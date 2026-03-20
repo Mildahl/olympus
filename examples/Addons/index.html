@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>AECO-dev</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+		<link rel="stylesheet" href="./../../external/styles/master.css" type="text/css"/>
+		<script src="./../../external/vendor/editor_deps/signals.min.js"></script>
+
+		<!-- favicon  -->
+		<link rel="icon" type="image/png" href="./favicon.ico">
+
+	</head>
+	<body>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"aeco": "./../../dist/index.js",
+					"three": "./../../external/vendor/three/build/three.module.js",
+					"three/webgpu": "./../../external/vendor/three/build/three.webgpu.js",
+					"three/addons/": "./../../external/vendor/three/examples/jsm/",
+					"three/examples/": "./../../external/vendor/three/examples/",
+					"three-mesh-bvh": "./../../external/vendor/three-mesh-bvh/index.module.js",
+					"three-gpu-pathtracer": "./../../external/vendor/three-gpu-pathtracer/build/index.module.js",
+					"3d-tiles-renderer": "./../../external/vendor/3d-tiles-renderer/build/index.js",
+					"3d-tiles-renderer/": "./../../external/vendor/3d-tiles-renderer/build/",
+					"3d-tiles-renderer/plugins": "./../../external/vendor/3d-tiles-renderer/build/index.plugins.js"
+				}
+			}
+
+		</script>
+
+		<link rel="stylesheet" href="./../../external/vendor/highlightjs/github.min.css">
+
+		<script src="./../../external/vendor/highlightjs/highlight.min.js"></script>
+	
+		<script type="module" src="./app.js"></script>
+	</body>
+</html>

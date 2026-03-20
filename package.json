@@ -1,0 +1,63 @@
+{
+  "name": "aeco",
+  "version": "1.0.0",
+  "description": "AECO library for BIM",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "types": "src/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./src/*": "./src/*"
+  },
+  "scripts": {
+    "start": "npm run serve",
+    "build": "webpack --config webpack.worker.config.js && webpack --mode production",
+    "build:deploy": "npm run build && node scripts/copy-dist-to-upload.js",
+    "setup": "npm install && npm run build",
+    "dev": "webpack --mode development --watch",
+    "dev:worker": "webpack --config webpack.worker.config.js --watch",
+    "lint:css": "stylelint \"src/**/*.css\"",
+    "lint:css:fix": "stylelint \"src/**/*.css\" --fix",
+    "strip:css:comments": "node scripts/strip-css-comments.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/unit",
+    "test:integration": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/integration",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "docs:olympus": "node scripts/docs-olympus.js",
+    "docs:olympus:serve": "npm run docs:olympus && npx serve docs/olympus",
+    "serve": "node scripts/serve-static-mjs.js 3000",
+    "serve:5502": "node scripts/serve-static-mjs.js 5502",
+    "analyze:bundle": "node scripts/bundle-module-sizes.js"
+  },
+  "dependencies": {
+    "@ifc-lite/geometry": "^1.14.3",
+    "@ifc-lite/parser": "^2.1.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "css-loader": "^7.1.2",
+    "eslint": "^9.39.2",
+    "globals": "^16.5.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "style-loader": "^4.0.0",
+    "stylelint": "^16.26.1",
+    "stylelint-order": "^6.0.4",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0"
+  },
+  "keywords": [
+    "bim",
+    "ifc",
+    "aeco"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "module"
+}

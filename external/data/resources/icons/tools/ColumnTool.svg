@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Capsule body - top half (dome) -->
+  <path d="M12 28 C12 14 22 6 32 6 C42 6 52 14 52 28" fill="currentColor" fill-opacity="0.15"/>
+  
+  <!-- Capsule body - bottom half (cylinder) -->
+  <rect x="12" y="28" width="40" height="28" rx="4" fill="currentColor" fill-opacity="0.25"/>
+  
+  <!-- Bottom rounded end -->
+  <path d="M12 52 C12 58 20 62 32 62 C44 62 52 58 52 52" fill="currentColor" fill-opacity="0.25"/>
+  
+  <!-- Divider line between top and bottom -->
+  <line x1="12" y1="28" x2="52" y2="28" stroke-width="2.5"/>
+  
+  <!-- Top dome outline -->
+  <path d="M12 28 C12 14 22 6 32 6 C42 6 52 14 52 28"/>
+  
+  <!-- Button on top -->
+  <circle cx="32" cy="12" r="5" fill="currentColor" fill-opacity="0.4" stroke-width="2"/>
+  
+  <!-- Button inner circle -->
+  <circle cx="32" cy="12" r="2" fill="currentColor"/>
+  
+  <!-- Side outline -->
+  <line x1="12" y1="28" x2="12" y2="52"/>
+  <line x1="52" y1="28" x2="52" y2="52"/>
+  
+  <!-- Bottom curve outline -->
+  <path d="M12 52 C12 58 20 62 32 62 C44 62 52 58 52 52"/>
+  
+  <!-- Label band on bottom half -->
+  <rect x="18" y="36" width="28" height="12" rx="2" fill="currentColor" fill-opacity="0.1" stroke-width="1.5"/>
+  
+  <!-- "CC" or number placeholder on label -->
+  <text x="32" y="46" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="currentColor" stroke="none">CC</text>
+  
+  <!-- Highlight reflection on dome -->
+  <path d="M20 16 C22 12 26 10 30 10" stroke-width="1.5" opacity="0.5"/>
+</svg>

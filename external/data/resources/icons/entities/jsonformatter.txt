@@ -1,0 +1,2628 @@
+{
+  "1s_zaoZpr1Z9sUvL_auqgW": {
+    "id": 1,
+    "name": "My Project",
+    "type": "IfcProject",
+    "children": {
+      "03tSbnjh1DEPOG2YdHoYn3": {
+        "id": 30,
+        "name": "My Site",
+        "type": "IfcSite",
+        "container": true,
+        "children": {
+          "0nXFQAy1X7Cv4j2RvWgIlk": {
+            "id": 36,
+            "name": "My Building",
+            "type": "IfcBuilding",
+            "container": true,
+            "children": {
+              "2cWzRNMxj4HBMQtqU0Jy09": {
+                "id": 42,
+                "name": "My Storey",
+                "type": "IfcBuildingStorey",
+                "container": true,
+                "children": {
+                  "0fwvXLL3nF0B41IVP0$QWn": {
+                    "id": 80931,
+                    "name": "Living Room",
+                    "type": "IfcSpace",
+                    "container": true,
+                    "children": {
+                      "1I8HRa1eT96udlPfc2Wals": {
+                        "id": 41601,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1zZspPrsr6afLm$b5rm9cx": {
+                        "id": 53552,
+                        "name": "Furniture",
+                        "type": "IfcFurniture",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0ZVP9Swv51nfOU1DrKZDF7": {
+                        "id": 53593,
+                        "name": "Furniture",
+                        "type": "IfcFurniture",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1SJfMaUCX1uvzCnaCCmtwJ": {
+                        "id": 45996,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3IyAJMxPn8GfgeBz8hDyFf": {
+                        "id": 47579,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3$oKuqA$n4qPH5P7rRgdBM": {
+                        "id": 42815,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3SCtSXXbr4EemqaCXb$SyT": {
+                        "id": 41548,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3aIsgO8ZHAie4kRiop4duV": {
+                        "id": 42124,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0wQn864M52ne0dEvSrE0dR": {
+                        "id": 41736,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3xkjSx9dT1yAlSQ4puFLhn": {
+                        "id": 66747,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      }
+                    }
+                  },
+                  "2ALeSv1uHB0OWzex2Sz5E3": {
+                    "id": 80866,
+                    "name": "Balcony-1",
+                    "type": "IfcSpace",
+                    "container": true,
+                    "children": {
+                      "3pfq7ZmMv6S91jDYYjlbbN": {
+                        "id": 73297,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "12rFIA57136BtzXZhnGbW$": {
+                            "id": 75737,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          },
+                          "0uaXhClmz9QPRyGjXWNlmp": {
+                            "id": 75694,
+                            "name": null,
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "1XxL4aTIj2e8wtLV0CqumS": {
+                        "id": 73211,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      }
+                    }
+                  },
+                  "2eTlsOHEzCc8wZla5WkyUY": {
+                    "id": 80490,
+                    "name": "Bedroom",
+                    "type": "IfcSpace",
+                    "container": true,
+                    "children": {
+                      "0j6N0CPVL5WfXnnUs4V$XW": {
+                        "id": 88464,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "246Z0yBjD0EeJ5bcMqh_8k": {
+                        "id": 93460,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1g5K7SKrfExg5QeUU8_xfI": {
+                        "id": 86494,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1w1B9_tNH3px_Hkdd6NHRb": {
+                        "id": 88072,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1fOG_20Gj3Ng5QAc1EuPhl": {
+                        "id": 92914,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "12BIfkykrBrBIMbxL9mYgC": {
+                        "id": 87539,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "05ai25SHj8eu_jQERxIXX2": {
+                        "id": 53515,
+                        "name": "Furniture",
+                        "type": "IfcFurniture",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1vUlxGRiv1HuAhSwHbMroF": {
+                        "id": 88547,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2xadx_d$jDtRbtLF_kzdrq": {
+                        "id": 87000,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1rBLEEJdzACuavkCGp0I$J": {
+                        "id": 44284,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0dckW7gaf0jRmUsxTyPoAA": {
+                        "id": 93499,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1KKeGHQ5b9a8Yhwe56MLAq": {
+                        "id": 88934,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1ooUE4cRv36vUGD1rNzFCc": {
+                        "id": 93226,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "28d_6MHibF6Qpl24sa22C2": {
+                        "id": 93382,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2A1sw$_j5ApAPCwG3D$YW7": {
+                        "id": 88881,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2nkabssZHBvwGTyi222i$p": {
+                        "id": 88113,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2o9u5Q_513IfKetRATinup": {
+                        "id": 85967,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0YTyB4qdL7vxag9jF8zFrY": {
+                        "id": 88513,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3fCwbqDfb10fDgFZ1KUTVf": {
+                        "id": 86966,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3ATNL4GVD1o9Wi_ES0suRv": {
+                        "id": 93148,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2GizwVXO5Civh4M7__vzDp": {
+                        "id": 89004,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3L8wOShuH8OvhFs3414j5I": {
+                        "id": 88687,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1VxYck6ib1gAgigKaSKUJd": {
+                        "id": 87309,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2Be_aKBIfDkBFscBtIZWVI": {
+                        "id": 88330,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3fY6d5Zr5A8P$h5ZpWO9QF": {
+                        "id": 87190,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "04Vyrfv6r9Sfz8H7Lj8vqb": {
+                        "id": 86818,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2pcW6iV8j8Vvh_L0Ye0U4T": {
+                        "id": 88224,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3CzGNjV15EXxkWRaNxe56y": {
+                        "id": 39947,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2pf3kMTIL6dOBBo3YNajRj": {
+                        "id": 84848,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3PNXp3RHH6EhCqUmNVujrQ": {
+                        "id": 86360,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "26HwgkYWTAof_qebTFvzMz": {
+                        "id": 86252,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2RE3KMyF501uPKg4wLwLjt": {
+                        "id": 85880,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2n0AeXMRv2$Q3IENVh5Uaq": {
+                        "id": 62233,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0tguKMLLr1BxnLdgDvGHc0": {
+                            "id": 75436,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          },
+                          "0JvSlhTq994gsEVMCnLS0e": {
+                            "id": 75369,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "2dQe0J2CPCmw5fxKn7tPk1": {
+                        "id": 88437,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "23gUJUR4H6Vvft94x$BrcQ": {
+                        "id": 85389,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3pqZq4BfrFCwuAZLmTH8$O": {
+                        "id": 85138,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "17gvwa$sL8NgQqUklcybCE": {
+                        "id": 88611,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2wR5jEEaj8RuIhrgeeWon_": {
+                        "id": 82338,
+                        "name": "Outlet",
+                        "type": "IfcOutlet",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3cpE5vd35EuO9ZOr06rdrp": {
+                        "id": 85034,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2uomYUJC92zP9DwQ71uRxp": {
+                        "id": 86656,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3mwBCFNibF9wH3NirqNIyE": {
+                        "id": 89790,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1HAUgiBNHB39jsjfq7$hWN": {
+                        "id": 92836,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0kWD0dNkfBNxwYjE0aaCDF": {
+                        "id": 93421,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1qFkqZ$z51HR1zSJAWkgVz": {
+                        "id": 86455,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3GzkAeP3H7_uV7629nIuca": {
+                        "id": 82207,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2AjEFfbZn46OnekFYNl7ib": {
+                        "id": 89162,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0Q6McEFqfBbQer98AGHiNf": {
+                        "id": 87771,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3G2ITmnzf0sOGF0Xu3dRsh": {
+                        "id": 93304,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0s0aPSYEn2sPOh3e1uFDWO": {
+                        "id": 94880,
+                        "name": "ElectricDistributionBoard",
+                        "type": "IfcElectricDistributionBoard",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1T6cIsk3r0_PeXlCQrQHNH": {
+                        "id": 85178,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0afR_HuWn1uhjA_HAY3Ru3": {
+                        "id": 87040,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3HPp4i2tv5Tw9GrSpcOHhe": {
+                        "id": 88290,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0V98eCOQ5FM9z4Ep6kLAYO": {
+                        "id": 86327,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1vJ97MEYrEy8ebqA5DjkyI": {
+                        "id": 87744,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1pE1yGheD4BehQFUXj_3sK": {
+                        "id": 93187,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0WDJpFcyDEBQ$NEV$YH2Qd": {
+                        "id": 93070,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1rlet3OfnCsReEYiXRdZWy": {
+                        "id": 85246,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1dWDPjuSn4ufHVyKdlFlrr": {
+                        "id": 89560,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3NT3aB$u56aRwRDvbKuYU8": {
+                        "id": 89322,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2h7r77bML9XxGhvpmFKuoz": {
+                        "id": 86291,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0WsuHjMNjEiR0t0l8S7R1W": {
+                        "id": 89282,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "28W46SBofCbu7spD65zmUx": {
+                        "id": 88965,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0HYO7YDBL4rBhefgWmxAwy": {
+                        "id": 90103,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "061Kts1_P6bPFfdzmGkcBU": {
+                        "id": 87574,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1H8C3elDLAFPKVbXi4UlTU": {
+                        "id": 85721,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0vg1vE_wP2PuEIg4JMglWX": {
+                        "id": 92953,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0DCPOoP295EPrv1uU48oU6": {
+                        "id": 87708,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "06XgriIKb3ihohLusxW1OS": {
+                        "id": 88135,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2yyGcdSlL44fMJcS1XPpHu": {
+                        "id": 93538,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0QvvHW6MbCtuyuJwwwYAg4": {
+                        "id": 85687,
+                        "name": "Furniture",
+                        "type": "IfcFurniture",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1QPOE75yjDlgFkPtJJ1ffI": {
+                        "id": 86521,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3i7306dUD7wfXeSpWsiP51": {
+                        "id": 88665,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2RDPd_DTbFVfuv4i1DBDx2": {
+                        "id": 89488,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1bWf6lZTD1OeO2KTBJFmDW": {
+                        "id": 82161,
+                        "name": "Outlet",
+                        "type": "IfcOutlet",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2BPJLM4Gj5HussQp0ECBX3": {
+                        "id": 86851,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "23jTqXgS96GvQJ0wXtLocq": {
+                        "id": 88189,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1mO90c68z9cOQMvbtpPgvu": {
+                        "id": 89756,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2pmmO6sOj66e6SNxSFRAbc": {
+                        "id": 89527,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0LMit_s2z9nBm3rL83Ds5f": {
+                        "id": 88721,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "14OzWU5lXARAXcHyGWmi54": {
+                        "id": 44157,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0yGnhdBuT7avQ7ydu4SS_L": {
+                            "id": 70107,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "0EynjZjAHF6AhzD0G8EsGL": {
+                        "id": 84632,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "1F9U5a5wD7HeumfkC6_l9t": {
+                            "id": 86424,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "1nDAhiI356yARSmyRbGlJ9": {
+                        "id": 44117,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2gjx3nqWX0aQM7hiqLYXkx": {
+                        "id": 89729,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "39E96mvWL4z9GPOPZ3ZtHW": {
+                        "id": 88589,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3dSh1LN6z19RRugB5SsAlo": {
+                        "id": 93343,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1Rrgn3ro5AoAgXNalQSZIw": {
+                        "id": 87242,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3J_0WZm1HDoRFDohuKmV$w": {
+                        "id": 93109,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3XYz7NXMTFSgAGOJGH2sJB": {
+                        "id": 93265,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3sFzWDy$j2kBJV3bDQyJgW": {
+                        "id": 87404,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3zBhvxSpP6ShBv5qY2G5IS": {
+                        "id": 88370,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1q737pPc19VBGn2NxqTtv_": {
+                        "id": 88491,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3LdDQaeiL3Jv5AuCYxs3hT": {
+                        "id": 92992,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3R$VNkEqzFff_pIe_5gqEC": {
+                        "id": 92875,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1kEQ4e625DJew8wGS8TB5N": {
+                        "id": 88638,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2XdipQBcrAoeSTJR5V$pwE": {
+                        "id": 93031,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      }
+                    }
+                  },
+                  "3$dnSxjMbCWw5ZlykIxeyu": {
+                    "id": 78445,
+                    "name": "Toilette",
+                    "type": "IfcSpace",
+                    "container": true,
+                    "children": {
+                      "3gV6juZ6b6tOafrgF0GjOh": {
+                        "id": 35460,
+                        "name": "PipeFitting",
+                        "type": "IfcPipeFitting",
+                        "container": false,
+                        "children": {
+                          "3vHxjVmr5CSPUfgFhT_rId": {
+                            "id": 35488,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "1KZ9fKvwP9JB1zGHlhMiNW": {
+                            "id": 35497,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      },
+                      "3d$zL$2t1EdBs1NGm1JQke": {
+                        "id": 27106,
+                        "name": "DistributionControlElement",
+                        "type": "IfcDistributionControlElement",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3H6Eewvt5D_As06gHEb9e8": {
+                        "id": 51198,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1kIkXK4l91s8Al68lUUQJn": {
+                        "id": 50954,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2B99BJOL52_RUdzPAUT$xc": {
+                        "id": 51288,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0vSNW7QybAwvGoLsm1DaBT": {
+                            "id": 51305,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "0Vi1xjmXj7Ywy5aiU16l$8": {
+                        "id": 66387,
+                        "name": "PipeSegment",
+                        "type": "IfcPipeSegment",
+                        "container": false,
+                        "children": {
+                          "3xD$wPyozASBEs9W5DIzGB": {
+                            "id": 66414,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "0_PAsGWi5CA81btlVxoEk3": {
+                            "id": 66406,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      },
+                      "0h5QIeKnb3wOTiwtv9T3e7": {
+                        "id": 50393,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0WeRE$FwT2rhrhkGq3fwot": {
+                            "id": 55645,
+                            "name": null,
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "0IT7l2SFHEqBvTTYTHGEyw": {
+                        "id": 35335,
+                        "name": "PipeSegment",
+                        "type": "IfcPipeSegment",
+                        "container": false,
+                        "children": {
+                          "0$3yVS5gX56fdkB3hboWJo": {
+                            "id": 35354,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "1GALOFKfz42gid2DnQ8Vi1": {
+                            "id": 35360,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "3dcQZ8eiLDcx$5bsLZsAFY": {
+                    "id": 80750,
+                    "name": "Communals",
+                    "type": "IfcSpace",
+                    "container": true,
+                    "children": {
+                      "1DJl3h7kb6wfV09JRNv7QV": {
+                        "id": 40637,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "2ciM1Uw$n3VxbKsy_L3qlU": {
+                            "id": 40643,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "3XwMiYZ49ApOXLkZJgYfyX": {
+                        "id": 41274,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "1K0GnKqeD4ax$jfdiDpFBi": {
+                            "id": 47534,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "1T2Dq4GwrFYQ6zkEEyUEDL": {
+                        "id": 40047,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0t0Legt$vExAn6NqZLOHc2": {
+                        "id": 48890,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "38KInKLJ5FOOrFY_JEBNqv": {
+                            "id": 67646,
+                            "name": null,
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "0mHY8geH97gvHDkNYSC1$p": {
+                        "id": 40943,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "2q7W1OHZv81QR4DhkVJDnE": {
+                            "id": 41248,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "3tJXP_LZz76O0STNqjxJRd": {
+                        "id": 40346,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "3tjEz_hxb5UfwaLNvBFdww": {
+                            "id": 40583,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "1ebomZlXr66hy2uSyRgrTV": {
+                        "id": 44623,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0Y6YFwU0f4ifrdsW0MujON": {
+                            "id": 47457,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "2V8zrr4Vr8SxupUrcmDW7D": {
+                        "id": 48971,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0$X$Mbn3zBOBpJ2Ekp33At": {
+                        "id": 40821,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "32RoXLDmL8bgXFvbBxceE$": {
+                        "id": 49219,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3D6XlvXxXFEe7IMUhnP9Zd": {
+                        "id": 79419,
+                        "name": "Sol-SDB",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      }
+                    }
+                  },
+                  "1dpNc1TcXEiPgW8DjWj5kq": {
+                    "id": 78425,
+                    "name": "Sdb",
+                    "type": "IfcSpace",
+                    "container": true,
+                    "children": {
+                      "0yf1hHzGP7l8d1oNk3zOx3": {
+                        "id": 34526,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3pA0kWfRv1mhPdcrRhvZz_": {
+                        "id": 34909,
+                        "name": "PipeSegment",
+                        "type": "IfcPipeSegment",
+                        "container": false,
+                        "children": {
+                          "3R1mYOu6HBrOjN4rR$$r5Z": {
+                            "id": 34938,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "0BYWYRWfDBKfixlDHGVU6l": {
+                            "id": 34930,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      },
+                      "0zWDXaqmr1tgJr5EgAsCqm": {
+                        "id": 77948,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2Op6TfnhzArvvx9ljoYgAZ": {
+                        "id": 65658,
+                        "name": "PipeSegment",
+                        "type": "IfcPipeSegment",
+                        "container": false,
+                        "children": {
+                          "3TVCoJCnnCTPCBZkEOymi7": {
+                            "id": 65677,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "1H6zwH6LDA4QWtV1pOznCm": {
+                            "id": 65683,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      },
+                      "0iNdVavSfAoA4lJs7uCBFC": {
+                        "id": 77840,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0IzoSnABHCXuMo1Xlv_gQ_": {
+                        "id": 68407,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0Trp2BR1LCzPjtrN5$oE$Q": {
+                            "id": 48825,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "2lYSOUJdX0luAu_Jz2e3xn": {
+                        "id": 33359,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2sLnTzCUr6QO$xHGyjC4b3": {
+                        "id": 26193,
+                        "name": "PipeSegment",
+                        "type": "IfcPipeSegment",
+                        "container": false,
+                        "children": {
+                          "1aMLkh7pDCpB0yTPkgEaBG": {
+                            "id": 26201,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "2msu7auyrDSwg6$7RDWMnD": {
+                            "id": 26207,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      },
+                      "0oh1YdRu98zh858eU6eYoj": {
+                        "id": 106674,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0sMox2ZGv4gPpxlZe0S8Oy": {
+                        "id": 24311,
+                        "name": "Slab",
+                        "type": "IfcSlab",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0bKM8HtpP1zxpUu7ka5dwP": {
+                        "id": 77732,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0B0ECP0Db4ch4fmIEV8Ym6": {
+                        "id": 66243,
+                        "name": "PipeFitting",
+                        "type": "IfcPipeFitting",
+                        "container": false,
+                        "children": {
+                          "3$10I9BzvC9PR_ECSDs6VK": {
+                            "id": 66273,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "1bzpoKiu13Yx1BHjNmegxf": {
+                            "id": 66282,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      },
+                      "01aDnaCrL9hAqGmXpgyvCm": {
+                        "id": 66681,
+                        "name": "Mirror",
+                        "type": "IfcFurniture",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3Hpg9bzM96CP23uirptNoH": {
+                        "id": 66727,
+                        "name": "Sink Tap 02",
+                        "type": "IfcDistributionControlElement",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0eePowhiX3ueL3nyyfskKp": {
+                        "id": 27740,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0tQ36v5wj5oPP0mMlJYjO5": {
+                        "id": 27643,
+                        "name": "Lave a eau",
+                        "type": "IfcDistributionControlElement",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1pLG4_5sf8DOKOu7acYFUQ": {
+                        "id": 34072,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "1GpzBdnh55_OShGoVt3xya": {
+                            "id": 34092,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "1zsvEoPqL2oBmoZ29ANkB1": {
+                        "id": 32723,
+                        "name": "Shower Head",
+                        "type": "IfcDistributionControlElement",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1smmfh97z3BeEJJq3LjEgg": {
+                        "id": 34182,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3HmY6W9hL4xB5N$BC4pSmB": {
+                        "id": 33691,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3HrvYQaTH8_eAJefltv0ks": {
+                        "id": 36832,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1iSec33Zz97ghW9DZIw8p7": {
+                        "id": 25561,
+                        "name": "Toilette",
+                        "type": "IfcDistributionControlElement",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2VnFwpcvjCEOY0bW19omtX": {
+                        "id": 38071,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3$nJoCFGvDuhxjI3hxvxe9": {
+                        "id": 33055,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3jirga5An60R1br8HCKo2M": {
+                        "id": 37963,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3RnkCidyjB_vbiV1sXkqxF": {
+                        "id": 107631,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2UNMyZCSf1YOpNxZbd_sdx": {
+                        "id": 26047,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "05bN2zZJv6exHOh3DJaLzW": {
+                        "id": 25785,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2FxJXEZnzFNhqGIfMg$5$Q": {
+                        "id": 37855,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2VDWCT1XLAXR9ICBq$6_Ah": {
+                        "id": 36772,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0FXnLQ5gD5jOPatZLwmlQ_": {
+                        "id": 54307,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0YIqJhBZr8_uaGuZ2btk3m": {
+                            "id": 54359,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "1uxaox7mv9FxofMs1loMdJ": {
+                        "id": 27687,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "166h0NKC9FlOHl4xMK9GVz": {
+                        "id": 35282,
+                        "name": "PipeFitting",
+                        "type": "IfcPipeFitting",
+                        "container": false,
+                        "children": {
+                          "0CQElABQDAdQmFaqBrAE30": {
+                            "id": 35312,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "304GzrVY53qxRzfzvx6SUn": {
+                            "id": 35321,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      },
+                      "3vgxNRRT10cRZt5ZylvdxE": {
+                        "id": 77894,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1bl$7qAH94kgF1mOv2erJz": {
+                        "id": 33024,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0lGa4D6$n7Tv9ehRESvSzC": {
+                        "id": 25871,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0X0rdtPBzF5Og1H8yzaHCS": {
+                            "id": 32926,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "1UPb82gUn16BufJzEuRG9L": {
+                        "id": 33477,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1ho5F4ixjC8QlfIT9piS$R": {
+                        "id": 77786,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0oNHZi4RfDVxbyBdi6sNM9": {
+                        "id": 25646,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2CKaeai3L6ixZSqyqM72IZ": {
+                        "id": 106783,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1MH8c$VybA5uCW8L2V2mkk": {
+                        "id": 107155,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3KyiyJI6j0189BtLi$J3YI": {
+                        "id": 24387,
+                        "name": "Column",
+                        "type": "IfcColumn",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0MzTao0211qQJ3Jf2Xr2DV": {
+                        "id": 79212,
+                        "name": "Covering.099",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1IJo8M4453RwfOGsnWcEYH": {
+                        "id": 77469,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1$747YNaD99xF7BHmdlUL_": {
+                        "id": 32995,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "35b4CIGMr55emudlmAlNzJ": {
+                        "id": 65916,
+                        "name": "PipeSegment",
+                        "type": "IfcPipeSegment",
+                        "container": false,
+                        "children": {
+                          "19nhC3TcLBIRqpchU0SFpi": {
+                            "id": 65935,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "1xtKxKQm9EYhRnu_Y0yEEW": {
+                            "id": 65941,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      },
+                      "2pJfUgFJv38g1$0UYGC3U4": {
+                        "id": 33512,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0qVn4Nmd54qxIO6UmkQwOY": {
+                            "id": 34026,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "2NPwJKIW1688rLMkMm3eXB": {
+                        "id": 76738,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2eF3Q2LMP4sPqMmCso9Dts": {
+                        "id": 34579,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1BKxPieXLD2uYofO0FAdu_": {
+                        "id": 33197,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0bZY911vDDm8PxMujyJLNW": {
+                            "id": 55710,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "3qyw29vmr1jvP103eQGmuh": {
+                        "id": 38017,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1zmKRjS_X2ZBKuvd5BzJ_h": {
+                        "id": 37909,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3Uajjtptn3JgsIOgkg8SE3": {
+                        "id": 25606,
+                        "name": "Slab",
+                        "type": "IfcSlab",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1bpzeWG$n10eBk0trNjm_T": {
+                        "id": 43581,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3OOkJRUvXARRkG8H1Wp6nF": {
+                        "id": 66550,
+                        "name": "Receveur de Douche",
+                        "type": "IfcOutlet",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2Z5S9ybe11UPJGis7jieiN": {
+                        "id": 24250,
+                        "name": "Slab",
+                        "type": "IfcSlab",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2gIqY9FQTEuf8hD_RO1jWf": {
+                        "id": 65612,
+                        "name": "PipeSegment",
+                        "type": "IfcPipeSegment",
+                        "container": false,
+                        "children": {
+                          "211KKHBiv00Q$_k1Hspmwg": {
+                            "id": 65638,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "0mg_yGMlD7avHx9$IH5Lbe": {
+                            "id": 65647,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      },
+                      "2Wb12LTe1DX9UDQaga1oXZ": {
+                        "id": 27996,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      }
+                    }
+                  },
+                  "1NsMcR2Sv5Hvz6_3wkbe0L": {
+                    "id": 103062,
+                    "name": "Kitchen",
+                    "type": "IfcSpace",
+                    "container": true,
+                    "children": {
+                      "2SkD4P1HvAgOtfdWD3SwS4": {
+                        "id": 101641,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0mGZxE7X9BZQyvbcShs8nm": {
+                        "id": 102169,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1HYMXrV39BAg8QUnUy_Hrh": {
+                        "id": 63655,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "13rWgWQkf2SOGoXQ2zzP9m": {
+                        "id": 100899,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2TPq5DkQv0$u8NGDpDX3y2": {
+                        "id": 80032,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0CunB$E_jFQhID5AW61O4n": {
+                        "id": 7956,
+                        "name": "Outlet",
+                        "type": "IfcOutlet",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3f7YVQtUj3Hxo7STMcZozU": {
+                        "id": 101563,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0P6gD6kij58BN3yxHgmGO2": {
+                        "id": 94122,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3aAjSUA71CzxlrHvunNwQk": {
+                        "id": 48525,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2Qp1vYgCz8UhXp94$trkff": {
+                        "id": 4434,
+                        "name": "PipeFitting",
+                        "type": "IfcPipeFitting",
+                        "container": false,
+                        "children": {
+                          "0jCZH$vaz2gf70XaOvmTZr": {
+                            "id": 4469,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "0ksL_fNoz4ERCM6$vSiTJP": {
+                            "id": 4462,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      },
+                      "09OF8HID10bgF2YbqKzpi$": {
+                        "id": 94203,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1tauGS5Ir9$AV0tPzbizi6": {
+                        "id": 2530,
+                        "name": "ElectricAppliance",
+                        "type": "IfcElectricAppliance",
+                        "container": false,
+                        "children": {}
+                      },
+                      "08$14P1F99ggICO9pTMZfv": {
+                        "id": 2237,
+                        "name": "Wall",
+                        "type": "IfcWall",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3uKLT$DEb3cuo27EkRdKNn": {
+                        "id": 100957,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3ZYzqhdN566RS4ZZTCsnv$": {
+                        "id": 83229,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "18ReDI_oT9QQ5lVgF1bbp8": {
+                        "id": 95356,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "129kw6XFPAfRzJp060Rw_R": {
+                        "id": 3694,
+                        "name": "PipeSegment",
+                        "type": "IfcPipeSegment",
+                        "container": false,
+                        "children": {
+                          "3oen2uNjDAuhF8g41pmJdd": {
+                            "id": 3724,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          },
+                          "2xNIB4oqD4yeNcrADu$ndl": {
+                            "id": 3717,
+                            "name": null,
+                            "type": "IfcDistributionPort",
+                            "container": false,
+                            "children": {}
+                          }
+                        }
+                      },
+                      "17VdJTAbfE58vDV9KxEzog": {
+                        "id": 107604,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1Uf9u$LhH93uXa8IxSDenU": {
+                        "id": 96683,
+                        "name": "Wall",
+                        "type": "IfcWall",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0h63iBJSbCIgJB2ZmlGSlX": {
+                        "id": 102227,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2X$bA0XUn91OWUCYUyZ$GS": {
+                        "id": 46845,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0Elnelpp1D1Qj6oXBVMEOr": {
+                        "id": 103039,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3_IiEi_Z1COgpH3hwT6m16": {
+                        "id": 47285,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0ZXdc0pF531wcGrHFu4pBs": {
+                        "id": 103012,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2zT6GkPLT1ERKJoOXqppbR": {
+                        "id": 101665,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "110PkcJjf8WA2sGG41oyIu": {
+                        "id": 94358,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0qEQTeIZrCyPPaqxSGwJEZ": {
+                        "id": 67159,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "03csZzMDvEgfDjTxrX_2$V": {
+                        "id": 102990,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1le6PjrI11dhgJxgbQ7nTm": {
+                        "id": 47698,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0yakfX37b3F8vNsk8nXJql": {
+                        "id": 64511,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3DmiyL4Zn9mgzMilEWOaWm": {
+                        "id": 101929,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0fMFKNORrAEgfrUAEf5pOU": {
+                        "id": 102457,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "058jPgeo94$B2$rqzV5oG9": {
+                        "id": 11235,
+                        "name": "ElectricAppliance",
+                        "type": "IfcElectricAppliance",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0$45e8aIv5UfKg2UpEVVIK": {
+                        "id": 102963,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2nYrGFgcv13BN6rdxdqtek": {
+                        "id": 2271,
+                        "name": "Wall",
+                        "type": "IfcWall",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3$cgfuXLv4BfBw3dHf9odo": {
+                        "id": 96741,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1HTvWeibPEqxC5z7Ell4vR": {
+                        "id": 95929,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2njCWjVNH7ix0Ov4xaFJw2": {
+                        "id": 52172,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1fUmAmMGX3CxSoZDXE99b0": {
+                        "id": 94331,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "071QJYhpP3qwDPjKzkhVX_": {
+                        "id": 7874,
+                        "name": "Outlet",
+                        "type": "IfcOutlet",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2mRVPJaw1ELRMyMH5zo2tD": {
+                        "id": 102725,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0d1GaP9xT0k9qL$X3FMCtC": {
+                        "id": 11183,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0lDfXrpK56uOoOfb18L$vD": {
+                        "id": 81862,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1jf3AbmlfAIRWsX9pGl26S": {
+                        "id": 63579,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3w8$r00Oj8C9JlOM5NFzaY": {
+                        "id": 94176,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3HkPhXs0T7rxoQWms_Jo8X": {
+                        "id": 80075,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0pzij0bpX94Q9eTxk5YOc7": {
+                            "id": 67751,
+                            "name": null,
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "2_vVtfvHj8lBnmq4Tj$T4R": {
+                        "id": 96826,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2HMpE7Kd94OOKyonnF92Sk": {
+                        "id": 64611,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0_hhCQ3tD0SvuVX8AN$qn3": {
+                        "id": 1823,
+                        "name": "Wall",
+                        "type": "IfcWall",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3HMT02Iun8LxJJ_6vKdzm8": {
+                        "id": 102557,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1ag1uVsXfFOBjLO83wIYgk": {
+                        "id": 96007,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2C6llND0TF6O2$uL2NROzU": {
+                        "id": 101461,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0AZTYwNmT01A8H$cbFDe8l": {
+                        "id": 48073,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1cAfwH6I5CBB5Wd1yi3SEo": {
+                        "id": 102504,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2HNicrfhrBfPBOpkeZ67a_": {
+                        "id": 3548,
+                        "name": "SanitaryTerminal",
+                        "type": "IfcSanitaryTerminal",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2IlAEjN5H1wu5XidFCPQ7q": {
+                        "id": 108664,
+                        "name": "Outlet",
+                        "type": "IfcOutlet",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2cq9e5QCP5P81OwPJ15Gfd": {
+                        "id": 106756,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3IYqWR0fbCt9jhEqN0hykj": {
+                        "id": 102880,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3NRiwFsNPEqAN1myodlrOz": {
+                        "id": 101500,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0jZUd02On5d88YqQMoTpQ_": {
+                        "id": 1723,
+                        "name": "Wall",
+                        "type": "IfcWall",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2MY1QgMmzCHvSPBV6GJJa_": {
+                        "id": 11385,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1UtEBLncnE7hiM6iOWf$54": {
+                        "id": 46939,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0XxQRuDM9ExhO5fKKAoK2O": {
+                        "id": 64480,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2gXlZPOcX1hOI9$9DXO$2r": {
+                        "id": 101028,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3eIlcDFl5Axg6az9MmlyTm": {
+                        "id": 2310,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1fE4bgeXP3SO9wdaUWKkqg": {
+                        "id": 52225,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3QS_uHx$bFE82c7LF7JWo6": {
+                        "id": 101587,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3vy8O$QPTB4wHD7V1uo0GO": {
+                        "id": 95827,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2XbQYzLzP3sxP8Fnyb9B$h": {
+                        "id": 64446,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "13z9DYO_XCrwtCSGlzXMdF": {
+                        "id": 94095,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2kWvBDmv59qe2zLjMaSfwy": {
+                        "id": 64831,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1UWo5EWkn9O8b66C2AoSYh": {
+                        "id": 64941,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "20U4KmAEj7ghYmJHBLNy89": {
+                        "id": 94385,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1uKRzpX5D5WBxohUzFGkUv": {
+                        "id": 107335,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3MB1iVlWLBHQkUbSIsbThg": {
+                        "id": 94068,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3J4TrmTfP8ruedaX9Pf0EV": {
+                        "id": 101533,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0DI8ZCA$rE8hjAFEF0hciu": {
+                        "id": 64542,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0BGgO1dfT0H8LJzYSHcbC7": {
+                        "id": 46589,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2XK5aLWB91_AGa55itNebb": {
+                        "id": 2159,
+                        "name": "Wall",
+                        "type": "IfcWall",
+                        "container": false,
+                        "children": {}
+                      },
+                      "14YXu26$rAlBoHyOwjI4Ch": {
+                        "id": 81410,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "2a4R$Azuz5jfALd4J5b7xm": {
+                            "id": 81444,
+                            "name": null,
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "36QkFjf059q9zCpJvYR1Kh": {
+                        "id": 48722,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0IPqqUIRn6H9AJ3ItEY2mc": {
+                        "id": 94230,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1svQ$hIEPBMhex3RNFL6uy": {
+                        "id": 67337,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0vALKuDsb5Su7QaTuYY4dt": {
+                        "id": 106729,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0wIbYp33LBjwtR6ybznlEW": {
+                        "id": 102413,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1nPtNJkr98gewxFy_9Geyo": {
+                        "id": 95172,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0SIxHEPU96wBNTMCRYL7dI": {
+                        "id": 31684,
+                        "name": "DistributionControlElement",
+                        "type": "IfcDistributionControlElement",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3$ouHgwLTF0wVX1setE5Cr": {
+                        "id": 11266,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "3DaXbL8iT1FPtgRv2$tzHX": {
+                            "id": 3634,
+                            "name": null,
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "13O6VEnPP1KeGi9Bok99Hl": {
+                        "id": 63608,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2chukzYw1D2ea0eHp7S0Xb": {
+                        "id": 30931,
+                        "name": "Sink Tap",
+                        "type": "IfcDistributionControlElement",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1zi_I5Mon0IAz2C73vWoIf": {
+                        "id": 7839,
+                        "name": "Outlet",
+                        "type": "IfcOutlet",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0DQVS7zgj8Tu_V$S22ROzs": {
+                        "id": 2134,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "0Am4SL3bv9bPEMDM_P$W_F": {
+                            "id": 48480,
+                            "name": null,
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "2l40hkFOfAT8eDXkdC1CQN": {
+                        "id": 101611,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3CBIRdgGL0yOltLx$kLcsW": {
+                        "id": 94304,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1OZQA$smDCfgSq9DlmdduS": {
+                        "id": 83167,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0uZTkcirb7cQLCjL2j4B1k": {
+                        "id": 9881,
+                        "name": "Wall",
+                        "type": "IfcWall",
+                        "container": false,
+                        "children": {}
+                      },
+                      "18BXkg6YD5W8Bn018G9BAT": {
+                        "id": 48223,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "27GYBO3h51HxlolnG5eYUc": {
+                        "id": 64750,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0yFb8$bgP9AxPchgeYrIRU": {
+                        "id": 1579,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2YU$7KYifDH9K8Z479ZlTC": {
+                        "id": 101067,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "16VKbixDz5Y8rzlXMMfV$g": {
+                        "id": 94277,
+                        "name": "DiscreteAccessory",
+                        "type": "IfcDiscreteAccessory",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0hFnP5zF10chU20TlmWy5p": {
+                        "id": 1792,
+                        "name": "Wall",
+                        "type": "IfcWall",
+                        "container": false,
+                        "children": {}
+                      }
+                    }
+                  },
+                  "0uePcNEIr1PBJY1Uz6M_rB": {
+                    "id": 80510,
+                    "name": "Debarras",
+                    "type": "IfcSpace",
+                    "container": true,
+                    "children": {
+                      "1nX4iHsQ97pPd1uBbO2qSl": {
+                        "id": 51557,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "2vosaXexz1JOTOhITx1NuJ": {
+                            "id": 51563,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "2jjn294I9EoQdhttioY7c1": {
+                        "id": 51445,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2RQgTl7NX38gQbrYKGHFAJ": {
+                        "id": 51720,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2XlJbMUxb35B8tt6IVKSme": {
+                        "id": 51515,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      }
+                    }
+                  },
+                  "0ZC4yPOF1CShZ3jNqqQckl": {
+                    "id": 80530,
+                    "name": "Office",
+                    "type": "IfcSpace",
+                    "container": true,
+                    "children": {
+                      "1tVhkfJYf8Fwn4Fy7$yaTY": {
+                        "id": 32685,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1mI1a7JvDCv8I2oJPsKXPt": {
+                        "id": 39242,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1GSuDU8kfB7u9TtkwRUgPw": {
+                        "id": 32648,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "04otljRGvArgydH_oPUTpn": {
+                        "id": 43947,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2yvCbKpuz4Jui8FtMkAiOq": {
+                        "id": 53954,
+                        "name": "Furniture",
+                        "type": "IfcFurniture",
+                        "container": false,
+                        "children": {}
+                      },
+                      "1frnNJJp954BsPzgE0h65d": {
+                        "id": 43856,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "33xIxEcsb41ATJf9wxQaHD": {
+                            "id": 75154,
+                            "name": null,
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "3XYxvrBfD1Yf2gRNC_dOBn": {
+                        "id": 41472,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {
+                          "3LiAUI9mL62f_ZRb4ncaiu": {
+                            "id": 47496,
+                            "name": "Opening",
+                            "type": "IfcOpeningElement",
+                            "container": false,
+                            "children": []
+                          }
+                        }
+                      },
+                      "3yNn4i6IXEExpp2TkM0C_T": {
+                        "id": 54218,
+                        "name": "Furniture",
+                        "type": "IfcFurniture",
+                        "container": false,
+                        "children": {}
+                      },
+                      "19sb0k_X95MQXS9pvR0EBm": {
+                        "id": 54191,
+                        "name": "Furniture",
+                        "type": "IfcFurniture",
+                        "container": false,
+                        "children": {}
+                      },
+                      "2Q15J5Acr8EOefyfacVb8G": {
+                        "id": 43816,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      }
+                    }
+                  },
+                  "0$F2OZBYj51BQcfEt8GZTO": {
+                    "id": 80886,
+                    "name": "Balcon - LivingRoom",
+                    "type": "IfcSpace",
+                    "container": true,
+                    "children": {
+                      "0Mlx91l9TBmQ7P6f0R5yLl": {
+                        "id": 72632,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "0zlQJhlmvA8PwwZqgqF4dv": {
+                        "id": 74668,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      },
+                      "3DwRtkB4L3meudb4sYygSx": {
+                        "id": 74723,
+                        "name": "Covering",
+                        "type": "IfcCovering",
+                        "container": false,
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

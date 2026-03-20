@@ -1,0 +1,665 @@
+/* ===========================================
+   ORIENTATION GATE — mobile portrait blocker
+   =========================================== */
+   #OrientationGate {
+    align-items: center;
+    background: #0d0d0d;
+    bottom: 0;
+    color: #e0e0e0;
+    display: none;
+    flex-direction: column;
+    font-family: inherit;
+    gap: 1.5rem;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 10000;
+  }
+  
+  #OrientationGate.active {
+    display: flex;
+  }
+  
+  #OrientationGate .orientation-gate-icon {
+    animation: orientationRock 1.8s ease-in-out infinite;
+    height: 64px;
+    opacity: 0.7;
+    width: 64px;
+  }
+  
+  #OrientationGate .orientation-gate-text {
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    max-width: 260px;
+    opacity: 0.8;
+    text-align: center;
+  }
+  
+  #OrientationGate .orientation-gate-subtext {
+    font-size: 0.75rem;
+    opacity: 0.4;
+  }
+  
+  @keyframes orientationRock {
+    0%, 100% { transform: rotate(0deg); }
+    25%      { transform: rotate(90deg); }
+    50%, 75% { transform: rotate(90deg); }
+    90%      { transform: rotate(0deg); }
+  }
+  
+  @media screen and (min-width: 769px) {
+    #OrientationGate { display: none !important; }
+  }
+  
+  
+  
+  
+  
+  
+  /* ===========================================
+     DESKTOP  (>= 1024px)
+     =========================================== */
+  @media screen and (min-width: 1024px) {
+    .NotificationsPanel {
+      max-width: 50vw;
+    }
+  
+    .project-monitoring-panel {
+      width: var(--panel-width-desktop);
+    }
+  
+    .World .HeaderBar .ContextMenu {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      margin-left: 0 !important;
+      padding-inline: var(--phi-1);
+      scroll-padding-inline-end: var(--phi-0-5);
+      scroll-padding-inline-start: calc(var(--config-width) + var(--phi-0-5));
+      width: 100% !important;
+      z-index: 1;
+    }
+  }
+  
+  /* ===========================================
+     TABLET  (768 – 1023px)
+     =========================================== */
+  @media screen and (max-width: 1023px) {
+    :root {
+      --sidebar-width: 44px;
+      --margin: var(--phi-1);
+    }
+  
+    .World .HeaderBar {
+      height: 44px;
+      width: calc(100% - var(--sidebar-width));
+    }
+  
+    .World .HeaderBar .ContextMenu {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: var(--phi-0-5);
+      padding-inline: var(--phi-0-5);
+    }
+  
+    .World .HeaderBar .ContextMenu::-webkit-scrollbar {
+      display: none;
+    }
+  
+    .World .HeaderBar .ContextMenu .ContextModules {
+      flex-shrink: 0;
+      padding-inline: var(--phi-0-5);
+      font-size: 11px;
+    }
+  
+    .FloatingPanel {
+      min-width: 280px;
+      max-width: calc(100vw - var(--sidebar-width) - var(--phi-1));
+    }
+  
+    .CollapsiblePanel.SpatialManager {
+      min-width: 240px;
+    }
+  
+    .TabbedPanel {
+      min-width: 280px;
+      max-width: calc(100vw - var(--sidebar-width) - var(--phi-1));
+    }
+  
+    .NotificationsPanel {
+      max-width: 60vw;
+    }
+  
+    .project-monitoring-panel {
+      width: var(--panel-width-phone);
+      max-width: 50vw;
+    }
+  }
+  
+  /* ===========================================
+     PHONE — IMMERSIVE MODE  (<= 768px)
+     =========================================== */
+  @media screen and (max-width: 768px) {
+    :root {
+      --sidebar-width: 40px;
+      --margin: 0px;
+      --config-width: 0px;
+    }
+  
+  
+    .terminal-label {
+      display: none !important;
+    }
+  
+    /* Terminal header action row: scrollable, compact buttons */
+    #terminal-panel > .Row {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      flex-wrap: nowrap;
+      gap: 4px !important;
+    }
+  
+    #terminal-panel > .Row::-webkit-scrollbar {
+      display: none;
+    }
+  
+    #terminal-panel > .Row .Btn,
+    #terminal-panel > .Row button,
+    #terminal-panel > .Row [id^="btn-"] {
+      padding: 3px 6px !important;
+      font-size: 0.75rem !important;
+      white-space: nowrap;
+      flex-shrink: 0;
+      gap: 2px;
+    }
+  
+    #terminal-panel > .Row .Btn .material-symbols-outlined,
+    #terminal-panel > .Row button .material-symbols-outlined,
+    #terminal-panel > .Row [id^="btn-"] .material-symbols-outlined {
+      font-size: 0.85rem !important;
+    }
+  
+    .World.lesson-page .HeaderBar .ContextMenu {
+      padding-inline: 2px;
+      gap: 4px;
+    }
+  
+    /* Sidebar modules */
+    .Module {
+      height: var(--sidebar-width);
+      width: var(--sidebar-width);
+      padding: var(--phi-0-2-5);
+    }
+  
+    .Module .material-symbols-outlined {
+      font-size: 18px;
+    }
+  
+    /* Configurator / viewport controls — edge-hug, no sidebar offset */
+    .World .Configurator {
+      right: 8px;
+      width: 36px;
+      gap: 4px;
+      top: var(--headerbar-height);
+    }
+  
+    .World .viewport-controls {
+      right: 8px;
+      top: 8px;
+    }
+  
+    .World .Information {
+      right: 8px;
+      bottom: 8px;
+    }
+  
+    .ViewportGizmo {
+      right: 8px;
+    }
+  
+    .World .NavigationToolbar {
+      right: 8px;
+      gap: 3px;
+      max-width: calc(100vw - 80px);
+    }
+  
+    .World .ViewportToolBar {
+      left: 8px;
+      gap: 3px;
+    }
+  
+    .World .Windows {
+      left: 8px;
+      bottom: 8px;
+      width: 36px;
+    }
+  
+    .World .ViewportSnapTools {
+      left: 8px;
+      bottom: 8px;
+    }
+  
+    /* StatusBar — edge-hug, no sidebar offset */
+    .StatusBar {
+      font-size: 10px;
+      height: auto;
+      min-height: 32px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: 3px;
+      padding: 3px 8px;
+      left: 8px !important;
+      right: 8px;
+      bottom: 8px;
+      width: auto;
+      border-radius: 16px;
+    }
+  
+    .StatusBar::-webkit-scrollbar {
+      display: none;
+    }
+  
+    /* =========================================
+       Phase 2 — Always-visible HUD modules
+       ========================================= */
+  
+    #GameHUD {
+      gap: 4px 8px;
+      height: var(--headerbar-height);
+      left: 0;
+      max-width: calc(100% - var(--sidebar-width));
+      padding: 0 8px;
+      top: 0;
+      width: calc(100% - var(--sidebar-width));
+      z-index: 34;
+    }
+  
+    #GameHUD .hud-secondary {
+      display: flex !important;
+    }
+  
+    #HudBudget,
+    #HudProject,
+    #HudLocation {
+      flex: 1;
+      min-width: 0;
+    }
+  
+    #GameTimer {
+      margin-left: auto;
+    }
+  
+    #GameHUD .hud-divider {
+      display: none;
+    }
+  
+    #GameHUD .hud-label {
+      font-size: 0.48rem;
+      letter-spacing: 0.7px;
+    }
+  
+    #GameHUD .hud-input,
+    #GameHUD .hud-coins {
+      font-size: 0.9rem;
+    }
+  
+    #GameHUD .hud-input {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100% !important;
+    }
+  
+    #TimerDisplay {
+      font-size: 1rem;
+      letter-spacing: 0.8px;
+    }
+  
+    /* Welcome panel — compact card, bottom center (HUD is at top) */
+    .welcome-panel,
+    .IntroductionHUD {
+      bottom: var(--phi-1) !important;
+      top: auto !important;
+      left: 50% !important;
+      transform: translateX(-50%);
+      max-width: calc(100vw - 24px);
+      padding: 0.6rem 1rem !important;
+      gap: 0.6rem !important;
+      font-size: 12px;
+      border-radius: 12px;
+    }
+  
+    .welcome-panel .hud-input,
+    .IntroductionHUD .hud-input {
+      font-size: 0.85rem;
+    }
+  
+    .welcome-panel .challenge-title {
+      font-size: 0.95rem;
+    }
+  
+    /* =========================================
+       Phase 3 — Left/right lanes for notes/editor
+       ========================================= */
+  
+    .FloatingPanel {
+      position: fixed !important;
+      bottom: 8px !important;
+      left: auto !important;
+      top: var(--headerbar-height) !important;
+      right: 8px !important;
+      width: min(33vw, 420px) !important;
+      max-width: min(33vw, 420px) !important;
+      min-width: 220px !important;
+      max-height: calc(100vh - 128px);
+      border-radius: 12px !important;
+      z-index: 40 !important;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: visible !important;
+    }
+  
+    .FloatingPanel .FloatingPanel-content {
+      max-height: calc(100vh - 168px);
+      overflow-y: auto;
+    }
+  
+    .FloatingPanel.maximized {
+      max-height: 100% !important;
+      height: 100% !important;
+      border-radius: 0 !important;
+    }
+  
+    #ExerciseNotes {
+      bottom: 8px !important;
+      left: 8px !important;
+      pointer-events: auto;
+      position: fixed !important;
+      right: auto !important;
+      top: var(--headerbar-height) !important;
+      width: min(33vw, 420px) !important;
+      z-index: 41 !important;
+    }
+  
+    #ExerciseNotes .Panel {
+      bottom: 0 !important;
+      left: 0 !important;
+      pointer-events: auto;
+      position: absolute !important;
+      top: 0 !important;
+      right: auto !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      max-height: none !important;
+      border-radius: 12px !important;
+      z-index: 42 !important;
+    }
+  
+    #ExerciseNotes .PanelContent {
+      max-height: calc(100vh - 128px);
+      overflow-y: auto;
+    }
+  
+    /* Sheet drag handle indicator */
+    .FloatingPanel::before,
+    #ExerciseNotes .Panel::before {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+      content: "";
+      display: block;
+      height: 4px;
+      left: 50%;
+      position: absolute;
+      top: 6px;
+      transform: translateX(-50%);
+      width: 32px;
+      z-index: 1;
+    }
+  
+    .CollapsiblePanel {
+      max-width: 100%;
+    }
+  
+    .CollapsiblePanel.SpatialManager {
+      min-width: 0;
+    }
+  
+    .MeasurePanel,
+    .SectionBoxPanel {
+      max-width: 100%;
+      width: 100% !important;
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      top: auto !important;
+      border-radius: 14px 14px 0 0;
+      max-height: 50vh;
+      z-index: 50;
+    }
+  
+    .TabbedPanel {
+      min-width: 0;
+      max-width: 100%;
+    }
+  
+    .NotificationsPanel {
+      max-width: 100%;
+      left: 0;
+      right: 0;
+    }
+  
+    .project-monitoring-panel {
+      left: 8px !important;
+      max-width: min(33vw, 420px);
+      width: min(33vw, 420px);
+      position: fixed !important;
+      bottom: 8px !important;
+      top: auto !important;
+      border-radius: 12px;
+      max-height: calc(100vh - 128px);
+    }
+  
+    .World.lesson-page #terminal-panel {
+      bottom: 8px !important;
+      left: auto !important;
+      max-width: min(33vw, 420px) !important;
+      position: fixed !important;
+      right: 8px !important;
+      top: var(--headerbar-height) !important;
+      width: min(33vw, 420px) !important;
+      z-index: 40 !important;
+    }
+  
+    /* =========================================
+       Phase 4 — Active ball + progress panel
+       ========================================= */
+  
+    .active-exercise-ball {
+      height: 1.4rem;
+      width: 1.4rem;
+    }
+  
+    .exercise-progress-panel {
+      bottom: calc(8px + 2.5rem);
+      left: 8px;
+      max-width: calc(100vw - 16px);
+    }
+  
+    /* =========================================
+       Shared — typography, modals, misc
+       ========================================= */
+  
+    .BIMTool {
+      height: 36px;
+      min-height: 36px;
+      max-height: 36px;
+      width: 36px;
+      min-width: 36px;
+      max-width: 36px;
+    }
+  
+    .BIMToolsContainer {
+      gap: 4px;
+      padding: 4px;
+    }
+  
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 2rem; }
+    h3 { font-size: 1.6rem; }
+    h4 { font-size: 1.3rem; }
+    h5 { font-size: 1.1rem; }
+    h6 { font-size: 1rem; }
+  
+    body { font-size: 14px; }
+  
+    .modal-content {
+      max-width: 100%;
+      padding: var(--phi-0-5);
+      border-radius: var(--radius-sm);
+    }
+  
+    .weather-hud {
+      right: 8px;
+      top: var(--headerbar-height);
+      padding: 0.5rem;
+      gap: 0.5rem;
+    }
+  
+    .weather-details-panel {
+      right: 8px;
+      min-width: 200px;
+    }
+  
+    .dev-toolbar {
+      left: 8px;
+      bottom: 48px;
+    }
+  
+    .summary-stats-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+  
+    .summary-coins-value {
+      font-size: 1.75rem;
+    }
+  
+    .instruction-panel {
+      max-width: 100%;
+    }
+  
+    .weapons-menu-container {
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  
+    .weapons-item-card {
+      min-width: 5.5rem;
+      max-width: 5.5rem;
+    }
+  
+    /* IFC popup on phones */
+    .ifc-popup {
+      width: 98vw;
+      height: 92vh;
+      padding: 10px;
+    }
+  
+    .ifc-popup-title {
+      font-size: 1.3rem;
+    }
+  }
+  
+  /* ===========================================
+     SMALL PHONE  (<= 480px)
+     =========================================== */
+  @media screen and (max-width: 480px) {
+    #GameHUD {
+      gap: 4px 4px;
+      padding: 0 6px;
+    }
+  
+    #TimerDisplay {
+      font-size: 0.88rem;
+    }
+  
+    #GameHUD .hud-label {
+      font-size: 0.44rem;
+    }
+  
+    #GameHUD .hud-input,
+    #GameHUD .hud-coins {
+      font-size: 0.76rem;
+    }
+  
+    #ExerciseNotes,
+    .World.lesson-page #terminal-panel {
+      max-width: 34vw !important;
+      width: 34vw !important;
+    }
+  
+    .mobile-menu-toggle {
+      height: 32px;
+      width: 32px;
+    }
+  
+    .mobile-menu-toggle .material-symbols-outlined {
+      font-size: 18px;
+    }
+  
+    .welcome-panel,
+    .IntroductionHUD {
+      padding: 0.5rem 0.75rem !important;
+      font-size: 11px;
+    }
+  
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.6rem; }
+    h3 { font-size: 1.3rem; }
+  
+    body { font-size: 13px; }
+  }
+  
+  /* ===========================================
+     LANDSCAPE PHONE  (<= 768px landscape)
+     =========================================== */
+  @media screen and (max-width: 768px) and (orientation: landscape) {
+    #GameHUD {
+      padding: 0 8px;
+    }
+  
+    #TimerDisplay {
+      font-size: 0.9rem;
+    }
+  
+    .FloatingPanel {
+      max-height: 70vh;
+    }
+  
+    #ExerciseNotes .Panel {
+      max-height: calc(100vh - 94px) !important;
+    }
+  
+    .CollapsibleSection-body {
+      max-height: 30vh;
+    }
+  
+    .welcome-panel,
+    .IntroductionHUD {
+      bottom: var(--phi-1) !important;
+      top: auto !important;
+    }
+  
+    #ExerciseNotes,
+    .World.lesson-page #terminal-panel {
+      max-width: 32vw !important;
+      top: var(--headerbar-height) !important;
+      width: 32vw !important;
+    }
+  }
+  

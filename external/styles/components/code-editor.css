@@ -1,0 +1,134 @@
+
+
+/* Main Code Editor Container */
+.CodeEditor {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Main Code Editor Container */
+.CodeEditor .Image {
+    height: 16px;
+    width: 16px;
+}
+
+
+
+/* Toolbar */
+.CodeEditor-toolbar {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    justify-content: space-between;
+    padding: 6px 12px;
+}
+
+.CodeEditor-toolbar-left,
+.CodeEditor-toolbar-right {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+}
+
+.CodeEditor-toolbar-center {
+    align-items: center;
+    color: var(--theme-text-light);
+    display: flex;
+    font-size: 13px;
+    gap: 8px;
+}
+
+
+/* Editor Area */
+.CodeEditor-area {
+    flex: 1;
+    min-height: 200px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Vertical Resizer */
+.CodeEditor-resizer {
+    background: var(--border, #333);
+    cursor: ns-resize;
+    flex-shrink: 0;
+    height: 1px;
+    position: relative;
+    z-index: 10;
+}
+
+.CodeEditor-resizer:hover {
+    background: var(--primary, #2196f3);
+}
+
+.CodeEditor-resizer.resizing {
+    background: var(--primary, #2196f3);
+}
+
+/* Console Section */
+.EditorConsole {
+    background-color: #1e1e1e;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    min-height: 15vh;
+    overflow: hidden;
+    position: relative;
+}
+
+.ConsoleHeader {
+    align-items: center;
+    background: transparent;
+    display: flex;
+    justify-content: space-between;
+    left: 0;
+    padding: 6px 12px;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+}
+
+.ConsoleHeader-title {
+    color: var(--theme-text-light);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.ConsoleHeader-actions {
+    display: flex;
+    gap: 8px;
+    pointer-events: auto;
+}
+
+.ConsoleHeader-actions .CodeEditor-toolbar-btn {
+    height: 24px;
+    width: 24px;
+}
+
+.CodeEditorOutput {
+    box-sizing: border-box;
+    font-size: var(--font-size-xs, 16px);
+    flex: 1;
+    margin: 0;
+    margin-top: 32px;
+    min-height: 0;
+    overflow: auto;
+    padding: 8px 12px 12px;
+    width: 100%;
+}
+
+/* Tabs */
+
+/* Editor Group */
+.CodeEditor .EditorGroup {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+}

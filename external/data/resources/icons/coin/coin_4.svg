@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#000" d="M7 1h2v14h-2z"/>
+  <path fill="#da0" d="M9 2h.5v12h-.5z"/> <!-- Highlight side -->
+  <path fill="#fb0" d="M7.5 2h1.5v12h-1.5z"/>
+</svg>

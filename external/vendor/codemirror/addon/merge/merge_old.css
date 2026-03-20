@@ -1,0 +1,185 @@
+.CodeMirror-merge {
+  position: relative;
+  white-space: pre;
+  background: #0d1117;
+  border-radius: 8px;
+  border: 1px solid #30363d;
+  box-shadow: 0 2px 16px 0 #000a;
+}
+
+.CodeMirror-merge, .CodeMirror-merge .CodeMirror {
+  height: 350px;
+  background: #0d1117;
+  color: #c9d1d9;
+}
+
+.CodeMirror-merge-2pane .CodeMirror-merge-pane { width: 50%; }
+.CodeMirror-merge-2pane .CodeMirror-merge-gap { width: 2%; }
+.CodeMirror-merge-3pane .CodeMirror-merge-pane { width: 31%; }
+.CodeMirror-merge-3pane .CodeMirror-merge-gap { width: 3.5%; }
+
+.CodeMirror-merge-pane {
+  display: inline-block;
+  white-space: normal;
+  vertical-align: top;
+  background: #0d1117;
+  box-shadow: 2px 0 8px 0 #0004;
+}
+.CodeMirror-merge-pane-rightmost {
+  position: absolute;
+  right: 0px;
+  z-index: 1;
+}
+
+.CodeMirror-merge-gap {
+  z-index: 2;
+  display: inline-block;
+  height: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-left: 1px solid var(--border-coding);
+  border-right: 1px solid var(--border-coding);
+  position: relative;
+  background: #161b22;
+}
+
+.CodeMirror-merge-scrolllock-wrap {
+  position: absolute;
+  bottom: 0; left: 50%;
+}
+.CodeMirror-merge-scrolllock {
+  position: relative;
+  left: -50%;
+  cursor: pointer;
+  color: #555;
+  line-height: 1;
+}
+.CodeMirror-merge-scrolllock:after {
+  content: "\21db\00a0\00a0\21da";
+}
+.CodeMirror-merge-scrolllock.CodeMirror-merge-scrolllock-enabled:after {
+  content: "\21db\21da";
+}
+
+.CodeMirror-merge-copybuttons-left, .CodeMirror-merge-copybuttons-right {
+  position: absolute;
+  left: 0; top: 0;
+  right: 0; bottom: 0;
+  line-height: 1;
+}
+
+.CodeMirror-merge-copy {
+  position: absolute;
+  cursor: pointer;
+  color: #44c;
+  z-index: 3;
+}
+
+.CodeMirror-merge-copy-reverse {
+  position: absolute;
+  cursor: pointer;
+  color: #44c;
+}
+
+.CodeMirror-merge-copybuttons-left .CodeMirror-merge-copy { left: 2px; }
+.CodeMirror-merge-copybuttons-right .CodeMirror-merge-copy { right: 2px; }
+
+/* GitHub-like diff styling for CodeMirror MergeView (user code left, solution right) */
+.CodeMirror-merge {
+  background: #0d1117;
+  border-radius: 8px;
+  border: 1px solid #30363d;
+  box-shadow: 0 2px 16px 0 #000a;
+}
+.CodeMirror-merge-pane {
+  background: #0d1117;
+}
+.CodeMirror-merge .CodeMirror {
+  background: #0d1117;
+  color: #c9d1d9;
+}
+.CodeMirror-merge-gap {
+  background: #161b22;
+  border-left: none;
+  border-right: none;
+}
+
+/* User (left pane) highlights only */
+.CodeMirror-merge-pane:not(.CodeMirror-merge-pane-rightmost) .CodeMirror-merge-l-inserted {
+  background: #033a16 !important;
+  border-left: 4px solid #2ea043 !important;
+  color: #c9d1d9 !important;
+  position: relative;
+}
+.CodeMirror-merge-pane:not(.CodeMirror-merge-pane-rightmost) .CodeMirror-merge-l-deleted {
+  background: #3c0a0a !important;
+  border-left: 4px solid #f85149 !important;
+  color: #c9d1d9 !important;
+  position: relative;
+}
+.CodeMirror-merge-pane:not(.CodeMirror-merge-pane-rightmost) .CodeMirror-merge-l-chunk {
+  background: #341a00 !important;
+  border-left: 4px solid #d29922 !important;
+  position: relative;
+}
+.CodeMirror-merge-pane:not(.CodeMirror-merge-pane-rightmost) .CodeMirror-merge-l-inserted pre::before {
+  content: "+ ";
+  color: #2ea043;
+  font-weight: bold;
+  margin-right: 4px;
+}
+.CodeMirror-merge-pane:not(.CodeMirror-merge-pane-rightmost) .CodeMirror-merge-l-deleted pre::before {
+  content: "- ";
+  color: #f85149;
+  font-weight: bold;
+  margin-right: 4px;
+}
+/* For chunk lines, show a neutral marker */
+.CodeMirror-merge-pane:not(.CodeMirror-merge-pane-rightmost) .CodeMirror-merge-l-chunk pre::before {
+  content: "! ";
+  color: #d29922;
+  font-weight: bold;
+  margin-right: 4px;
+}
+/* Restore line borders for chunk start/end (from merge_old.css) */
+.CodeMirror-merge-l-chunk-start { border-top: 1px solid #d29922 !important; }
+.CodeMirror-merge-l-chunk-end { border-bottom: 1px solid #d29922 !important; }
+
+/* Solution (right pane) - only orange border for changed lines, no background */
+.CodeMirror-merge-pane-rightmost .CodeMirror-merge-r-inserted,
+.CodeMirror-merge-pane-rightmost .CodeMirror-merge-r-deleted {
+  background: transparent !important;
+  border-left: none !important;
+  color: #c9d1d9 !important;
+}
+.CodeMirror-merge-pane-rightmost .CodeMirror-merge-r-chunk {
+  background: transparent !important;
+  border-left: 4px solid #d29922 !important;
+}
+
+/* Gutter and line numbers */
+.CodeMirror-gutters {
+  background: #0d1117 !important;
+  border-right: 1px solid #30363d;
+}
+.CodeMirror-linenumber {
+  color: #6e7681;
+}
+
+/* Collapsed widget */
+.CodeMirror-merge-collapsed-widget {
+  background: #161b22;
+  color: #8b949e;
+  border: 1px solid #444;
+}
+
+/* Scrollbar styling for dark/futuristic look */
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  background: #161b22;
+}
+
+/* Remove default border for a cleaner look */
+.CodeMirror {
+  border: none !important;
+}

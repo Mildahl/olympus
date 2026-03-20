@@ -1,0 +1,3657 @@
+[
+    {
+        "pID": 236354,
+        "pName": "Design, Construction, and Procurement",
+        "pCaption": "Design, Construction, and Procurement",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 0,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236370,
+        "pName": "Design",
+        "pCaption": "Design",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236354,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "gtaskblue",
+        "pDepend": ""
+    },
+    {
+        "pID": 236372,
+        "pName": "Procurement",
+        "pCaption": "Procurement",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236354,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "gtaskblue",
+        "pDepend": ""
+    },
+    {
+        "pID": 236373,
+        "pName": "Construction",
+        "pCaption": "Construction",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236354,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236374,
+        "pName": "Civil",
+        "pCaption": "Civil",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236373,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236393,
+        "pName": "Excavation",
+        "pCaption": "Excavation",
+        "pStart": "2022-12-05T09:00:00",
+        "pEnd": "2022-12-09T17:00:00",
+        "pPlanStart": "2022-12-05T09:00:00",
+        "pPlanEnd": "2022-12-09T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236374,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236395,
+                "type": "SF"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236395,
+                "type": "SF"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236395SF"
+    },
+    {
+        "pID": 236395,
+        "pName": "Underground Services",
+        "pCaption": "Underground Services",
+        "pStart": "2022-12-12T09:00:00",
+        "pEnd": "2022-12-16T17:00:00",
+        "pPlanStart": "2022-12-12T09:00:00",
+        "pPlanEnd": "2022-12-16T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236374,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 241034,
+                "type": "SF"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236393,
+                "type": "SF"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 241034,
+                "type": "SF"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "241034SF"
+    },
+    {
+        "pID": 241034,
+        "pName": "Backfill",
+        "pCaption": "Backfill",
+        "pStart": "2022-12-19T09:00:00",
+        "pEnd": "2022-12-23T17:00:00",
+        "pPlanStart": "2022-12-19T09:00:00",
+        "pPlanEnd": "2022-12-23T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236374,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236562,
+                "type": "SF"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236395,
+                "type": "SF"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236562,
+                "type": "SF"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236562SF"
+    },
+    {
+        "pID": 236376,
+        "pName": "Structural & Waterproofing",
+        "pCaption": "Structural & Waterproofing",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236373,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236402,
+        "pName": "Demolition",
+        "pCaption": "Demolition",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236376,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "gtaskblue",
+        "pDepend": ""
+    },
+    {
+        "pID": 236404,
+        "pName": "Foundations",
+        "pCaption": "Foundations",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236376,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "gtaskblue",
+        "pDepend": ""
+    },
+    {
+        "pID": 236405,
+        "pName": "Sub Structure",
+        "pCaption": "Sub Structure",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236376,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "gtaskblue",
+        "pDepend": ""
+    },
+    {
+        "pID": 236406,
+        "pName": "Super Structure ",
+        "pCaption": "Super Structure ",
+        "pStart": null,
+        "pEnd": null,
+        "pPlanStart": null,
+        "pPlanEnd": null,
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236376,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236562,
+        "pName": "Ground Floor Slab",
+        "pCaption": "Ground Floor Slab",
+        "pStart": "2023-01-02T09:00:00",
+        "pEnd": "2023-01-06T17:00:00",
+        "pPlanStart": "2023-01-02T09:00:00",
+        "pPlanEnd": "2023-01-06T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236406,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [
+            {
+                "taskId": 236564,
+                "type": "FS"
+            },
+            {
+                "taskId": 241034,
+                "type": "SF"
+            }
+        ],
+        "dependencies": [],
+        "pClass": "gtaskred",
+        "pDepend": ""
+    },
+    {
+        "pID": 236564,
+        "pName": "Ground Floor Columns",
+        "pCaption": "Ground Floor Columns",
+        "pStart": "2023-01-09T09:00:00",
+        "pEnd": "2023-01-13T17:00:00",
+        "pPlanStart": "2023-01-09T09:00:00",
+        "pPlanEnd": "2023-01-13T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236406,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236562,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236565,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236562,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236562FS"
+    },
+    {
+        "pID": 236565,
+        "pName": "1st Floor Slab",
+        "pCaption": "1st Floor Slab",
+        "pStart": "2023-01-16T09:00:00",
+        "pEnd": "2023-01-20T17:00:00",
+        "pPlanStart": "2023-01-16T09:00:00",
+        "pPlanEnd": "2023-01-20T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236406,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236564,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236566,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236564,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236564FS"
+    },
+    {
+        "pID": 236566,
+        "pName": "1st Floor Columns",
+        "pCaption": "1st Floor Columns",
+        "pStart": "2023-01-23T09:00:00",
+        "pEnd": "2023-01-27T17:00:00",
+        "pPlanStart": "2023-01-23T09:00:00",
+        "pPlanEnd": "2023-01-27T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236406,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236565,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236567,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236565,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236565FS"
+    },
+    {
+        "pID": 236567,
+        "pName": "Roof Slab",
+        "pCaption": "Roof Slab",
+        "pStart": "2023-01-30T09:00:00",
+        "pEnd": "2023-02-03T17:00:00",
+        "pPlanStart": "2023-01-30T09:00:00",
+        "pPlanEnd": "2023-02-03T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236406,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236566,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236461,
+                "type": "FS"
+            },
+            {
+                "taskId": 236381,
+                "type": "FS"
+            },
+            {
+                "taskId": 237161,
+                "type": "FS"
+            },
+            {
+                "taskId": 239197,
+                "type": "FS"
+            },
+            {
+                "taskId": 241156,
+                "type": "SS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236566,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236566FS"
+    },
+    {
+        "pID": 237161,
+        "pName": "Roof Parapet",
+        "pCaption": "Roof Parapet",
+        "pStart": "2023-02-06T09:00:00",
+        "pEnd": "2023-02-10T17:00:00",
+        "pPlanStart": "2023-02-06T09:00:00",
+        "pPlanEnd": "2023-02-10T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236406,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236567,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 241245,
+                "type": "SS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236567,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236567FS"
+    },
+    {
+        "pID": 241245,
+        "pName": "GF",
+        "pCaption": "GF",
+        "pStart": "2023-02-06T09:00:00",
+        "pEnd": "2023-02-10T17:00:00",
+        "pPlanStart": "2023-02-06T09:00:00",
+        "pPlanEnd": "2023-02-10T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236406,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 237161,
+                "type": "SS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 237161,
+                "type": "SS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "237161SS"
+    },
+    {
+        "pID": 236407,
+        "pName": "Waterproofing",
+        "pCaption": "Waterproofing",
+        "pStart": null,
+        "pEnd": null,
+        "pPlanStart": null,
+        "pPlanEnd": null,
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236376,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 239197,
+        "pName": "Roof",
+        "pCaption": "Roof",
+        "pStart": "2023-03-16T09:00:00",
+        "pEnd": "2023-03-22T17:00:00",
+        "pPlanStart": "2023-03-16T09:00:00",
+        "pPlanEnd": "2023-03-22T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236407,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236567,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 239199,
+                "type": "FS"
+            },
+            {
+                "taskId": 236558,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236567,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236567FS"
+    },
+    {
+        "pID": 239199,
+        "pName": "Bathrooms",
+        "pCaption": "Bathrooms",
+        "pStart": "2023-03-23T09:00:00",
+        "pEnd": "2023-03-29T17:00:00",
+        "pPlanStart": "2023-03-23T09:00:00",
+        "pPlanEnd": "2023-03-29T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236407,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 239197,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 239200,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 239197,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "239197FS"
+    },
+    {
+        "pID": 239200,
+        "pName": "Balconies",
+        "pCaption": "Balconies",
+        "pStart": "2023-03-30T09:00:00",
+        "pEnd": "2023-04-05T17:00:00",
+        "pPlanStart": "2023-03-30T09:00:00",
+        "pPlanEnd": "2023-04-05T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236407,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 239199,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 239199,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "239199FS"
+    },
+    {
+        "pID": 236377,
+        "pName": "Architectural",
+        "pCaption": "Architectural",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236373,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236378,
+        "pName": "Exterior",
+        "pCaption": "Exterior",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236377,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236381,
+        "pName": "Masonry",
+        "pCaption": "Masonry",
+        "pStart": "2023-02-06T09:00:00",
+        "pEnd": "2023-02-10T17:00:00",
+        "pPlanStart": "2023-02-06T09:00:00",
+        "pPlanEnd": "2023-02-10T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236378,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236567,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236461,
+                "type": "SS"
+            },
+            {
+                "taskId": 237178,
+                "type": "FS"
+            },
+            {
+                "taskId": 237179,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236567,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236567FS"
+    },
+    {
+        "pID": 236383,
+        "pName": "Windows",
+        "pCaption": "Windows",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236378,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 237129,
+        "pName": "GF",
+        "pCaption": "GF",
+        "pStart": "2023-03-30T09:00:00",
+        "pEnd": "2023-04-05T17:00:00",
+        "pPlanStart": "2023-03-30T09:00:00",
+        "pPlanEnd": "2023-04-05T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236383,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236558,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 237131,
+                "type": "FS"
+            },
+            {
+                "taskId": 236552,
+                "type": "FS"
+            },
+            {
+                "taskId": 236384,
+                "type": "SS"
+            },
+            {
+                "taskId": 237178,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236558,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236558FS"
+    },
+    {
+        "pID": 237131,
+        "pName": "1ST",
+        "pCaption": "1ST",
+        "pStart": "2023-04-06T09:00:00",
+        "pEnd": "2023-04-12T17:00:00",
+        "pPlanStart": "2023-04-06T09:00:00",
+        "pPlanEnd": "2023-04-12T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236383,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236560,
+                "type": "FS"
+            },
+            {
+                "taskId": 237129,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236560,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 237129,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236560FS,237129FS"
+    },
+    {
+        "pID": 236384,
+        "pName": "Curtain Panels",
+        "pCaption": "Curtain Panels",
+        "pStart": "2023-03-30T09:00:00",
+        "pEnd": "2023-04-05T17:00:00",
+        "pPlanStart": "2023-03-30T09:00:00",
+        "pPlanEnd": "2023-04-05T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236378,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 237129,
+                "type": "SS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 237178,
+                "type": "FS"
+            },
+            {
+                "taskId": 237179,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 237129,
+                "type": "SS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "237129SS"
+    },
+    {
+        "pID": 237178,
+        "pName": "Stone",
+        "pCaption": "Stone",
+        "pStart": "2023-05-22T09:00:00",
+        "pEnd": "2023-05-26T17:00:00",
+        "pPlanStart": "2023-05-22T09:00:00",
+        "pPlanEnd": "2023-05-26T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236378,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236381,
+                "type": "FS"
+            },
+            {
+                "taskId": 236384,
+                "type": "FS"
+            },
+            {
+                "taskId": 237129,
+                "type": "FS"
+            },
+            {
+                "taskId": 237193,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236424,
+                "type": "FS"
+            },
+            {
+                "taskId": 237179,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236381,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236384,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 237129,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 237193,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236381FS,236384FS,237129FS,237193FS"
+    },
+    {
+        "pID": 237179,
+        "pName": "Plaster and Paint",
+        "pCaption": "Plaster and Paint",
+        "pStart": "2023-05-29T09:00:00",
+        "pEnd": "2023-06-02T17:00:00",
+        "pPlanStart": "2023-05-29T09:00:00",
+        "pPlanEnd": "2023-06-02T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236378,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236384,
+                "type": "FS"
+            },
+            {
+                "taskId": 236381,
+                "type": "FS"
+            },
+            {
+                "taskId": 237178,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236384,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236381,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 237178,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236384FS,236381FS,237178FS"
+    },
+    {
+        "pID": 241039,
+        "pName": "Railing",
+        "pCaption": "Railing",
+        "pStart": "2023-05-01T09:00:00",
+        "pEnd": "2023-05-05T17:00:00",
+        "pPlanStart": "2023-05-01T09:00:00",
+        "pPlanEnd": "2023-05-05T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236378,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 240762,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 240762,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "240762FS"
+    },
+    {
+        "pID": 241156,
+        "pName": "Wall strip & Ceiling",
+        "pCaption": "Wall strip & Ceiling",
+        "pStart": "2023-01-30T09:00:00",
+        "pEnd": "2023-02-03T17:00:00",
+        "pPlanStart": "2023-01-30T09:00:00",
+        "pPlanEnd": "2023-02-03T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236378,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236567,
+                "type": "SS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236567,
+                "type": "SS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236567SS"
+    },
+    {
+        "pID": 236380,
+        "pName": "Interior",
+        "pCaption": "Interior",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236377,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236386,
+        "pName": "Masonry",
+        "pCaption": "Masonry",
+        "pStart": null,
+        "pEnd": null,
+        "pPlanStart": null,
+        "pPlanEnd": null,
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236380,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236461,
+        "pName": "Masonry - GF",
+        "pCaption": "Masonry - GF",
+        "pStart": "2023-02-09T09:00:00",
+        "pEnd": "2023-03-08T17:00:00",
+        "pPlanStart": "2023-02-09T09:00:00",
+        "pPlanEnd": "2023-03-08T17:00:00",
+        "pMile": 0,
+        "pRes": "Foreman/Masonry - GF, Mason/Masonry - GF, Laborer/Masonry - GF, Crane/Masonry - GF, Fork Lift/Masonry - GF, Truck/Masonry - GF, ",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236386,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "20 days, 0:00:00",
+        "resourceUsage": "0.531961805555556, 8.51139756944444, 4.25569791666667, 0.0656736111111111, 0.0656736111111111, 0.0656736111111111, ",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236567,
+                "type": "FS"
+            },
+            {
+                "taskId": 236381,
+                "type": "SS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236463,
+                "type": "FS"
+            },
+            {
+                "taskId": 236484,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236567,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236381,
+                "type": "SS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236567FS,236381SS"
+    },
+    {
+        "pID": 236463,
+        "pName": "Masonry - 1st Floor",
+        "pCaption": "Masonry - 1st Floor",
+        "pStart": "2023-03-09T09:00:00",
+        "pEnd": "2023-03-15T17:00:00",
+        "pPlanStart": "2023-03-09T09:00:00",
+        "pPlanEnd": "2023-03-15T17:00:00",
+        "pMile": 0,
+        "pRes": "Foreman/Masonry - 1st Floor, Mason/Masonry - 1st Floor, Laborer/Masonry - 1st Floor, Crane/Masonry - 1st Floor, Fork Lift/Masonry - 1st Floor, Truck/Masonry - 1st Floor, ",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236386,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "2.51986805555556, None, None, None, None, None, ",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236461,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236486,
+                "type": "FS"
+            },
+            {
+                "taskId": 241091,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236461,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236461FS"
+    },
+    {
+        "pID": 241091,
+        "pName": "Masonry - Roof",
+        "pCaption": "Masonry - Roof",
+        "pStart": "2023-03-16T09:00:00",
+        "pEnd": "2023-03-22T17:00:00",
+        "pPlanStart": "2023-03-16T09:00:00",
+        "pPlanEnd": "2023-03-22T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236386,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236463,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236463,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236463FS"
+    },
+    {
+        "pID": 236389,
+        "pName": "Doors & Closets",
+        "pCaption": "Doors & Closets",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236380,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236464,
+        "pName": "Doors & Closets - GF",
+        "pCaption": "Doors & Closets - GF",
+        "pStart": "2023-04-24T09:00:00",
+        "pEnd": "2023-04-28T17:00:00",
+        "pPlanStart": "2023-04-24T09:00:00",
+        "pPlanEnd": "2023-04-28T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236389,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236467,
+                "type": "FS"
+            },
+            {
+                "taskId": 236470,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236466,
+                "type": "FS"
+            },
+            {
+                "taskId": 241063,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236467,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236470,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236467FS,236470FS"
+    },
+    {
+        "pID": 236466,
+        "pName": "Doors & Closets - 1st Floor",
+        "pCaption": "Doors & Closets - 1st Floor",
+        "pStart": "2023-05-01T09:00:00",
+        "pEnd": "2023-05-05T17:00:00",
+        "pPlanStart": "2023-05-01T09:00:00",
+        "pPlanEnd": "2023-05-05T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236389,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236464,
+                "type": "FS"
+            },
+            {
+                "taskId": 236469,
+                "type": "FS"
+            },
+            {
+                "taskId": 236472,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 241173,
+                "type": "FS"
+            },
+            {
+                "taskId": 241064,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236464,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236469,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236472,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236464FS,236469FS,236472FS"
+    },
+    {
+        "pID": 241173,
+        "pName": "Doors - Roof",
+        "pCaption": "Doors - Roof",
+        "pStart": "2023-05-08T09:00:00",
+        "pEnd": "2023-05-12T17:00:00",
+        "pPlanStart": "2023-05-08T09:00:00",
+        "pPlanEnd": "2023-05-12T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236389,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236466,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236466,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236466FS"
+    },
+    {
+        "pID": 236390,
+        "pName": "Marble",
+        "pCaption": "Marble",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236380,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236467,
+        "pName": "Wall and Floor Marble - GF",
+        "pCaption": "Wall and Floor Marble - GF",
+        "pStart": "2023-04-17T09:00:00",
+        "pEnd": "2023-04-21T17:00:00",
+        "pPlanStart": "2023-04-17T09:00:00",
+        "pPlanEnd": "2023-04-21T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236390,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236552,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236464,
+                "type": "FS"
+            },
+            {
+                "taskId": 236469,
+                "type": "FS"
+            },
+            {
+                "taskId": 240755,
+                "type": "SS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236552,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236552FS"
+    },
+    {
+        "pID": 236469,
+        "pName": "Wall and Floor Marble - 1st Floor",
+        "pCaption": "Wall and Floor Marble - 1st Floor",
+        "pStart": "2023-04-24T09:00:00",
+        "pEnd": "2023-04-28T17:00:00",
+        "pPlanStart": "2023-04-24T09:00:00",
+        "pPlanEnd": "2023-04-28T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236390,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236467,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236466,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236467,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236467FS"
+    },
+    {
+        "pID": 236401,
+        "pName": "Ceramic",
+        "pCaption": "Ceramic",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236380,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236470,
+        "pName": "Wall and Floor Ceramic - GF",
+        "pCaption": "Wall and Floor Ceramic - GF",
+        "pStart": "2023-04-17T09:00:00",
+        "pEnd": "2023-04-21T17:00:00",
+        "pPlanStart": "2023-04-17T09:00:00",
+        "pPlanEnd": "2023-04-21T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236401,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236552,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236464,
+                "type": "FS"
+            },
+            {
+                "taskId": 236472,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236552,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236552FS"
+    },
+    {
+        "pID": 236472,
+        "pName": "Wall and Floor Ceramic - 1st Floor",
+        "pCaption": "Wall and Floor Ceramic - 1st Floor",
+        "pStart": "2023-04-24T09:00:00",
+        "pEnd": "2023-04-28T17:00:00",
+        "pPlanStart": "2023-04-24T09:00:00",
+        "pPlanEnd": "2023-04-28T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236401,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236554,
+                "type": "FS"
+            },
+            {
+                "taskId": 236470,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236466,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236554,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236470,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236554FS,236470FS"
+    },
+    {
+        "pID": 236409,
+        "pName": "Ceilings",
+        "pCaption": "Ceilings",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236380,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236473,
+        "pName": "Ceilings - GF",
+        "pCaption": "Ceilings - GF",
+        "pStart": "2023-03-23T09:00:00",
+        "pEnd": "2023-03-29T17:00:00",
+        "pPlanStart": "2023-03-23T09:00:00",
+        "pPlanEnd": "2023-03-29T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236409,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236487,
+                "type": "FS"
+            },
+            {
+                "taskId": 236484,
+                "type": "FS"
+            },
+            {
+                "taskId": 236490,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236475,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236487,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236484,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236490,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236487FS,236484FS,236490FS"
+    },
+    {
+        "pID": 236475,
+        "pName": "Ceilings - 1st Floor",
+        "pCaption": "Ceilings - 1st Floor",
+        "pStart": "2023-03-30T09:00:00",
+        "pEnd": "2023-04-05T17:00:00",
+        "pPlanStart": "2023-03-30T09:00:00",
+        "pPlanEnd": "2023-04-05T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236409,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236473,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236473,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236473FS"
+    },
+    {
+        "pID": 236410,
+        "pName": "Painting",
+        "pCaption": "Painting",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236380,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236549,
+        "pName": "Primer + 1st Coat",
+        "pCaption": "Primer + 1st Coat",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236410,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236552,
+        "pName": "Primer + 1st Coat - GF",
+        "pCaption": "Primer + 1st Coat - GF",
+        "pStart": "2023-04-10T09:00:00",
+        "pEnd": "2023-04-14T17:00:00",
+        "pPlanStart": "2023-04-10T09:00:00",
+        "pPlanEnd": "2023-04-14T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236549,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 237129,
+                "type": "FS"
+            },
+            {
+                "taskId": 236558,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236554,
+                "type": "FS"
+            },
+            {
+                "taskId": 236470,
+                "type": "FS"
+            },
+            {
+                "taskId": 236467,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 237129,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236558,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "237129FS,236558FS"
+    },
+    {
+        "pID": 236554,
+        "pName": "Primer + 1st Coat - 1st Floor",
+        "pCaption": "Primer + 1st Coat - 1st Floor",
+        "pStart": "2023-04-17T09:00:00",
+        "pEnd": "2023-04-21T17:00:00",
+        "pPlanStart": "2023-04-17T09:00:00",
+        "pPlanEnd": "2023-04-21T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236549,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236552,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236472,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236552,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236552FS"
+    },
+    {
+        "pID": 236551,
+        "pName": "Final Paintaing ( 2 coats )",
+        "pCaption": "Final Paintaing ( 2 coats )",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236410,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236555,
+        "pName": "Final Paintaing ( 2 coats ) - GF",
+        "pCaption": "Final Paintaing ( 2 coats ) - GF",
+        "pStart": "2023-05-22T09:00:00",
+        "pEnd": "2023-05-26T17:00:00",
+        "pPlanStart": "2023-05-22T09:00:00",
+        "pPlanEnd": "2023-05-26T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236551,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 237193,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236557,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 237193,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "237193FS"
+    },
+    {
+        "pID": 236557,
+        "pName": "Final Paintaing ( 2 coats ) - 1st Floor",
+        "pCaption": "Final Paintaing ( 2 coats ) - 1st Floor",
+        "pStart": "2023-05-29T09:00:00",
+        "pEnd": "2023-06-02T17:00:00",
+        "pPlanStart": "2023-05-29T09:00:00",
+        "pPlanEnd": "2023-06-02T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236551,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236555,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236555,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236555FS"
+    },
+    {
+        "pID": 236548,
+        "pName": "Plaster",
+        "pCaption": "Plaster",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236380,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236558,
+        "pName": "Plaster - GF",
+        "pCaption": "Plaster - GF",
+        "pStart": "2023-03-23T09:00:00",
+        "pEnd": "2023-03-29T17:00:00",
+        "pPlanStart": "2023-03-23T09:00:00",
+        "pPlanEnd": "2023-03-29T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236548,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236490,
+                "type": "FS"
+            },
+            {
+                "taskId": 239197,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236560,
+                "type": "FS"
+            },
+            {
+                "taskId": 237129,
+                "type": "FS"
+            },
+            {
+                "taskId": 236552,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236490,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 239197,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236490FS,239197FS"
+    },
+    {
+        "pID": 236560,
+        "pName": "Plaster - 1st Floor",
+        "pCaption": "Plaster - 1st Floor",
+        "pStart": "2023-03-30T09:00:00",
+        "pEnd": "2023-04-05T17:00:00",
+        "pPlanStart": "2023-03-30T09:00:00",
+        "pPlanEnd": "2023-04-05T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236548,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236492,
+                "type": "FS"
+            },
+            {
+                "taskId": 236558,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 237131,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236492,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236558,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236492FS,236558FS"
+    },
+    {
+        "pID": 236411,
+        "pName": "Kitchen",
+        "pCaption": "Kitchen",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236380,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "gtaskblue",
+        "pDepend": ""
+    },
+    {
+        "pID": 237192,
+        "pName": "Cleaning",
+        "pCaption": "Cleaning",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236380,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 237193,
+        "pName": "Builders Clean",
+        "pCaption": "Builders Clean",
+        "pStart": "2023-05-15T09:00:00",
+        "pEnd": "2023-05-19T17:00:00",
+        "pPlanStart": "2023-05-15T09:00:00",
+        "pPlanEnd": "2023-05-19T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 237192,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 241064,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236555,
+                "type": "FS"
+            },
+            {
+                "taskId": 237178,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 241064,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "241064FS"
+    },
+    {
+        "pID": 237195,
+        "pName": "Final Cleaning",
+        "pCaption": "Final Cleaning",
+        "pStart": null,
+        "pEnd": null,
+        "pPlanStart": null,
+        "pPlanEnd": null,
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 237192,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "gtaskblue",
+        "pDepend": ""
+    },
+    {
+        "pID": 240754,
+        "pName": "Parquet",
+        "pCaption": "Parquet",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236380,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 240755,
+        "pName": "1st Floor",
+        "pCaption": "1st Floor",
+        "pStart": "2023-04-17T09:00:00",
+        "pEnd": "2023-04-21T17:00:00",
+        "pPlanStart": "2023-04-17T09:00:00",
+        "pPlanEnd": "2023-04-21T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 240754,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236467,
+                "type": "SS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 240762,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236467,
+                "type": "SS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236467SS"
+    },
+    {
+        "pID": 240762,
+        "pName": "Balconies",
+        "pCaption": "Balconies",
+        "pStart": "2023-04-24T09:00:00",
+        "pEnd": "2023-04-28T17:00:00",
+        "pPlanStart": "2023-04-24T09:00:00",
+        "pPlanEnd": "2023-04-28T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 240754,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 240755,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 241039,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 240755,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "240755FS"
+    },
+    {
+        "pID": 236396,
+        "pName": "MEP",
+        "pCaption": "MEP",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236373,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236397,
+        "pName": "Electrical",
+        "pCaption": "Electrical",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236396,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236484,
+        "pName": "Electrical - GF",
+        "pCaption": "Electrical - GF",
+        "pStart": "2023-03-09T09:00:00",
+        "pEnd": "2023-03-15T17:00:00",
+        "pPlanStart": "2023-03-09T09:00:00",
+        "pPlanEnd": "2023-03-15T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236397,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236461,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236487,
+                "type": "FS"
+            },
+            {
+                "taskId": 236486,
+                "type": "FS"
+            },
+            {
+                "taskId": 236473,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236461,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236461FS"
+    },
+    {
+        "pID": 236486,
+        "pName": "Electrical - 1st Floor",
+        "pCaption": "Electrical - 1st Floor",
+        "pStart": "2023-03-16T09:00:00",
+        "pEnd": "2023-03-22T17:00:00",
+        "pPlanStart": "2023-03-16T09:00:00",
+        "pPlanEnd": "2023-03-22T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236397,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236463,
+                "type": "FS"
+            },
+            {
+                "taskId": 236484,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236489,
+                "type": "FS"
+            },
+            {
+                "taskId": 236492,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236463,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236484,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236463FS,236484FS"
+    },
+    {
+        "pID": 241044,
+        "pName": "Electrical - GF",
+        "pCaption": "Electrical - GF",
+        "pStart": "2023-03-09T09:00:00",
+        "pEnd": "2023-03-15T17:00:00",
+        "pPlanStart": "2023-03-09T09:00:00",
+        "pPlanEnd": "2023-03-15T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236397,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "gtaskblue",
+        "pDepend": ""
+    },
+    {
+        "pID": 241053,
+        "pName": "Electrical - 1st Floor",
+        "pCaption": "Electrical - 1st Floor",
+        "pStart": "2023-03-16T09:00:00",
+        "pEnd": "2023-03-22T17:00:00",
+        "pPlanStart": "2023-03-16T09:00:00",
+        "pPlanEnd": "2023-03-22T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236397,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "gtaskblue",
+        "pDepend": ""
+    },
+    {
+        "pID": 236399,
+        "pName": "Mechanical",
+        "pCaption": "Mechanical",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236396,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236487,
+        "pName": "Mechanical - GF",
+        "pCaption": "Mechanical - GF",
+        "pStart": "2023-03-16T09:00:00",
+        "pEnd": "2023-03-22T17:00:00",
+        "pPlanStart": "2023-03-16T09:00:00",
+        "pPlanEnd": "2023-03-22T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236399,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236484,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236490,
+                "type": "SS"
+            },
+            {
+                "taskId": 236489,
+                "type": "FS"
+            },
+            {
+                "taskId": 236473,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236484,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236484FS"
+    },
+    {
+        "pID": 236489,
+        "pName": "Mechanical - 1st Floor",
+        "pCaption": "Mechanical - 1st Floor",
+        "pStart": "2023-03-23T09:00:00",
+        "pEnd": "2023-03-29T17:00:00",
+        "pPlanStart": "2023-03-23T09:00:00",
+        "pPlanEnd": "2023-03-29T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236399,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236486,
+                "type": "FS"
+            },
+            {
+                "taskId": 236487,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236492,
+                "type": "SS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236486,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236487,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236486FS,236487FS"
+    },
+    {
+        "pID": 236400,
+        "pName": "Plumbing",
+        "pCaption": "Plumbing",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236396,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236490,
+        "pName": "Plumbing - GF",
+        "pCaption": "Plumbing - GF",
+        "pStart": "2023-03-15T09:00:00",
+        "pEnd": "2023-03-21T17:00:00",
+        "pPlanStart": "2023-03-15T09:00:00",
+        "pPlanEnd": "2023-03-21T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236400,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236487,
+                "type": "SS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236558,
+                "type": "FS"
+            },
+            {
+                "taskId": 236492,
+                "type": "FS"
+            },
+            {
+                "taskId": 236473,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236487,
+                "type": "SS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236487SS"
+    },
+    {
+        "pID": 236492,
+        "pName": "Plumbing - 1st Floor",
+        "pCaption": "Plumbing - 1st Floor",
+        "pStart": "2023-03-23T09:00:00",
+        "pEnd": "2023-03-29T17:00:00",
+        "pPlanStart": "2023-03-23T09:00:00",
+        "pPlanEnd": "2023-03-29T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236400,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236486,
+                "type": "FS"
+            },
+            {
+                "taskId": 236490,
+                "type": "FS"
+            },
+            {
+                "taskId": 236489,
+                "type": "SS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236560,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236486,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236490,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236489,
+                "type": "SS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236486FS,236490FS,236489SS"
+    },
+    {
+        "pID": 241063,
+        "pName": "Plumbing fixtures - GF",
+        "pCaption": "Plumbing fixtures - GF",
+        "pStart": "2023-05-01T09:00:00",
+        "pEnd": "2023-05-05T17:00:00",
+        "pPlanStart": "2023-05-01T09:00:00",
+        "pPlanEnd": "2023-05-05T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236400,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236464,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 241064,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236464,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236464FS"
+    },
+    {
+        "pID": 241064,
+        "pName": "Plumbing fixtures - 1st Floor",
+        "pCaption": "Plumbing fixtures - 1st Floor",
+        "pStart": "2023-05-08T09:00:00",
+        "pEnd": "2023-05-12T17:00:00",
+        "pPlanStart": "2023-05-08T09:00:00",
+        "pPlanEnd": "2023-05-12T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236400,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 241063,
+                "type": "FS"
+            },
+            {
+                "taskId": 236466,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 237193,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 241063,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236466,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "241063FS,236466FS"
+    },
+    {
+        "pID": 236414,
+        "pName": "Exterior",
+        "pCaption": "Exterior",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236373,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236415,
+        "pName": "Landscaping",
+        "pCaption": "Landscaping",
+        "pStart": "2023-06-19T09:00:00",
+        "pEnd": "2023-06-30T17:00:00",
+        "pPlanStart": "2023-06-19T09:00:00",
+        "pPlanEnd": "2023-06-30T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236414,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "10 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236422,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236422,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236422FS"
+    },
+    {
+        "pID": 236417,
+        "pName": "Flooring",
+        "pCaption": "Flooring",
+        "pStart": "2023-06-19T09:00:00",
+        "pEnd": "2023-06-23T17:00:00",
+        "pPlanStart": "2023-06-19T09:00:00",
+        "pPlanEnd": "2023-06-23T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236414,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236423,
+                "type": "FS"
+            },
+            {
+                "taskId": 236422,
+                "type": "FS"
+            },
+            {
+                "taskId": 236424,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236423,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236422,
+                "type": "FS"
+            },
+            {
+                "toTaskId": 236424,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236423FS,236422FS,236424FS"
+    },
+    {
+        "pID": 236418,
+        "pName": "Swimming Pool",
+        "pCaption": "Swimming Pool",
+        "pStart": "",
+        "pEnd": "",
+        "pPlanStart": "",
+        "pPlanEnd": "",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 1,
+        "pParent": 236414,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [],
+        "successors": [],
+        "dependencies": [],
+        "pClass": "ggroupblack",
+        "pDepend": ""
+    },
+    {
+        "pID": 236419,
+        "pName": "Excavation",
+        "pCaption": "Excavation",
+        "pStart": "2023-06-05T09:00:00",
+        "pEnd": "2023-06-09T17:00:00",
+        "pPlanStart": "2023-06-05T09:00:00",
+        "pPlanEnd": "2023-06-09T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236418,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236424,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236421,
+                "type": "FS"
+            },
+            {
+                "taskId": 236422,
+                "type": "FS"
+            },
+            {
+                "taskId": 236423,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236424,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236424FS"
+    },
+    {
+        "pID": 236421,
+        "pName": "Concrete Works",
+        "pCaption": "Concrete Works",
+        "pStart": "2023-06-12T09:00:00",
+        "pEnd": "2023-06-16T17:00:00",
+        "pPlanStart": "2023-06-12T09:00:00",
+        "pPlanEnd": "2023-06-16T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236418,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236419,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236419,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236419FS"
+    },
+    {
+        "pID": 236422,
+        "pName": "Pumbling & Electrical",
+        "pCaption": "Pumbling & Electrical",
+        "pStart": "2023-06-12T09:00:00",
+        "pEnd": "2023-06-16T17:00:00",
+        "pPlanStart": "2023-06-12T09:00:00",
+        "pPlanEnd": "2023-06-16T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236418,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236419,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236417,
+                "type": "FS"
+            },
+            {
+                "taskId": 236415,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236419,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "236419FS"
+    },
+    {
+        "pID": 236423,
+        "pName": "Finishes",
+        "pCaption": "Finishes",
+        "pStart": "2023-06-12T09:00:00",
+        "pEnd": "2023-06-16T17:00:00",
+        "pPlanStart": "2023-06-12T09:00:00",
+        "pPlanEnd": "2023-06-16T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236418,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236419,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236417,
+                "type": "FS"
+            },
+            {
+                "taskId": 240773,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 236419,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236419FS"
+    },
+    {
+        "pID": 240773,
+        "pName": "Water",
+        "pCaption": "Water",
+        "pStart": "2023-06-19T09:00:00",
+        "pEnd": "2023-06-20T17:00:00",
+        "pPlanStart": "2023-06-19T09:00:00",
+        "pPlanEnd": "2023-06-20T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236418,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "2 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 236423,
+                "type": "FS"
+            }
+        ],
+        "successors": [],
+        "dependencies": [
+            {
+                "toTaskId": 236423,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskblue",
+        "pDepend": "236423FS"
+    },
+    {
+        "pID": 236424,
+        "pName": "Boundary Wall",
+        "pCaption": "Boundary Wall",
+        "pStart": "2023-05-29T09:00:00",
+        "pEnd": "2023-06-02T17:00:00",
+        "pPlanStart": "2023-05-29T09:00:00",
+        "pPlanEnd": "2023-06-02T17:00:00",
+        "pMile": 0,
+        "pRes": "",
+        "pComp": 0,
+        "pGroup": 0,
+        "pParent": 236414,
+        "pOpen": 1,
+        "pCost": 1,
+        "ifcduration": "5 days, 0:00:00",
+        "resourceUsage": "",
+        "status": "",
+        "priority": "",
+        "inputs": [],
+        "outputs": [],
+        "predecessors": [
+            {
+                "taskId": 237178,
+                "type": "FS"
+            }
+        ],
+        "successors": [
+            {
+                "taskId": 236417,
+                "type": "FS"
+            },
+            {
+                "taskId": 236419,
+                "type": "FS"
+            }
+        ],
+        "dependencies": [
+            {
+                "toTaskId": 237178,
+                "type": "FS"
+            }
+        ],
+        "pClass": "gtaskred",
+        "pDepend": "237178FS"
+    }
+]

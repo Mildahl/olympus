@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AECO - 3D Tiles Example</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        #container {
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            max-width: 350px;
+        }
+        
+        #controls h2 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        
+        #controls label {
+            display: block;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        
+        #controls input, #controls select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: #2a2a2a;
+            color: white;
+            box-sizing: border-box;
+        }
+        
+        #controls button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 4px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        #controls button:hover {
+            background: #45a049;
+        }
+        
+        #controls button.secondary {
+            background: #666;
+        }
+        
+        #controls button.secondary:hover {
+            background: #777;
+        }
+        
+        #info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        
+        #progress {
+            margin-top: 10px;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        .sample-tilesets {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #444;
+        }
+        
+        .sample-tilesets h3 {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            color: #888;
+        }
+        
+        .sample-btn {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #4CAF50;
+            border-radius: 4px;
+            background: transparent;
+            color: #4CAF50;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: left;
+        }
+        
+        .sample-btn:hover {
+            background: rgba(76, 175, 80, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    
+    <div id="controls">
+        <h2>🏗️ 3D Tiles Loader</h2>
+        
+        <label>Tileset URL (tileset.json)</label>
+        <input type="text" id="tilesetUrl" placeholder="https://example.com/tileset.json">
+        
+        <label>Error Target (lower = higher quality)</label>
+        <input type="range" id="errorTarget" min="1" max="20" value="6">
+        <span id="errorValue">6</span>
+        
+        <button id="loadBtn">Load Tileset</button>
+        <button id="clearBtn" class="secondary">Clear All</button>
+        
+        <div class="sample-tilesets">
+            <h3>Sample Tilesets</h3>
+            <button class="sample-btn" data-url="https://raw.githubusercontent.com/NASA-AMMOS/3DTilesSampleData/master/msl-dingo-gap/0528_0260184_to_s64o256_colorize/0528_0260184_to_s64o256_colorize/0528_0260184_to_s64o256_colorize_tileset.json">
+                🚀 Mars Dingo Gap (NASA)
+            </button>
+            <button class="sample-btn" data-url="https://int.nyt.com/data/3dscenes/ONA360/TILESET/0731_FREEMAN_ALLEY_10M_A_36x8K__10K-PN_50P_DB/tileset_tileset.json">
+                🏙️ NYC Freeman Alley
+            </button>
+        </div>
+        
+        <div id="progress"></div>
+    </div>
+    
+    <div id="info">
+        <strong>Controls:</strong><br>
+        Middle Mouse: Rotate<br>
+        Right Mouse: Pan<br>
+        Scroll: Zoom
+    </div>
+
+    <!-- Import maps for ES modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+            "three/examples/jsm/": "https://unpkg.com/three@0.169.0/examples/jsm/",
+            "3d-tiles-renderer": "https://unpkg.com/3d-tiles-renderer@0.4.6/src/index.js",
+            "3d-tiles-renderer/": "https://unpkg.com/3d-tiles-renderer@0.4.6/src/",
+            "3d-tiles-renderer/plugins": "https://unpkg.com/3d-tiles-renderer@0.4.6/src/plugins/index.js"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { TilesRenderer, EnvironmentControls } from '3d-tiles-renderer';
+        import { TilesFadePlugin, GLTFExtensionsPlugin, DebugTilesPlugin } from '3d-tiles-renderer/plugins';
+        import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+        import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+        // Scene setup
+        const container = document.getElementById('container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a1a1a);
+
+        // Camera
+        const camera = new THREE.PerspectiveCamera(
+            60,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            10000
+        );
+        camera.position.set(50, 50, 50);
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Controls
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = true;
+        controls.mouseButtons.LEFT = undefined;
+        controls.mouseButtons.MIDDLE = THREE.MOUSE.ROTATE;
+        controls.mouseButtons.RIGHT = THREE.MOUSE.PAN;
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(100, 100, 100);
+        scene.add(directionalLight);
+
+        // Grid
+        const grid = new THREE.GridHelper(100, 100, 0x444444, 0x333333);
+        grid.rotation.x = Math.PI / 2;
+        scene.add(grid);
+
+        // DRACO loader
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+
+        // Store active tiles renderers
+        let tilesRenderers = [];
+
+        // Load tileset function
+        function loadTileset(url, errorTarget = 6) {
+            console.log(`Loading tileset: ${url}`);
+            
+            const tiles = new TilesRenderer(url);
+
+            // Register plugins
+            tiles.registerPlugin(new GLTFExtensionsPlugin({
+                dracoLoader: dracoLoader
+            }));
+            tiles.registerPlugin(new TilesFadePlugin());
+
+            // Configuration
+            tiles.errorTarget = errorTarget;
+
+            // Set camera
+            tiles.setCamera(camera);
+            tiles.setResolutionFromRenderer(camera, renderer);
+
+            // Center tileset when loaded
+            tiles.addEventListener('load-tile-set', () => {
+                console.log('Tileset loaded!');
+                
+                const sphere = new THREE.Sphere();
+                if (tiles.getBoundingSphere(sphere)) {
+                    // Center the tileset
+                    tiles.group.position.copy(sphere.center).multiplyScalar(-1);
+                    
+                    // Move camera to view
+                    const distance = sphere.radius * 2.5;
+                    camera.position.set(distance, distance, distance);
+                    controls.target.set(0, 0, 0);
+                    controls.update();
+                }
+            });
+
+            // Rotate for Z-up
+            tiles.group.rotation.x = -Math.PI / 2;
+
+            scene.add(tiles.group);
+            tilesRenderers.push(tiles);
+
+            return tiles;
+        }
+
+        // Clear all tilesets
+        function clearTilesets() {
+            for (const tiles of tilesRenderers) {
+                scene.remove(tiles.group);
+                tiles.dispose();
+            }
+            tilesRenderers = [];
+            updateProgress();
+        }
+
+        // Update progress display
+        function updateProgress() {
+            const progressEl = document.getElementById('progress');
+            
+            if (tilesRenderers.length === 0) {
+                progressEl.innerHTML = 'No tilesets loaded';
+                return;
+            }
+
+            let html = '';
+            for (let i = 0; i < tilesRenderers.length; i++) {
+                const tiles = tilesRenderers[i];
+                const stats = tiles.stats || {};
+                html += `<div>Tileset ${i + 1}: ${tiles.loadProgress?.loaded || 0} tiles loaded</div>`;
+            }
+            progressEl.innerHTML = html;
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            controls.update();
+
+            // Update all tiles renderers
+            for (const tiles of tilesRenderers) {
+                camera.updateMatrixWorld();
+                tiles.update();
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            for (const tiles of tilesRenderers) {
+                tiles.setResolutionFromRenderer(camera, renderer);
+            }
+        });
+
+        // UI Event handlers
+        document.getElementById('loadBtn').addEventListener('click', () => {
+            const url = document.getElementById('tilesetUrl').value;
+            const errorTarget = parseInt(document.getElementById('errorTarget').value);
+            
+            if (url) {
+                loadTileset(url, errorTarget);
+            } else {
+                alert('Please enter a tileset URL');
+            }
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', clearTilesets);
+
+        document.getElementById('errorTarget').addEventListener('input', (e) => {
+            document.getElementById('errorValue').textContent = e.target.value;
+            
+            // Update all active tiles
+            for (const tiles of tilesRenderers) {
+                tiles.errorTarget = parseInt(e.target.value);
+            }
+        });
+
+        // Sample tileset buttons
+        document.querySelectorAll('.sample-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const url = btn.dataset.url;
+                document.getElementById('tilesetUrl').value = url;
+                loadTileset(url, parseInt(document.getElementById('errorTarget').value));
+            });
+        });
+
+        // Periodic progress update
+        setInterval(updateProgress, 500);
+
+        // Start animation
+        animate();
+
+        console.log('🏗️ AECO 3D Tiles Example Ready!');
+        console.log('Benefits of 3D Tiles:');
+        console.log('- Stream massive datasets efficiently');
+        console.log('- Automatic Level of Detail (LoD)');
+        console.log('- Memory-efficient tile caching');
+        console.log('- Support for B3DM, PNTS, I3DM formats');
+    </script>
+</body>
+</html>

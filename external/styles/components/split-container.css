@@ -1,0 +1,146 @@
+/* Split Container - Resizable split view */
+
+.SplitContainer {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.SplitContainer.horizontal {
+    flex-direction: row;
+}
+
+.SplitContainer.vertical {
+    flex-direction: column;
+}
+
+/* Split Panes */
+.SplitPane {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.SplitPane.horizontal {
+    min-width: 100px;
+}
+
+.SplitPane.vertical {
+    min-height: 100px;
+}
+
+/* Split Divider */
+.SplitDivider {
+    background: var(--border, #333);
+    flex: 0 0 4px;
+    position: relative;
+    transition: background 0.2s ease;
+    z-index: 10;
+}
+
+.SplitDivider.horizontal {
+    cursor: col-resize;
+}
+
+.SplitDivider.vertical {
+    cursor: row-resize;
+}
+
+.SplitDivider:hover,
+.SplitDivider.dragging {
+    background: var(--primary, #2196f3);
+}
+
+/* Editor Group */
+.EditorGroup {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+/* Drop zone highlight */
+.EditorGroup.drop-target {
+    background: var(--theme-background-hover, rgba(60, 60, 60, 0.3));
+    outline: 2px solid var(--primary, #007acc);
+}
+
+/* Tab Bar */
+
+
+.EditorGroup-tab:hover {
+    background: var(--theme-background-hover, rgba(255, 255, 255, 0.05));
+}
+
+.EditorGroup-tab.active {
+    background: var(--theme-background-1618, #1e1e1e);
+}
+
+.EditorGroup-tab.dragging {
+    opacity: 0.5;
+}
+
+.EditorGroup-tab-icon {
+    height: 14px;
+    width: 14px;
+}
+
+.EditorGroup-tab-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.EditorGroup-tab-close {
+    border-radius: 3px;
+    font-size: 16px;
+    line-height: 1;
+    opacity: 0.6;
+    padding: 2px 4px;
+    transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.EditorGroup-tab-close:hover {
+    background: var(--theme-background-hover, #3c3c3c);
+    opacity: 1;
+}
+
+/* Content Area */
+.EditorGroup-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.EditorGroup-tab-content {
+    bottom: 0;
+    display: none;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.EditorGroup-tab-content.active {
+    display: block;
+}
+
+/* Empty State */
+.EditorGroup-empty {
+    align-items: center;
+    color: var(--theme-text-light);
+    display: flex;
+    font-size: 14px;
+    height: 100%;
+    justify-content: center;
+    user-select: none;
+}
+
+.EditorGroup-empty.hidden {
+    display: none;
+}

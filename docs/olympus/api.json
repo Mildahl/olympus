@@ -1,0 +1,2981 @@
+{
+  "coreApi": {
+    "Init": [
+      "storeEditor"
+    ],
+    "Notification": [
+      "newNotification",
+      "markNotificationRead",
+      "markAllNotificationsRead",
+      "removeNotification",
+      "clearAllNotifications"
+    ],
+    "World": [
+      "initWorld",
+      "createWorldStructure",
+      "createNode",
+      "getWorldStructure",
+      "getLayerGroup",
+      "getLayerCollection",
+      "getLayer",
+      "resetWorld"
+    ],
+    "Scripting": [
+      "enableJavaScript",
+      "enablePython",
+      "enableViewerAPI",
+      "enableMonacoEditor",
+      "runCode",
+      "runPythonCode",
+      "runJavaScriptCode",
+      "newScript",
+      "openScript",
+      "enableBIM",
+      "createScriptEditor",
+      "saveScript",
+      "refreshScript",
+      "runScript",
+      "renameScript",
+      "colorizeDom",
+      "minimizeAllEditorPanels",
+      "maximizeEditorPanel",
+      "activateScript",
+      "getScriptCode"
+    ],
+    "Terminal": [
+      "newTerminal",
+      "openTerminal",
+      "executeTerminalCommand",
+      "clearTerminal",
+      "setTerminalLanguage",
+      "renameTerminal"
+    ],
+    "Layer": [
+      "activateLayer",
+      "setActive",
+      "getLayerByName",
+      "createLayer",
+      "removeLayer",
+      "setLayerVisibility",
+      "getAllLayers",
+      "collectLayers"
+    ],
+    "Viewpoint": [
+      "create",
+      "remove",
+      "rename",
+      "updatePosition",
+      "updateTarget",
+      "activate",
+      "updateFromEditor",
+      "setVisibility",
+      "toggleVisibility",
+      "navigateBack",
+      "navigateForward",
+      "clearHistory",
+      "importJSON",
+      "exportJSON"
+    ],
+    "AnimationPath": [
+      "create",
+      "remove",
+      "rename",
+      "activate",
+      "setVisibility",
+      "toggleVisibility",
+      "play",
+      "stop",
+      "addViewpoint",
+      "removeViewpoint",
+      "moveViewpoint",
+      "updateSettings",
+      "setPathColor",
+      "setMarkerColor",
+      "setTargetColor",
+      "createTemplate",
+      "updateViewpointSettings"
+    ],
+    "Measure": [
+      "activateMeasure",
+      "deactivateMeasure",
+      "toggleMeasure",
+      "addMeasurePoint",
+      "completeMeasurement",
+      "clearMeasurements",
+      "removeMeasurement",
+      "getAllMeasurements",
+      "getMeasureState",
+      "setMeasureUnits",
+      "exportMeasurements",
+      "importMeasurements"
+    ],
+    "SectionBox": [
+      "activateSectionBox",
+      "deactivateSectionBox",
+      "toggleSectionBox",
+      "setSectionBoxBounds",
+      "fitSectionBoxToSelection",
+      "fitSectionBoxToAll",
+      "resetSectionBox",
+      "setSectionBoxVisibility",
+      "getSectionBoxState",
+      "getSectionBoxBounds",
+      "expandSectionBox"
+    ],
+    "Navigation": [
+      "resolveSceneObject",
+      "resolveModeOptions",
+      "setNavigationMode",
+      "toggleFlyMode",
+      "toggleDriveMode",
+      "setOrbitMode",
+      "getNavigationMode",
+      "setNavigationSpeed",
+      "resetCamera",
+      "fitCameraToSelection",
+      "fitCameraToAll"
+    ],
+    "Spatial": [
+      "openSpatialManager",
+      "enableEditingForLayer",
+      "refreshSpatialManager",
+      "collapseAllNodes",
+      "expandAllNodes",
+      "expandToLevel",
+      "selectObject",
+      "deselectAll",
+      "getSelection",
+      "hideObject",
+      "showObject",
+      "toggleObjectVisibility",
+      "isolateSelection",
+      "collectIds",
+      "showAll",
+      "moveObject",
+      "focusOnObject"
+    ],
+    "Theme": [
+      "applyTheme",
+      "whichHalfDay",
+      "changeTheme",
+      "changeThemeColors",
+      "getCurrentTheme",
+      "getThemeColors",
+      "getAvailableThemes",
+      "registerTheme",
+      "getCSSVariable",
+      "setCSSVariable"
+    ],
+    "BIM": [
+      "setActiveBIMModel",
+      "loadBIMModelFromPath",
+      "loadBIMModelFromBlob",
+      "newBIMModel",
+      "deleteBIMModel",
+      "saveBIMModelToFile",
+      "loadGeometryData",
+      "createWall",
+      "createWindow",
+      "createDoor",
+      "refreshElementGeometry",
+      "deleteElement",
+      "addIfcElementToScene",
+      "removeIfcElementFromScene"
+    ],
+    "Configurator": [
+      "loadTemplates",
+      "chooseAvatar",
+      "getConfiguration",
+      "updateUIConfiguration",
+      "updateAppConfiguration",
+      "saveConfiguration",
+      "resetConfiguration",
+      "getActiveModules",
+      "enableModule",
+      "disableModule",
+      "getJobRoles",
+      "applyJobRole"
+    ],
+    "Scheduling": [
+      "add_work_schedule",
+      "enable_editing_workschedule_tasks",
+      "remove_work_schedule",
+      "add_work_plan",
+      "remove_work_plan",
+      "enable_editing_work_plan",
+      "disable_editing_work_plan",
+      "enable_editing_work_schedules"
+    ]
+  },
+  "modules": [
+    {
+      "id": "world",
+      "name": "World",
+      "description": "Core 3D viewport and world structure management",
+      "version": "1.0.0",
+      "dependsOn": [],
+      "operatorNames": [
+        "world.create_world_layers",
+        "viewer.focus_on_selection",
+        "viewer.isolate_elements",
+        "viewer.unisolate_elements",
+        "viewer.show_all_elements",
+        "viewer.select_all",
+        "viewer.deselect_all",
+        "viewer.set_view"
+      ],
+      "operatorLabels": [
+        "Operator CreateWorld",
+        "Focus on Selection",
+        "Isolate Elements",
+        "Unisolate Elements (Undo Isolation)",
+        "Show All Elements",
+        "Select All",
+        "Deselect All",
+        "Set View"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "configurator",
+      "name": "Configurator",
+      "description": "Application configuration and template management",
+      "version": "1.0.0",
+      "dependsOn": [],
+      "operatorNames": [
+        "configurator.chose_avatar",
+        "configurator.load_templates"
+      ],
+      "operatorLabels": [
+        "Choose Avatar",
+        "Load Templates"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "world.information",
+      "name": "World information",
+      "description": "Information display capabilities within the world context.",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world"
+      ],
+      "operatorNames": [
+        "world.new_notification"
+      ],
+      "operatorLabels": [
+        "New Notification"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "world.navigation",
+      "name": "Navigation",
+      "description": "Viewport navigation controls (orbit, fly, drive)",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world"
+      ],
+      "operatorNames": [
+        "navigation.toggle_fly_mode",
+        "navigation.toggle_drive_mode",
+        "navigation.set_mode"
+      ],
+      "operatorLabels": [
+        "Toggle Fly Mode",
+        "Toggle Drive Mode",
+        "Set Navigation Mode"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "theme",
+      "name": "Theme",
+      "description": "Visual theme and color scheme management",
+      "version": "1.0.0",
+      "dependsOn": [],
+      "operatorNames": [
+        "theme.change_to",
+        "theme.change_to_colors"
+      ],
+      "operatorLabels": [
+        "Change Theme",
+        "Change Theme Colors"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "settings",
+      "name": "Settings",
+      "description": "General application settings panel",
+      "version": "1.0.0",
+      "dependsOn": [
+        "theme",
+        "world.navigation"
+      ],
+      "operatorNames": [
+        "theme.change_to",
+        "theme.change_to_colors",
+        "navigation.change_settings"
+      ],
+      "operatorLabels": [
+        "Change Theme",
+        "Change Theme Colors",
+        "Change Navigation Settings"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "world.notification",
+      "name": "World Notifications",
+      "description": "In-app notification system",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world"
+      ],
+      "operatorNames": [
+        "world.new_notification",
+        "world.mark_notification_read",
+        "world.mark_all_notifications_read",
+        "world.remove_notification",
+        "world.clear_all_notifications"
+      ],
+      "operatorLabels": [
+        "New Notification",
+        "Mark Notification Read",
+        "Mark All Notifications Read",
+        "Remove Notification",
+        "Clear All Notifications"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "world.layer",
+      "name": "World Layers",
+      "description": "Layer management for world structure",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world"
+      ],
+      "operatorNames": [
+        "world.activate_layer",
+        "world.get_layer_by_name",
+        "world.create_root_layer"
+      ],
+      "operatorLabels": [
+        "Activate Layer",
+        "Get Layer By Name",
+        "Create World Layer"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "world.spatial",
+      "name": "World Spatial",
+      "description": "Spatial structure and hierarchy management",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world",
+        "world.layer"
+      ],
+      "operatorNames": [
+        "spatial.open",
+        "spatial.enable_editing",
+        "spatial.refresh",
+        "spatial.collapse_all",
+        "spatial.expand_all",
+        "spatial.move_object",
+        "spatial.select"
+      ],
+      "operatorLabels": [
+        "Open Spatial Manager",
+        "Enable Spatial Editing",
+        "Refresh Spatial Manager",
+        "Collapse All Spatial Tree",
+        "Expand Spatial Tree",
+        "Move Object",
+        "Select Object in Spatial Tree"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "world.viewpoints",
+      "name": "World Viewpoints",
+      "description": "Camera viewpoint management and snapshots",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world"
+      ],
+      "operatorNames": [
+        "viewpoint.create",
+        "viewpoint.remove",
+        "viewpoint.rename",
+        "viewpoint.update_position",
+        "viewpoint.update_target",
+        "viewpoint.update_from_editor",
+        "viewpoint.activate",
+        "viewpoint.navigate_back",
+        "viewpoint.navigate_forward",
+        "viewpoint.clear_history",
+        "viewpoint.get",
+        "viewpoint.get_by_name",
+        "viewpoint.export",
+        "viewpoint.import",
+        "viewpoint.toggle_visibility"
+      ],
+      "operatorLabels": [
+        "Create Viewpoint",
+        "Remove Viewpoint",
+        "Rename Viewpoint",
+        "Update Viewpoint Camera Position",
+        "Update Viewpoint Camera Target",
+        "Update Viewpoint From Current View",
+        "Activate Viewpoint",
+        "Navigate Back",
+        "Navigate Forward",
+        "Clear Navigation History",
+        "Get Viewpoint",
+        "Get Viewpoint By Name",
+        "Export Viewpoints",
+        "Import Viewpoints",
+        "Toggle Viewpoint Visibility"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "world.animationPath",
+      "name": "World Animation Path",
+      "description": "Camera animation path creation and playback",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world",
+        "world.viewpoints"
+      ],
+      "operatorNames": [
+        "animationPath.create",
+        "animationPath.remove",
+        "animationPath.rename",
+        "animationPath.activate",
+        "animationPath.toggle_visibility",
+        "animationPath.play",
+        "animationPath.stop",
+        "animationPath.add_viewpoint",
+        "animationPath.remove_viewpoint",
+        "animationPath.move_viewpoint",
+        "animationPath.update_settings",
+        "animationPath.set_path_color",
+        "animationPath.set_marker_color",
+        "animationPath.set_target_color",
+        "animationPath.create_template",
+        "animationPath.update_viewpoint_settings"
+      ],
+      "operatorLabels": [
+        "Create Animation Path",
+        "Remove Animation Path",
+        "Rename Animation Path",
+        "Activate Animation Path",
+        "Toggle Animation Path Visibility",
+        "Play Animation Path",
+        "Stop Animation Path",
+        "Add Viewpoint to Animation Path",
+        "Remove Viewpoint from Animation Path",
+        "Move Viewpoint in Path",
+        "Update Animation Settings",
+        "Set Path Color",
+        "Set Marker Color",
+        "Set Target Color",
+        "Create Animation Path Template",
+        "Update Viewpoint Settings"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "world.measure",
+      "name": "Measure Tools",
+      "description": "Professional measurement tools for 3D viewport with snap support",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world"
+      ],
+      "operatorNames": [
+        "world.measure.toggle",
+        "world.measure.activate",
+        "world.measure.deactivate",
+        "world.measure.set_mode",
+        "world.measure.create_distance",
+        "world.measure.create_angle",
+        "world.measure.create_area",
+        "world.measure.create_perpendicular",
+        "world.measure.clear_all",
+        "world.measure.delete_last",
+        "world.measure.delete",
+        "world.measure.export",
+        "world.measure.get_measurements"
+      ],
+      "operatorLabels": [
+        "Toggle Measure Tool",
+        "Activate Measure Tool",
+        "Deactivate Measure Tool",
+        "Set Measure Mode",
+        "Create Distance Measurement",
+        "Create Angle Measurement",
+        "Create Area Measurement",
+        "Create Perpendicular Measurement",
+        "Clear All Measurements",
+        "Delete Last Measurement",
+        "Delete Measurement",
+        "Export Measurements",
+        "Get Measurements"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "world.sectionbox",
+      "name": "Section Box",
+      "description": "Interactive section box tool for 3D clipping and analysis",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world"
+      ],
+      "operatorNames": [
+        "world.sectionbox.toggle",
+        "world.sectionbox.activate",
+        "world.sectionbox.deactivate",
+        "world.sectionbox.reset",
+        "world.sectionbox.fit_selection",
+        "world.sectionbox.fit_all",
+        "world.sectionbox.set_box",
+        "world.sectionbox.export",
+        "world.sectionbox.import",
+        "world.sectionbox.toggle_visibility",
+        "world.sectionbox.toggle_clipping",
+        "world.sectionbox.set_gizmo_mode"
+      ],
+      "operatorLabels": [
+        "Toggle Section Box",
+        "Activate Section Box",
+        "Deactivate Section Box",
+        "Reset Section Box",
+        "Fit Section Box to Selection",
+        "Fit Section Box to All",
+        "Set Section Box",
+        "Export Section Box",
+        "Import Section Box",
+        "Toggle Section Box Visibility",
+        "Toggle Section Box Clipping",
+        "Set Section Box Gizmo Mode"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "world.snap",
+      "name": "Snapping",
+      "description": "Global snapping settings and utilities for the application",
+      "version": "1.0.0",
+      "dependsOn": [],
+      "operatorNames": [
+        "world.snap.set_option",
+        "world.snap.get_options",
+        "world.snap.toggle_enabled",
+        "world.snap.toggle_menu"
+      ],
+      "operatorLabels": [
+        "Set Snap Option",
+        "Get Snap Options",
+        "Toggle Snap Enabled",
+        "Toggle Snap Menu"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "world.history",
+      "name": "History",
+      "description": "Undo/redo history management with visual timeline",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world"
+      ],
+      "operatorNames": [
+        "history.undo",
+        "history.redo",
+        "history.clear",
+        "history.go_to_state"
+      ],
+      "operatorLabels": [
+        "Undo",
+        "Redo",
+        "Clear History",
+        "Go To History State"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER",
+          "SKIP_HISTORY"
+        ],
+        [
+          "REGISTER",
+          "SKIP_HISTORY"
+        ],
+        [
+          "REGISTER",
+          "SKIP_HISTORY"
+        ],
+        [
+          "REGISTER",
+          "SKIP_HISTORY"
+        ]
+      ]
+    },
+    {
+      "id": "tiles",
+      "name": "Tiles",
+      "description": "3D Tiles loading and rendering",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world"
+      ],
+      "operatorNames": [
+        "tiles.load_tileset",
+        "tiles.load_cesium_ion",
+        "tiles.remove_tileset",
+        "tiles.set_quality",
+        "tiles.toggle_debug"
+      ],
+      "operatorLabels": [
+        "tiles.load_tileset",
+        "tiles.load_cesium_ion",
+        "tiles.remove_tileset",
+        "tiles.set_quality",
+        "tiles.toggle_debug"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "code.scripting",
+      "name": "Scripting",
+      "description": "Python and JavaScript script editor and execution",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world"
+      ],
+      "operatorNames": [
+        "code.enable_python",
+        "code.enable_javascript",
+        "code.enable_bim",
+        "code.enable_viewer_api",
+        "code.run_python",
+        "code.run_javascript",
+        "code.run_code",
+        "code.new_script",
+        "code.show_editor",
+        "code.open_script",
+        "code.save_script",
+        "code.update_script",
+        "code.run_script",
+        "code.rename_script",
+        "code.switch_script",
+        "code.close_script_tab",
+        "code.create_template_scripts"
+      ],
+      "operatorLabels": [
+        "Enable Python",
+        "Enable JavaScript",
+        "Enable BIM",
+        "Enable Viewer API",
+        "Run Python Code",
+        "Run JavaScript",
+        "Run Code",
+        "New Script",
+        "Show Code Editor",
+        "Open Script",
+        "Save Script",
+        "Update Script",
+        "Run Script",
+        "Rename Script",
+        "Switch Script",
+        "Close Script Tab",
+        "Create Template Scripts"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "code.terminal",
+      "name": "Terminal",
+      "description": "Interactive Python and JavaScript terminal sessions",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world",
+        "code.scripting"
+      ],
+      "operatorNames": [
+        "terminal.new",
+        "terminal.open",
+        "terminal.execute",
+        "terminal.clear",
+        "terminal.set_language",
+        "terminal.rename"
+      ],
+      "operatorLabels": [
+        "New Terminal",
+        "Open Terminal",
+        "Execute Terminal Command",
+        "Clear Terminal",
+        "Set Terminal Language",
+        "Rename Terminal"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "bim.project",
+      "name": "BIM Project",
+      "description": "BIM project management and templates",
+      "version": "1.0.0",
+      "dependsOn": [
+        "world",
+        "code.scripting"
+      ],
+      "operatorNames": [
+        "bim.load_model_from_path",
+        "bim.set_active_model",
+        "bim.edit_project_name",
+        "bim.save_ifc",
+        "bim.load_geometry_data",
+        "bim.new_model"
+      ],
+      "operatorLabels": [
+        "Load BIM Model from Path",
+        "Set Active BIM Model",
+        "Edit Project Name",
+        "Save IFC Model",
+        "Load Geometry Data",
+        "Create BIM"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "bim.attribute",
+      "name": "BIM Attribute",
+      "description": "IFC attribute viewing and editing",
+      "version": "1.0.0",
+      "dependsOn": [
+        "bim.project"
+      ],
+      "operatorNames": [
+        "bim.enable_bim_selection",
+        "bim.enable_editing_attributes",
+        "bim.edit_attributes"
+      ],
+      "operatorLabels": [
+        "Enable BIM Selection",
+        "Enable Editing Attributes",
+        "Edit Attributes"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "bim.pset",
+      "name": "BIM Property Sets",
+      "description": "IFC property set and quantity set viewing and editing",
+      "version": "1.0.0",
+      "dependsOn": [
+        "bim.project"
+      ],
+      "operatorNames": [
+        "bim.edit_property_set",
+        "bim.edit_quantity_set",
+        "bim.load_properties",
+        "bim.calculate_quantities"
+      ],
+      "operatorLabels": [
+        "Edit Property Set",
+        "Edit Quantity Set",
+        "Load Properties",
+        "Calculate Quantities"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "bim.sequence",
+      "name": "BIM Construction Sequencing",
+      "description": "IFC 4D scheduling and timeline management",
+      "version": "1.0.0",
+      "dependsOn": [
+        "bim.project"
+      ],
+      "operatorNames": [
+        "bim.add_work_schedule",
+        "bim.remove_work_schedule",
+        "bim.list_work_schedules",
+        "bim.enable_editing_work_schedules",
+        "bim.enable_editing_work_schedule_tasks",
+        "bim.switch_view",
+        "bim.select_task",
+        "bim.deselect_task",
+        "bim.expand_node_path",
+        "bim.test",
+        "bim.load_animation_data",
+        "bim.get_elements_at_date",
+        "bim.get_schedule_date_range",
+        "bim.play_animation",
+        "bim.pause_animation",
+        "bim.stop_animation",
+        "bim.set_animation_date",
+        "bim.set_animation_color_scheme",
+        "bim.wire_animation_schedule"
+      ],
+      "operatorLabels": [
+        "Add Work Schedule",
+        "Remove Work Schedule",
+        "List Work Schedules",
+        "Enable Editing Work Schedule",
+        "Enable Editing Tasks",
+        "Switch Schedule View",
+        "Select Schedule Task",
+        "Deselect Schedule Task",
+        "Expand Node Path",
+        "Test Scheduler",
+        "Load Animation Data",
+        "Get Elements At Date",
+        "Get Schedule Date Range",
+        "Play Animation",
+        "Pause Animation",
+        "Stop Animation",
+        "Set Animation Date",
+        "Set Animation Color Scheme",
+        "Wire Animation to Schedule"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER"
+        ]
+      ]
+    },
+    {
+      "id": "bim.model",
+      "name": "Modeling tools",
+      "description": "BIM modeling tools and operations",
+      "version": "1.0.0",
+      "dependsOn": [
+        "bim.project"
+      ],
+      "operatorNames": [
+        "bim.set_active_type",
+        "bim.create_space",
+        "bim.vertical_layer",
+        "bim.profiled_construction",
+        "bim.new_occurence",
+        "bim.horizontal_layer",
+        "bim.create_window",
+        "bim.create_door",
+        "bim.refresh_element",
+        "bim.delete_element"
+      ],
+      "operatorLabels": [
+        "Operator Template",
+        "Create Space",
+        "Horizontal Construction",
+        "Profiled Construction",
+        "New Occurence",
+        "Horizontal Layer",
+        "Create Window",
+        "Create Door",
+        "Refresh Element Geometry",
+        "Delete Element"
+      ],
+      "operatorOptionsList": [
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER",
+          "UNDO"
+        ],
+        [
+          "REGISTER",
+          "UNDO"
+        ],
+        [
+          "REGISTER",
+          "UNDO"
+        ],
+        [
+          "REGISTER",
+          "UNDO"
+        ],
+        [
+          "REGISTER",
+          "UNDO"
+        ],
+        [
+          "REGISTER",
+          "UNDO"
+        ],
+        [
+          "REGISTER",
+          "UNDO"
+        ],
+        [
+          "REGISTER"
+        ],
+        [
+          "REGISTER",
+          "UNDO"
+        ]
+      ]
+    }
+  ],
+  "operators": [
+    {
+      "operatorName": "world.create_world_layers",
+      "operatorLabel": "Operator CreateWorld",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world"
+    },
+    {
+      "operatorName": "viewer.focus_on_selection",
+      "operatorLabel": "Focus on Selection",
+      "operatorOptions": [],
+      "moduleId": "world"
+    },
+    {
+      "operatorName": "viewer.isolate_elements",
+      "operatorLabel": "Isolate Elements",
+      "operatorOptions": [],
+      "moduleId": "world"
+    },
+    {
+      "operatorName": "viewer.unisolate_elements",
+      "operatorLabel": "Unisolate Elements (Undo Isolation)",
+      "operatorOptions": [],
+      "moduleId": "world"
+    },
+    {
+      "operatorName": "viewer.show_all_elements",
+      "operatorLabel": "Show All Elements",
+      "operatorOptions": [],
+      "moduleId": "world"
+    },
+    {
+      "operatorName": "viewer.select_all",
+      "operatorLabel": "Select All",
+      "operatorOptions": [],
+      "moduleId": "world"
+    },
+    {
+      "operatorName": "viewer.deselect_all",
+      "operatorLabel": "Deselect All",
+      "operatorOptions": [],
+      "moduleId": "world"
+    },
+    {
+      "operatorName": "viewer.set_view",
+      "operatorLabel": "Set View",
+      "operatorOptions": [],
+      "moduleId": "world"
+    },
+    {
+      "operatorName": "configurator.chose_avatar",
+      "operatorLabel": "Choose Avatar",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "configurator"
+    },
+    {
+      "operatorName": "configurator.load_templates",
+      "operatorLabel": "Load Templates",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "configurator"
+    },
+    {
+      "operatorName": "world.new_notification",
+      "operatorLabel": "New Notification",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.information"
+    },
+    {
+      "operatorName": "navigation.toggle_fly_mode",
+      "operatorLabel": "Toggle Fly Mode",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.navigation"
+    },
+    {
+      "operatorName": "navigation.toggle_drive_mode",
+      "operatorLabel": "Toggle Drive Mode",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.navigation"
+    },
+    {
+      "operatorName": "navigation.set_mode",
+      "operatorLabel": "Set Navigation Mode",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.navigation"
+    },
+    {
+      "operatorName": "theme.change_to",
+      "operatorLabel": "Change Theme",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "theme"
+    },
+    {
+      "operatorName": "theme.change_to_colors",
+      "operatorLabel": "Change Theme Colors",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "theme"
+    },
+    {
+      "operatorName": "theme.change_to",
+      "operatorLabel": "Change Theme",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "settings"
+    },
+    {
+      "operatorName": "theme.change_to_colors",
+      "operatorLabel": "Change Theme Colors",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "settings"
+    },
+    {
+      "operatorName": "navigation.change_settings",
+      "operatorLabel": "Change Navigation Settings",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "settings"
+    },
+    {
+      "operatorName": "world.new_notification",
+      "operatorLabel": "New Notification",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.notification"
+    },
+    {
+      "operatorName": "world.mark_notification_read",
+      "operatorLabel": "Mark Notification Read",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.notification"
+    },
+    {
+      "operatorName": "world.mark_all_notifications_read",
+      "operatorLabel": "Mark All Notifications Read",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.notification"
+    },
+    {
+      "operatorName": "world.remove_notification",
+      "operatorLabel": "Remove Notification",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.notification"
+    },
+    {
+      "operatorName": "world.clear_all_notifications",
+      "operatorLabel": "Clear All Notifications",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.notification"
+    },
+    {
+      "operatorName": "world.activate_layer",
+      "operatorLabel": "Activate Layer",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.layer"
+    },
+    {
+      "operatorName": "world.get_layer_by_name",
+      "operatorLabel": "Get Layer By Name",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.layer"
+    },
+    {
+      "operatorName": "world.create_root_layer",
+      "operatorLabel": "Create World Layer",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.layer"
+    },
+    {
+      "operatorName": "spatial.open",
+      "operatorLabel": "Open Spatial Manager",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.spatial"
+    },
+    {
+      "operatorName": "spatial.enable_editing",
+      "operatorLabel": "Enable Spatial Editing",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.spatial"
+    },
+    {
+      "operatorName": "spatial.refresh",
+      "operatorLabel": "Refresh Spatial Manager",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.spatial"
+    },
+    {
+      "operatorName": "spatial.collapse_all",
+      "operatorLabel": "Collapse All Spatial Tree",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.spatial"
+    },
+    {
+      "operatorName": "spatial.expand_all",
+      "operatorLabel": "Expand Spatial Tree",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.spatial"
+    },
+    {
+      "operatorName": "spatial.move_object",
+      "operatorLabel": "Move Object",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.spatial"
+    },
+    {
+      "operatorName": "spatial.select",
+      "operatorLabel": "Select Object in Spatial Tree",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.spatial"
+    },
+    {
+      "operatorName": "viewpoint.create",
+      "operatorLabel": "Create Viewpoint",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.remove",
+      "operatorLabel": "Remove Viewpoint",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.rename",
+      "operatorLabel": "Rename Viewpoint",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.update_position",
+      "operatorLabel": "Update Viewpoint Camera Position",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.update_target",
+      "operatorLabel": "Update Viewpoint Camera Target",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.update_from_editor",
+      "operatorLabel": "Update Viewpoint From Current View",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.activate",
+      "operatorLabel": "Activate Viewpoint",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.navigate_back",
+      "operatorLabel": "Navigate Back",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.navigate_forward",
+      "operatorLabel": "Navigate Forward",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.clear_history",
+      "operatorLabel": "Clear Navigation History",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.get",
+      "operatorLabel": "Get Viewpoint",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.get_by_name",
+      "operatorLabel": "Get Viewpoint By Name",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.export",
+      "operatorLabel": "Export Viewpoints",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.import",
+      "operatorLabel": "Import Viewpoints",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "viewpoint.toggle_visibility",
+      "operatorLabel": "Toggle Viewpoint Visibility",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.viewpoints"
+    },
+    {
+      "operatorName": "animationPath.create",
+      "operatorLabel": "Create Animation Path",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.remove",
+      "operatorLabel": "Remove Animation Path",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.rename",
+      "operatorLabel": "Rename Animation Path",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.activate",
+      "operatorLabel": "Activate Animation Path",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.toggle_visibility",
+      "operatorLabel": "Toggle Animation Path Visibility",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.play",
+      "operatorLabel": "Play Animation Path",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.stop",
+      "operatorLabel": "Stop Animation Path",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.add_viewpoint",
+      "operatorLabel": "Add Viewpoint to Animation Path",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.remove_viewpoint",
+      "operatorLabel": "Remove Viewpoint from Animation Path",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.move_viewpoint",
+      "operatorLabel": "Move Viewpoint in Path",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.update_settings",
+      "operatorLabel": "Update Animation Settings",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.set_path_color",
+      "operatorLabel": "Set Path Color",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.set_marker_color",
+      "operatorLabel": "Set Marker Color",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.set_target_color",
+      "operatorLabel": "Set Target Color",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.create_template",
+      "operatorLabel": "Create Animation Path Template",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "animationPath.update_viewpoint_settings",
+      "operatorLabel": "Update Viewpoint Settings",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.animationPath"
+    },
+    {
+      "operatorName": "world.measure.toggle",
+      "operatorLabel": "Toggle Measure Tool",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.activate",
+      "operatorLabel": "Activate Measure Tool",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.deactivate",
+      "operatorLabel": "Deactivate Measure Tool",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.set_mode",
+      "operatorLabel": "Set Measure Mode",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.create_distance",
+      "operatorLabel": "Create Distance Measurement",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.create_angle",
+      "operatorLabel": "Create Angle Measurement",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.create_area",
+      "operatorLabel": "Create Area Measurement",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.create_perpendicular",
+      "operatorLabel": "Create Perpendicular Measurement",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.clear_all",
+      "operatorLabel": "Clear All Measurements",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.delete_last",
+      "operatorLabel": "Delete Last Measurement",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.delete",
+      "operatorLabel": "Delete Measurement",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.export",
+      "operatorLabel": "Export Measurements",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.measure.get_measurements",
+      "operatorLabel": "Get Measurements",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.measure"
+    },
+    {
+      "operatorName": "world.sectionbox.toggle",
+      "operatorLabel": "Toggle Section Box",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.sectionbox.activate",
+      "operatorLabel": "Activate Section Box",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.sectionbox.deactivate",
+      "operatorLabel": "Deactivate Section Box",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.sectionbox.reset",
+      "operatorLabel": "Reset Section Box",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.sectionbox.fit_selection",
+      "operatorLabel": "Fit Section Box to Selection",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.sectionbox.fit_all",
+      "operatorLabel": "Fit Section Box to All",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.sectionbox.set_box",
+      "operatorLabel": "Set Section Box",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.sectionbox.export",
+      "operatorLabel": "Export Section Box",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.sectionbox.import",
+      "operatorLabel": "Import Section Box",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.sectionbox.toggle_visibility",
+      "operatorLabel": "Toggle Section Box Visibility",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.sectionbox.toggle_clipping",
+      "operatorLabel": "Toggle Section Box Clipping",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.sectionbox.set_gizmo_mode",
+      "operatorLabel": "Set Section Box Gizmo Mode",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.sectionbox"
+    },
+    {
+      "operatorName": "world.snap.set_option",
+      "operatorLabel": "Set Snap Option",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.snap"
+    },
+    {
+      "operatorName": "world.snap.get_options",
+      "operatorLabel": "Get Snap Options",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.snap"
+    },
+    {
+      "operatorName": "world.snap.toggle_enabled",
+      "operatorLabel": "Toggle Snap Enabled",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.snap"
+    },
+    {
+      "operatorName": "world.snap.toggle_menu",
+      "operatorLabel": "Toggle Snap Menu",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "world.snap"
+    },
+    {
+      "operatorName": "history.undo",
+      "operatorLabel": "Undo",
+      "operatorOptions": [
+        "REGISTER",
+        "SKIP_HISTORY"
+      ],
+      "moduleId": "world.history"
+    },
+    {
+      "operatorName": "history.redo",
+      "operatorLabel": "Redo",
+      "operatorOptions": [
+        "REGISTER",
+        "SKIP_HISTORY"
+      ],
+      "moduleId": "world.history"
+    },
+    {
+      "operatorName": "history.clear",
+      "operatorLabel": "Clear History",
+      "operatorOptions": [
+        "REGISTER",
+        "SKIP_HISTORY"
+      ],
+      "moduleId": "world.history"
+    },
+    {
+      "operatorName": "history.go_to_state",
+      "operatorLabel": "Go To History State",
+      "operatorOptions": [
+        "REGISTER",
+        "SKIP_HISTORY"
+      ],
+      "moduleId": "world.history"
+    },
+    {
+      "operatorName": "tiles.load_tileset",
+      "operatorLabel": "tiles.load_tileset",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "tiles"
+    },
+    {
+      "operatorName": "tiles.load_cesium_ion",
+      "operatorLabel": "tiles.load_cesium_ion",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "tiles"
+    },
+    {
+      "operatorName": "tiles.remove_tileset",
+      "operatorLabel": "tiles.remove_tileset",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "tiles"
+    },
+    {
+      "operatorName": "tiles.set_quality",
+      "operatorLabel": "tiles.set_quality",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "tiles"
+    },
+    {
+      "operatorName": "tiles.toggle_debug",
+      "operatorLabel": "tiles.toggle_debug",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "tiles"
+    },
+    {
+      "operatorName": "code.enable_python",
+      "operatorLabel": "Enable Python",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.enable_javascript",
+      "operatorLabel": "Enable JavaScript",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.enable_bim",
+      "operatorLabel": "Enable BIM",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.enable_viewer_api",
+      "operatorLabel": "Enable Viewer API",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.run_python",
+      "operatorLabel": "Run Python Code",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.run_javascript",
+      "operatorLabel": "Run JavaScript",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.run_code",
+      "operatorLabel": "Run Code",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.new_script",
+      "operatorLabel": "New Script",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.show_editor",
+      "operatorLabel": "Show Code Editor",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.open_script",
+      "operatorLabel": "Open Script",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.save_script",
+      "operatorLabel": "Save Script",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.update_script",
+      "operatorLabel": "Update Script",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.run_script",
+      "operatorLabel": "Run Script",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.rename_script",
+      "operatorLabel": "Rename Script",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.switch_script",
+      "operatorLabel": "Switch Script",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.close_script_tab",
+      "operatorLabel": "Close Script Tab",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "code.create_template_scripts",
+      "operatorLabel": "Create Template Scripts",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.scripting"
+    },
+    {
+      "operatorName": "terminal.new",
+      "operatorLabel": "New Terminal",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.terminal"
+    },
+    {
+      "operatorName": "terminal.open",
+      "operatorLabel": "Open Terminal",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.terminal"
+    },
+    {
+      "operatorName": "terminal.execute",
+      "operatorLabel": "Execute Terminal Command",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.terminal"
+    },
+    {
+      "operatorName": "terminal.clear",
+      "operatorLabel": "Clear Terminal",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.terminal"
+    },
+    {
+      "operatorName": "terminal.set_language",
+      "operatorLabel": "Set Terminal Language",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.terminal"
+    },
+    {
+      "operatorName": "terminal.rename",
+      "operatorLabel": "Rename Terminal",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "code.terminal"
+    },
+    {
+      "operatorName": "bim.load_model_from_path",
+      "operatorLabel": "Load BIM Model from Path",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.project"
+    },
+    {
+      "operatorName": "bim.set_active_model",
+      "operatorLabel": "Set Active BIM Model",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.project"
+    },
+    {
+      "operatorName": "bim.edit_project_name",
+      "operatorLabel": "Edit Project Name",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.project"
+    },
+    {
+      "operatorName": "bim.save_ifc",
+      "operatorLabel": "Save IFC Model",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.project"
+    },
+    {
+      "operatorName": "bim.load_geometry_data",
+      "operatorLabel": "Load Geometry Data",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.project"
+    },
+    {
+      "operatorName": "bim.new_model",
+      "operatorLabel": "Create BIM",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.project"
+    },
+    {
+      "operatorName": "bim.enable_bim_selection",
+      "operatorLabel": "Enable BIM Selection",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.attribute"
+    },
+    {
+      "operatorName": "bim.enable_editing_attributes",
+      "operatorLabel": "Enable Editing Attributes",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.attribute"
+    },
+    {
+      "operatorName": "bim.edit_attributes",
+      "operatorLabel": "Edit Attributes",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.attribute"
+    },
+    {
+      "operatorName": "bim.edit_property_set",
+      "operatorLabel": "Edit Property Set",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.pset"
+    },
+    {
+      "operatorName": "bim.edit_quantity_set",
+      "operatorLabel": "Edit Quantity Set",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.pset"
+    },
+    {
+      "operatorName": "bim.load_properties",
+      "operatorLabel": "Load Properties",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.pset"
+    },
+    {
+      "operatorName": "bim.calculate_quantities",
+      "operatorLabel": "Calculate Quantities",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.pset"
+    },
+    {
+      "operatorName": "bim.add_work_schedule",
+      "operatorLabel": "Add Work Schedule",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.remove_work_schedule",
+      "operatorLabel": "Remove Work Schedule",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.list_work_schedules",
+      "operatorLabel": "List Work Schedules",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.enable_editing_work_schedules",
+      "operatorLabel": "Enable Editing Work Schedule",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.enable_editing_work_schedule_tasks",
+      "operatorLabel": "Enable Editing Tasks",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.switch_view",
+      "operatorLabel": "Switch Schedule View",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.select_task",
+      "operatorLabel": "Select Schedule Task",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.deselect_task",
+      "operatorLabel": "Deselect Schedule Task",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.expand_node_path",
+      "operatorLabel": "Expand Node Path",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.test",
+      "operatorLabel": "Test Scheduler",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.load_animation_data",
+      "operatorLabel": "Load Animation Data",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.get_elements_at_date",
+      "operatorLabel": "Get Elements At Date",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.get_schedule_date_range",
+      "operatorLabel": "Get Schedule Date Range",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.play_animation",
+      "operatorLabel": "Play Animation",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.pause_animation",
+      "operatorLabel": "Pause Animation",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.stop_animation",
+      "operatorLabel": "Stop Animation",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.set_animation_date",
+      "operatorLabel": "Set Animation Date",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.set_animation_color_scheme",
+      "operatorLabel": "Set Animation Color Scheme",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.wire_animation_schedule",
+      "operatorLabel": "Wire Animation to Schedule",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.sequence"
+    },
+    {
+      "operatorName": "bim.set_active_type",
+      "operatorLabel": "Operator Template",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.model"
+    },
+    {
+      "operatorName": "bim.create_space",
+      "operatorLabel": "Create Space",
+      "operatorOptions": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "moduleId": "bim.model"
+    },
+    {
+      "operatorName": "bim.vertical_layer",
+      "operatorLabel": "Horizontal Construction",
+      "operatorOptions": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "moduleId": "bim.model"
+    },
+    {
+      "operatorName": "bim.profiled_construction",
+      "operatorLabel": "Profiled Construction",
+      "operatorOptions": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "moduleId": "bim.model"
+    },
+    {
+      "operatorName": "bim.new_occurence",
+      "operatorLabel": "New Occurence",
+      "operatorOptions": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "moduleId": "bim.model"
+    },
+    {
+      "operatorName": "bim.horizontal_layer",
+      "operatorLabel": "Horizontal Layer",
+      "operatorOptions": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "moduleId": "bim.model"
+    },
+    {
+      "operatorName": "bim.create_window",
+      "operatorLabel": "Create Window",
+      "operatorOptions": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "moduleId": "bim.model"
+    },
+    {
+      "operatorName": "bim.create_door",
+      "operatorLabel": "Create Door",
+      "operatorOptions": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "moduleId": "bim.model"
+    },
+    {
+      "operatorName": "bim.refresh_element",
+      "operatorLabel": "Refresh Element Geometry",
+      "operatorOptions": [
+        "REGISTER"
+      ],
+      "moduleId": "bim.model"
+    },
+    {
+      "operatorName": "bim.delete_element",
+      "operatorLabel": "Delete Element",
+      "operatorOptions": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "moduleId": "bim.model"
+    }
+  ],
+  "editors": [
+    {
+      "name": "Editor",
+      "path": "src/context/world/Editor.js",
+      "description": "Main editor class: scene, camera, signals, history, loader, storage."
+    },
+    {
+      "name": "EditorControls",
+      "path": "src/context/world/EditorControls.js",
+      "description": "Viewport controls used by the editor."
+    },
+    {
+      "name": "Sidebar",
+      "path": "src/context/world/editor/Sidebar.js",
+      "description": "Main sidebar container and panel registration."
+    },
+    {
+      "name": "Sidebar (Scene)",
+      "path": "src/context/world/editor/Sidebar.Scene.js",
+      "description": "Scene hierarchy panel."
+    },
+    {
+      "name": "Sidebar (Properties)",
+      "path": "src/context/world/editor/Sidebar.Properties.js",
+      "description": "Object properties panel."
+    },
+    {
+      "name": "Sidebar (Project)",
+      "path": "src/context/world/editor/Sidebar.Project.js",
+      "description": "Project / assets panel."
+    },
+    {
+      "name": "Sidebar (Material)",
+      "path": "src/context/world/editor/Sidebar.Material.js",
+      "description": "Material editing panel."
+    },
+    {
+      "name": "Sidebar (Geometry)",
+      "path": "src/context/world/editor/Sidebar.Geometry.js",
+      "description": "Geometry editing panel."
+    },
+    {
+      "name": "Sidebar (Settings)",
+      "path": "src/context/world/editor/Sidebar.Settings.js",
+      "description": "Editor settings panel."
+    },
+    {
+      "name": "Sidebar (Script)",
+      "path": "src/context/world/editor/Sidebar.Script.js",
+      "description": "Script attachment panel."
+    },
+    {
+      "name": "Config",
+      "path": "src/context/world/editor/Config.js",
+      "description": "Editor configuration."
+    },
+    {
+      "name": "Loader",
+      "path": "src/context/world/editor/Loader.js",
+      "description": "Asset loading."
+    },
+    {
+      "name": "History",
+      "path": "src/context/world/editor/History.js",
+      "description": "Undo/redo history."
+    },
+    {
+      "name": "Storage",
+      "path": "src/context/world/editor/Storage.js",
+      "description": "Editor storage/persistence."
+    },
+    {
+      "name": "NavigationController",
+      "path": "src/context/world/editor/NavigationController.js",
+      "description": "Fly/drive navigation."
+    },
+    {
+      "name": "ScriptEditorWindow",
+      "path": "src/modules/code.scripting/ScriptEditorWindow.js",
+      "description": "Script editor window (module)."
+    },
+    {
+      "name": "MonacoEditor",
+      "path": "src/tool/code/MonacoEditor/MonacoEditor.js",
+      "description": "Monaco-based code editor tool."
+    },
+    {
+      "name": "CodeEditorTool",
+      "path": "src/tool/code/CodeEditorTool.js",
+      "description": "Code editor tool."
+    },
+    {
+      "name": "NodeEditorTool",
+      "path": "src/tool/code/NodeEditorTool.js",
+      "description": "Node editor tool."
+    }
+  ],
+  "tools": {
+    "world": [
+      {
+        "key": "configurator",
+        "className": "ConfiguratorTool",
+        "path": "src/tool/configurator/ConfiguratorTool.js"
+      },
+      {
+        "key": "layer",
+        "className": "LayerTool",
+        "path": "src/tool/layer/LayerTool.js"
+      },
+      {
+        "key": "scene",
+        "className": "SceneTool",
+        "path": "src/tool/viewer/SceneTool.js"
+      },
+      {
+        "key": "model",
+        "className": "ModelTool",
+        "path": "src/tool/model/model.js"
+      },
+      {
+        "key": "drawing",
+        "className": "DrawingTool",
+        "path": "src/tool/model/drawing.js"
+      },
+      {
+        "key": "slicer",
+        "className": "SliceTool",
+        "path": "src/tool/viewer/SliceTool.js"
+      },
+      {
+        "key": "markup",
+        "className": "MarkupTool",
+        "path": "src/tool/viewer/MarkupTool.js"
+      },
+      {
+        "key": "placement",
+        "className": "PlacementTool",
+        "path": "src/tool/model/placement.js"
+      },
+      {
+        "key": "notification",
+        "className": "NotificationTool",
+        "path": "src/tool/viewer/NotificationTool.js"
+      },
+      {
+        "key": "viewpoint",
+        "className": "ViewpointTool",
+        "path": "src/tool/viewer/ViewpointTool.js"
+      },
+      {
+        "key": "animationPath",
+        "className": "AnimationPathTool",
+        "path": "src/tool/viewer/AnimationPathTool.js"
+      },
+      {
+        "key": "navigate",
+        "className": "null",
+        "path": null
+      },
+      {
+        "key": "gizmo",
+        "className": "null",
+        "path": null
+      },
+      {
+        "key": "cursor",
+        "className": "null",
+        "path": null
+      },
+      {
+        "key": "measure",
+        "className": "MeasureTool",
+        "path": "src/tool/viewer/MeasureTool.js"
+      },
+      {
+        "key": "sectionBox",
+        "className": "SectionBoxTool",
+        "path": "src/tool/viewer/SectionBoxTool.js"
+      }
+    ],
+    "code": [
+      {
+        "key": "pyWorker",
+        "className": "PythonSandbox",
+        "path": "src/tool/pyodide/Python.js"
+      },
+      {
+        "key": "js",
+        "className": "JSSandboxTool",
+        "path": "src/tool/js/JsSandbox.js"
+      },
+      {
+        "key": "editor",
+        "className": "CodeEditorTool",
+        "path": "src/tool/code/CodeEditorTool.js"
+      },
+      {
+        "key": "nodes",
+        "className": "NodeEditorTool",
+        "path": "src/tool/code/NodeEditorTool.js"
+      }
+    ],
+    "bim": [
+      {
+        "key": "project",
+        "className": "ProjectTool",
+        "path": "src/tool/bim/project.js"
+      },
+      {
+        "key": "geometry",
+        "className": "GeometryTool",
+        "path": "src/tool/bim/geometry.js"
+      },
+      {
+        "key": "attribute",
+        "className": "AttributeTool",
+        "path": "src/tool/bim/attribute.js"
+      },
+      {
+        "key": "pset",
+        "className": "PsetTool",
+        "path": "src/tool/bim/pset.js"
+      },
+      {
+        "key": "sequence",
+        "className": "SequenceTool",
+        "path": "src/tool/bim/sequence.js"
+      },
+      {
+        "key": "types",
+        "className": "TypeTool",
+        "path": "src/tool/bim/type.js"
+      },
+      {
+        "key": "modeling",
+        "className": "BIMModelingTool",
+        "path": "src/tool/bim/modeling.js"
+      }
+    ],
+    "ifc": {
+      "key": "ifc",
+      "className": "IfcTool",
+      "path": "src/tool/bim/ifc.js"
+    }
+  }
+}

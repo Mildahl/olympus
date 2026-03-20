@@ -1,0 +1,493 @@
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 12px 0;
+  opacity: 0.5;
+}
+
+button {
+  position: relative;
+}
+
+.TabbedPanel {
+  display: block;
+  min-width: 335px;
+  position: relative;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+
+  /* No support for these yet */
+  -o-user-select: none;
+  user-select: none;
+  width: 100%;
+}
+
+.TabbedPanel .Tabs {
+  display: block;
+  overflow: hidden;
+  overflow-x: auto;
+  position: relative;
+  white-space: pre;
+  width: 100%;
+  z-index: 1; /** Above .Panels **/
+}
+
+.TabbedPanel .Tabs::-webkit-scrollbar {
+  background: transparent;
+  height: 8px;
+}
+.TabbedPanel .Tabs::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.TabbedPanel .Tabs:hover::-webkit-scrollbar-thumb {
+  background: var(--brand-color);
+  cursor: ew-resize;
+}
+.TabbedPanel .Tabs::-webkit-scrollbar-track {
+  background: var(--color-white-rgba-003);
+  border-radius: 4px;
+}
+
+.TabbedPanel .Tabs .Tab {
+  padding: 10px 9px;
+  text-transform: uppercase;
+}
+
+.TabbedPanel .Panels {
+  display: block;
+  position: absolute;
+  top: 40px;
+  width: 100%;
+}
+
+#properties.TabbedPanel .Panels {
+  max-height: calc(100% - 40px);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#properties {
+  height: 100%;
+  width: 100%;
+}
+
+
+button::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 100%
+  );
+  bottom: 0;
+  content: "";
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: opacity var(--transition-fast);
+}
+
+button:hover {
+  background: var(--glass-surface);
+  border-color: var(--border-hover);
+  box-shadow: var(--glass-shadow);
+  transform: translateY(-2px);
+}
+
+button:hover::before {
+  opacity: 1;
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.selected {
+  background: var(--brand-color);
+  border-color: var(--brand-color);
+  box-shadow: 0 4px 20px rgba(10, 132, 255, 0.4),
+    0 2px 8px rgba(10, 132, 255, 0.2);
+  color: var(--color-white);
+}
+
+button.selected:hover {
+  background: var(--brand-color-hover);
+  box-shadow: 0 6px 24px rgba(10, 132, 255, 0.5),
+    0 2px 12px rgba(10, 132, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+
+
+
+#resizer {
+  bottom: 0px;
+  cursor: col-resize;
+  position: absolute;
+  right: 320px;
+  top: 52px;
+  transform: translateX(5px);
+  transition: all var(--transition-normal);
+  width: 10px;
+  z-index: 99;
+}
+
+#resizer::before {
+  background: var(--border);
+  border-radius: 2px;
+  content: "";
+  height: 40px;
+  left: 50%;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all var(--transition-normal);
+  width: 3px;
+}
+
+#resizer:hover::before {
+  opacity: 0.5;
+}
+
+#resizer:hover {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--brand-color-rgba) 50%,
+    transparent 100%
+  );
+}
+
+#resizer:active {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--brand-color-rgba) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 24px var(--brand-color-rgba);
+}
+
+#resizer:active::before {
+  background: var(--brand-color);
+  box-shadow: 0 0 12px var(--brand-color-rgba-06);
+  opacity: 1;
+}
+
+#viewport {
+  border-radius: 0;
+  height: 100%;
+  overflow: hidden;
+  position:relative;
+  width: 100%;
+}
+
+#viewport .Text {
+  pointer-events: none;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* 
+#script {
+  position: absolute;
+  background: var(--glass-surface);
+  top: 52px;
+  left: 0;
+  right: 320px;
+  bottom: 0;
+  opacity: 0.95;
+  z-index: 2;
+} */
+
+#player {
+  background-color: var(--color-gray-medium);
+}
+
+.viewport-controls {
+  color : var(--color-white);
+  position: absolute;
+  right: 100px;
+  top: calc(var(--menubar-height) + 10px);
+}
+
+
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+br {
+  background: var(--color-white);
+  border: none;
+  display: block;
+  height: 1px;
+  margin: 8px 0;
+  opacity: 1;
+  pointer-events: none;
+  width: 100%;
+}
+
+#sidebar .Row, #properties .Row {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  min-height: 32px;
+}
+
+#sidebar .Row .Label, #properties .Row .Label {
+  color: var(--theme-text-secondary);
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  width: 100px;
+}
+
+
+/* enable #properties .Panel to be scrollable */
+/* #properties {
+  height: 80vw;
+  overflow-y: scroll;
+} */
+
+.properties-panel .Panel{
+  height: 100%;
+  margin: 0;
+  overflow: scroll;
+  width: 100%;
+}
+
+
+#tabs {
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  background: var(--glass-surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+#tabs span {
+  border: none;
+  border-radius: var(--radius-lg);
+  color: var(--theme-text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 10px 24px;
+  position: relative;
+  text-transform: uppercase;
+  transition: all var(--transition-normal);
+}
+
+#tabs span:hover {
+  background: var(--glass-surface);
+  color: var(--theme-text);
+  transform: translateY(-2px);
+}
+
+#tabs span.selected {
+  background: var(--brand-color);
+  box-shadow: 0 4px 16px rgba(10, 132, 255, 0.4);
+  color: var(--color-white);
+  transform: translateY(-2px);
+}
+
+#tabs span.selected::after {
+  background: var(--brand-color);
+  border-radius: 50%;
+  bottom: -12px;
+  box-shadow: 0 0 8px var(--brand-color);
+  content: "";
+  height: 4px;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 4px;
+}
+
+#bim-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  left: var(--spacing-lg);
+  position: absolute;
+  top: 72px;
+  width: 56px;
+  z-index: 2;
+}
+
+
+
+#bim-toolbar button {
+  align-items: center;
+  border-radius: var(--radius-md);
+  display: flex;
+  height: 44px;
+  justify-content: center;
+  margin: var(--spacing-xs);
+  position: relative;
+  width: 44px;
+}
+
+#bim-toolbar input {
+  align-items: center;
+  border-radius: var(--radius-md);
+  display: flex;
+  height: 44px;
+  justify-content: center;
+  margin: var(--spacing-xs);
+  position: relative;
+  width: 44px;
+}
+
+#bim-toolbar button:hover {
+  background: var(--brand-color);
+  box-shadow: 0 4px 16px rgba(10, 132, 255, 0.4);
+  transform: scale(1.08);
+}
+
+#bim-toolbar button:active {
+  transform: scale(1);
+}
+
+button img,
+.icon {
+  opacity: 0.75;
+  transition: all var(--transition-fast);
+  width: 22px;
+}
+
+#bim-toolbar button:hover img {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  opacity: 1;
+}
+
+/* Add tooltips for toolbar buttons */
+#bim-toolbar button::after {
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  background: var(--glass-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-shadow);
+  color: var(--theme-text);
+  content: attr(title);
+  font-size: 11px;
+  font-weight: 500;
+  left: calc(100% + 12px);
+  opacity: 0;
+  padding: 6px 12px;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+#bim-toolbar button:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(4px);
+}
+
+
+.TabbedPanel .Tabs {
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  background: var(--glass-surface);
+  display: flex;
+  gap: 4px;
+  padding: 8px;
+}
+
+.TabbedPanel .Tab {
+  border: none;
+  border-radius: var(--radius-lg);
+  color: var(--theme-text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 10px 24px;
+  text-transform: uppercase;
+  transition: all var(--transition-normal);
+}
+
+.TabbedPanel .Tab:hover {
+  background: var(--glass-surface);
+  color: var(--theme-text);
+  transform: translateY(-2px);
+}
+
+.TabbedPanel .Tab.selected {
+  background: var(--brand-color);
+  box-shadow: 0 4px 16px rgba(10, 132, 255, 0.4);
+  color: var(--color-white);
+  transform: translateY(-2px);
+}
+
+
+/* */
+
+@media all and (max-width: 600px) {
+  #resizer {
+    display: none;
+  }
+
+  #menubar .menu .options {
+    max-height: calc(100% - 80px);
+  }
+
+  #menubar .menu.right {
+    display: none;
+  }
+
+  #viewport {
+    left: 0;
+    right: 0;
+    top: 32px;
+  }
+
+  #script {
+    left: 0;
+    right: 0;
+    top: 32px;
+  }
+
+  #player {
+    left: 0;
+    right: 0;
+    top: 32px;
+  }
+
+  #sidebar {
+    bottom: 0;
+    left: 0;
+    top: calc(100% - 320px);
+    width: 100%;
+  }
+}
+
+
+
+/* Temporary Chrome fix (#24794) */
+
+[draggable="true"] {
+  transform: translate(0, 0);
+  z-index: 0;
+}

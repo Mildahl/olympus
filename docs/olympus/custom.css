@@ -1,0 +1,193 @@
+/**
+ * Olympus docs theme — dark UI with green accent to match the application.
+ */
+
+:root {
+  --olympus-bg: #1e1e1e;
+  --olympus-bg-elevated: #252526;
+  --olympus-bg-sidebar: #2d2d30;
+  --olympus-text: #d4d4d4;
+  --olympus-text-muted: #9d9d9d;
+  --olympus-accent: #4caf50;
+  --olympus-accent-bright: #66bb6a;
+  --olympus-border: #3c3c3c;
+  --olympus-code-bg: #2d2d2d;
+  --olympus-link: #4caf50;
+  --olympus-link-hover: #66bb6a;
+}
+
+/* Base */
+html {
+  background-color: var(--olympus-bg);
+}
+
+body {
+  background-color: var(--olympus-bg) !important;
+  color: var(--olympus-text) !important;
+}
+
+.content {
+  background-color: var(--olympus-bg) !important;
+}
+
+#app {
+  color: var(--olympus-text);
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: var(--olympus-bg-sidebar) !important;
+  border-right: 1px solid var(--olympus-border);
+}
+
+.sidebar-nav li {
+  color: var(--olympus-text);
+}
+
+.sidebar-nav li a {
+  color: var(--olympus-text) !important;
+}
+
+.sidebar-nav li a:hover {
+  color: var(--olympus-accent-bright) !important;
+}
+
+.sidebar-nav li.active > a {
+  color: var(--olympus-accent) !important;
+  border-left-color: var(--olympus-accent);
+}
+
+.app-name-link {
+  color: var(--olympus-text) !important;
+  font-weight: 600;
+}
+
+.app-name-link:hover {
+  color: var(--olympus-accent) !important;
+}
+
+/* Main content */
+.markdown-section {
+  background-color: var(--olympus-bg) !important;
+  color: var(--olympus-text);
+}
+
+.markdown-section h1,
+.markdown-section h2,
+.markdown-section h3,
+.markdown-section h4,
+.markdown-section h5,
+.markdown-section h6 {
+  color: var(--olympus-text) !important;
+  border-bottom-color: var(--olympus-border);
+}
+
+.markdown-section p {
+  color: var(--olympus-text);
+}
+
+.markdown-section a {
+  color: var(--olympus-link) !important;
+}
+
+.markdown-section a:hover {
+  color: var(--olympus-link-hover) !important;
+}
+
+/* Code and pre */
+.markdown-section code {
+  background-color: var(--olympus-code-bg) !important;
+  color: var(--olympus-accent-bright);
+  border: 1px solid var(--olympus-border);
+  border-radius: 3px;
+}
+
+.markdown-section pre {
+  background-color: var(--olympus-code-bg) !important;
+  border: 1px solid var(--olympus-border);
+  border-radius: 4px;
+}
+
+.markdown-section pre > code {
+  background-color: transparent !important;
+  border: none;
+  color: var(--olympus-text);
+}
+
+/* Tables */
+.markdown-section table {
+  border-collapse: collapse;
+  border: 1px solid var(--olympus-border);
+}
+
+.markdown-section th {
+  background-color: var(--olympus-bg-elevated) !important;
+  color: var(--olympus-text) !important;
+  border: 1px solid var(--olympus-border);
+  border-bottom: 2px solid var(--olympus-accent);
+}
+
+.markdown-section td {
+  border: 1px solid var(--olympus-border);
+  color: var(--olympus-text);
+}
+
+
+.markdown-section tr:hover td {
+  background-color: rgba(78, 201, 176, 0.06);
+}
+
+/* Strong / emphasis */
+.markdown-section strong {
+  color: var(--olympus-text);
+}
+
+.markdown-section hr {
+  border-color: var(--olympus-border);
+}
+
+/* Search (if used later) */
+.search input {
+  background-color: var(--olympus-bg-elevated) !important;
+  border-color: var(--olympus-border);
+  color: var(--olympus-text);
+}
+
+.search input::placeholder {
+  color: var(--olympus-text-muted);
+}
+
+.search .results-panel {
+  background-color: var(--olympus-bg-elevated);
+  border-color: var(--olympus-border);
+}
+
+/* Scrollbar (optional, WebKit) */
+.sidebar::-webkit-scrollbar,
+.markdown-section::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.markdown-section::-webkit-scrollbar-track {
+  background: var(--olympus-bg);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--olympus-border);
+  border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--olympus-text-muted);
+}
+
+.markdown-section::-webkit-scrollbar-thumb {
+  background: var(--olympus-border);
+  border-radius: 4px;
+}
+
+.markdown-section::-webkit-scrollbar-thumb:hover {
+  background: var(--olympus-text-muted);
+}

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="48"
+   height="20"
+   viewBox="0 0 48 20"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Main pill gradient (orange/golden like dragon ball) -->
+    <linearGradient id="pillGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd542;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ffa033;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff7a2a;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- White cap gradient -->
+    <linearGradient id="capGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#f0f0f0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d8d8d8;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Highlight/shine gradient -->
+    <linearGradient id="shineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="pillShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Pill body group -->
+  <g filter="url(#pillShadow)">
+    <!-- Left white cap -->
+    <path
+       d="M 10,2 L 18,2 L 18,18 L 10,18 A 8,8 0 0 1 10,2 Z"
+       style="fill:url(#capGradient);stroke:#c0c0c0;stroke-width:0.5" />
+    
+    <!-- Middle colored band (dragon ball orange/gold) -->
+    <rect
+       x="18" y="2"
+       width="12" height="16"
+       style="fill:url(#pillGradient);stroke:#d45500;stroke-width:0.5" />
+    
+    <!-- Right white cap -->
+    <path
+       d="M 30,2 L 38,2 A 8,8 0 0 1 38,18 L 30,18 Z"
+       style="fill:url(#capGradient);stroke:#c0c0c0;stroke-width:0.5" />
+    
+    <!-- Top shine highlight (left cap) -->
+    <ellipse
+       cx="12" cy="6"
+       rx="4" ry="2.5"
+       style="fill:url(#shineGradient);opacity:0.8" />
+    
+    <!-- Top shine highlight (middle) -->
+    <ellipse
+       cx="24" cy="5"
+       rx="5" ry="2"
+       style="fill:url(#shineGradient);opacity:0.6" />
+    
+    <!-- Top shine highlight (right cap) -->
+    <ellipse
+       cx="36" cy="6"
+       rx="4" ry="2.5"
+       style="fill:url(#shineGradient);opacity:0.8" />
+    
+    <!-- Small star sparkle on the colored band (dragon ball style) -->
+    <polygon
+       points="24,7 25,9.5 27.5,9.5 25.5,11 26.5,13.5 24,12 21.5,13.5 22.5,11 20.5,9.5 23,9.5"
+       style="fill:#ffffff;opacity:0.5" />
+  </g>
+</svg>
