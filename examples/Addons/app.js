@@ -85,7 +85,8 @@ simulation.tools.world.scene.addToLayer(context, mobileCrane.object, "Logistics"
 
 const load4DModel = async () => {
 
-    const path = "/external/ifc/Works_Plan.ifc";
+    const ROOT = window.__OLYMPUS_ROOT__ || '';
+    const path = ROOT + "/external/ifc/Works_Plan.ifc";
 
     await simulation.ops.execute("bim.load_model_from_path", context, path, null, "Works_Plan.ifc")
 

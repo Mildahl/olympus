@@ -2898,7 +2898,7 @@ class UISplash extends UIElement {
     super(document.createElement('div'));
     this.dom.id = 'AECOSplashScreen';
     this._options = {
-      imageUrl: options.imageUrl || '/external/ifc/splash.png',
+      imageUrl: options.imageUrl || (window.__OLYMPUS_ROOT__ || '') + '/external/ifc/splash.png',
       text: options.text != null ? options.text : 'Loading...',
     };
     this.dom.style.cssText = [

@@ -8,6 +8,8 @@ import { NavigationConfig } from "./config.navigation.js";
 
 import { WorldComponent } from "./config.ui.js";
 
+const ROOT = window.__OLYMPUS_ROOT__ || '';
+
 const ApplicationConfig = {
   Name: "AECO Simulation",
   Version: "20.12.2025",
@@ -21,13 +23,13 @@ const ApplicationConfig = {
     devMode: false,
     amountTestCubes: 3,
     scriptBaseUrl: null,
-    pyodideBaseUrl: "/external/vendor/pyodide/v0.29.0/full",
-    pyodideWorkerUrl: "/dist/pyodide.worker.js",
-    monacoBaseUrl: "/external/vendor/monaco-editor/0.52.2",
-    vendorBaseUrl: "/external/vendor",
-    dataBaseUrl: "/external/data",
-    pythonToolsBaseUrl: "/external/pytools",
-    ifcSamplesBaseUrl: "/external/ifc",
+    pyodideBaseUrl: ROOT + "/external/vendor/pyodide/v0.29.0/full",
+    pyodideWorkerUrl: ROOT + "/dist/pyodide.worker.js",
+    monacoBaseUrl: ROOT + "/external/vendor/monaco-editor/0.52.2",
+    vendorBaseUrl: ROOT + "/external/vendor",
+    dataBaseUrl: ROOT + "/external/data",
+    pythonToolsBaseUrl: ROOT + "/external/pytools",
+    ifcSamplesBaseUrl: ROOT + "/external/ifc",
   },
   Navigation : NavigationConfig,
   // Align Editor history with app History so undo/redo and History UI work (default preset)

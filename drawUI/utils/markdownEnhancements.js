@@ -617,7 +617,7 @@ function printContentAsPDF(contentNode, btn) {
 
   const relevant = /lesson|hljs|dark|code|syntax|theme|notes/i;
 
-  const notesCSS = '/external/styles/notes.css';
+  const notesCSS = (window.__OLYMPUS_ROOT__ || '') + '/external/styles/notes.css';
 
   styles += `<link rel="stylesheet" href="${notesCSS}">`;
 

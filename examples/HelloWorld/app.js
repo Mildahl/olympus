@@ -1,6 +1,8 @@
 import { DrawUI } from "./../../drawUI/index.js";
 
-const splash = DrawUI.splash({ imageUrl: '/external/ifc/splash.png', text: 'Initializing...' });
+const ROOT = window.__OLYMPUS_ROOT__ || '';
+
+const splash = DrawUI.splash({ imageUrl: ROOT + '/external/ifc/splash.png', text: 'Initializing...' });
 splash.show(document.body);
 splash.setText('Creating UI...');
 
@@ -22,7 +24,7 @@ simulation.tools.world.scene.addCube(context, 1, "grey");
 
 const load5DModel = async () => {
 
-    const path = "/external/ifc/5D.ifc";
+    const path = ROOT + "/external/ifc/5D.ifc";
 
     await simulation.ops.execute("bim.load_model_from_path", context, path, null, "5D.ifc")
 

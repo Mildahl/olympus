@@ -657,7 +657,7 @@ class FloatingPanel extends UIPanel {
     // Dragon pill SVG
     const pillImg = document.createElement('img');
 
-    pillImg.src = '/external/data/resources/icons/dragon_pill.svg';
+    pillImg.src = (window.__OLYMPUS_ROOT__ || '') + '/external/data/resources/icons/dragon_pill.svg';
 
     Object.assign(pillImg.style, {
       width: '36px',
