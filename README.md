@@ -10,7 +10,10 @@ The core library provides:
 - A pluggable module/addon system,
 - highly configurable User Interface (UI),
 
-[Live Demo:](https://myoualid.github.io/olympus/examples/HelloWorld/index.html)
+[Hello World Demo:](https://myoualid.github.io/olympus/examples/HelloWorld/index.html)
+
+<br>
+
 [Construction Application Demo :](https://myoualid.github.io/olympus/examples/Addons/index.html)
 
 ---
