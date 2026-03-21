@@ -225,13 +225,6 @@ class Context {
             taskSelectionChanged: new Signal(),
             taskDetailsLoaded: new Signal(),
             nodePathExpanded: new Signal(),
-            scheduleAnimationDateChanged: new Signal(),
-            scheduleAnimationPlaybackChanged: new Signal(),
-            scheduleAnimationColorSchemeChanged: new Signal(),
-            scheduleAnimationReset: new Signal(),
-            scheduleAnimationDataLoaded: new Signal(),
-            scheduleAnimationWired: new Signal(),
-            demoEnabled: new Signal(),
             notificationAdded: new Signal(),
             notificationRead: new Signal(),
             viewpointsChanged: new Signal(),
@@ -257,7 +250,6 @@ class Context {
             snapOptionChanged: new Signal(),
             sectionBoxToggled: new Signal(),
             sectionBoxChanged: new Signal(),
-            timelineAnimationChanged: new Signal(),
         };
     }
 

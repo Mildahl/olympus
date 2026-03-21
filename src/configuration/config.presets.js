@@ -47,7 +47,6 @@ const CONSTRUCTION_MANAGER_MODULE_IDS = [
   "world.navigation",
   "world.notification",
   "world.spatial",
-  "world.timeline_player",
   "world.viewpoints",
   "world.animationPath",
 ];

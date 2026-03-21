@@ -1,66 +1,36 @@
 import { Components as UIComponents } from "../../ui/Components/Components.js";
 
-import { TabPanel } from "../../../drawUI/TabPanel.js";
-
 import AECO_tools from "../../tool/index.js";
 
-const ANALYTICS_TAB_NO_TOOLBAR_TOGGLE_ELEMENT_ID =
-  "__bimProjectModelAnalyticsTabNoToolbarToggle__";
+import { TabPanel } from '../../../drawUI/TabPanel.js';
 
-class BimProjectModelAnalyticsUI {
+class BimProjectModelAnalyticsUI extends TabPanel {
   constructor({ context, operators }) {
-    this.context = context;
-
-    this.operators = operators;
-
-    this.position = "left";
-
-    this.tabId = "bim-project-model-analytics";
-
-    this.tabLabel = "Model analytics";
+    super({
+      context,
+      operators,
+      position: 'left',
+      tabId: 'bim-project-model-analytics',
+      tabLabel: 'Model analytics',
+      icon: 'analytics',
+      title: 'Model analytics',
+      showHeader: false,
+      floatable: true,
+      panelStyles: { "min-width": "0" },
+      toggleElementId: null,
+      autoShow: true,
+    });
 
     this.analyticsRoot = null;
 
-    this._tabPanel = new TabPanel({
-      context,
-      operators,
-      position: "left",
-      tabId: this.tabId,
-      tabLabel: this.tabLabel,
-      title: "Model analytics",
-      icon: "analytics",
-      showHeader: false,
-      moduleId: undefined,
-      toggleElementId: ANALYTICS_TAB_NO_TOOLBAR_TOGGLE_ELEMENT_ID,
-      floatable: true,
-      panelStyles: { "min-width": "0" },
-    });
-
-    this._tabPanel.panel.addClass("Panel");
-    this._tabPanel.panel.setId("BimProjectModelAnalyticsPanel");
-    this._tabPanel.content.setStyle("overflow-x", ["hidden"]);
-
-    this.panel = this._tabPanel.panel;
-    this.content = this._tabPanel.content;
-
-    this.buildAnalyticsSurface(context);
+    this.draw(context);
 
     this.listen(context);
 
-    this.applyAnalyticsForFileName(this.resolveActiveModelFileName(context));
+    this.applyAnalyticsForFileName(null);
   }
 
-  resolveActiveModelFileName(context) {
-    if (!context || !context.ifc) return null;
-
-    const name = context.ifc.activeModel;
-
-    if (name == null || name === "") return null;
-
-    return name;
-  }
-
-  buildAnalyticsSurface(context) {
+  draw(context) {
     this.content.addClass("Column");
 
     this.analyticsRoot = UIComponents.column().gap("var(--phi-0-5)");
@@ -90,7 +60,7 @@ class BimProjectModelAnalyticsUI {
 
     if (bimEnabledSignal && typeof bimEnabledSignal.add === "function") {
       bimEnabledSignal.add(() => {
-        this.applyAnalyticsForFileName(this.resolveActiveModelFileName(context));
+        this.applyAnalyticsForFileName(context.ifc.activeModel);
       });
     }
   }
@@ -101,7 +71,7 @@ class BimProjectModelAnalyticsUI {
     this.analyticsRoot.clear();
 
     if (!modelFileName) {
-      this.renderEmptyState("Select a model in IFC models to view analytics");
+      this.renderEmptyState("Load a model in IFC models Tab");
 
       return;
     }
@@ -151,7 +121,7 @@ class BimProjectModelAnalyticsUI {
     try {
       const overview = await AECO_tools.bim.project.getModelOverview(requestModel);
 
-      const activeNow = this.resolveActiveModelFileName(this.context);
+      const activeNow = this.context.ifc.activeModel;
 
       if (activeNow !== requestModel) return;
 
@@ -159,7 +129,7 @@ class BimProjectModelAnalyticsUI {
 
       this.renderOverviewContent(overview);
     } catch (err) {
-      const activeNow = this.resolveActiveModelFileName(this.context);
+      const activeNow = this.context.ifc.activeModel;
 
       if (activeNow !== requestModel) return;
 

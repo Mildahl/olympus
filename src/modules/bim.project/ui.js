@@ -35,41 +35,23 @@ const IFC_TEMPLATES = [{
 const BIM_IFC_OPERATOR_LOCKED_TOOLTIP =
   "Enable Python and BIM (IfcOpenShell) first, then try again.";
 
-class ProjectUI {
+class ProjectUI extends TabPanel {
   constructor({ context, operators }) {
-    this.context = context;
-
-    this.operators = operators;
-
-    // IFC project UI lives in the left workspace (same pattern as bim.sequence).
-    this.position = "left";
-
-    this.tabId = "bim-project-ifc-models";
-
-    this.tabLabel = "IFC models";
-
-    this._tabPanel = new TabPanel({
+    super({
       context,
       operators,
-      position: "left",
-      tabId: this.tabId,
-      tabLabel: this.tabLabel,
-      title: "IFC Building Models",
-      icon: "domain",
+      position: 'left',
+      tabId: 'bim-project-ifc-models',
+      tabLabel: 'IFC models',
+      icon: 'domain',
+      title: 'IFC Building Models',
       showHeader: false,
-      moduleId: "bim.project",
       floatable: true,
       panelStyles: { "min-width": "0" },
+      autoShow: true,
     });
 
-    this._tabPanel.panel.addClass("Panel");
-    this._tabPanel.panel.setId("BimProjectIFCPanel");
-    this._tabPanel.content.setStyle("overflow-x", ["hidden"]);
-
-    this.panel = this._tabPanel.panel;
-    this.header = this._tabPanel.header;
-    this.content = this._tabPanel.content;
-    this.footer = this._tabPanel.footer;
+    this.panel.addClass("Panel");
 
     this.projectsList = null;
 
@@ -417,6 +399,72 @@ class ProjectUI {
     return UIComponents.column().gap("var(--phi-0-5)").add(title, grid)
   }
 
+  drawLoadedModels(context, operators) {
+    
+    const section = UIComponents.collapsibleSection({
+      title: 'Loaded Models',
+      icon: 'view_in_ar',
+      collapsed: false
+    });
+
+    this.projectsList = UIComponents.list();
+
+    section.setContent(this.projectsList);
+
+    this.content.add( section );
+  
+  }
+
+  drawQuickActions(context, operators) {
+
+    const newModelCreation = () => {
+      const createProject = UIComponents.column().setStyles({
+      width: "100%",
+      height: "fit-content",
+      });
+
+      const labelProject = UIComponents.text("Create New IFC Model:").addClass('hud-label')
+
+      const nameInput = UIComponents.input().addClass('hud-input')
+
+      nameInput.setValue("Project Name");
+
+      const add = UIComponents.operator("add")
+
+      add.onClick( () => {
+
+        const name = nameInput.getValue() || "Unnamed";
+
+        operators.execute("bim.new_model", context, name );
+      
+      } );
+
+      const tooltip = UIComponents.tooltip("Add New BIM Model");
+
+      tooltip.attachTo(add);
+
+      createProject.add(labelProject, UIComponents.row().gap("var(--phi-0-5)").add(nameInput, add) );
+
+      return createProject;
+    }
+
+    const row = UIComponents.row().gap("var(--phi-0-5)").padding("var(--phi-1)");
+
+    row.setStyles({
+      width: "100%"
+    });
+
+    row.setStyle("align-items", ["center"]);
+
+    row.setStyle("justify-content", ["space-between"]);
+
+    const createProject = newModelCreation();
+
+    row.add(createProject);
+  
+    return row
+  }
+
   drawProgressBar() {
     this.progressContainer = UIComponents.column().gap("var(--phi-0-5)").setStyles({
       width: "100%",
@@ -618,71 +666,6 @@ class ProjectUI {
     }
   }
 
-  drawLoadedModels(context, operators) {
-    
-    const section = UIComponents.collapsibleSection({
-      title: 'Loaded Models',
-      icon: 'view_in_ar',
-      collapsed: false
-    });
-
-    this.projectsList = UIComponents.list();
-
-    section.setContent(this.projectsList);
-
-    this.content.add( section );
-  
-  }
-
-  drawQuickActions(context, operators) {
-
-    const newModelCreation = () => {
-      const createProject = UIComponents.column().setStyles({
-      width: "100%",
-      height: "fit-content",
-      });
-
-      const labelProject = UIComponents.text("Create New IFC Model:").addClass('hud-label')
-
-      const nameInput = UIComponents.input().addClass('hud-input')
-
-      nameInput.setValue("Project Name");
-
-      const add = UIComponents.operator("add")
-
-      add.onClick( () => {
-
-        const name = nameInput.getValue() || "Unnamed";
-
-        operators.execute("bim.new_model", context, name );
-      
-      } );
-
-      const tooltip = UIComponents.tooltip("Add New BIM Model");
-
-      tooltip.attachTo(add);
-
-      createProject.add(labelProject, UIComponents.row().gap("var(--phi-0-5)").add(nameInput, add) );
-
-      return createProject;
-    }
-
-    const row = UIComponents.row().gap("var(--phi-0-5)").padding("var(--phi-1)");
-
-    row.setStyles({
-      width: "100%"
-    });
-
-    row.setStyle("align-items", ["center"]);
-
-    row.setStyle("justify-content", ["space-between"]);
-
-    const createProject = newModelCreation();
-
-    row.add(createProject);
-  
-    return row
-  }
 }
 
 export default [ ProjectUI ];

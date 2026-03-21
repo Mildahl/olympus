@@ -351,76 +351,29 @@ class BIM_OP_expandNodePath extends Operator {
 
       let nodeIds = [];
 
-      try {
-        if (this.pathType === "critical") {
-          const result = await AECO_tools.ifc.runTool(modelName, {
-            toolName: "sequence",
-            functionName: "get_critical_path_tasks",
-            args: {
-              work_schedule: new IfcRoot(this.workscheduleId),
-            },
-          });
-
-          nodeIds = Array.isArray(result) ? result : [];
-        }
-
-        this.context.signals.nodePathExpanded.dispatch({
-          workscheduleId: this.workscheduleId,
-          pathType: this.pathType,
-          nodeIds,
+      if (this.pathType === "critical") {
+        const result = await AECO_tools.ifc.runTool(modelName, {
+          toolName: "sequence",
+          functionName: "get_critical_path_tasks",
+          args: {
+            work_schedule: new IfcRoot(this.workscheduleId),
+          },
         });
 
-        return { status: "FINISHED" };
-      } catch (error) {
-        console.error("bim.expand_node_path failed:", error);
-
-        return { status: "CANCELLED" };
+        nodeIds = Array.isArray(result) ? result : [];
       }
+
+      this.context.signals.nodePathExpanded.dispatch({
+        workscheduleId: this.workscheduleId,
+        pathType: this.pathType,
+        nodeIds,
+      });
+
+      return { status: "FINISHED" };
+
     }
 
 }
-
-
-
-class BIM_OP_test extends Operator {
-  static operatorName = "bim.test"
-
-  static operatorLabel = "Test Scheduler"
-
-  static operatorOptions = ["REGISTER"];
-
-  constructor( context, model, workscheduleGlobalId, path ) {
-    super( context );
-
-    this.model = model || context.activeModel ;
-
-    this.workscheduleGlobalId = workscheduleGlobalId || "dus1jb-sdaze";
-
-    this.path = path || "/data/tasks/sample_tasks.json";
-  }
-
-  poll() {
-    return true
-  }
-
-  async execute() {
-
-    const response = await fetch(this.path);
-
-    const SAMPLE_TASKS = await response.json();
-
-    const model =  this.model
-
-    const GlobalId = this.workscheduleGlobalId
-
-    const tasks  = await AECO_tools.bim.sequence.create_tasks_json(model, GlobalId)
-    
-    this.context.signals.enableEditingWorkScheduleTasks.dispatch({ model: model, workscheduleGlobalId: GlobalId, tasks: tasks });
-    
-  }
-
-}
-
 
 class BIM_OP_loadAnimationData extends Operator {
   static operatorName = "bim.load_animation_data"
@@ -455,7 +408,6 @@ class BIM_OP_loadAnimationData extends Operator {
     return { status: "FINISHED", result: animationData };
   }
 }
-
 
 class BIM_OP_getElementsAtDate extends Operator {
   static operatorName = "bim.get_elements_at_date"
@@ -495,7 +447,6 @@ class BIM_OP_getElementsAtDate extends Operator {
   }
 }
 
-
 class BIM_OP_getScheduleDateRange extends Operator {
   static operatorName = "bim.get_schedule_date_range"
 
@@ -528,118 +479,6 @@ class BIM_OP_getScheduleDateRange extends Operator {
   }
 }
 
-
-class BIM_OP_playAnimation extends Operator {
-  static operatorName = "bim.play_animation"
-
-  static operatorLabel = "Play Animation"
-
-  static operatorOptions = ["REGISTER"];
-
-  constructor(context) {
-    super(context);
-  }
-
-  poll() {
-    return !!this.context?.timelinePlayerController;
-  }
-
-  execute() {
-    return operators.execute("timeline_player.play_animation", this.context);
-  }
-}
-
-
-class BIM_OP_pauseAnimation extends Operator {
-  static operatorName = "bim.pause_animation"
-
-  static operatorLabel = "Pause Animation"
-
-  static operatorOptions = ["REGISTER"];
-
-  constructor(context) {
-    super(context);
-  }
-
-  poll() {
-    return !!this.context?.timelinePlayerController;
-  }
-
-  execute() {
-    return operators.execute("timeline_player.pause_animation", this.context);
-  }
-}
-
-
-class BIM_OP_stopAnimation extends Operator {
-  static operatorName = "bim.stop_animation"
-
-  static operatorLabel = "Stop Animation"
-
-  static operatorOptions = ["REGISTER"];
-
-  constructor(context) {
-    super(context);
-  }
-
-  poll() {
-    return !!this.context?.timelinePlayerController;
-  }
-
-  execute() {
-    return operators.execute("timeline_player.stop_animation", this.context);
-  }
-}
-
-
-class BIM_OP_setAnimationDate extends Operator {
-  static operatorName = "bim.set_animation_date"
-
-  static operatorLabel = "Set Animation Date"
-
-  static operatorOptions = ["REGISTER"];
-
-  constructor(context, targetDate) {
-    super(context);
-
-    this.targetDate = targetDate;
-  }
-
-  poll() {
-    return !!this.context?.timelinePlayerController;
-  }
-
-  execute() {
-    return operators.execute("timeline_player.set_animation_date", this.context, this.targetDate);
-  }
-}
-
-
-class BIM_OP_setAnimationColorScheme extends Operator {
-  static operatorName = "bim.set_animation_color_scheme"
-
-  static operatorLabel = "Set Animation Color Scheme"
-
-  static operatorOptions = ["REGISTER"];
-
-  constructor(context, scheme, mode) {
-    super(context);
-
-    this.scheme = scheme;
-
-    this.mode = mode;
-  }
-
-  poll() {
-    return !!this.context?.timelinePlayerController;
-  }
-
-  execute() {
-    return operators.execute("timeline_player.set_animation_color_scheme", this.context, this.scheme, this.mode);
-  }
-}
-
-
 class BIM_OP_wireAnimationSchedule extends Operator {
   static operatorName = "bim.wire_animation_schedule"
 
@@ -662,8 +501,6 @@ class BIM_OP_wireAnimationSchedule extends Operator {
 
     const scheduleId = this.workScheduleId;
 
-    console.log("[WireAnimation] Starting wire for schedule:", scheduleId);
-
     if (!scheduleId) {
       return { status: "CANCELLED", error: "No schedule specified" };
     }
@@ -672,38 +509,16 @@ class BIM_OP_wireAnimationSchedule extends Operator {
 
     const tasks = await AECO_tools.bim.sequence.create_tasks_json(model, scheduleId);
 
-    console.log("[WireAnimation] Loaded tasks:", tasks.length);
-
     AECO_tools.scheduler.setTasks(tasks);
 
     const dateRange = await AECO_tools.bim.sequence.getScheduleDateRange(model, scheduleId);
 
-    console.log("[WireAnimation] Date range from Python:", dateRange);
-
     const animationData = await AECO_tools.bim.sequence.getAnimationData(model, scheduleId);
 
-    console.log("[WireAnimation] Animation data:", {
-      taskCount: animationData.tasks ? animationData.tasks.length : 0,
-      totalOutputs: animationData.totalOutputs || 0,
-      totalInputs: animationData.totalInputs || 0
-    });
-
-    if ((animationData.totalOutputs || 0) === 0 && (animationData.totalInputs || 0) === 0) {
-      console.warn("[WireAnimation] WARNING: No elements linked to tasks. Animation will run but no elements will be affected.");
-      console.warn("[WireAnimation] To link elements, the IFC file needs IfcRelAssignsToProcess relationships between tasks and products.");
-    }
-
-    this.context.signals.scheduleAnimationWired.dispatch({
-      workScheduleId: scheduleId,
-      tasks,
-      dateRange,
-      animationData
-    });
 
     return { status: "FINISHED", result: { scheduleId, tasks, dateRange, animationData } };
   }
 }
-
 
 export default [
   BIM_OP_addWorkSchedule,
@@ -715,116 +530,10 @@ export default [
   BIM_OP_selectTask,
   BIM_OP_deselectTask,
   BIM_OP_expandNodePath,
-  BIM_OP_test,
   BIM_OP_loadAnimationData,
   BIM_OP_getElementsAtDate,
   BIM_OP_getScheduleDateRange,
-  BIM_OP_playAnimation,
-  BIM_OP_pauseAnimation,
-  BIM_OP_stopAnimation,
-  BIM_OP_setAnimationDate,
-  BIM_OP_setAnimationColorScheme,
   BIM_OP_wireAnimationSchedule
 ];
-
-export function updateTaskProperties(params) {
-    const { selectedTasks, workSchedule, scheduler } = params;
-
-    selectedTasks.forEach(taskId => {
-        const task = scheduler.getTask(taskId);
-
-        if (task && task.task) {
-            
-            if (params.name) {
-                task.task.Name = params.name;
-            }
-
-            if (params.description) {
-                task.task.Description = params.description;
-            }
-            // TODO: Update other properties as needed
-        }
-    });
-
-    return { status: 'success', updatedTasks: selectedTasks.length };
-}
-
-/**
- * Create task dependency operation
- */
-export function createTaskDependency(params) {
-    const { selectedTasks, workSchedule, scheduler } = params;
-
-    if (selectedTasks.length !== 2) {
-        throw new Error('Dependency creation requires exactly 2 selected tasks');
-    }
-
-    const [predecessorId, successorId] = selectedTasks;
-
-    const predecessor = scheduler.getTask(predecessorId);
-
-    const successor = scheduler.getTask(successorId);
-
-    if (!predecessor || !successor) {
-        throw new Error('Invalid tasks selected for dependency');
-    }
-
-    // TODO: Implement actual dependency creation using ifcopenshell
-    return { status: 'success', dependency: { predecessor: predecessorId, successor: successorId } };
-}
-
-/**
- * Assign resources to task operation
- */
-export function assignTaskResources(params) {
-    const { selectedTasks, workSchedule, scheduler, resourceIds } = params;
-
-    if (!resourceIds || resourceIds.length === 0) {
-        throw new Error('Resource IDs are required');
-    }
-
-    selectedTasks.forEach(taskId => {
-        const task = scheduler.getTask(taskId);
-
-        if (task && task.task) {
-            // TODO: Implement resource assignment using ifcopenshell
-   
-          }
-    });
-
-    return { status: 'success', assignedTasks: selectedTasks.length, resources: resourceIds };
-}
-
-/**
- * Update task dates operation
- */
-export function updateTaskDates(params) {
-    const { selectedTasks, workSchedule, scheduler, startDate, endDate } = params;
-
-    selectedTasks.forEach(taskId => {
-        const task = scheduler.getTask(taskId);
-
-        if (task && task.task && task.task.TaskTime) {
-            if (startDate) {
-                task.task.TaskTime.ScheduleStart = startDate;
-            }
-
-            if (endDate) {
-                task.task.TaskTime.ScheduleFinish = endDate;
-            }
-          }
-    });
-
-    return { status: 'success', updatedTasks: selectedTasks.length };
-}
-
-/**
- * Delete tasks operation
- */
-export function deleteTasks(params) {
-    const { selectedTasks, workSchedule, scheduler } = params;
-
-    return { status: 'success', deletedTasks: selectedTasks.length };
-}
 
 export { BIM_OP_selectTask, BIM_OP_deselectTask };

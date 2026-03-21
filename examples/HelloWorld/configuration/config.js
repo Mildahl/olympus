@@ -55,7 +55,7 @@ const UIConfig = {
         },
         "light-text": {
           key: "--theme-text-light",
-          value: "#969c94",
+          value: "#b9c2b6",
         },
         "subtext": {
           key: "--theme-subtext",

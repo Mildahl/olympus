@@ -622,14 +622,10 @@ function Viewport( context, ops, parent ) {
 
 	signals.animationPathChanged.add(scheduleRender);
 
-	// Timeline animation mutates scene objects (visibility/materials) and must invalidate rendering.
-	signals.timelineAnimationChanged?.add(scheduleRender);
-
 	signals.objectSelected.add( function ( object ) {
 
 		selectionBox.visible = false;
 
-		// TODO: Re-enable transform controls - will error on isInstanceProxy objects
 		if ( object !== null && object !== scene && object !== camera ) {
 
 			// TODO: Re-enable transform controls - will error on isInstanceProxy objects

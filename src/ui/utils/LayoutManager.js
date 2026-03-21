@@ -59,7 +59,6 @@ const DEFAULT_CONFIG = {
 
 const BOTTOM_WORKSPACE_TAB_GROUPS_BY_MODULE = [
   { moduleId: 'bim.sequence', tabIds: ['sequence-scheduling', 'sequence-schedule-tasks'] },
-  { moduleId: 'world.timeline_player', tabIds: ['sequence_animation_player', 'sequence_animation_settings'] },
 ];
 
 class LayoutManager {

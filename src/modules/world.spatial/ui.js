@@ -1,46 +1,27 @@
 import Paths from "../../utils/paths.js";
 import { Components as UIComponents } from "../../ui/Components/Components.js";
+import { TabPanel } from '../../../drawUI/TabPanel.js';
 
-import { TabPanel } from "../../../drawUI/TabPanel.js";
-
-class SpatialManagerUI {
+class SpatialManagerUI extends TabPanel{
   constructor({ context, operators }) {
-    this.context = context;
-
-    this.operators = operators;
-
-    this.position = "left";
-
-    this.tabId = "world-spatial-structure";
-
-    this.tabLabel = "Spatial structure";
-
-    this._tabPanel = new TabPanel({
+    super({
       context,
       operators,
-      position: "left",
-      tabId: this.tabId,
-      tabLabel: this.tabLabel,
-      title: "Spatial Structure",
-      icon: "account_tree",
+      moduleId: 'world.spatial',
+      position: 'left',
+      tabId: 'world-spatial-structure',
+      tabLabel: 'Spatial structure',
+      icon: 'account_tree',
+      title: 'Spatial Structure',
       showHeader: false,
-      moduleId: "world.spatial",
       floatable: true,
-      panelStyles: { "min-width": "0" },
+      panelStyles: {
+        minWidth: '240px',
+      },
+      autoShow: true,
     });
 
-    this._tabPanel.panel.addClass("Panel");
-    this._tabPanel.panel.setId("SpatialManagerPanel");
-    this._tabPanel.content.setStyle("overflow-x", ["hidden"]);
-
-    this.panel = this._tabPanel.panel;
-    this.header = this._tabPanel.header;
-    this.content = this._tabPanel.content;
-    this.footer = this._tabPanel.footer;
-
     this.editor = context.editor;
-
-    this.signals = context.editor.signals;
 
     this.nodeStates = new WeakMap();
 
@@ -65,31 +46,6 @@ class SpatialManagerUI {
       lm.isWorkspaceOpen(this.position) &&
       lm.isTabSelected(this.position, this.tabId)
     );
-  }
-
-  show() {
-    this._tabPanel.show();
-
-    this.refreshTree();
-
-    return this;
-  }
-
-  hide() {
-    const lm = this.context?.layoutManager;
-
-    if (lm && lm.isTabSelected(this.position, this.tabId)) {
-      lm.closeWorkspace(this.position);
-    }
-
-    return this;
-  }
-
-  destroy() {
-    if (this._tabPanel) {
-      this._tabPanel.destroy();
-      this._tabPanel = null;
-    }
   }
 
   listen(context, operators) {
@@ -422,7 +378,7 @@ class SpatialManagerUI {
 
       this.editor.select(object);
 
-      this.signals.objectSelected.dispatch(object);
+      this.editor.signals.objectSelected.dispatch(object);
 
       this.ignoreObjectSelectedSignal = false;
 

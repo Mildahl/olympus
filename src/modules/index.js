@@ -44,7 +44,6 @@ import BimPsetModule from './bim.pset/module.js';
 
 import SchedulingModule from './bim.sequence/module.js';
 
-import WorldTimelinePlayerModule from './world.timeline_player/module.js';
 
 import BimModelModule from './bim.model/module.js';
 
@@ -71,8 +70,7 @@ const CoreModuleDefinitions = [
   BimAttributeModule,
   BimPsetModule,
   BimModelModule,
-  SchedulingModule,
-  WorldTimelinePlayerModule
+  SchedulingModule
 ];
 
 export { moduleRegistry, CoreModuleDefinitions };

@@ -105,10 +105,6 @@ export const coreModules = [
         active: false,
     },
     {
-        id: "world.timeline_player",
-        active: true,
-    },
-    {
         id: "bim.cost",
         active: false,
     },

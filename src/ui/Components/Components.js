@@ -55,6 +55,8 @@ import { Nodes } from "./Nodes.js";
 
 import { GanttComponent } from "./GanttComponent.js";
 
+import { TabPanel } from "./../../../drawUI/TabPanel.js";
+
 let showdownConverter = null;
 
 /**
@@ -1174,6 +1176,10 @@ export class Components {
     resizer.dom.dataset.direction = splitNode.direction;
 
     return resizer;
+  }
+
+  static tabPanel(options = {}) {
+    return new TabPanel(options);
   }
 }
 
