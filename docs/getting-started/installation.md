@@ -2,6 +2,8 @@
 
 This guide walks you through setting up a development environment for Olympus/AECO.
 
+For **vendor assets** under `external/vendor/`, full folder layout, and npm scripts, use the canonical guide: **[Repository setup](../guides/repository-setup.md)**.
+
 ## Prerequisites
 
 - **Node.js** 18+ (LTS recommended)
@@ -64,13 +66,12 @@ After running `npm run build`:
 dist/
 ├── index.js          # Main AECO bundle
 ├── pyodide.worker.js # Python execution worker
-└── ...
 ```
 
 ## Troubleshooting
 
 ### "Module not found" errors
-Make sure you've run `npm run build` at least once to generate the `dist/` folder.
+Make sure you've run `npm run build` at least once so `dist/` exists, and that `external/vendor/` is complete. See [Build and runtime troubleshooting](../guides/build-and-runtime-troubleshooting.md) and [Repository setup](../guides/repository-setup.md).
 
 ### Port already in use
 Change the port: `npm run serve -- 8080` or use `serve:5502`.
@@ -80,6 +81,7 @@ Ensure the Pyodide worker is built: `npm run dev:worker`
 
 ## Next Steps
 
+- [Repository setup](../guides/repository-setup.md) — Vendor folders and full setup
 - [HelloWorld Tutorial](helloworld-tutorial.md) — Build your first app
 - [Project Structure](project-structure.md) — Understand the codebase
 - [First Addon](first-addon.md) — Create a custom module

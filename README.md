@@ -1,373 +1,157 @@
+<div align="center">
+
 # Olympus
 
-Lightweight toolkit for building and prototyping 3D web-based applications for AECO (Architecture, Engineering, Construction, and Operations), with a focus on visual data analysis.
+**3D AECO authoring in the browser. Modular. Open.**
+
+Don't waste time re-building an editor from scratch: olympus is here!
+
+[![aeco.dev](https://img.shields.io/badge/site-aeco.dev-0066cc)](https://www.aeco.dev/)
+[![License](https://img.shields.io/badge/license-see%20LICENSE-blue)](LICENSE)
 
 
-[Construction Application Demo :](https://myoualid.github.io/olympus/examples/Addons/index.html)
+[**Hello World (reference app)**](https://myoualid.github.io/olympus/examples/HelloWorld/index.html) · [**Addons (build your host app)**](https://myoualid.github.io/olympus/examples/Addons/index.html)
 
-![Olympus](https://www.aeco.dev/static/img/digital_construction_app.png)
+![Olympus — digital construction app](https://www.aeco.dev/static/img/digital_construction_app.png)
 
-[Hello World Demo:](https://myoualid.github.io/olympus/examples/HelloWorld/index.html)
+<details>
+<summary>Additional demo links</summary>
 
-<br>
+- [Hello World (hosted)](https://myoualid.github.io/olympus/examples/HelloWorld/index.html)
+- [Addons (hosted)](https://myoualid.github.io/olympus/examples/Addons/index.html)
 
----
+Local URLs (repository root served over HTTP): `/examples/HelloWorld/`, `/examples/Addons/`. Port `3000` with `npm run serve`; any other static server uses the configured port.
 
-The core library provides:
-- Three.js's 3D editor,
-- Monaco Script Editor,
-- In-browser Python,
-- IFC support with IfcOpenShell,
-- A pluggable module/addon system,
-- highly configurable User Interface (UI),
+</details>
 
-## Prerequisites
-
-### Running the examples
-- A modern browser (Chrome, Edge, Firefox)
-- A static server to serve the files (e.g. `npm run serve` or `python -m http.server` or live server)
-
-### Creating a build:
-- **Node.js** v18 or later (includes `npm`)
-- A modern browser (Chrome, Edge, Firefox)
+</div>
 
 ---
 
-## Setup Guide To run the app: (Step by Step)
+## Overview
 
-The project has two categories of dependencies:
+Olympus is a JavaScript library for 3D web applications in architecture, engineering, construction, and operations (AECO), with emphasis on visual analysis of building and infrastructure data. 
 
-1. **Vendor assets** — pre-built third-party libraries that live under `external/vendor/`. These are **not installed by npm** and are **git-ignored**, so they must be present before you can build or run the project.
+### Features
 
-To build the library:
-1. **npm packages** — installed by `npm install` into `node_modules/`.
+- **Viewport** — Three.js-based 3D editor (orbit, first-person, fly, drive)
+- **Scripting** — Monaco editor with Python (Pyodide) and JavaScript
+- **IFC** — IfcOpenShell, ifc-lite, and web-ifc-related integration ([repository setup](docs/guides/repository-setup.md))
+- **Modules and operators** — Pluggable addons, `operators.execute`, configurable UI shell
 
-### Step 1 — Get the full project files
+### Useful applications:
 
-When you clone or copy the repository, you need **all** of the following at the project root:
+- Custom BIM viewers
+- Internal authoring tools
+- Prototypes that need navigation, layers, and extension points without building an editor stack from scratch.
 
+### Examples in this repository
+
+There are **two** hosted examples. Both load **template IFC** samples from `external/ifc`, run **in-browser Python** (Pyodide) and the Monaco scripting UI, and turn on **BIM-related modules** (project, attributes, property sets, and related toggles in each app’s `configuration/config.modules.js`). They differ in purpose, not in “lite versus full” runtime.
+
+| Example | Role |
+|--------|------|
+| **HelloWorld** | **Reference application** — the default app layout in the repo; use it for first run, tutorials, and to see core module defaults. |
+| **Addons** | **Host application pattern** — same stack as HelloWorld, plus a `configuration/` layout and **custom addons** under `examples/Addons/addons/`; use it as the template for your own product or internal tool. |
+
+## Quick start
+
+### Hosted demos
+
+Published examples run in the browser without cloning or Node.js.
+
+- [Hello World — reference app](https://myoualid.github.io/olympus/examples/HelloWorld/index.html)
+- [Addons — host app with custom addons](https://myoualid.github.io/olympus/examples/Addons/index.html)
+
+### Local examples (prebuilt bundle)
+
+The default clone includes `dist/index.js` and `external/vendor/` so examples can run without `npm install` or `npm run build`.
+
+```bash
+git clone https://github.com/myoualid/olympus.git
+cd olympus
 ```
-AECOToolkit/
-├── src/            # Core library source (required)
-├── drawUI/             # UI utilities (required)
-├── examples/           # Runnable example apps
-├── external/
-│   ├── data/           # Sample data files
-│   ├── ifc/            # Sample IFC files
-│   ├── styles/         # CSS stylesheets (required)
-│   └── vendor/         # Third-party libraries (required — see Step 2)
-├── scripts/            # Build and serve scripts (required)
-├── package.json        # (required)
-├── package-lock.json   # (recommended)
-├── webpack.config.js   # (required)
-└── webpack.worker.config.js  # (required)
+
+Examples use import maps and ES modules; a static HTTP origin is required (`file://` is not supported). Serve the repository root, then open directory URLs:
+
+```bash
+python -m http.server 8080
 ```
 
-### Ensure Vendor libraries exist:
+- [http://localhost:8080/examples/HelloWorld/](http://localhost:8080/examples/HelloWorld/)
+- [http://localhost:8080/examples/Addons/](http://localhost:8080/examples/Addons/)
 
-The `external/vendor/` contains:
+`npm install` and `npm run build` are unnecessary for this path when `dist/` and `external/vendor/` are present. VS Code Live Server is valid if the opened workspace is the repository root.
 
-| Folder | Purpose | Needed for build? | Needed at runtime? |
-|--------|---------|--------------------|--------------------|
-| `ifc-lite/` | IFC parser and geometry engine | **Yes** | Yes |
-| `three/` | Three.js 3D engine | No | **Yes** |
-| `three-mesh-bvh/` | BVH acceleration for Three.js | No | **Yes** |
-| `three-gpu-pathtracer/` | Path tracing renderer | No | **Yes** |
-| `3d-tiles-renderer/` | 3D Tiles support | No | **Yes** |
-| `editor_deps/` | Signals library | No | **Yes** |
-| `highlightjs/` | Syntax highlighting | No | **Yes** |
-| `monaco-editor/` | Code editor (Monaco v0.52.2) | No | Yes (if using code editor) |
-| `pyodide/` | Python in the browser | No | Yes (if using Python/BIM) |
-| `ifcopenshell/` | IfcOpenShell Python wheels | No | Yes (if using Python IFC) |
-| `engine_web-ifc/` | web-ifc WASM engine | No | Yes (if using web-ifc) |
-| `ag-grid/` | Spreadsheet component | No | Yes (optional) |
-| `jsgantt/` | Gantt chart component | No | Yes (optional) |
-| `fonts/` | Custom fonts | No | Yes (optional) |
+### Development (rebuild from source)
 
-
-### Running the examples:
-
-There are two static examples:
-- **HelloWorld:** A minimal example with basic navigation and a simple cube.
-- **GameExperience:** A more complex example with addons, custom UI, and a sample IFC file.
-
-To run an example, you can open `index.html` in a browser,
-
-
-## Changin the Core and rebuilding the toolkit:
-
-### Install npm dependencies
+Changing `src/` or regenerating `dist/index.js` and `dist/pyodide.worker.js` requires Node.js, npm, and the vendor layout in [Repository setup](docs/guides/repository-setup.md).
 
 ```bash
 npm install
-```
-
-This installs webpack, style-loader, css-loader, and other build/dev tools into `node_modules/`.
-
-### Build
-
-```bash
-npm run build
-```
-
-This runs two webpack builds in sequence:
-1. Builds the Pyodide worker → `external/dist/pyodide.worker.js`
-2. Builds the main library → `external/dist/aeco.js`
-
-If the build succeeds you will see `external/dist/aeco.js` and `external/dist/pyodide.worker.js`.
-
-Or do Steps 3 and 4 together:
-
-```bash
 npm run setup
-```
-
-### Serve
-
-```bash
 npm run serve
 ```
 
-This starts a static server at `http://localhost:3000` from the project root. The custom server (in `scripts/serve-static-mjs.js`) serves `.mjs` files with the correct `application/javascript` MIME type, which is required for Pyodide to load.
-
-### Open an example
-
-- **HelloWorld:** `http://localhost:3000/examples/HelloWorld/`
-- **GameExperience:** `http://localhost:3000/examples/GameExperience/`
-
----
-
-## Configuring Resource Paths
-
-Olympus loads external resources (vendor libraries, data assets, Python tools, sample IFC files) at runtime. By default these resolve under `/external/`, but every base path is configurable via `Settings` in your application config file.
-
-### Path Settings
-
-| Setting | Default | Resolves to |
-|---------|---------|-------------|
-| `vendorBaseUrl` | `"/external/vendor"` | ag-grid, jsgantt, ifcopenshell wheels, and any vendor library not covered by a specific override |
-| `dataBaseUrl` | `"/external/data"` | Icons, images, and other static data resources |
-| `pythonToolsBaseUrl` | `"/external/pytools"` | Python BIM tool scripts (ifc_author, spatial, etc.) |
-| `ifcSamplesBaseUrl` | `"/external/ifc"` | Sample IFC files used by the BIM Project module |
-| `pyodideBaseUrl` | `null` | Pyodide runtime (overrides `vendorBaseUrl` for Pyodide specifically) |
-| `pyodideWorkerUrl` | `null` | Pyodide web worker script |
-| `monacoBaseUrl` | `null` | Monaco Editor (overrides `vendorBaseUrl` for Monaco specifically) |
-| `scriptBaseUrl` | `null` | Base URL where `aeco.js` and workers are served |
-
-### Example configuration
-
-```js
-Settings: {
-  vendorBaseUrl: "/external/vendor",
-  dataBaseUrl: "/external/data",
-  pythonToolsBaseUrl: "/external/pytools",
-  ifcSamplesBaseUrl: "/external/ifc",
-  pyodideBaseUrl: "/external/vendor/pyodide/v0.29.0/full",
-  pyodideWorkerUrl: "/external/dist/pyodide.worker.js",
-  monacoBaseUrl: "/external/vendor/monaco-editor/0.52.2",
-},
-```
-
-### Custom deployment
-
-If your deployment serves assets from a different root (e.g. a CDN or a subfolder), override the base URLs:
-
-```js
-Settings: {
-  vendorBaseUrl: "/assets/vendor",
-  dataBaseUrl: "/assets/data",
-  pythonToolsBaseUrl: "/assets/pytools",
-  ifcSamplesBaseUrl: "/assets/ifc",
-  pyodideBaseUrl: "/assets/vendor/pyodide/v0.29.0/full",
-  pyodideWorkerUrl: "/assets/dist/pyodide.worker.js",
-  monacoBaseUrl: "/assets/vendor/monaco-editor/0.52.2",
-},
-```
-
-The core library reads these paths through the `Paths` utility (`src/utils/paths.js`). All runtime resource lookups — vendor scripts, CSS, images, Python tools — resolve against these configured base URLs instead of hardcoded `/external/` paths.
-
----
-
-## Troubleshooting
-
-### Build fails with `Module not found: Error: Can't resolve '@ifc-lite/...'`
-
-The `external/vendor/ifc-lite/` directory is missing or incomplete. Copy it from the original project distribution. Verify these files exist:
-- `external/vendor/ifc-lite/packages/geometry/dist/index.js`
-- `external/vendor/ifc-lite/packages/parser/dist/index.js`
-- `external/vendor/ifc-lite/packages/data/dist/index.js`
-- `external/vendor/ifc-lite/packages/encoding/dist/index.js`
-- `external/vendor/ifc-lite/packages/ifcx/dist/index.js`
-- `external/vendor/ifc-lite/packages/mutations/dist/index.js`
-- `external/vendor/ifc-lite/packages/wasm/pkg/ifc-lite.js`
-
-### Build succeeds but examples show a blank page or console errors
-
-The `external/vendor/` directory is incomplete. The examples load third-party libraries at runtime via import maps in their HTML files. At minimum you need:
-- `external/vendor/three/build/three.module.js`
-- `external/vendor/three/build/three.webgpu.js`
-- `external/vendor/three/examples/jsm/` (addons directory)
-- `external/vendor/three-mesh-bvh/index.module.js`
-- `external/vendor/three-gpu-pathtracer/build/index.module.js`
-- `external/vendor/3d-tiles-renderer/build/index.js`
-- `external/vendor/3d-tiles-renderer/build/index.plugins.js`
-- `external/vendor/editor_deps/signals.min.js`
-- `external/vendor/highlightjs/highlight.min.js`
-- `external/vendor/highlightjs/github.min.css`
-
-### VS Code Live Server instead of `npm run serve`
-
-Open the **repository root** (File → Open Folder → AECOToolkit), then start Live Server. The repo includes `.vscode/settings.json` so Live Server uses the workspace root. If your workspace is a subfolder (e.g. only `examples/HelloWorld`), paths like `/external/` will 404.
-
-### Port 5502
-
-```bash
-npm run serve:5502
-```
-
-Opens at `http://127.0.0.1:5502/examples/HelloWorld/`.
-
-### Python / Pyodide not loading
-
-Pyodide is loaded from `external/vendor/pyodide/v0.29.0/full/`. Make sure the `external/vendor/pyodide/` directory is populated with the Pyodide distribution files (`.asm.js`, `.wasm`, `.zip`, wheels).
-
-### Warning: `Critical dependency: the request of a dependency is an expression`
-
-This webpack warning is expected and harmless. It comes from dynamic imports in the UI module loader.
-
----
-
-## Project Structure
-
-```
-AECOToolkit/
-├── src/                # Core library
-│   ├── index.js            # Library entry point
-│   ├── aeco.js             # Main AECO class
-│   ├── core/               # Core features (navigation, layers, viewpoints, etc.)
-│   ├── modules/            # Pluggable UI modules
-│   ├── operators/          # Data operators
-│   ├── tool/               # Tools (BIM, code editor, Pyodide)
-│   ├── ui/                 # UI components
-│   ├── utils/              # Utilities
-│   ├── data/               # Data layer (Store, collections)
-│   ├── context/            # Application context
-│   ├── configuration/      # Default configuration
-│   └── types/              # Type definitions
-├── drawUI/                 # UI panel utilities
-├── examples/
-│   ├── HelloWorld/         # Minimal example
-│   ├── GameExperience/     # Full-featured example with addons
-│   ├── Addons/             # Addons example
-│   └── Logistics/          # Logistics example
-├── external/
-│   ├── dist/               # Built output (generated by npm run build)
-│   │   ├── aeco.js         # Main library bundle
-│   │   └── pyodide.worker.js
-│   ├── styles/             # CSS stylesheets
-│   ├── data/               # Sample data
-│   ├── ifc/                # Sample IFC files
-│   └── vendor/             # Third-party libraries (NOT in git — see Setup Step 2)
-├── scripts/                # Build and serve scripts
-├── docs/                   # Documentation
-├── package.json
-├── webpack.config.js       # Main webpack config
-└── webpack.worker.config.js # Pyodide worker webpack config
-```
-
-**Library entry:** `src/index.js` → webpack builds to `external/dist/aeco.js`.
-
-**Examples** use their own `configuration/` and `addons/` directories. Copy an example folder and adjust to your needs.
-
----
-
-## Minimal App Code
-
-```javascript
-import { AECO } from "./../../src/index.js";
-import { AECOConfiguration } from "./configuration/config.js";
-import { ADDONS } from "./addons/index.js";
-
-const simulation = new AECO(document.body);
-
-simulation.createUI({
-  config: AECOConfiguration,
-  container: document.body,
-  addons: { ADDONS },
-});
-```
-
----
-
-## Files Needed vs Optional
-
-| File / Folder | Required? | Notes |
-|---------------|-----------|-------|
-| `src/` | **Yes** | Core library source |
-| `external/vendor/` | **Yes** | Must be manually placed (see Setup Step 2) |
-| `external/styles/` | **Yes** | CSS for the application |
-| `scripts/` | **Yes** | Contains build and serve scripts |
-| `package.json` | **Yes** | Dependencies and npm scripts |
-| `package-lock.json` | Recommended | Reproducible installs |
-| `webpack.config.js` | **Yes** | Builds `aeco.js` |
-| `webpack.worker.config.js` | **Yes** | Builds `pyodide.worker.js` |
-| `examples/` | Recommended | Runnable example apps |
-| `drawUI/` | **Yes** | UI utilities required by modules |
-| `external/data/` | Optional | Sample data for examples |
-| `external/ifc/` | Optional | Sample IFC files for examples |
-| `docs/` | Optional | Documentation |
-| `eslint.config.js` | Optional | Linting (dev only) |
-| `jest.config.js` | Optional | Tests (dev only) |
-| `jsconfig.json` | Optional | IDE path hints |
-| `stylelint.config.cjs` | Optional | CSS linting (dev only) |
-
----
-
-## Scripts
-
-| Script | Description |
-|--------|-------------|
-| `npm run setup` | `npm install` + `npm run build` (one command). |
-| `npm run build` | Build `aeco.js` and Pyodide worker to `external/dist/`. |
-| `npm run serve` | Serve the project at port 3000. |
-| `npm run serve:5502` | Serve the project at port 5502. |
-| `npm run dev` | Rebuild `aeco.js` in watch mode (development). |
-| `npm run docs:olympus` | Generate Olympus reference docs. |
-| `npm run docs:olympus:serve` | Generate docs and serve the doc site. |
-| `npm test` | Run the test suite. |
-
----
-
-## Highlights
-
-- Three.js 3D editor with orbit, first-person, fly, and drive navigation
-- Monaco code editor with Python (Pyodide) and JavaScript support
-- Native IFC support via IfcOpenShell, ifc-lite, and web-ifc
-- Modular addon/module system for custom extensions
-
----
-
-## Roadmap
-
-| Feature | Status |
-|---------|--------|
-| Layers, Viewpoints, Animation Paths | Available |
-| Orbit, First-Person, Fly, Drive navigation | Available |
-| Monaco Editor, Python, JS Sandbox, Terminal | Available |
-| Timeline Player | Planned |
-| Visual Node Editor / Workflow Editor | Planned |
-
----
+Examples: [http://localhost:3000/examples/HelloWorld/](http://localhost:3000/examples/HelloWorld/). The project server sets MIME types suitable for Pyodide and `.mjs` loads. For Pyodide or module load issues behind a minimal static server, use `npm run serve` or [Build and runtime troubleshooting](docs/guides/build-and-runtime-troubleshooting.md).
 
 ## Documentation
 
-- Serve locally: `npm run docs:olympus:serve`
-- Or read Markdown under `docs/src/`
-- Guides: [How the app works](docs/olympus/guides/how-the-app-works.md), [Creating addons](docs/olympus/guides/creating-addons.md), [Configuration](docs/olympus/guides/configuration.md), [Getting started](docs/olympus/guides/getting-started.md)
+This page summarizes orientation, quick paths, and a documentation index. Procedures, configuration, tutorials, and API detail live under `docs/`.
 
----
+### In this repository
 
-## License and Contact
+- [Quick start](#quick-start) — Hosted demos, local static serve, development workflow
+- [Examples in this repository](#examples-in-this-repository) — HelloWorld (reference app) and Addons (host app pattern); both use template IFC, Python, and BIM modules
+- [Features](#features) — Viewport, scripting, IFC, modules
 
-See the LICENSE file in the repository.
-Contact: contact@aeco.dev
+### Setup and deployment
+
+- [Repository setup](docs/guides/repository-setup.md) — Layout, vendors, `dist/`, build, serve, scripts
+- [Configure and deploy](docs/guides/configure-and-deploy.md) — `Settings` base URLs for deployment
+- [Minimal host application](docs/guides/minimal-host-application.md) — `AECO` and `createUI` embedding
+- [Build and runtime troubleshooting](docs/guides/build-and-runtime-troubleshooting.md) — Build and runtime faults
+
+### Tutorials
+
+- [Installation](docs/getting-started/installation.md) — Development environment
+- [HelloWorld tutorial](docs/getting-started/helloworld-tutorial.md) — First application
+- [Project structure](docs/getting-started/project-structure.md) — Codebase layout
+- [First addon](docs/getting-started/first-addon.md) — Custom module
+
+### Authoring
+
+- [Writing operators](docs/guides/writing-operators.md) — Operators and undo/redo
+- [Building UI](docs/guides/building-ui.md) — UI components
+- [Using LayoutManager](docs/guides/using-layoutmanager.md) — Workspaces and tabs
+
+### API (Markdown)
+
+- [API overview](docs/api/README.md) — Layers and imports
+- [UI components](docs/api/ui/components.md) — `UIComponents` factories
+- [LayoutManager](docs/api/ui/layoutmanager.md) — Panel layout
+- [Operators](docs/api/operators/index.md) — Registry and base class
+
+### Generated documentation site
+
+Canonical prose and API notes are maintained under `docs/getting-started/`, `docs/guides/`, and `docs/api/`. The static site under `docs/olympus/` is built with `npm run docs:olympus` and previewed with `npm run docs:olympus:serve`.
+
+- [Olympus doc hub](docs/olympus/README.md) — Entry point for the site bundle
+- [How the app works](docs/olympus/guides/how-the-app-works.md) — Architecture overview
+- [Configuration](docs/olympus/guides/configuration.md) — Application configuration
+- [Creating addons](docs/olympus/guides/creating-addons.md) — Addon development
+- [Getting started](docs/olympus/guides/getting-started.md) — Onboarding (site)
+- Reference: `core-api.md`, `modules.md`, `operators.md`, `tools.md`, `editors.md` (in `docs/olympus/` after generation)
+
+### Example notes
+
+- [HelloWorld example](docs/examples/helloworld/overview.md) — reference application
+- [Addons example](docs/examples/addons/overview.md) — building a host app and addons
+
+## Roadmap
+
+Working on it - feel free to contribute!
+
+## License and contact
+
+Licensed under the terms in [LICENSE](LICENSE). Contact: contact@aeco.dev. Issues: [github.com/myoualid/olympus/issues](https://github.com/myoualid/olympus/issues).
