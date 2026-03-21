@@ -1,62 +1,92 @@
 import { SidebarSettings } from './Sidebar.Settings.js';
 
-import { TabPanel } from '../../../../drawUI/TabPanel.js';
+import { BasePanel } from '../../../../drawUI/BasePanel.js';
 
 import { Components as UIComponents } from '../../../ui/Components/Components.js';
 
+import { makeDraggable } from '../../../../drawUI/utils/panelResizer.js';
+
 /**
- * Sidebar - Application sidebar panel that integrates with the layout system.
- * 
- * The sidebar is displayed as a tab in the right layout panel. It contains
- * scene settings and configuration options.
- * 
- * @param {Object} context - Application context.
- * @param {Object} operators - Operators reference.
- * @returns {TabPanel} The sidebar panel instance.
- * 
- * @example
- * // Create and show the sidebar
- * const sidebar = new Sidebar(context, operators);
+ * 3D / scene + renderer settings as a BasePanel, toggled from the AppSettings sidebar node
+ * (see `moduleId: "settings"` with `id: "AppSettings"` in UI config).
+ * Application tabs (General, Navigation, etc.) are registered on `context.ui.sidebarSettingsTabbedPanel`
+ * by the settings module.
+ *
+ * Call `ensureBuilt()` after `new UI(...)` and before module UI loads — see `AECO.createUI`.
  */
-function Sidebar( context, operators ) {
+class ThreeDSettingsPanel extends BasePanel {
+  constructor({ context, operators }) {
+    super({
+      context,
+      operators,
+      parentId: 'AppSettings',
+      panelStyles: {
+        minWidth: '280px',
+        width: 'min(400px, 92vw)',
+        maxHeight: '75vh',
+      },
+      resizeHandles: ['w', 's', 'sw'],
+      draggable: false,
+      position: 'below-left',
+      testing: false,
+    });
 
-	const editor = context.editor;
+    this._built = false;
 
-	const strings = editor.strings;
+    const title =
+      context.strings.getKey('sidebar/3d-settings') || '3D Settings';
 
-	// 3D / Three.js controls (scene + renderer); more tabs are added by the settings module
-	const settings = SidebarSettings( editor );
+    const headerRow = this.createHeader(title, 'view_in_ar');
 
-	const internalTabs = UIComponents.tabbedPanel();
+    this.header.add(headerRow);
 
-	internalTabs.addTab( 'threejs', 'Three.js', settings );
+    makeDraggable(this.panel.dom, headerRow.dom);
 
-	internalTabs.select( 'threejs' );
+    context.ui.threeDSettingsPanel = this;
+  }
 
-	if ( context.ui ) {
-		context.ui.sidebarSettingsTabbedPanel = internalTabs;
-	}
+  /**
+   * @returns {boolean} true if the inner tab strip (incl. Three.js tab) is ready
+   */
+  ensureBuilt() {
+    if (this._built) return true;
 
-	// Create TabPanel that integrates with LayoutManager
-	const sidebarPanel = new TabPanel({
-		context,
-		operators,
-		position: 'right',
-		tabId: 'sidebar-3d-settings',
-		tabLabel: strings.getKey( 'sidebar/3d-settings' ) || '3D Settings',
-		icon: 'view_in_ar',
-		title: strings.getKey( 'sidebar/3d-settings' ) || '3D Settings',
-		showHeader: false,
-		panelStyles: {
-			minWidth: '280px',
-		},
-		autoShow: true,
-	});
+    const editor = this.context.editor;
 
-	sidebarPanel.content.add( internalTabs );
+    if (!editor) return false;
 
-	return sidebarPanel;
+    const settings = SidebarSettings(editor);
 
+    const internalTabs = UIComponents.tabbedPanel();
+
+    internalTabs.addTab('threejs', 'Three.js', settings);
+
+    internalTabs.select('threejs');
+
+    internalTabs.setStyle('display', ['flex']);
+
+    internalTabs.setStyle('flex-direction', ['column']);
+
+    internalTabs.setStyle('flex', ['1']);
+
+    internalTabs.setStyle('min-height', ['0']);
+
+    internalTabs.setStyle('overflow', ['hidden']);
+
+    this.content.add(internalTabs);
+
+    this.context.ui.sidebarSettingsTabbedPanel = internalTabs;
+
+    this._built = true;
+
+    return true;
+  }
+
+  onShow() {
+    this.ensureBuilt();
+  }
 }
 
-export { Sidebar };
+export { ThreeDSettingsPanel };
+
+export { ThreeDSettingsPanel as Sidebar };

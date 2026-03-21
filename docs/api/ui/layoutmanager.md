@@ -5,11 +5,12 @@ LayoutManager controls the application's panel layout with tabs, resizable panel
 ## Import
 
 ```javascript
-// Access via context
-const layoutManager = context.editor.layoutManager;
+// Olympus / AECO host: LayoutManager is on context
+const layoutManager = context.layoutManager;
 
-// Or from simulation
-const layoutManager = simulation.editor.layoutManager;
+// Some embeddings may expose it on the editor
+const editor = context.editor;
+const layoutManager = editor ? editor.layoutManager : null;
 ```
 
 ## Types
@@ -35,12 +36,17 @@ interface LayoutManagerConfig {
 
 ### AddTabOptions
 
+Used by `addTab` and `ensureTab`.
+
 ```typescript
 interface AddTabOptions {
-    open?: boolean;      // Default: true - Open panel after adding
-    replace?: boolean;   // Default: true - Replace existing tab with same ID
+    open?: boolean;       // Default: true — open workspace after adding
+    replace?: boolean;    // Default: true — replace existing tab with same ID
+    floatable?: boolean;  // Default: false — show “undock” on the workspace tab label
 }
 ```
+
+When `floatable` is `true`, the tab row shows a small control (e.g. open-in-new) that calls any handler registered with `registerTabFloatHandler` for that `position` + tab `id`. The built-in `TabPanel` class registers this handler automatically when its `floatable` option is set.
 
 ### RemoveTabOptions
 
@@ -132,6 +138,26 @@ layoutManager.registerTabbedWorkspaces(tabbedWorkspaces: {
 
 **Returns:** `this` for chaining
 
+Also assigns each workspace panel `_layoutManager` and `_layoutWorkspacePosition` so low-level tab UI (e.g. `UITabbedPanel`) can invoke floating behavior.
+
+---
+
+### ensureTab(position, id, label, content, options)
+
+Idempotent: adds the tab only if it does not already exist. Accepts the same `AddTabOptions` as `addTab` (including `floatable`).
+
+```javascript
+layoutManager.ensureTab(
+    position: LayoutPosition,
+    id: string,
+    label: string,
+    content: HTMLElement | UIElement,
+    options?: AddTabOptions
+): boolean
+```
+
+Default options: `open: false`, `replace: false`.
+
 ## Tab Management
 
 ### addTab(position, id, label, content, options)
@@ -156,6 +182,7 @@ layoutManager.addTab(
 | `content` | HTMLElement \| {dom: HTMLElement} | Tab content |
 | `options.open` | boolean | Open workspace after adding (default: true) |
 | `options.replace` | boolean | Replace existing tab with same ID (default: true) |
+| `options.floatable` | boolean | Tab-strip undock control (default: false) |
 
 **Returns:** `true` if tab was added, `false` otherwise
 
@@ -305,7 +332,7 @@ layoutManager.clearTabs(position: LayoutPosition, closeWorkspace?: boolean): boo
 
 ### setTabLabel(position, id, label)
 
-Update a tab's label text.
+Update a tab's visible title. For composite tabs (label + optional float icon), only the `.Tab-label` text is updated.
 
 ```javascript
 layoutManager.setTabLabel(position: LayoutPosition, id: string, label: string): boolean
@@ -316,6 +343,46 @@ layoutManager.setTabLabel(position: LayoutPosition, id: string, label: string): 
 // Show item count in label
 layoutManager.setTabLabel('left', 'items', `Items (${count})`);
 ```
+
+---
+
+### registerTabFloatHandler(position, tabId, fn)
+
+Register the callback invoked when the user activates the float control on a **floatable** workspace tab (same `position` and `id` as `addTab`).
+
+```javascript
+layoutManager.registerTabFloatHandler(
+    position: LayoutPosition,
+    tabId: string,
+    fn: () => void
+): () => void
+```
+
+**Returns:** A cleanup function that removes this handler.
+
+`TabPanel` registers this for you when `floatable: true`. Use directly only for custom panels that are not `TabPanel` but still use `floatable` tabs.
+
+---
+
+### invokeTabFloat(position, tabId)
+
+Calls the handler registered with `registerTabFloatHandler`, if any. Normally used from workspace tab UI, not application code.
+
+```javascript
+layoutManager.invokeTabFloat(position: LayoutPosition, tabId: string): void
+```
+
+---
+
+### restoreWorkspaceTabSelections()
+
+Re-applies saved active tab IDs per workspace from layout state (see [State persistence](#state-persistence)). Called automatically after workspaces register; you can call it again if your module adds tabs asynchronously.
+
+```javascript
+layoutManager.restoreWorkspaceTabSelections(): LayoutManager
+```
+
+**Returns:** `this` for chaining
 
 ---
 
@@ -363,42 +430,32 @@ layoutManager.isWorkspaceOpen(position: LayoutPosition): boolean
 
 ---
 
-### getWorkspaceWidth(position)
+### getWorkspaceSize(position)
 
-Get current workspace width.
+Get the current width (left/right) or height (bottom) in pixels.
 
 ```javascript
-layoutManager.getWorkspaceWidth(position: 'left' | 'right'): number
+layoutManager.getWorkspaceSize(position: LayoutPosition): number
 ```
 
 ---
 
-### setWorkspaceWidth(position, width)
+### setWorkspaceSize(position, size)
 
-Set workspace width.
+Set workspace width (`left` / `right`) or height (`bottom`). Values below the configured minimum are clamped.
 
 ```javascript
-layoutManager.setWorkspaceWidth(position: 'left' | 'right', width: number): void
+layoutManager.setWorkspaceSize(position: LayoutPosition, size: number): LayoutManager
 ```
 
 ---
 
-### getWorkspaceHeight(position)
+### resetLayout()
 
-Get current workspace height.
-
-```javascript
-layoutManager.getWorkspaceHeight(position: 'bottom'): number
-```
-
----
-
-### setWorkspaceHeight(position, height)
-
-Set workspace height.
+Reset open/closed state, default sizes, and stored per-workspace **selected tab IDs** to defaults, then persist.
 
 ```javascript
-layoutManager.setWorkspaceHeight(position: 'bottom', height: number): void
+layoutManager.resetLayout(): LayoutManager
 ```
 
 ## Element Binding
@@ -424,20 +481,32 @@ layoutManager.bindToggle(
 **Returns:** Cleanup function to unbind, or `null` if element not found
 
 Creates bidirectional binding:
-- Clicking element toggles the tab
-- Element's 'Active' class syncs with tab state
+
+- Clicking the element toggles the tab  
+- The element’s `Active` class stays in sync with tab/workspace state  
 
 **Example:**
-```javascript
-// Bind by ID
-const unbind = layoutManager.bindToggle('sidebarBtn', 'right', 'settings');
 
-// Bind by element
+```javascript
+const unbind = layoutManager.bindToggle('sidebarBtn', 'right', 'settings');
 const btn = document.getElementById('treeBtn');
 layoutManager.bindToggle(btn, 'left', 'tree');
-
-// Later, to unbind
 unbind();
+```
+
+---
+
+### bindToggleForModule(moduleId, position, tabId, options?)
+
+Same behavior as `bindToggle`, but resolves the toggle element id from the World UI config for `moduleId`, unless `options.toggleElementId` is provided.
+
+```javascript
+layoutManager.bindToggleForModule(
+    moduleId: string,
+    position: LayoutPosition,
+    tabId: string,
+    options?: { toggleElementId?: string }
+): Function | null
 ```
 
 ## Signals
@@ -464,15 +533,20 @@ context.signals.layoutWorkspaceChanged.add((data) => {
 });
 ```
 
-## State Persistence
+## State persistence
 
-LayoutManager automatically persists state to localStorage:
+LayoutManager saves layout state to `localStorage` under `storageKey` (default: `'aeco-layout-state'`).
 
-- Workspace open/closed states
-- Workspace sizes (width/height)
-- Selected tabs per workspace
+**Always persisted** when the user resizes or toggles workspaces:
 
-State is saved using the `storageKey` from config (default: `'aeco-layout-state'`).
+- Open/closed state for left, right, and bottom workspaces  
+- Workspace sizes (left/right width, bottom height)
+
+**Persisted only when the user has enabled “Save my settings”** in Welcome or Settings (`config.app.Settings.persistSettings === true`):
+
+- Last **selected tab id** for each workspace (`workspaceSelected`)
+
+On load, grid state is restored from storage; tab selection is re-applied when workspaces are registered (and briefly retried so async modules can add tabs first).
 
 ## Keyboard Shortcuts
 
@@ -492,7 +566,7 @@ import { UIComponents } from "aeco";
 class MyAddonUI {
     constructor({ context, operators }) {
         this.context = context;
-        this.layoutManager = context.editor.layoutManager;
+        this.layoutManager = context.layoutManager;
         
         // Create panel content
         this.panel = this.createPanel();
@@ -555,5 +629,6 @@ class MyAddonUI {
 ## Related
 
 - [Using LayoutManager Guide](../guides/using-layoutmanager.md)
-- [UIComponents API](components.md)
+- [UIComponents API](components.md) — `floatingPanel`, `tabbedPanel`
 - [Building UI Guide](../guides/building-ui.md)
+- `drawUI/TabPanel.js` / `DrawUI.tabPanel()` — workspace-integrated panels with optional tab-strip float

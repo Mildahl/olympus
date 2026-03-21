@@ -2,6 +2,8 @@
 
 Complete documentation for the Olympus/AECO library — a powerful BIM development framework built on Three.js.
 
+**Authoritative sources in the repo:** Hand-written guides and API notes live under `docs/getting-started/`, `docs/guides/`, and `docs/api/`. Edit those first. The `docs/olympus/` tree is used for the static doc site (`npm run docs:olympus`); some pages mirror guides from `docs/guides/`—keep them in sync when you change the canonical files.
+
 ## Getting Started
 
 New to Olympus? Start here:
@@ -19,7 +21,7 @@ In-depth guides for common tasks:
 - [Configuration](guides/configuration.md) — Config files and options
 - [Writing Operators](../guides/writing-operators.md) — Command pattern and undo/redo
 - [Building UI](../guides/building-ui.md) — UI components and patterns
-- [Using LayoutManager](../guides/using-layoutmanager.md) — Panel and tab management
+- [Using LayoutManager](../guides/using-layoutmanager.md) — Workspaces, `TabPanel`, tab-strip float, persistence
 - [Creating Addons](guides/creating-addons.md) — Module development
 
 ## API Reference

@@ -1861,7 +1861,7 @@ class UITabbedPanel extends UIDiv {
     return this;
   }
 
-  addTab(id, label, items, styles) {
+  addTab(id, label, items, styles, tabOptions) {
     // Important: do not steal focus/selection from the currently active tab.
     // Auto-select only when there is no existing (valid) selection.
     const hasSelection = Boolean(this.selected && this.selected.length);
@@ -1876,7 +1876,8 @@ class UITabbedPanel extends UIDiv {
       return;
     }
 
-    const tab = new UITab(label, this);
+    const floatable = Boolean(tabOptions && tabOptions.floatable);
+    const tab = new UITab(label, this, { floatable });
 
     tab.setId(id);
 
@@ -1967,18 +1968,57 @@ class UITabbedPanel extends UIDiv {
   }
 }
 
-class UITab extends UIText {
-  constructor(text, parent) {
-    super(text);
+class UITab extends UIDiv {
+  /**
+   * @param {string} labelText
+   * @param {UITabbedPanel} parent
+   * @param {{ floatable?: boolean }} [tabOptions]
+   */
+  constructor(labelText, parent, tabOptions = {}) {
+    super();
 
     this.dom.className = "Tab";
 
     this.parent = parent;
 
-    const scope = this;
+    const label = new UISpan();
 
-    this.dom.addEventListener("click", function () {
-      scope.parent.select(scope.dom.id);
+    label.dom.className = "Tab-label";
+
+    label.setTextContent(labelText);
+
+    this.add(label);
+
+    if (tabOptions.floatable) {
+      const floatIc = new UIIcon("open_in_new");
+
+      floatIc.dom.classList.add("Operator", "Tab-float");
+
+      floatIc.dom.title = "Undock to floating window";
+
+      floatIc.setStyle("font-size", ["13px"]);
+
+      floatIc.onClick((e) => {
+        e.preventDefault();
+
+        e.stopPropagation();
+
+        const lm = parent._layoutManager;
+
+        const pos = parent._layoutWorkspacePosition;
+
+        if (lm && typeof lm.invokeTabFloat === "function" && pos) {
+          lm.invokeTabFloat(pos, this.dom.id);
+        }
+      });
+
+      this.add(floatIc);
+    }
+
+    this.dom.addEventListener("click", (e) => {
+      if (e.target.closest(".Tab-float")) return;
+
+      parent.select(this.dom.id);
     });
   }
 }
@@ -2889,59 +2929,6 @@ class UISpinner extends UIElement {
   }
 }
 
-/**
- * Blender-style splash screen: full-screen overlay with centered image during load.
- * No blur; optional loading text below image.
- */
-class UISplash extends UIElement {
-  constructor(options = {}) {
-    super(document.createElement('div'));
-    this.dom.id = 'AECOSplashScreen';
-    this._options = {
-      imageUrl: options.imageUrl || (window.__OLYMPUS_ROOT__ || '') + '/external/ifc/splash.png',
-      text: options.text != null ? options.text : 'Loading...',
-    };
-    this.dom.style.cssText = [
-      'position:fixed;top:0;left:0;width:100vw;height:100vh;',
-      'background:#1a1a1a;',
-      'display:flex;flex-direction:column;align-items:center;justify-content:center;',
-      'z-index:10000;',
-    ].join('');
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:1rem;';
-    const img = document.createElement('img');
-    img.alt = 'AECO';
-    img.src = this._options.imageUrl;
-    img.style.cssText = 'max-width:90vw;max-height:70vh;object-fit:contain;';
-    img.onerror = () => { img.style.display = 'none'; };
-    const textEl = document.createElement('span');
-    textEl.className = 'splash-text';
-    textEl.textContent = this._options.text;
-    textEl.style.cssText = 'color:rgba(255,255,255,0.7);font-size:0.8rem;';
-    wrap.appendChild(img);
-    wrap.appendChild(textEl);
-    this.dom.appendChild(wrap);
-    this._textEl = textEl;
-  }
-
-  show(target = document.body) {
-    const el = typeof target === 'string' ? (document.querySelector(target) || document.body) : target;
-    if (this.dom.parentNode) return this;
-    el.appendChild(this.dom);
-    return this;
-  }
-
-  hide() {
-    if (this.dom.parentNode) this.dom.parentNode.removeChild(this.dom);
-    return this;
-  }
-
-  setText(text) {
-    if (this._textEl) this._textEl.textContent = text;
-    return this;
-  }
-}
-
 class UITooltip extends UIElement {
   constructor(text = '', options = {}) {
     super(document.createElement('div'));
@@ -3084,6 +3071,5 @@ export {
   ListboxItem,
   UIDatePicker,
   UISpinner,
-  UISplash,
   UITooltip,
 };

@@ -199,7 +199,8 @@ class BIM_OP_EnableEditingWorkScheduleTasks extends Operator {
         ifc:AECO_tools.ifc, 
         sequence:AECO_tools.bim.sequence, 
         signals: this.context.signals, 
-        context: this.context 
+        context: this.context,
+        viewType: this.viewType,
       });
 
   }

@@ -1007,7 +1007,13 @@ class Nodes extends FloatingPanel {
                 let parentId = null;
 
                 for (const [id, n] of nodeMap) {
-                    if (n.children && n.children.includes(currentId)) {
+                    if (!n.children || n.children.length === 0) {
+                        continue;
+                    }
+
+                    const hasChild = n.children.some((childId) => childId == currentId);
+
+                    if (hasChild) {
                         parentId = id;
 
                         break;

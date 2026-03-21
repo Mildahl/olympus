@@ -113,6 +113,15 @@ const CoreModules = [
 
 const addons = [
   {
+    id:"AppSettings",
+    name: "Settings",
+    type: "Module",
+    icon: "settings",
+    priority: 1,
+    moduleId: "settings",
+    children: [],
+  },
+  {
       id: "NotificationsModule",
       name: "Notifications Module",
       needsCount: true,
@@ -135,15 +144,6 @@ const addons = [
     icon: "play_circle",
     priority: 3,
     moduleId: "world.animationPath",
-  },
-  {
-    id: "Planning",
-    name: "Planning",
-    type: "Module",
-    icon: "timeline",
-    priority: 4,
-    moduleId: "bim.sequence",
-    children: [],
   },
 ]
 
@@ -238,17 +238,35 @@ export const WorldComponent = {
       id: 'SideWorkspaceLeft',
       name: 'Side Workspace Left',
       type: 'Body',
+      priority: 6,
     },
     {
       id: 'SideWorkspaceRight',
       name: 'Side Workspace Right',
       type: 'Body',
+      priority: 7,
     },
     {
       id: "Viewport",
       name: "Viewport",
       type: "Body",
-      priority: 2,
+      children: [
+        {
+          id: "SideBar",
+          name: "World Menu",
+          children: SideBar,
+          type: "Modules",
+          priority: 3,
+        },
+        {
+          id: "Windows",
+          name: "Windows Center",
+          type: "WindowManager",
+          priority: 6,
+          children: [],
+        },
+        ...ViewportComponents
+      ],
     },
     {
       id: "ViewportSnapTools",
@@ -259,13 +277,7 @@ export const WorldComponent = {
       moduleId: "world.snap",
       children: [],
     },
-    {
-      id: "SideBar",
-      name: "World Menu",
-      children: SideBar,
-      type: "Modules",
-      priority: 3,
-    },
+
     {
       id: "HeaderBar",
       name: "Header Bar",
@@ -273,13 +285,5 @@ export const WorldComponent = {
       type: "Modules",
       priority: 4,
     },
-    {
-      id: "Windows",
-      name: "Windows Center",
-      type: "WindowManager",
-      priority: 6,
-      children: [],
-    },
-    ...ViewportComponents
   ],
 };

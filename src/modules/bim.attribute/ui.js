@@ -20,7 +20,7 @@ class AttributeUI {
 
     this.isActive = false;
 
-    this.AttributePanel = this.basePanel();
+    this.AttributePanel = this.basePanel(context);
 
     this.contextMenu = null;
 
@@ -41,8 +41,14 @@ class AttributeUI {
     );
   }
 
-  basePanel() {
-    const panel = UIComponents.floatingPanel("BIM Attributes")
+  basePanel(context) {
+    const panel = UIComponents.floatingPanel({
+      context,
+      title: 'Entity Attributes',
+      icon: 'info',
+      workspaceTabId: 'bim.attribute',
+      workspaceTabLabel: 'Attributes',
+    });
 
     panel.setIcon("info");
 
@@ -854,6 +860,15 @@ class AttributeUI {
   }
 
   showPanel(context, operators) {
+    const docked = this.AttributePanel._dockedWorkspace;
+    const lm = context.layoutManager;
+    if (docked && lm && typeof lm.selectTab === "function") {
+      lm.selectTab(docked.position, docked.tabId, { open: true });
+      this.isActive = true;
+      if (this.parent) this.parent.classList.add("Active");
+      return;
+    }
+
     this.appendDom(context);
 
     this.isActive = true;

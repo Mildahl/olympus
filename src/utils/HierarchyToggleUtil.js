@@ -6,18 +6,12 @@ export class HierarchyToggleUtil {
   toggleNode(id) {
     if (this.expanded.has(id)) {
       this.expanded.delete(id);
-
-      console.log("Collaps node:", id);
     } else {
       this.expanded.add(id);
-
-      console.log("Expand node:", id);
     }
   }
 
   expandNode(id) {
-    console.log("node added to expanded list:", id);
-
     this.expanded.add(id);
   }
 
@@ -26,21 +20,29 @@ export class HierarchyToggleUtil {
   }
 
   expandAll(nodes) {
-    const collectIds = (items) => {
-      let ids = [];
+    const nextExpanded = new Set();
 
-      items.forEach(item => {
-        ids.push(item.id);
+    if (!Array.isArray(nodes)) {
+      this.expanded = nextExpanded;
 
-        if (item.children && item.children.length > 0) {
-          ids = ids.concat(collectIds(item.children));
-        }
-      });
+      return;
+    }
 
-      return ids;
-    };
+    nodes.forEach((node) => {
+      if (!node) {
+        return;
+      }
 
-    this.expanded = new Set(collectIds(nodes));
+      const nodeId = node.id;
+
+      if (nodeId === undefined || nodeId === null) {
+        return;
+      }
+
+      nextExpanded.add(nodeId);
+    });
+
+    this.expanded = nextExpanded;
   }
 
   collapseAll() {

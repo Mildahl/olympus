@@ -37,6 +37,8 @@ import {
 
 import { FloatingPanel } from "./../../../drawUI/FloatingPanel.js";
 
+import { buildWorkspaceDockHandlers } from "./../../../drawUI/utils/workspacePanelDock.js";
+
 import { CollapsiblePanel } from "./../../../drawUI/CollapsiblePanel.js";
 
 import { CollapsibleSection } from "./../../../drawUI/CollapsibleSection.js";
@@ -322,6 +324,11 @@ class NavigableList {
  * @property {boolean} [startMinimized] - Start in minimized state
  * @property {boolean} [closable] - Allow closing
  * @property {boolean} [resizable] - Allow resizing
+ * @property {object} [context] - App context (layoutManager resolved from context.layoutManager)
+ * @property {object} [layoutManager] - LayoutManager instance (overrides context.layoutManager)
+ * @property {string} [workspaceTabId] - When set with layoutManager, dock pins add this tab to a workspace
+ * @property {string} [workspaceTabLabel] - Tab label when docking (defaults to title or id)
+ * @property {{ left?: function, bottom?: function, right?: function }} [dock] - Custom dock handlers (overrides workspace wiring)
  */
 
 /**
@@ -502,16 +509,16 @@ export class Components {
    * Renders a Gantt chart.
    * @param {Object} context - The application context.
    * @param {Object} tasksData - The tasks data.
-   * @param {HTMLElement} container - The container element.
+   * @param {Object} [options] - Optional `{ operators, onTaskRowClick, shouldRunSelectTaskOnRowClick }` for row-click behavior.
    */
-  static gantt(context, tasksData) {
+  static gantt(context, tasksData, options) {
     const container = new UIDiv()
       .setStyle("position", ["relative"])
       .addClass("gantt");
 
     container.setId("GanttChartDIV");
 
-    const jsganttView = new GanttComponent(context);
+    const jsganttView = new GanttComponent(context, options);
 
     jsganttView.render(tasksData, container);
 
@@ -1003,7 +1010,29 @@ export class Components {
    * context.dom.appendChild(panel.dom);
    */
   static floatingPanel(options = {}) {
-    return new FloatingPanel(options);
+    const {
+      context,
+      layoutManager,
+      workspaceTabId,
+      workspaceTabLabel,
+      dock,
+      ...fpOptions
+    } = options;
+
+    const lm = layoutManager ?? context?.layoutManager;
+    const mergedDock =
+      dock ||
+      (lm && workspaceTabId
+        ? buildWorkspaceDockHandlers({
+            layoutManager: lm,
+            tabId: workspaceTabId,
+            tabLabel: workspaceTabLabel ?? fpOptions.title,
+          })
+        : undefined);
+
+    if (mergedDock) fpOptions.dock = mergedDock;
+
+    return new FloatingPanel(fpOptions);
   }
 
   /**

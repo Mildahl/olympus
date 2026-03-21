@@ -3,7 +3,9 @@
  */
 import operators from './operators.js';
 
-import UI from './ui.js';
+import projectUiClasses from './ui.js';
+
+import modelAnalyticsUiClasses from './modelAnalyticsUi.js';
 
 const ModuleDefinition = {
   id: 'bim.project',
@@ -12,7 +14,7 @@ const ModuleDefinition = {
   version: '1.0.0',
   dependsOn: ['world', 'code.scripting'],
   operators: operators,
-  ui: UI,
+  ui: [...projectUiClasses, ...modelAnalyticsUiClasses],
 };
 
 export default ModuleDefinition;

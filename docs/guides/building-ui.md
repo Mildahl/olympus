@@ -429,16 +429,20 @@ class MyAddonUI {
     }
 
     registerPanel() {
-        const layoutManager = this.context.editor?.layoutManager;
+        const editor = this.context.editor;
+        const layoutManager = editor ? editor.layoutManager : null;
         if (layoutManager) {
             layoutManager.addTab('right', 'myaddon', 'My Addon', this.panel);
         }
     }
 
     setupSignals() {
-        this.context.signals.myAddonStatusChanged?.add((data) => {
-            this.statusText.setValue(data.status);
-        });
+        const statusSignal = this.context.signals.myAddonStatusChanged;
+        if (statusSignal) {
+            statusSignal.add((data) => {
+                this.statusText.setValue(data.status);
+            });
+        }
     }
 
     refresh() {
@@ -446,7 +450,8 @@ class MyAddonUI {
     }
 
     destroy() {
-        const layoutManager = this.context.editor?.layoutManager;
+        const editor = this.context.editor;
+        const layoutManager = editor ? editor.layoutManager : null;
         if (layoutManager) {
             layoutManager.removeTab('right', 'myaddon');
         }
@@ -455,6 +460,14 @@ class MyAddonUI {
 
 export default MyAddonUI;
 ```
+
+## Workspace side panels (`TabPanel`)
+
+For UI that lives in the **left, right, or bottom** workspace tabs, use **`TabPanel`** (`import { TabPanel } from "../../drawUI/TabPanel.js"` or `DrawUI.tabPanel(...)`) with `context`, `tabId`, `tabLabel`, and usually `moduleId` so the world toolbar toggle is wired automatically. Set **`floatable: true`** to show **undock on the workspace tab label** (not inside the panel).
+
+Floating tool windows that should be able to **dock** into a workspace tab again can be created with **`UIComponents.floatingPanel({ context, workspaceTabId, workspaceTabLabel, title, icon, ... })`**.
+
+Details: [Using LayoutManager — TabPanel and floating workspace tabs](using-layoutmanager.md#tabpanel-and-floating-workspace-tabs), [UIComponents API — Panels](../api/ui/components.md#panels).
 
 ## DrawUI Low-Level API
 

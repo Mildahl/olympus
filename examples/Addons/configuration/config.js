@@ -19,7 +19,7 @@ const ApplicationConfig = {
   Shortcuts: Shortcuts,
   Settings: {
     save: true,
-    persistSettings: false,
+    persistSettings: true,
     devMode: false,
     amountTestCubes: 3,
     scriptBaseUrl: null,
@@ -40,6 +40,7 @@ const ApplicationConfig = {
 
 const UIConfig = {
   WorldComponent: WorldComponent,
+  showWelcomeScreen: true,
   theme: {
     default: "night",
     colors: {
@@ -107,7 +108,6 @@ const UIConfig = {
     },
   },
   language: "en",
-  showWelcomeScreen: false,
 };
 
 

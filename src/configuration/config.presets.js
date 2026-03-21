@@ -1,52 +1,138 @@
 /**
  * Module presets: role-based module configuration templates.
- * Used by Settings > Presets tab and by the Welcome screen dropdown.
+ * Used by the settings module header presets control and by the Welcome screen dropdown.
  */
 
 export const PRESET_IDS = {
+  archEng: "archEng",
+  constructionManager: "constructionManager",
+  quantitySurveyor: "quantitySurveyor",
+  developer: "developer",
   full: "full",
-  PythonMode: "PythonMode",
-  BIMManager: "BIMManager",
-  QuantitySurveyor: "QuantitySurveyor",
 };
 
+const ARCH_ENG_MODULE_IDS = [
+  "code.scripting",
+  "bim.project",
+  "bim.attribute",
+  "bim.pset",
+  "bim.model",
+  "configurator",
+  "settings",
+  "theme",
+  "world",
+  "world.history",
+  "world.layer",
+  "world.measure",
+  "world.navigation",
+  "world.notification",
+  "world.snap",
+  "world.spatial",
+];
+
+const CONSTRUCTION_MANAGER_MODULE_IDS = [
+  "code.scripting",
+  "bim.project",
+  "bim.attribute",
+  "bim.pset",
+  "bim.cost",
+  "bim.sequence",
+  "configurator",
+  "settings",
+  "theme",
+  "world",
+  "world.history",
+  "world.layer",
+  "world.measure",
+  "world.navigation",
+  "world.notification",
+  "world.spatial",
+  "world.timeline_player",
+  "world.viewpoints",
+  "world.animationPath",
+];
+
+const QUANTITY_SURVEYOR_MODULE_IDS = [
+  "code.scripting",
+  "bim.project",
+  "bim.attribute",
+  "bim.pset",
+  "bim.cost",
+  "configurator",
+  "settings",
+  "theme",
+  "world",
+  "world.history",
+  "world.layer",
+  "world.measure",
+  "world.navigation",
+  "world.notification",
+  "world.snap",
+  "world.spatial",
+];
+
+const DEVELOPER_MODULE_IDS = [
+  "code.scripting",
+  "bim.project",
+  "bim.model",
+  "bim.attribute",
+  "bim.pset",
+  "bim.cost",
+  "bim.sequence",
+  "configurator",
+  "settings",
+  "theme",
+  "world",
+  "world.history",
+  "world.layer",
+  "world.measure",
+  "world.navigation",
+  "world.notification",
+  "world.snap",
+  "world.spatial",
+  "world.viewpoints",
+  "world.animationPath",
+];
+
 export const PRESETS = {
+  [PRESET_IDS.archEng]: {
+    id: PRESET_IDS.archEng,
+    name: "Architecture & Engineering",
+    description:
+      "Model coordination, IFC, properties, sections, viewpoints, and presentation paths. No estimating, 4D playback, or scripting IDE.",
+    icon: "architecture",
+    moduleIds: ARCH_ENG_MODULE_IDS,
+  },
+  [PRESET_IDS.constructionManager]: {
+    id: PRESET_IDS.constructionManager,
+    name: "Construction Manager",
+    description:
+      "Projects, CPM-style sequencing, timelines, cost hooks, coordination, and field-oriented measurement. No animator paths or developer tools.",
+    icon: "construction",
+    moduleIds: CONSTRUCTION_MANAGER_MODULE_IDS,
+  },
+  [PRESET_IDS.quantitySurveyor]: {
+    id: PRESET_IDS.quantitySurveyor,
+    name: "Quantity Surveyor",
+    description:
+      "Takeoff-friendly viewing, properties, costing, schedules for quantity logic, and measurement. Lean chrome without basemaps or code tools.",
+    icon: "calculate",
+    moduleIds: QUANTITY_SURVEYOR_MODULE_IDS,
+  },
+  [PRESET_IDS.developer]: {
+    id: PRESET_IDS.developer,
+    name: "Developer",
+    description:
+      "Script editor, terminal, and core viewport workflows for extending or automating AECO without the full BIM estimating and scheduling stack.",
+    icon: "code",
+    moduleIds: DEVELOPER_MODULE_IDS,
+  },
   [PRESET_IDS.full]: {
     id: PRESET_IDS.full,
-    name: "Full",
-    description: "All modules active.",
+    name: "AECO (full)",
+    description: "All core modules enabled.",
     icon: "apps",
     moduleIds: null,
-  },
-  [PRESET_IDS.PythonMode]: {
-    id: PRESET_IDS.PythonMode,
-    name: "Python Mode",
-    description: "Scripting and terminal; no BIM/IFC (no ifcopenshell).",
-    icon: "code",
-    moduleIds: [
-      "configurator", "theme", "world", "world.notification", "world.layer", "world.spatial",
-      "world.viewpoints", "world.animationPath", "world.snap", "world.measure", "world.sectionbox",
-      "world.history", "world.navigation", "settings", "code.scripting", "code.terminal",
-    ],
-  },
-  [PRESET_IDS.BIMManager]: {
-    id: PRESET_IDS.BIMManager,
-    name: "BIM Manager",
-    description: "All modules except Costing and Planning.",
-    icon: "domain",
-    moduleIds: null,
-    disableIds: ["bim.cost", "bim.sequence"],
-  },
-  [PRESET_IDS.QuantitySurveyor]: {
-    id: PRESET_IDS.QuantitySurveyor,
-    name: "Quantity Surveyor",
-    description: "Costing and Planning focus; minimal other modules.",
-    icon: "calculate",
-    moduleIds: [
-      "configurator", "theme", "world", "world.notification", "world.layer", "world.spatial",
-      "world.snap", "world.measure", "world.history", "world.navigation",
-      "settings", "bim.project", "bim.attribute", "bim.pset", "bim.model", "bim.cost", "bim.sequence",
-    ],
   },
 };
 

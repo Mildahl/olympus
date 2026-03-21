@@ -62,6 +62,7 @@ const ApplicationConfig = {
 };
 
 const UIConfig = {
+  showWelcomeScreen: true,
   theme: {
     default: "night",
     colors: {
@@ -112,7 +113,6 @@ const UIConfig = {
     },
   },
   language: "en",
-  showWelcomeScreen: false,
   notifications: {
     showToasts: false,
   },

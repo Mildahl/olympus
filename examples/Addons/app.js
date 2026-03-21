@@ -83,12 +83,13 @@ const mobileCrane = simulation.tools.world.model.createMobileCrane({
 
 simulation.tools.world.scene.addToLayer(context, mobileCrane.object, "Logistics");
 
-const load4DModel = async () => {
+const load5DModel = async () => {
 
     const ROOT = window.__OLYMPUS_ROOT__ || '';
-    const path = ROOT + "/external/ifc/Works_Plan.ifc";
+    
+    const path = ROOT + "/external/ifc/5D.ifc";
 
-    await simulation.ops.execute("bim.load_model_from_path", context, path, null, "Works_Plan.ifc")
+    await simulation.ops.execute("bim.load_model_from_path", context, path, null, "5D.ifc")
 
 }
 
@@ -96,7 +97,7 @@ const loadGeometryData = async () => {
     await simulation.ops.execute(
         "bim.load_geometry_data",
         context,
-        "Works_Plan.ifc",
+        "5D.ifc",
         "Buildings",
         "ifcopenshell",
     );
@@ -104,7 +105,7 @@ const loadGeometryData = async () => {
 
 simulation.enablePython().then(() => {
     simulation.enableBIM().then(() => {
-        load4DModel().then(() => {
+        load5DModel().then(() => {
             loadGeometryData();
         });
     });

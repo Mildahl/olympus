@@ -2,6 +2,9 @@ export interface AECOContext {
   dom: HTMLElement | null;
   viewport: HTMLElement | null;
   root: unknown;
+  appModuleOrderIds?: string[];
+  layoutManager?: unknown;
+  ui?: unknown;
   config: {
     ui: Record<string, unknown>;
     app: Record<string, unknown>;
@@ -180,6 +183,9 @@ export interface CoreNamespace {
   BIM: unknown;
   Scheduling: unknown;
   Configurator: unknown;
+  ModulePreset: {
+    applyModulePresetAndReload(context: AECOContext, presetKey: string): { ok: boolean };
+  };
 }
 
 export interface DataStore {

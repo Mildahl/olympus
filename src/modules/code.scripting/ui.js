@@ -23,6 +23,8 @@ class ScriptsUI extends TabPanel {
       tabLabel: 'Scripts',
       icon: 'code',
       title: 'Scripts',
+      showHeader: false,
+      floatable: true,
       panelStyles: {
         minWidth: '240px',
       },

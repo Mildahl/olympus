@@ -14,6 +14,8 @@ const { Signal } = signals;
  * @property {Array} availableModels - List of available models
  * @property {Object|null} activeWorkSchedule - Currently active work schedule
  * @property {Object|null} activeElement - Currently selected element
+ * @property {string} geometryBackend - Preferred backend for IFC mesh generation
+ * @property {boolean} geometryLoadInProgress - True while loadGeometryData is running
  */
 
 /**
@@ -66,10 +68,10 @@ class Context {
         this.dom = null;
 
         /**
-         * Localized strings instance
-         * @type {Object|null}
+         * Localized strings (default until setConfig / setLanguage runs)
+         * @type {import("../ui/language/Strings.js").Strings}
          */
-        this.strings = null;
+        this.strings = new Strings({ language: 'en' });
 
         /**
          * Application configuration
@@ -100,6 +102,7 @@ class Context {
             activeWorkSchedule: null,
             activeElement: null,
             geometryBackend: "ifcopenshell",
+            geometryLoadInProgress: false,
         }
 
         this._baseListeners();
@@ -206,8 +209,10 @@ class Context {
             refreshBIMLayers: new Signal(),
             newIFCModel: new Signal(),
             activeModelChanged: new Signal(),
+            bimIfcModelAnalyticsContextChanged: new Signal(),
             activeTypeChanged: new Signal,
             newIFCGeometry: new Signal(),
+            bimGeometryLoadProgress: new Signal(),
             enableEditingAttributes: new Signal(),
 
             elementCreated: new Signal(),
@@ -330,13 +335,12 @@ class Context {
     }
 
     setLanguage(language) {
-        if (!language && !this.config.ui.language) return;
+        const resolved =
+            language ||
+            this.config.ui.language ||
+            'en';
 
-        if (!language && this.config.ui.language) {
-            language = this.config.ui.language;
-        }
-
-        this.strings = new Strings({ language: language });
+        this.strings = new Strings({ language: resolved });
     }
 
     _printWorldStructure() {

@@ -32,13 +32,14 @@ import {
   UIH6,
   UIParagraph,
   UISpinner,
-  UISplash,
   UITooltip,
   UILabel,
   UIForm,
 } from "./ui.js";
 
 import { FloatingPanel } from "./FloatingPanel.js";
+
+import { buildWorkspaceDockHandlers } from "./utils/workspacePanelDock.js";
 
 import { CollapsiblePanel } from "./CollapsiblePanel.js";
 
@@ -424,6 +425,11 @@ class NavigableList {
  * @property {boolean} [startMinimized] - Start in minimized state
  * @property {boolean} [closable] - Allow closing
  * @property {boolean} [resizable] - Allow resizing
+ * @property {object} [context] - App context (layoutManager)
+ * @property {object} [layoutManager] - LayoutManager instance
+ * @property {string} [workspaceTabId] - Dock targets: add as this tab id in workspace
+ * @property {string} [workspaceTabLabel] - Tab label when docking
+ * @property {{ left?: function, bottom?: function, right?: function }} [dock] - Custom dock handlers
  */
 
 /**
@@ -590,46 +596,8 @@ export class DrawUI {
     return new UISpinner(options);
   }
 
-  /**
-   * Blender-style splash screen during load. Uses /external/ifc/splash.png by default.
-   * @param {Object} options - { imageUrl?: string, text?: string }
-   * @returns {UISplash}
-   */
-  static splash(options = {}) {
-    return new UISplash(options);
-  }
-
   static tooltip(text = '', options = {}) {
     return new UITooltip(text, options);
-  }
-
-  /**
-   * Creates a node editor component.
-   * @param {Object} nodes - The nodes configuration.
-   * @returns {Nodes} The nodes component.
-   */
-  static nodes(nodes) {
-    return new Nodes(nodes);
-  }
-
-  /**
-   * Renders a Gantt chart.
-   * @param {Object} context - The application context.
-   * @param {Object} tasksData - The tasks data.
-   * @param {HTMLElement} container - The container element.
-   */
-  static gantt(context, tasksData) {
-    const container = new UIDiv()
-      .setStyle("position", ["relative"])
-      .addClass("gantt");
-
-    container.setId("GanttChartDIV");
-
-    const jsganttView = new GanttComponent(context);
-
-    jsganttView.render(tasksData, container);
-
-    return container;
   }
 
   /**
@@ -1180,7 +1148,29 @@ export class DrawUI {
    * context.dom.appendChild(panel.dom);
    */
   static floatingPanel(options = {}) {
-    return new FloatingPanel(options);
+    const {
+      context,
+      layoutManager,
+      workspaceTabId,
+      workspaceTabLabel,
+      dock,
+      ...fpOptions
+    } = options;
+
+    const lm = layoutManager ?? context?.layoutManager;
+    const mergedDock =
+      dock ||
+      (lm && workspaceTabId
+        ? buildWorkspaceDockHandlers({
+            layoutManager: lm,
+            tabId: workspaceTabId,
+            tabLabel: workspaceTabLabel ?? fpOptions.title,
+          })
+        : undefined);
+
+    if (mergedDock) fpOptions.dock = mergedDock;
+
+    return new FloatingPanel(fpOptions);
   }
 
   /**

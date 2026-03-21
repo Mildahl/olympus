@@ -516,18 +516,52 @@ UIComponents.floatingPanel(options?: FloatingPanelOptions): FloatingPanel
 | `startMinimized` | boolean | `false` | Start minimized |
 | `closable` | boolean | `true` | Show close button |
 | `resizable` | boolean | `true` | Allow resizing |
+| `context` | object | — | App context; used with `workspaceTabId` to resolve `layoutManager` |
+| `layoutManager` | object | — | Explicit layout manager (overrides `context.layoutManager`) |
+| `workspaceTabId` | string | — | With a layout manager: pin buttons dock into this workspace tab id |
+| `workspaceTabLabel` | string | — | Tab label when docking (defaults to `title` or id) |
+| `dock` | object | — | Optional `{ left?, bottom?, right? }` handlers `(panel) => void` to override default dock behavior |
+
+When `workspaceTabId` and a layout manager are provided, the header pin controls move the panel body into the left/right/bottom workspace as that tab. Undock is the **workspace tab** open-in-new control (same as `TabPanel` with `floatable: true`), not a row inside the panel body.
 
 **Example:**
 ```javascript
 const panel = UIComponents.floatingPanel({
     title: "Inspector",
     icon: "info",
-    startMinimized: false
+    context,
+    workspaceTabId: "my.addon.inspector",
+    workspaceTabLabel: "Inspector",
 });
 panel.setContent(contentElement);
-panel.setPosition({ top: 100, left: 100 });
-document.body.appendChild(panel.dom);
+document.getElementById("Windows")?.appendChild(panel.dom);
 ```
+
+---
+
+### tabPanel(options) — DrawUI
+
+Workspace-integrated panel with optional **tab-strip float**. Not on `UIComponents`; use **`DrawUI.tabPanel`** from the drawUI bundle or import `TabPanel` from `drawUI/TabPanel.js`.
+
+```javascript
+DrawUI.tabPanel(options?: TabPanelOptions): TabPanel
+```
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `context` | object | Required for `layoutManager` |
+| `position` | `'left'` \| `'right'` \| `'bottom'` | Workspace |
+| `tabId` | string | Unique tab id |
+| `tabLabel` | string | Tab title in strip |
+| `title` | string | In-panel header title |
+| `icon` | string | Material icon (header) |
+| `moduleId` | string | World module id for toolbar toggle (`bindToggleForModule`) |
+| `toggleElementId` | string | Explicit toggle element id |
+| `floatable` | boolean | Undock control on the **workspace tab label** |
+| `showHeader` | boolean | Inner panel header (default `true`) |
+| `autoShow` | boolean | Call `show()` on construct |
+
+See [Using LayoutManager](../../guides/using-layoutmanager.md#tabpanel-and-floating-workspace-tabs).
 
 ---
 
@@ -590,6 +624,8 @@ tabs.addTab("general", "General", generalContent);
 tabs.addTab("advanced", "Advanced", advancedContent);
 tabs.select("general");
 ```
+
+Optional fifth argument to `addTab` (used when driving tabs via `LayoutManager.addTab`): `{ floatable: true }` adds a tab-strip undock control. Prefer **`TabPanel` + `floatable`** for app modules so float handlers register automatically.
 
 ## Complex Components
 
@@ -698,13 +734,27 @@ const sheet = UIComponents.spreadsheet({
 
 ---
 
-### gantt(context, tasksData)
+### gantt(context, tasksData, options?)
 
 Renders a Gantt chart.
 
 ```javascript
-UIComponents.gantt(context: Context, tasksData: object): UIDiv
+UIComponents.gantt(
+  context: Context,
+  tasksData: object,
+  options?: {
+    operators?: { execute: Function },
+    onTaskRowClick?: (taskId: string | number) => void,
+    shouldRunSelectTaskOnRowClick?: () => boolean
+  }
+): UIDiv
 ```
+
+Optional `options`:
+
+- **`onTaskRowClick`** — If provided, row clicks invoke this with the task id instead of the default operator path (host can implement clear-then-select or other behavior).
+- **`operators`** — Used for default row-click handling (`bim.select_task`) when `onTaskRowClick` is omitted.
+- **`shouldRunSelectTaskOnRowClick`** — When `onTaskRowClick` is omitted, row clicks run the operator only if this returns `true` when provided; if omitted, row clicks run whenever `operators` is available.
 
 ---
 

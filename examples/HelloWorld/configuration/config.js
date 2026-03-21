@@ -40,6 +40,7 @@ const ApplicationConfig = {
 
 const UIConfig = {
   WorldComponent: WorldComponent,
+  showWelcomeScreen: true,
   theme: {
     default: "night",
     colors: {
@@ -107,7 +108,6 @@ const UIConfig = {
     },
   },
   language: "en",
-  showWelcomeScreen: false,
 };
 
 

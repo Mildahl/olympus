@@ -1,6 +1,8 @@
 import Paths from "../../utils/paths.js";
 import { Components as UIComponents } from "../../ui/Components/Components.js";
 
+import { TabPanel } from "../../../drawUI/TabPanel.js";
+
 class SpatialManagerUI {
   constructor({ context, operators }) {
     this.context = context;
@@ -13,47 +15,28 @@ class SpatialManagerUI {
 
     this.tabLabel = "Spatial structure";
 
-    this.panel = UIComponents.div();
+    this._tabPanel = new TabPanel({
+      context,
+      operators,
+      position: "left",
+      tabId: this.tabId,
+      tabLabel: this.tabLabel,
+      title: "Spatial Structure",
+      icon: "account_tree",
+      showHeader: false,
+      moduleId: "world.spatial",
+      floatable: true,
+      panelStyles: { "min-width": "0" },
+    });
 
-    this.panel.addClass("Panel");
+    this._tabPanel.panel.addClass("Panel");
+    this._tabPanel.panel.setId("SpatialManagerPanel");
+    this._tabPanel.content.setStyle("overflow-x", ["hidden"]);
 
-    this.panel.setStyle("display", ["flex"]);
-
-    this.panel.setStyle("flex-direction", ["column"]);
-
-    this.panel.setStyle("height", ["100%"]);
-
-    this.panel.setStyle("overflow", ["hidden"]);
-
-    this.panel.setStyle("min-width", ["0"]);
-
-    this.panel.dom.id = "SpatialManagerPanel";
-
-    this.header = UIComponents.div();
-
-    this.header.addClass("PanelHeader");
-
-    this.header.setStyle("flex-shrink", ["0"]);
-
-    this.content = UIComponents.div();
-
-    this.content.addClass("PanelContent");
-
-    this.content.setStyle("flex", ["1"]);
-
-    this.content.setStyle("overflow-y", ["auto"]);
-
-    this.content.setStyle("overflow-x", ["hidden"]);
-
-    this.content.setStyle("min-height", ["0"]);
-
-    this.footer = UIComponents.row();
-
-    this.footer.addClass("PanelFooter");
-
-    this.footer.setStyle("flex-shrink", ["0"]);
-
-    this.panel.add(this.header, this.content, this.footer);
+    this.panel = this._tabPanel.panel;
+    this.header = this._tabPanel.header;
+    this.content = this._tabPanel.content;
+    this.footer = this._tabPanel.footer;
 
     this.editor = context.editor;
 
@@ -71,21 +54,6 @@ class SpatialManagerUI {
 
     this.draw();
 
-    const lm = context.layoutManager;
-
-    if (lm) {
-      lm.ensureTab("left", this.tabId, this.tabLabel, this.panel, {
-        open: false,
-        replace: false,
-      });
-      this._bindCleanup = lm.bindToggleForModule(
-        "world.spatial",
-        "left",
-        this.tabId,
-      );
-      this._isShown = true;
-    }
-
     this.listen(context, operators);
   }
 
@@ -99,63 +67,8 @@ class SpatialManagerUI {
     );
   }
 
-  _createPanelHeader(title, iconName, actions = []) {
-    const headerRow = UIComponents.row()
-      .addClass("fill-parent")
-      .setStyle("justify-content", ["space-between"])
-      .setStyle("align-items", ["center"])
-      .setStyle("padding", ["0.5rem 0.75rem"]);
-
-    const headerLeft = UIComponents.row()
-      .setStyle("align-items", ["center"])
-      .setStyle("gap", ["0.5rem"]);
-
-    if (iconName) {
-      const icon = UIComponents.icon(iconName);
-
-      icon.setStyle("font-size", ["1.2rem"]);
-
-      headerLeft.add(icon);
-    }
-
-    const titleText = UIComponents.text(title);
-
-    titleText.setStyle("font-weight", ["600"]);
-
-    titleText.setStyle("font-size", ["0.9rem"]);
-
-    headerLeft.add(titleText);
-
-    headerRow.add(headerLeft);
-
-    if (actions.length > 0) {
-      const actionsRow = UIComponents.row().setStyle("gap", ["0.5rem"]);
-
-      for (const action of actions) {
-        actionsRow.add(action);
-      }
-
-      headerRow.add(actionsRow);
-    }
-
-    return headerRow;
-  }
-
   show() {
-    const lm = this.context?.layoutManager;
-
-    const panelWorkspace = this.context.ui?.workspaces?.[this.position];
-
-    if (lm && panelWorkspace && typeof panelWorkspace.select === "function") {
-      lm.ensureTab(this.position, this.tabId, this.tabLabel, this.panel, {
-        open: false,
-        replace: false,
-      });
-
-      lm.openWorkspace(this.position);
-
-      panelWorkspace.select(this.tabId);
-    }
+    this._tabPanel.show();
 
     this.refreshTree();
 
@@ -173,9 +86,9 @@ class SpatialManagerUI {
   }
 
   destroy() {
-    if (this._bindCleanup) {
-      this._bindCleanup();
-      this._bindCleanup = null;
+    if (this._tabPanel) {
+      this._tabPanel.destroy();
+      this._tabPanel = null;
     }
   }
 
@@ -229,12 +142,6 @@ class SpatialManagerUI {
 
   draw() {
     this.content.clear();
-
-    this.header.clear();
-
-    const headerRow = this._createPanelHeader("Spatial Structure", "account_tree");
-
-    this.header.add(headerRow);
 
     this.footer.clear();
 

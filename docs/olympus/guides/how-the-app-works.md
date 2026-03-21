@@ -2,9 +2,11 @@
 
 This guide describes the Olympus application architecture: the entrypoint, Core, tools, operators, and UI.
 
-## Entrypoint: `aeco.js`
+## Entrypoint: `src/aeco.js`
 
-The application starts from **`olympus/aeco.js`**, which exports the **`AECO`** class and the shared **`context`** and **`Core`**.
+The application starts from **`src/aeco.js`**, which exports the **`AECO`** class and the shared **`context`** and **`Core`**.
+
+In tutorials the **`AECO` instance** is often stored in a variable named `simulation`; the following steps use that name.
 
 1. **Constructor:** `new AECO(container)`  
    - Stores `context`, `tools`, `operators` (`ops`), `data`, `core`, `moduleRegistry` on the instance.  
@@ -21,7 +23,7 @@ So: **AECO** wires the **Editor** (3D scene, history, sidebar), **Core** (namesp
 
 ## Core
 
-**Core** is a single object from `olympus/core/index.js`. Each key is a namespace (e.g. `Init`, `Viewpoint`, `BIM`) whose value is a set of functions. Operators and the app call these functions to perform actions (e.g. create a viewpoint, load a model). Core does not depend on the DOM; it is the logical API layer. See [Core API](core-api.md) for the list of namespaces and functions.
+**Core** is a single object from `src/core/index.js`. Each key is a namespace (e.g. `Init`, `Viewpoint`, `BIM`) whose value is a set of functions. Operators and the app call these functions to perform actions (e.g. create a viewpoint, load a model). Core does not depend on the DOM; it is the logical API layer. See [Core API](core-api.md) for the list of namespaces and functions.
 
 ## Tools
 
@@ -46,7 +48,7 @@ Operators typically call **Core** and/or **tools** and return a result (e.g. `{ 
 
 ## UI
 
-The **UI** is built by `olympus/ui/index.js` (**`UI`** class). It reads `context.config.ui` and the **UserInterface** model (from `olympus/ui/WorldModel/UserInterface.js` and related config). It draws the base layout (viewport, sidebars, toolbars) and shows/hides sections based on **active module IDs**. Each active module can contribute **UI classes** (in its `ui` array); the registry instantiates them with `{ context, operators }` when the module is activated. So the visible UI is a combination of the base layout and the UI components from active core modules and addons.
+The **UI** is built by `src/ui/index.js` (**`UI`** class). It reads `context.config.ui` and the **UserInterface** model (from `src/ui/WorldModel/UserInterface.js` and related config). It draws the base layout (viewport, sidebars, toolbars) and shows/hides sections based on **active module IDs**. Each active module can contribute **UI classes** (in its `ui` array); the registry instantiates them with `{ context, operators }` when the module is activated. So the visible UI is a combination of the base layout and the UI components from active core modules and addons.
 
 ## Data flow (summary)
 

@@ -81,6 +81,10 @@ class CodeEditorTool {
     return CodeEditorTool.monacoEditor.getEditor();
   }
 
+  static layoutEditor() {
+    CodeEditorTool.monacoEditor.layout();
+  }
+
   static getEditorContainer() {
     return CodeEditorTool.monacoEditor._editorContainer;
   }

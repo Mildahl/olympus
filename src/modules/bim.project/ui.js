@@ -1,8 +1,8 @@
 import { Components as UIComponents } from "../../ui/Components/Components.js";
 
-import { UIHelper } from "../../ui/UIHelper.js";
+import { TabPanel } from "../../../drawUI/TabPanel.js";
 
-import AECO_tools from "../../tool/index.js";
+import { UIHelper } from "../../ui/UIHelper.js";
 
 import Paths from "../../utils/paths.js";
 
@@ -48,51 +48,30 @@ class ProjectUI {
 
     this.tabLabel = "IFC models";
 
-    this.panel = UIComponents.div();
+    this._tabPanel = new TabPanel({
+      context,
+      operators,
+      position: "left",
+      tabId: this.tabId,
+      tabLabel: this.tabLabel,
+      title: "IFC Building Models",
+      icon: "domain",
+      showHeader: false,
+      moduleId: "bim.project",
+      floatable: true,
+      panelStyles: { "min-width": "0" },
+    });
 
-    this.panel.addClass("Panel");
+    this._tabPanel.panel.addClass("Panel");
+    this._tabPanel.panel.setId("BimProjectIFCPanel");
+    this._tabPanel.content.setStyle("overflow-x", ["hidden"]);
 
-    this.panel.setStyle("display", ["flex"]);
-
-    this.panel.setStyle("flex-direction", ["column"]);
-
-    this.panel.setStyle("height", ["100%"]);
-
-    this.panel.setStyle("overflow", ["hidden"]);
-
-    this.panel.setStyle("min-width", ["0"]);
-
-    this.header = UIComponents.div();
-
-    this.header.addClass("PanelHeader");
-
-    this.header.setStyle("flex-shrink", ["0"]);
-
-    this.content = UIComponents.div();
-
-    this.content.addClass("PanelContent");
-
-    this.content.setStyle("flex", ["1"]);
-
-    this.content.setStyle("overflow-y", ["auto"]);
-
-    this.content.setStyle("overflow-x", ["hidden"]);
-
-    this.content.setStyle("min-height", ["0"]);
-
-    this.footer = UIComponents.row();
-
-    this.footer.addClass("PanelFooter");
-
-    this.footer.setStyle("flex-shrink", ["0"]);
-
-    this.panel.add(this.header, this.content, this.footer);
+    this.panel = this._tabPanel.panel;
+    this.header = this._tabPanel.header;
+    this.content = this._tabPanel.content;
+    this.footer = this._tabPanel.footer;
 
     this.projectsList = null;
-
-    this.modelOverviewSection = null;
-
-    this.modelOverviewContent = null;
 
     this.progressContainer = null;
 
@@ -106,61 +85,11 @@ class ProjectUI {
 
     this.baseUI(context, operators);
 
-    context.layoutManager?.ensureTab("left", this.tabId, this.tabLabel, this.panel, {
-      open: false,
-      replace: false,
-    });
-
     this.listen(context, operators);
   }
 
-  _createPanelHeader(title, iconName, actions = []) {
-    const headerRow = UIComponents.row()
-      .addClass("fill-parent")
-      .setStyle("justify-content", ["space-between"])
-      .setStyle("align-items", ["center"])
-      .setStyle("padding", ["0.5rem 0.75rem"]);
-
-    const headerLeft = UIComponents.row()
-      .setStyle("align-items", ["center"])
-      .setStyle("gap", ["0.5rem"]);
-
-    if (iconName) {
-      const icon = UIComponents.icon(iconName);
-
-      icon.setStyle("font-size", ["1.2rem"]);
-
-      headerLeft.add(icon);
-    }
-
-    const titleText = UIComponents.text(title);
-
-    titleText.setStyle("font-weight", ["600"]);
-
-    titleText.setStyle("font-size", ["0.9rem"]);
-
-    headerLeft.add(titleText);
-
-    headerRow.add(headerLeft);
-
-    if (actions.length > 0) {
-      const actionsRow = UIComponents.row().setStyle("gap", ["0.5rem"]);
-
-      for (const action of actions) {
-        actionsRow.add(action);
-      }
-
-      headerRow.add(actionsRow);
-    }
-
-    return headerRow;
-  }
-
   baseUI(context, operators) {
-    
-    this.content.addClass("Column")
-
-    this.header.add(this._createPanelHeader("IFC Building Models", "domain"));
+    this.content.addClass("Column");
 
     const dragAndDrop = this.openByFileDrop(context, operators);
 
@@ -172,8 +101,6 @@ class ProjectUI {
 
     this.drawLoadedModels(context, operators);
 
-    this.drawModelOverview(context, operators);
-
     this.footer.add( this.drawQuickActions(context, operators) );
 
   }
@@ -183,10 +110,51 @@ class ProjectUI {
       this.refreshModelsList(context, operators);
     });
 
-    context.signals.activeModelChanged.add(async ({ FileName }) => {
+    context.signals.activeModelChanged.add(() => {
       this.refreshModelsList(context, operators);
+    });
 
-      await this.updateModelOverview(FileName);
+    context.signals.bimGeometryLoadProgress.add((payload) => {
+      if (!payload) return;
+
+      if (payload.category && payload.category !== "geometry") {
+        return;
+      }
+
+      const phase = payload.phase;
+
+      if (phase === "start") {
+        this.showProgress(payload.message, payload.percent);
+
+        return;
+      }
+
+      if (phase === "update") {
+        this.updateProgress(payload.message, payload.percent);
+
+        return;
+      }
+
+      if (phase === "complete") {
+        this.updateProgress(payload.message, payload.percent);
+
+        window.setTimeout(() => {
+          this.hideProgress();
+        }, 600);
+
+        return;
+      }
+
+      if (phase === "error") {
+        this.hideProgress();
+
+        const errorDetail = payload.message ? payload.message : "Unknown error";
+
+        operators.execute("world.new_notification", context, {
+          message: `Failed to load geometry: ${errorDetail}`,
+          type: "error",
+        });
+      }
     });
   }
 
@@ -275,42 +243,15 @@ class ProjectUI {
 
     if (context.ifc.activeModel === loadedModelName) item.addClass("Active");
 
-    let geometryLoadInProgress = false;
-
     const runGeometryLoad = async (backend) => {
-      const isLite = backend === "ifc-lite";
-
-      const geometryProgressText = isLite
-        ? `Loading ${loadedModelName} geometry with ifc-lite...`
-        : `Loading ${loadedModelName} geometry...`;
-
-      geometryLoadInProgress = true;
-
-      this.showProgress(geometryProgressText, 8);
-
-      const stopPulse = this.startProgressPulse(geometryProgressText, 12, 92);
-
       item.remove(loadGeometryOp);
 
       item.remove(loadLiteGeometryOp);
 
       try {
         await operators.execute("bim.load_geometry_data", context, loadedModelName, "Buildings", backend);
-
-        stopPulse(100, `Geometry loaded for ${loadedModelName}`);
-
-
-        setTimeout(() => {
-          this.hideProgress();
-        }, 600);
-      } catch (err) {
-        stopPulse(0, "Geometry loading failed");
-
-        this.hideProgress();
-
-        operators.execute("world.new_notification", context, { message: `Failed to load geometry: ${err.message}`, type: "error" });
-      } finally {
-        geometryLoadInProgress = false;
+      } catch {
+        return;
       }
     };
 
@@ -328,7 +269,6 @@ class ProjectUI {
       operatorId: "bim.load_geometry_data",
       getArgs: () => [loadedModelName, "Buildings", "ifcopenshell"],
       lockedTooltip: BIM_IFC_OPERATOR_LOCKED_TOOLTIP,
-      extraReadyCheck: () => !geometryLoadInProgress,
       onLocked: onGeometryLocked,
       onClick: async () => {
         await runGeometryLoad("ifcopenshell");
@@ -342,7 +282,6 @@ class ProjectUI {
       operatorId: "bim.load_geometry_data",
       getArgs: () => [loadedModelName, "Buildings", "ifc-lite"],
       lockedTooltip: BIM_IFC_OPERATOR_LOCKED_TOOLTIP,
-      extraReadyCheck: () => !geometryLoadInProgress,
       onLocked: onGeometryLocked,
       onClick: async () => {
         await runGeometryLoad("ifc-lite");
@@ -398,6 +337,8 @@ class ProjectUI {
           this.hideProgress();
         } catch (err) {
           this.hideProgress();
+
+          console.warn("Failed to load model:", err);
 
           operators.execute("world.new_notification", context, { message: `Failed to load model: ${err.message}`, type: "error" });
         }
@@ -576,36 +517,6 @@ class ProjectUI {
     return parsed;
   }
 
-  startProgressPulse(text, start = 12, max = 92) {
-    this.stopProgressPulse();
-
-    let current = this.normalizeProgress(start);
-
-    const limit = this.normalizeProgress(max);
-
-    this.updateProgress(text, current);
-
-    this.progressPulseTimer = window.setInterval(() => {
-      const remaining = limit - current;
-
-      if (remaining <= 0.5) {
-        current = limit;
-      } else {
-        current = current + Math.max(0.8, remaining * 0.08);
-      }
-
-      this.updateProgress(text, current);
-    }, 160);
-
-    return (finalProgress = null, finalText = text) => {
-      this.stopProgressPulse();
-
-      if (typeof finalProgress === "number") {
-        this.updateProgress(finalText, finalProgress);
-      }
-    };
-  }
-
   stopProgressPulse() {
     if (this.progressPulseTimer === null) return;
 
@@ -721,145 +632,6 @@ class ProjectUI {
 
     this.content.add( section );
   
-  }
-
-  drawModelOverview(context, operators) {
-    this.modelOverviewSection = UIComponents.collapsibleSection({
-      title: 'Model Analytics',
-      icon: 'analytics',
-      collapsed: false
-    });
-
-    this.modelOverviewContent = UIComponents.column().gap("var(--phi-0-5)");
-    
-    const emptyState = UIComponents.text("Select a model to view its overview");
-
-    emptyState.setStyle("font-size", ["12px"]);
-
-    emptyState.setStyle("color", ["var(--theme-text-light)"]);
-
-    emptyState.setStyle("padding", ["var(--phi-0-5)"]);
-
-    this.modelOverviewContent.add(emptyState);
-
-    this.modelOverviewSection.setContent(this.modelOverviewContent);
-
-    this.content.add(this.modelOverviewSection);
-  }
-
-  async updateModelOverview(modelName) {
-    if (!this.modelOverviewContent) return;
-    
-    this.modelOverviewContent.clear();
-
-    if (!modelName) {
-      const emptyState = UIComponents.text("Select a model to view its overview");
-
-      emptyState.setStyle("font-size", ["12px"]);
-
-      emptyState.setStyle("color", ["var(--theme-text-light)"]);
-
-      emptyState.setStyle("padding", ["var(--phi-0-5)"]);
-
-      this.modelOverviewContent.add(emptyState);
-
-      return;
-    }
-
-    const loadingText = UIComponents.text("Loading...");
-
-    loadingText.setStyle("font-size", ["12px"]);
-
-    loadingText.setStyle("color", ["var(--theme-text-light)"]);
-
-    this.modelOverviewContent.add(loadingText);
-
-    try {
-      const overview = await AECO_tools.bim.project.getModelOverview(modelName);
-
-      this.modelOverviewContent.clear();
-
-      const camelToTitle = (str) => str.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()).trim();
-
-      const statsGrid = UIComponents.row();
-
-      statsGrid.setStyle("display", ["grid"]);
-
-      statsGrid.setStyle("grid-template-columns", ["repeat(3, 1fr)"]);
-
-      statsGrid.setStyle("gap", ["var(--phi-0-5)"]);
-
-      for (const [key, value] of Object.entries(overview)) {
-        const count = Array.isArray(value) ? value.length : 0;
-
-        const label = camelToTitle(key);
-        
-        const item = UIComponents.div().addClass("SquareOperator");
-
-        item.add(UIComponents.text(label));
-
-        item.add(UIComponents.span(String(count)).addClass("GameNumber"));
-
-        statsGrid.add(item);
-      }
-
-      this.modelOverviewContent.add(statsGrid);
-
-      if (overview.costSchedules && overview.costSchedules.length > 0) {
-        const costSection = UIComponents.collapsibleSection({
-          title: `Cost Schedules (${overview.costSchedules.length})`,
-          collapsed: true
-        });
-
-        const costList = UIComponents.list();
-
-        for (const cost of overview.costSchedules) {
-          const item = UIComponents.listItem().addClass("justify-between");
-
-          item.add(UIComponents.text(cost.Name || "Unnamed"));
-
-          item.add(UIComponents.badge(cost.type?.replace("Ifc", "") || ""));
-
-          costList.add(item);
-        }
-
-        costSection.setContent(costList);
-
-        this.modelOverviewContent.add(costSection);
-      }
-
-      if (overview.workSchedules && overview.workSchedules.length > 0) {
-        const scheduleSection = UIComponents.collapsibleSection({
-          title: `Work Schedules (${overview.workSchedules.length})`,
-          collapsed: true
-        });
-
-        const scheduleList = UIComponents.list();
-
-        for (const schedule of overview.workSchedules) {
-          const item = UIComponents.listItem().addClass("justify-between");
-
-          item.add(UIComponents.text(schedule.Name || "Unnamed"));
-
-          item.add(UIComponents.badge(schedule.type?.replace("Ifc", "") || ""));
-
-          scheduleList.add(item);
-        }
-
-        scheduleSection.setContent(scheduleList);
-
-        this.modelOverviewContent.add(scheduleSection);
-      }
-
-    } catch (err) {
-      this.modelOverviewContent.clear();
-
-      const errorText = UIComponents.text("Failed to load overview");
-
-      errorText.setStyle("color", ["var(--theme-error)"]);
-
-      this.modelOverviewContent.add(errorText);
-    }
   }
 
   drawQuickActions(context, operators) {

@@ -172,6 +172,12 @@ class BIM_EditProjectName extends Operator {
 
       this.context.signals.projectChanged.dispatch({ name: this.new_name });
 
+      const analyticsSignal = this.context.signals.bimIfcModelAnalyticsContextChanged;
+
+      if (analyticsSignal && typeof analyticsSignal.dispatch === "function") {
+        analyticsSignal.dispatch({ fileName: this.new_name });
+      }
+
       return { status: "FINISHED", result };
     }
 
@@ -246,13 +252,13 @@ class BIM_LoadGeometryData extends Operator {
       }
 
     poll() {
-      const canExecute = this.modelName && AECO_tools.code.pyWorker.initialized.bim;
+      const bimReady = AECO_tools.code.pyWorker.initialized.bim;
 
-      if (! canExecute) {
-        console.warn("[bim.load_geometry_data]Cannot execute operator,", { modelName: this.modelName, bimInitialized: AECO_tools.code.pyWorker.initialized.bim });
-      }
+      const notBlocked = !this.context.ifc.geometryLoadInProgress;
 
-        return canExecute;
+      const canExecute = Boolean(this.modelName && bimReady && notBlocked);
+
+      return canExecute;
     }
 
     async execute() {

@@ -24,6 +24,8 @@ import { ViewportPathtracer } from './editor/Viewport.Pathtracer.js';
 
 import FocusManager from '../../utils/FocusManager.js';
 
+import { attachViewportLoadStatusStrip } from './ViewportLoadStatusStrip.js';
+
 function Viewport( context, ops, parent ) {
 
 	const editor = context.editor;
@@ -43,6 +45,10 @@ function Viewport( context, ops, parent ) {
 	let pmremGenerator = null;
 
 	let pathtracer = null;
+
+	let lastViewportSyncWidth = 0;
+
+	let lastViewportSyncHeight = 0;
 
 	const camera = editor.camera;
 
@@ -274,6 +280,36 @@ function Viewport( context, ops, parent ) {
 			if ( cameraHelper ) cameraHelper.update();
 
 		}
+
+	}
+
+	function syncViewportSizeFromContainer() {
+
+		if ( renderer === null ) return;
+
+		const width = container.dom.offsetWidth;
+
+		const height = container.dom.offsetHeight;
+
+		if ( width <= 0 || height <= 0 ) return;
+
+		if ( width === lastViewportSyncWidth && height === lastViewportSyncHeight ) return;
+
+		lastViewportSyncWidth = width;
+
+		lastViewportSyncHeight = height;
+
+		renderer.setSize( width, height );
+
+		if ( pathtracer !== null ) {
+
+			pathtracer.setSize( width, height );
+
+		}
+
+		updateAspectRatio();
+
+		render();
 
 	}
 
@@ -518,6 +554,10 @@ function Viewport( context, ops, parent ) {
 
 		renderer.setSize( container.dom.offsetWidth, container.dom.offsetHeight );
 
+		lastViewportSyncWidth = container.dom.offsetWidth;
+
+		lastViewportSyncHeight = container.dom.offsetHeight;
+
 		pmremGenerator = new THREE.PMREMGenerator( renderer );
 
 		pmremGenerator.compileEquirectangularShader();
@@ -529,22 +569,10 @@ function Viewport( context, ops, parent ) {
 		editor.renderer = renderer;
 
 		if ( window.ResizeObserver ) {
-			const resizeObserver = new ResizeObserver( ( entries ) => {
-				for ( const entry of entries ) {
-					const { width, height } = entry.contentRect;
+			const resizeObserver = new ResizeObserver( function () {
 
-					if ( renderer && ( width !== renderer.domElement.width || height !== renderer.domElement.height ) ) {
-						renderer.setSize( width, height );
+				syncViewportSizeFromContainer();
 
-						if ( pathtracer ) {
-							pathtracer.setSize( width, height );
-						}
-
-						updateAspectRatio();
-
-						render();
-					}
-				}
 			} );
 
 			resizeObserver.observe( container.dom );
@@ -933,8 +961,6 @@ function Viewport( context, ops, parent ) {
 
 	signals.settingUpdated.add( function ( path, value ) {
 
-		console.log('[settingUpdated] received:', path, value);
-
 		const parts = path.split('.');
 
 		let target = context.config;
@@ -953,13 +979,9 @@ function Viewport( context, ops, parent ) {
 
 		const key = parts[parts.length - 1];
 
-		console.log('[settingUpdated] setting', key, 'on', target, 'to', value);
-
 		target[key] = value;
 
 		context._saveConfig();
-
-		console.log('[settingUpdated] config saved to localStorage');
 
 	} );
 
@@ -1015,23 +1037,17 @@ function Viewport( context, ops, parent ) {
 
 	signals.windowResize.add( function () {
 
-		updateAspectRatio();
-
-		if ( renderer !== null ) {
-
-			renderer.setSize( container.dom.offsetWidth, container.dom.offsetHeight );
-
-		}
-
-		if ( pathtracer !== null ) {
-
-			pathtracer.setSize( container.dom.offsetWidth, container.dom.offsetHeight );
-
-		}
-
-		render();
+		syncViewportSizeFromContainer();
 
 	} );
+
+	function onWindowResizeForViewport() {
+
+		signals.windowResize.dispatch();
+
+	}
+
+	window.addEventListener( 'resize', onWindowResizeForViewport );
 
 	signals.showHelpersChanged.add( function ( appearanceStates ) {
 
@@ -1234,6 +1250,8 @@ function Viewport( context, ops, parent ) {
 		editor.signals.sceneRendered.dispatch( endTime - startTime );
 
 	}
+
+	attachViewportLoadStatusStrip( context, container );
 
 	container.applySceneConfig = function ( sceneConfig ) {
 

@@ -38,6 +38,10 @@ const DEFAULT_POSITION = {
   width: '45vw', height: '100vh'
 };
 
+/**
+ * @extends {UIPanel}
+ * @property {{ position: string, tabId: string, hostDom: HTMLElement }|null} _dockedWorkspace
+ */
 class FloatingPanel extends UIPanel {
   static get isMobile() {
     return window.innerWidth <= 768;
@@ -64,6 +68,18 @@ class FloatingPanel extends UIPanel {
 
     /** @type {boolean} When false, the close button is hidden and the panel cannot be closed. */
     this.closable = options?.closable !== false;
+
+    /**
+     * Optional dock-to-workspace handlers: { left?, bottom?, right? } each (panel) => void.
+     * When set for a side, that pin button calls the handler instead of CSS pin.
+     */
+    this._dockHandlers = options?.dock ?? null;
+
+    /**
+     * Set by workspacePanelDock when panel body lives in a layout tab; cleared on undock.
+     * @type {{ position: string, tabId: string, hostDom: HTMLElement }|null}
+     */
+    this._dockedWorkspace = null;
 
     this.setClass("FloatingPanel");
 
@@ -102,6 +118,22 @@ class FloatingPanel extends UIPanel {
   }
 
   setContent(content) {
+    const docked = this._dockedWorkspace;
+    if (docked?.hostDom) {
+      const host = docked.hostDom;
+      while (host.firstChild) {
+        host.removeChild(host.firstChild);
+      }
+      if (content && (content instanceof Object || content.nodeType)) {
+        if (content.nodeType) {
+          host.appendChild(content);
+        } else if (content.dom) {
+          host.appendChild(content.dom);
+        }
+      }
+      return this;
+    }
+
     this.contentWrapper.clear();
 
     if (content && (content instanceof Object || content.nodeType)) {
@@ -112,6 +144,16 @@ class FloatingPanel extends UIPanel {
   }
 
   addContent(content) {
+    const docked = this._dockedWorkspace;
+    if (docked?.hostDom && content && (content instanceof Object || content.nodeType)) {
+      if (content.nodeType) {
+        docked.hostDom.appendChild(content);
+      } else if (content.dom) {
+        docked.hostDom.appendChild(content.dom);
+      }
+      return this;
+    }
+
     this.contentWrapper.add(content);
 
     return this;
@@ -277,6 +319,46 @@ class FloatingPanel extends UIPanel {
     }
 
     this.dom.style.display = '';
+
+    return this;
+  }
+
+  /**
+   * After the panel was re-attached (e.g. undock from workspace), sync left/top to the
+   * new offset parent so absolute positioning + drag match the visible box.
+   * @returns {this}
+   */
+  prepareAfterRemount() {
+    if (FloatingPanel.isMobile) return this;
+
+    const sync = () => {
+      this.dom.classList.remove("maximized");
+      this.isMaximized = false;
+      this._pinned = null;
+
+      const rect = this.dom.getBoundingClientRect();
+      const op = this.dom.offsetParent;
+
+      this.dom.style.right = "";
+      this.dom.style.bottom = "";
+
+      if (op instanceof HTMLElement) {
+        const pr = op.getBoundingClientRect();
+        this.dom.style.left = `${Math.round(rect.left - pr.left + op.scrollLeft)}px`;
+        this.dom.style.top = `${Math.round(rect.top - pr.top + op.scrollTop)}px`;
+      } else {
+        this.dom.style.left = `${Math.round(rect.left)}px`;
+        this.dom.style.top = `${Math.round(rect.top)}px`;
+      }
+
+      if (rect.width > 0) this.dom.style.width = `${Math.round(rect.width)}px`;
+      if (rect.height > 0) this.dom.style.height = `${Math.round(rect.height)}px`;
+    };
+
+    requestAnimationFrame(() => {
+      sync();
+      requestAnimationFrame(sync);
+    });
 
     return this;
   }
@@ -451,6 +533,12 @@ class FloatingPanel extends UIPanel {
   // ==================== Private Toggle Methods ====================
 
   _togglePin(position) {
+    const dockFn = this._dockHandlers?.[position];
+    if (dockFn) {
+      dockFn(this);
+      return;
+    }
+
     // If clicking same pin, unpin to default position
     if (this._pinned === position) {
       this.dom.classList.remove('maximized');

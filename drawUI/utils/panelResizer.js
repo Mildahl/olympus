@@ -1,3 +1,22 @@
+/**
+ * For position:absolute, left/top are relative to offsetParent — not the viewport.
+ * getBoundingClientRect() is viewport-based; convert so drag math stays consistent.
+ * @param {HTMLElement} el
+ * @returns {{ left: number, top: number }}
+ */
+function positionForAbsoluteDrag(el) {
+  const rect = el.getBoundingClientRect();
+  const op = el.offsetParent;
+  if (op instanceof HTMLElement) {
+    const pr = op.getBoundingClientRect();
+    return {
+      left: rect.left - pr.left + op.scrollLeft,
+      top: rect.top - pr.top + op.scrollTop,
+    };
+  }
+  return { left: rect.left, top: rect.top };
+}
+
 export function makeDraggable(panel, header) {
     let isDragging = false;
 
@@ -32,12 +51,11 @@ export function makeDraggable(panel, header) {
 
       startY = e.clientY;
 
-      // Get current computed position regardless of how it was set
-      const rect = panel.getBoundingClientRect();
+      const { left, top } = positionForAbsoluteDrag(panel);
 
-      startLeft = rect.left;
+      startLeft = left;
 
-      startTop = rect.top;
+      startTop = top;
 
       panel.style.transition = 'none';
 
@@ -49,7 +67,6 @@ export function makeDraggable(panel, header) {
       // Clear transform to prevent conflicts with positioning
       panel.style.transform = '';
 
-      // Set initial left/top from computed position
       panel.style.left = `${startLeft}px`;
 
       panel.style.top = `${startTop}px`;

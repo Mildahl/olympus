@@ -14,7 +14,6 @@ class WelcomeScreen {
 
     this.overlay = null;
 
-    /** Set to true when user changes the preset dropdown so we can reload on Continue */
     this.presetChangedThisSession = false;
 
     this.render();
@@ -34,34 +33,81 @@ class WelcomeScreen {
     Object.assign(card.style, {
       background: 'rgba(40, 40, 42, 0.97)',
       border: '1px solid rgba(255,255,255,0.06)',
-      borderRadius: '6px',
-      padding: '1.25rem 1.5rem',
-      minWidth: '280px',
-      maxWidth: '380px',
-      width: '90vw',
+      borderRadius: '8px',
+      padding: '0',
+      minWidth: '300px',
+      maxWidth: '400px',
+      width: 'min(92vw, 400px)',
       display: 'flex',
       flexDirection: 'column',
-      gap: '0.85rem',
-      boxShadow: '0 2px 16px rgba(0,0,0,0.4)',
+      overflow: 'hidden',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.55)',
       pointerEvents: 'auto',
+    });
+
+    const splashHeader = document.createElement('div');
+    Object.assign(splashHeader.style, {
+      position: 'relative',
+      width: '100%',
+      height: 'clamp(150px, 42vw, 220px)',
+      flexShrink: '0',
+      overflow: 'hidden',
+      background: '#1c1c1e',
+    });
+
+    let olympusRoot = '';
+    if (typeof window !== 'undefined' && window.__OLYMPUS_ROOT__) {
+      olympusRoot = window.__OLYMPUS_ROOT__;
+    }
+    const splashImageSource = olympusRoot + '/external/ifc/splash.png';
+    const splashImage = document.createElement('img');
+    splashImage.alt = '';
+    splashImage.src = splashImageSource;
+    Object.assign(splashImage.style, {
+      position: 'absolute',
+      top: '0',
+      left: '0',
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      objectPosition: 'center',
+      display: 'block',
+    });
+    splashImage.addEventListener('error', () => {
+      splashImage.style.display = 'none';
+    });
+    splashHeader.appendChild(splashImage);
+    card.appendChild(splashHeader);
+
+    const body = document.createElement('div');
+    Object.assign(body.style, {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.45rem',
+      padding: '0.9rem 1.25rem 1rem',
     });
 
     const title = document.createElement('div');
     title.textContent = 'Welcome';
     Object.assign(title.style, {
-      margin: '0 0 0.25rem 0',
-      color: '#fff',
-      fontSize: '1.1rem',
+      margin: '0',
+      padding: '0 0 0.15rem 0',
+      color: 'rgba(255,255,255,0.55)',
+      fontSize: '0.7rem',
       fontWeight: '600',
+      letterSpacing: '0.06em',
+      textTransform: 'uppercase',
     });
-    card.appendChild(title);
+    body.appendChild(title);
 
-    card.appendChild(this._buildPresetRow());
-    card.appendChild(this._buildPersistSettingsRow());
-    card.appendChild(this._buildThemeRow());
-    card.appendChild(this._buildLanguageRow());
-    card.appendChild(this._buildToastsRow());
-    card.appendChild(this._buildFooter());
+    body.appendChild(this._buildPresetRow());
+    body.appendChild(this._buildPersistSettingsRow());
+    body.appendChild(this._buildThemeRow());
+    body.appendChild(this._buildLanguageRow());
+    body.appendChild(this._buildToastsRow());
+    body.appendChild(this._buildFooter());
+
+    card.appendChild(body);
 
     this.overlay.appendChild(card);
     this.container.appendChild(this.overlay);
@@ -110,11 +156,19 @@ class WelcomeScreen {
   _buildSettingRow(label, control) {
     const row = document.createElement('div');
     Object.assign(row.style, {
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '0.65rem',
+      minHeight: '1.65rem',
     });
     const labelEl = document.createElement('span');
     labelEl.textContent = label;
-    Object.assign(labelEl.style, { color: 'rgba(255,255,255,0.9)', fontSize: '0.8rem' });
+    Object.assign(labelEl.style, {
+      color: 'rgba(255,255,255,0.88)',
+      fontSize: '0.78rem',
+      lineHeight: '1.25',
+    });
     row.appendChild(labelEl);
     if (control instanceof HTMLElement) row.appendChild(control);
     else if (control?.dom) row.appendChild(control.dom);
@@ -175,7 +229,12 @@ class WelcomeScreen {
 
   _buildFooter() {
     const footer = document.createElement('div');
-    Object.assign(footer.style, { display: 'flex', justifyContent: 'center', paddingTop: '0.25rem' });
+    Object.assign(footer.style, {
+      display: 'flex',
+      justifyContent: 'center',
+      paddingTop: '0.35rem',
+      marginTop: '0.2rem',
+    });
     const btn = UIComponents.button('Continue');
     Object.assign(btn.dom.style, {
       padding: '0.5rem 1.5rem', fontSize: '0.85rem', borderRadius: '4px',

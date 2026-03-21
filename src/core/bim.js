@@ -8,6 +8,97 @@ import * as THREE from "three";
 
 import * as WorldCore from "./world.js";
 
+function normalizeGeometryLoadProgressPercentage(percentage) {
+  const parsed = Number(percentage);
+
+  if (Number.isNaN(parsed)) return 0;
+
+  if (parsed < 0) return 0;
+
+  if (parsed > 100) return 100;
+
+  return parsed;
+}
+
+function dispatchBimGeometryLoadProgressSignal(context, payload) {
+  const progressSignal = context.signals.bimGeometryLoadProgress;
+
+  if (!progressSignal) return;
+
+  const merged = Object.assign({}, payload);
+
+  if (!merged.category) {
+    merged.category = "geometry";
+  }
+
+  progressSignal.dispatch(merged);
+}
+
+function dispatchBimIfcModelAnalyticsContextChanged(context, fileName) {
+  const analyticsSignal = context.signals.bimIfcModelAnalyticsContextChanged;
+
+  if (!analyticsSignal || typeof analyticsSignal.dispatch !== "function") return;
+
+  analyticsSignal.dispatch({ fileName: fileName });
+}
+
+function scheduleApproximateBimGeometryLoadProgress(
+  context,
+  modelName,
+  geometryBackend,
+  label,
+  pulseStartPercent,
+  pulseMaxPercent,
+) {
+  let pulseTimerId = null;
+
+  let currentPercent = normalizeGeometryLoadProgressPercentage(pulseStartPercent);
+
+  const limitPercent = normalizeGeometryLoadProgressPercentage(pulseMaxPercent);
+
+  const dispatchProgressUpdate = () => {
+    dispatchBimGeometryLoadProgressSignal(context, {
+      phase: "update",
+      modelName,
+      geometryBackend,
+      message: label,
+      percent: currentPercent,
+    });
+  };
+
+  dispatchProgressUpdate();
+
+  pulseTimerId = window.setInterval(() => {
+    const remaining = limitPercent - currentPercent;
+
+    if (remaining <= 0.5) {
+      currentPercent = limitPercent;
+    } else {
+      currentPercent = currentPercent + Math.max(0.8, remaining * 0.08);
+    }
+
+    dispatchProgressUpdate();
+  }, 160);
+
+  return function finalizeApproximateGeometryLoadProgress(finalProgress, finalMessage) {
+    if (pulseTimerId !== null) {
+      window.clearInterval(pulseTimerId);
+
+      pulseTimerId = null;
+    }
+
+    if (typeof finalProgress === "number") {
+      dispatchBimGeometryLoadProgressSignal(context, {
+        phase: "update",
+        modelName,
+        geometryBackend,
+        message: finalMessage || label,
+        percent: normalizeGeometryLoadProgressPercentage(finalProgress),
+      });
+    }
+  };
+}
+
 async function setActiveBIMModel(
   file_name,
   isNewModel = false,
@@ -24,6 +115,8 @@ async function setActiveBIMModel(
   if (!isAlreadyActive) {
     context.signals.activeModelChanged.dispatch({ FileName: file_name });
   }
+
+  dispatchBimIfcModelAnalyticsContextChanged(context, file_name);
 }
 
 /**
@@ -33,36 +126,102 @@ async function setActiveBIMModel(
  * @returns {Object} Loaded model info
  */
 async function loadBIMModelFromPath(path, { context, bimTools }) {
-  const result = await bimTools.project.loadModelFromPath(path);
-
   const file_name = path.split("/").pop();
 
-  bimTools.project.storeProject(context, {
-    GlobalId: result.GlobalId,
-    Name: result.Name,
-    FileName: file_name,
-    Path: path,
-    TotalElements: result.totalElements,
+  dispatchBimGeometryLoadProgressSignal(context, {
+    phase: "start",
+    category: "ifc_model",
+    message: `Loading IFC model ${file_name}...`,
+    percent: 8,
   });
 
-  setActiveBIMModel(file_name, true, { context });
+  try {
+    const result = await bimTools.project.loadModelFromPath(path);
 
-  return { GlobalId: result.GlobalId, FileName: file_name, Name: result.Name };
+    bimTools.project.storeProject(context, {
+      GlobalId: result.GlobalId,
+      Name: result.Name,
+      FileName: file_name,
+      Path: path,
+      TotalElements: result.totalElements,
+    });
+
+    setActiveBIMModel(file_name, true, { context });
+
+    dispatchBimGeometryLoadProgressSignal(context, {
+      phase: "complete",
+      category: "ifc_model",
+      message: `IFC model ${file_name} ready`,
+      percent: 100,
+    });
+
+    return { GlobalId: result.GlobalId, FileName: file_name, Name: result.Name };
+  } catch (err) {
+    let errorMessage = "IFC model load failed";
+
+    if (err && err.message) {
+      errorMessage = err.message;
+    } else if (err) {
+      errorMessage = String(err);
+    }
+
+    dispatchBimGeometryLoadProgressSignal(context, {
+      phase: "error",
+      category: "ifc_model",
+      message: errorMessage,
+      percent: 0,
+    });
+
+    throw err;
+  }
 }
 
 async function loadBIMModelFromBlob(fileName, arrayBuffer, { context, bimTools, signals }) {
-  const result = await bimTools.project.loadModelFromBlob(fileName, arrayBuffer);
-
-  bimTools.project.storeProject(context, {
-    GlobalId: result.GlobalId,
-    Name: result.Name,
-    FileName: fileName,
-    TotalElements: result.totalElements,
+  dispatchBimGeometryLoadProgressSignal(context, {
+    phase: "start",
+    category: "ifc_model",
+    message: `Loading IFC model ${fileName}...`,
+    percent: 8,
   });
 
-  setActiveBIMModel(fileName, true, { context });
+  try {
+    const result = await bimTools.project.loadModelFromBlob(fileName, arrayBuffer);
 
-  return { GlobalId: result.GlobalId, FileName: fileName, Name: result.Name };
+    bimTools.project.storeProject(context, {
+      GlobalId: result.GlobalId,
+      Name: result.Name,
+      FileName: fileName,
+      TotalElements: result.totalElements,
+    });
+
+    setActiveBIMModel(fileName, true, { context });
+
+    dispatchBimGeometryLoadProgressSignal(context, {
+      phase: "complete",
+      category: "ifc_model",
+      message: `IFC model ${fileName} ready`,
+      percent: 100,
+    });
+
+    return { GlobalId: result.GlobalId, FileName: fileName, Name: result.Name };
+  } catch (err) {
+    let errorMessage = "IFC model load failed";
+
+    if (err && err.message) {
+      errorMessage = err.message;
+    } else if (err) {
+      errorMessage = String(err);
+    }
+
+    dispatchBimGeometryLoadProgressSignal(context, {
+      phase: "error",
+      category: "ifc_model",
+      message: errorMessage,
+      percent: 0,
+    });
+
+    throw err;
+  }
 }
 
 /**
@@ -174,204 +333,217 @@ async function loadGeometryData(
   targetLayerPath,
   { sceneTool, projectTool, layerTool, placementTool, geometryBackend = "ifcopenshell", context }
 ) {
+  if (context.ifc.geometryLoadInProgress) {
+    throw new Error("A geometry load is already in progress.");
+  }
 
-    const place = (element, { position, rotation }) => {
-      console.log("[BIM.loadGeometryData] place:start", {
-        modelName,
-        geometryBackend,
-        position,
-        rotation,
-        initialRotation: {
-          x: element.rotation.x,
-          y: element.rotation.y,
-          z: element.rotation.z,
-        },
-        initialPosition: {
-          x: element.position.x,
-          y: element.position.y,
-          z: element.position.z,
-        },
+  context.ifc.geometryLoadInProgress = true;
+
+  let finalizeApproximateGeometryLoadProgress = null;
+
+  const place = (element, { position, rotation }) => {
+
+
+    if (Array.isArray(rotation)) {
+      rotation.forEach((r) => {
+        console.log("[BIM.loadGeometryData] place:rotate", {
+          modelName,
+          geometryBackend,
+          axis: r.axis,
+          angle: r.angle,
+        });
+
+        placementTool.rotate(
+          null,
+          element,
+          r.axis,
+          r.angle,
+        );
+
       });
-
-      if (Array.isArray(rotation)) {
-        rotation.forEach((r) => {
-          console.log("[BIM.loadGeometryData] place:rotate", {
-            modelName,
-            geometryBackend,
-            axis: r.axis,
-            angle: r.angle,
-          });
-
-          placementTool.rotate(
+    } else {
+      rotation
+        ? placementTool.setRotation(
             null,
             element,
-            r.axis,
-            r.angle,
-          );
+            rotation.axis,
+            rotation.angle,
+          )
+        : null;
+    }
 
-          console.log("[BIM.loadGeometryData] place:rotate:after", {
-            modelName,
-            geometryBackend,
-            axis: r.axis,
-            angle: r.angle,
-            resultingRotation: {
-              x: element.rotation.x,
-              y: element.rotation.y,
-              z: element.rotation.z,
-            },
-          });
-        });
-      } else {
-        rotation
-          ? placementTool.setRotation(
-              null,
-              element,
-              rotation.axis,
-              rotation.angle,
-            )
-          : null;
-      }
+    position ? placementTool.setPosition(null, element, position) : null;
 
-      position ? placementTool.setPosition(null, element, position) : null;
+    element.updateMatrixWorld(true);
 
-      element.updateMatrixWorld(true);
+  };
 
-      console.log("[BIM.loadGeometryData] place:end", {
-        modelName,
-        geometryBackend,
-        finalRotation: {
-          x: element.rotation.x,
-          y: element.rotation.y,
-          z: element.rotation.z,
-        },
-        finalPosition: {
-          x: element.position.x,
-          y: element.position.y,
-          z: element.position.z,
-        },
-        matrixWorld: element.matrixWorld.elements.slice(),
-      });
+  const progressLabel =
+    geometryBackend === "ifc-lite"
+      ? `Loading ${modelName} geometry with ifc-lite...`
+      : `Loading ${modelName} geometry...`;
+
+  try {
+    dispatchBimGeometryLoadProgressSignal(context, {
+      phase: "start",
+      modelName,
+      geometryBackend,
+      message: progressLabel,
+      percent: 8,
+    });
+
+    finalizeApproximateGeometryLoadProgress = scheduleApproximateBimGeometryLoadProgress(
+      context,
+      modelName,
+      geometryBackend,
+      progressLabel,
+      12,
+      92,
+    );
+
+    let geometrySource = schema;
+
+    if (geometryBackend === "ifc-lite") {
+      geometrySource = "IFC_LITE";
+    }
+
+    const { spatialStructure, loadedCount, instancedGeometryMap, success, transform } =
+      await projectTool.generateMeshLayerStructure(geometrySource, modelName);
+
+    if (spatialStructure == null || typeof spatialStructure !== "object") {
+      throw new Error(
+        `[BIM] loadGeometryData: no spatial structure for model "${modelName}". ` +
+          `Load that IFC first and pass the same registered file name as the URL basename (e.g. Works_Plan.ifc).`,
+      );
+    }
+
+    const parentLayerPath =
+      targetLayerPath && String(targetLayerPath).includes("/")
+        ? targetLayerPath
+        : `World/${targetLayerPath || "Buildings"}`;
+
+    let parentCollection = layerTool.getLayerByPath(parentLayerPath);
+
+    if (!parentCollection) {
+      parentCollection = layerTool.getLayerByPath("World/Buildings");
+    }
+
+    const parentPath = parentCollection?.path || "World/Buildings";
+    const bimProjectNodePath = parentPath.endsWith("/") ? parentPath : `${parentPath}/`;
+
+    const bimProjectNode = {
+      name: modelName,
+      path: bimProjectNodePath,
+      type: "georeferenced",
+      references: {
+        ifc: modelName,
+        path: null,
+        usd: null,
+        glb: null,
+      },
     };
 
-  let geometrySource = schema;
-
-  if (geometryBackend === "ifc-lite") {
-    geometrySource = "IFC_LITE";
-  }
-
-  const { spatialStructure, loadedCount, instancedGeometryMap, success, transform } =
-    await projectTool.generateMeshLayerStructure(geometrySource, modelName);
-
-  if (spatialStructure == null || typeof spatialStructure !== "object") {
-    throw new Error(
-      `[BIM] loadGeometryData: no spatial structure for model "${modelName}". ` +
-        `Load that IFC first and pass the same registered file name as the URL basename (e.g. Works_Plan.ifc).`,
+    const projectRootGroup = projectTool.createLayer(
+      spatialStructure,
+      instancedGeometryMap || {},
     );
-  }
 
-  const parentLayerPath =
-    targetLayerPath && String(targetLayerPath).includes("/")
-      ? targetLayerPath
-      : `World/${targetLayerPath || "Buildings"}`;
+    const projectTransform = transform || {
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { axis: "x", angle: -90 },
+    };
 
-  let parentCollection = layerTool.getLayerByPath(parentLayerPath);
+    place(projectRootGroup, projectTransform);
 
-  if (!parentCollection) {
-    parentCollection = layerTool.getLayerByPath("World/Buildings");
-  }
+    const createdNode = WorldCore.createNode(
+      bimProjectNode,
+      parentCollection,
+      parentCollection.scene,
+      { sceneTool, layerTool, context },
+    );
 
-  const parentPath = parentCollection?.path || "World/Buildings";
-  const bimProjectNodePath = parentPath.endsWith("/") ? parentPath : `${parentPath}/`;
+    projectRootGroup.userData.collectionId = createdNode.GlobalId;
 
-  const bimProjectNode = {
-    name: modelName,
-    path: bimProjectNodePath,
-    type: "georeferenced",
-    references: {
-      ifc: modelName,
-      path: null,
-      usd: null,
-      glb: null,
-    },
-  };
+    createdNode.scene.add(projectRootGroup);
 
-  const projectRootGroup = projectTool.createLayer(
-    spatialStructure,
-    instancedGeometryMap || {},
-  );
+    if (geometryBackend === "ifc-lite") {
+      projectRootGroup.updateMatrixWorld(true);
 
-  const projectTransform = transform || {
-    position: { x: 0, y: 0, z: 0 },
-    rotation: { axis: "x", angle: -90 },
-  };
+      const firstMesh = projectRootGroup.getObjectByProperty("isMesh", true);
 
-  console.log("[BIM.loadGeometryData] transform:selected", {
-    modelName,
-    geometryBackend,
-    geometrySource,
-    projectTransform,
-    success,
-    loadedCount,
-  });
+      if (firstMesh) {
+        const worldPos = new THREE.Vector3();
 
-  place(projectRootGroup, projectTransform);
+        firstMesh.getWorldPosition(worldPos);
 
-  // Register the IFC file as a layer under the target world folder, then hang the
-  // spatial tree (IfcProject → Site → …) under that file group. Passing
-  // projectRootGroup as sceneParent used to parent the empty file group *inside*
-  // the IFC project root, so the file appeared as a sibling of IfcSite in the UI.
-  const createdNode = WorldCore.createNode(
-    bimProjectNode,
-    parentCollection,
-    parentCollection.scene,
-    { sceneTool, layerTool, context },
-  );
+        if (firstMesh.geometry && !firstMesh.geometry.boundingBox) {
+          firstMesh.geometry.computeBoundingBox();
+        }
 
-  projectRootGroup.userData.collectionId = createdNode.GlobalId;
+        const bbox = firstMesh.geometry?.boundingBox;
 
-  createdNode.scene.add(projectRootGroup);
+        const transformedMin = bbox?.min.clone().applyMatrix4(firstMesh.matrixWorld);
 
-  if (geometryBackend === "ifc-lite") {
-    projectRootGroup.updateMatrixWorld(true);
+        const transformedMax = bbox?.max.clone().applyMatrix4(firstMesh.matrixWorld);
 
-    const firstMesh = projectRootGroup.getObjectByProperty("isMesh", true);
-
-    if (firstMesh) {
-      const worldPos = new THREE.Vector3();
-
-      firstMesh.getWorldPosition(worldPos);
-
-      if (firstMesh.geometry && !firstMesh.geometry.boundingBox) {
-        firstMesh.geometry.computeBoundingBox();
+        console.log("[BIM.loadGeometryData] firstMesh:debug", {
+          modelName,
+          geometryBackend,
+          localBboxMin: bbox ? { x: bbox.min.x, y: bbox.min.y, z: bbox.min.z } : null,
+          localBboxMax: bbox ? { x: bbox.max.x, y: bbox.max.y, z: bbox.max.z } : null,
+          worldBboxMin: transformedMin ? { x: transformedMin.x, y: transformedMin.y, z: transformedMin.z } : null,
+          worldBboxMax: transformedMax ? { x: transformedMax.x, y: transformedMax.y, z: transformedMax.z } : null,
+          matrixAutoUpdate: firstMesh.matrixAutoUpdate,
+          visible: firstMesh.visible,
+          parentVisible: firstMesh.parent?.visible,
+        });
       }
-
-      const bbox = firstMesh.geometry?.boundingBox;
-
-      const transformedMin = bbox?.min.clone().applyMatrix4(firstMesh.matrixWorld);
-
-      const transformedMax = bbox?.max.clone().applyMatrix4(firstMesh.matrixWorld);
-
-      console.log("[BIM.loadGeometryData] firstMesh:debug", {
-        modelName,
-        geometryBackend,
-        localBboxMin: bbox ? { x: bbox.min.x, y: bbox.min.y, z: bbox.min.z } : null,
-        localBboxMax: bbox ? { x: bbox.max.x, y: bbox.max.y, z: bbox.max.z } : null,
-        worldBboxMin: transformedMin ? { x: transformedMin.x, y: transformedMin.y, z: transformedMin.z } : null,
-        worldBboxMax: transformedMax ? { x: transformedMax.x, y: transformedMax.y, z: transformedMax.z } : null,
-        matrixAutoUpdate: firstMesh.matrixAutoUpdate,
-        visible: firstMesh.visible,
-        parentVisible: firstMesh.parent?.visible,
-      });
     }
+
+    context.signals.activeLayerUpdate.dispatch(layerTool.World);
+
+    context.signals.newIFCGeometry.dispatch({ modelName, GlobalId: createdNode.GlobalId });
+
+    context.editor.signals.sceneGraphChanged.dispatch();
+
+    finalizeApproximateGeometryLoadProgress(
+      100,
+      `Geometry loaded for ${modelName}`,
+    );
+
+    dispatchBimGeometryLoadProgressSignal(context, {
+      phase: "complete",
+      modelName,
+      geometryBackend,
+      message: `Geometry loaded for ${modelName}`,
+      percent: 100,
+    });
+
+    return projectRootGroup;
+  } catch (err) {
+    if (typeof finalizeApproximateGeometryLoadProgress === "function") {
+      finalizeApproximateGeometryLoadProgress(0, "Geometry loading failed");
+    }
+
+    let errorMessage = "Geometry loading failed";
+
+    if (err && err.message) {
+      errorMessage = err.message;
+    } else if (err) {
+      errorMessage = String(err);
+    }
+
+    dispatchBimGeometryLoadProgressSignal(context, {
+      phase: "error",
+      modelName,
+      geometryBackend,
+      message: errorMessage,
+    });
+
+    throw err;
+  } finally {
+    context.ifc.geometryLoadInProgress = false;
   }
-
-  context.signals.activeLayerUpdate.dispatch(layerTool.World);
-
-  context.signals.newIFCGeometry.dispatch({ modelName, GlobalId: createdNode.GlobalId });
-
-  context.editor.signals.sceneGraphChanged.dispatch();
-
-  return projectRootGroup;
 }
 
 /**

@@ -2,6 +2,17 @@
 
 Lightweight toolkit for building and prototyping 3D web-based applications for AECO (Architecture, Engineering, Construction, and Operations), with a focus on visual data analysis.
 
+
+[Construction Application Demo :](https://myoualid.github.io/olympus/examples/Addons/index.html)
+
+![Olympus](https://www.aeco.dev/static/img/digital_construction_app.png)
+
+[Hello World Demo:](https://myoualid.github.io/olympus/examples/HelloWorld/index.html)
+
+<br>
+
+---
+
 The core library provides:
 - Three.js's 3D editor,
 - Monaco Script Editor,
@@ -9,14 +20,6 @@ The core library provides:
 - IFC support with IfcOpenShell,
 - A pluggable module/addon system,
 - highly configurable User Interface (UI),
-
-[Hello World Demo:](https://myoualid.github.io/olympus/examples/HelloWorld/index.html)
-
-<br>
-
-[Construction Application Demo :](https://myoualid.github.io/olympus/examples/Addons/index.html)
-
----
 
 ## Prerequisites
 

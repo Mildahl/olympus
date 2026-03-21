@@ -1,11 +1,3 @@
-import { DrawUI } from "./../../drawUI/index.js";
-
-const ROOT = window.__OLYMPUS_ROOT__ || '';
-
-const splash = DrawUI.splash({ imageUrl: ROOT + '/external/ifc/splash.png', text: 'Initializing...' });
-splash.show(document.body);
-splash.setText('Creating UI...');
-
 import { AECO } from "aeco";
 
 import { AECOConfiguration } from "./configuration/config.js";
@@ -18,12 +10,12 @@ simulation.createUI({ config: AECOConfiguration, container: document.body });
 
 simulation.moduleRegistry.logActiveModulesAndUI();
 
-splash.hide();
-
 simulation.tools.world.scene.addCube(context, 1, "grey");      
 
 const load5DModel = async () => {
 
+    const ROOT = window.__OLYMPUS_ROOT__ || '';
+    
     const path = ROOT + "/external/ifc/5D.ifc";
 
     await simulation.ops.execute("bim.load_model_from_path", context, path, null, "5D.ifc")
@@ -31,8 +23,14 @@ const load5DModel = async () => {
 }
 
 const loadGeometryData = async () => {
-    await simulation.ops.execute("bim.load_geometry_data", context, "5D.ifc", "Buildings", "ifcopenshell");
-}
+    await simulation.ops.execute(
+        "bim.load_geometry_data",
+        context,
+        "5D.ifc",
+        "Buildings",
+        "ifcopenshell",
+    );
+};
 
 simulation.enablePython().then(() => {
     simulation.enableBIM().then(() => {
@@ -41,8 +39,5 @@ simulation.enablePython().then(() => {
         });
     });
   });
-
-
-// simulation.ops.execute("world.create_world_layers", context);
 
 export default simulation;

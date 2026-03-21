@@ -313,8 +313,6 @@ class SceneTool {
 
   static _saveFogConfig(context, fogType, fogColor, fogNear, fogFar, fogDensity) {
 
-    console.log('[SceneTool._saveFogConfig] dispatching settingUpdated signals', { fogType, fogColor, fogNear, fogFar, fogDensity });
-
     if (fogType === 'None') {
 
       context.editor.signals.settingUpdated.dispatch('app.Scene.enableFog', false);

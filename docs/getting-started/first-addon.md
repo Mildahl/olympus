@@ -338,8 +338,8 @@ class CounterUI {
     }
 
     registerPanel() {
-        // Add tab to right panel using LayoutManager
-        const layoutManager = this.context.editor?.layoutManager;
+        const editor = this.context.editor;
+        const layoutManager = editor ? editor.layoutManager : null;
         if (layoutManager) {
             layoutManager.addTab(
                 'right',           // position
@@ -351,9 +351,9 @@ class CounterUI {
         }
     }
 
-    // Called when addon is deactivated
     destroy() {
-        const layoutManager = this.context.editor?.layoutManager;
+        const editor = this.context.editor;
+        const layoutManager = editor ? editor.layoutManager : null;
         if (layoutManager) {
             layoutManager.removeTab('right', 'counter');
         }
@@ -380,38 +380,28 @@ export const ADDONS = [
 Update `app.js` to load your addon:
 
 ```javascript
-import { DrawUI } from "./../../drawUI/index.js";
-
-const splash = DrawUI.splash({ imageUrl: '/external/ifc/splash.png', text: 'Initializing...' });
-splash.show(document.body);
-splash.setText('Creating UI...');
-
 import { AECO } from "aeco";
 import { AECOConfiguration } from "./configuration/config.js";
 
-// Import your addons
 import { ADDONS } from "./addons/index.js";
 
 const simulation = new AECO();
 const context = simulation.context;
 
-// Pre-register addon signals (must be done before createUI)
 const addonSignals = [
     "counterChanged"
 ];
 
-simulation.createUI({ 
-    config: AECOConfiguration, 
+simulation.createUI({
+    config: AECOConfiguration,
     container: document.body,
-    addons: { 
-        ADDONS, 
-        Listeners: addonSignals 
+    addons: {
+        ADDONS,
+        Listeners: addonSignals
     }
 });
 
 simulation.moduleRegistry.logActiveModulesAndUI();
-
-splash.hide();
 
 export default simulation;
 ```

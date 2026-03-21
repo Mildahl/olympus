@@ -4,6 +4,10 @@ import FocusManager from '../../utils/FocusManager.js';
 
 import Paths from '../../utils/paths.js';
 
+import CodeEditorTool from '../../tool/code/CodeEditorTool.js';
+
+const SCRIPT_EDITOR_WORKSPACE_TAB_ID = 'code.scripting';
+
 class ScriptEditorWindow {
   constructor({ context, operators }) {
     this.context = context;
@@ -32,13 +36,17 @@ class ScriptEditorWindow {
   }
 
   _buildWindow() {
-    this.floatingPanel = UIComponents.floatingPanel({ title: 'Script Editor' });
+    this.floatingPanel = UIComponents.floatingPanel({
+      context: this.context,
+      title: 'Script Editor',
+      icon: 'code',
+      workspaceTabId: SCRIPT_EDITOR_WORKSPACE_TAB_ID,
+      workspaceTabLabel: 'Script Editor',
+    });
 
     this.floatingPanel.setId('WindowCodeEditor');
 
     this.floatingPanel.setIcon('code');
-
-    this.floatingPanel.pinRight();
 
     this.floatingPanel.onClose(() => {
       this.isVisible = false;
@@ -46,11 +54,11 @@ class ScriptEditorWindow {
 
     const isMobile = window.innerWidth <= 768;
 
-    this.floatingPanel.setStyles({
-      "max-height": "calc(100vh)",
-      "width": isMobile ? "50vw" : "30vw",
-      "max-width": "calc(100vw - var(--sidebar-width))"
-    });
+    this.floatingPanel
+      .setStyle('width', [isMobile ? '50vw' : 'clamp(280px, 40vw, 720px)'])
+      .setStyle('max-width', ['calc(100vw - var(--sidebar-width))'])
+      .setStyle('min-height', ['min(70vh, 560px)'])
+      .setStyle('max-height', ['calc(100vh - var(--headerbar-height, 36px))']);
 
     const mainContainer = UIComponents.div();
 
@@ -80,11 +88,7 @@ class ScriptEditorWindow {
 
     mainContainer.add(this.consoleSection);
 
-    const contentEl = this.floatingPanel.dom.querySelector('.FloatingPanel-content');
-
-    contentEl.innerHTML = '';
-
-    contentEl.appendChild(mainContainer.dom);
+    this.floatingPanel.setContent(mainContainer);
   }
 
   _createToolbar() {
@@ -339,13 +343,39 @@ class ScriptEditorWindow {
     return section;
   }
 
+  _scheduleMonacoLayout() {
+    const runLayout = () => {
+      CodeEditorTool.layoutEditor();
+    };
+
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(runLayout);
+      });
+    } else {
+      runLayout();
+    }
+  }
+
   _setupSignals() {
     const { signals } = this.context;
+
+    const layoutTabChanged = signals.layoutTabChanged;
+
+    if (layoutTabChanged && typeof layoutTabChanged.add === 'function') {
+      layoutTabChanged.add((payload) => {
+        if (!payload || payload.id !== SCRIPT_EDITOR_WORKSPACE_TAB_ID) return;
+
+        this._scheduleMonacoLayout();
+      });
+    }
 
     signals.openScript.add(async ({ codeCollection }) => {
       if (!codeCollection || !codeCollection.guid) return;
 
       await this._displayScript(codeCollection);
+
+      this._scheduleMonacoLayout();
     });
 
     signals.openOutput.add(({ language, outputText, scriptName }) => {
@@ -388,21 +418,57 @@ class ScriptEditorWindow {
   }
 
   show() {
+    const floatingPanel = this.floatingPanel;
+    const docked = floatingPanel && floatingPanel._dockedWorkspace;
+    const layoutManager = this.context && this.context.layoutManager;
+
+    if (
+      docked &&
+      docked.hostDom &&
+      docked.hostDom.isConnected &&
+      layoutManager &&
+      typeof layoutManager.selectTab === 'function'
+    ) {
+      layoutManager.selectTab(docked.position, docked.tabId, { open: true });
+
+      this.isVisible = true;
+
+      this.context._scriptEditorContainer = this.editorContainer.dom;
+
+      this._scheduleMonacoLayout();
+
+      return;
+    }
+
     if (this.isVisible) return;
 
-    const parentContainer = this.context?.dom || document.body;
+    const parentContainer =
+      this.context && this.context.dom ? this.context.dom : document.body;
 
-    this.floatingPanel.show(parentContainer);
+    floatingPanel.show(parentContainer);
 
     this.isVisible = true;
 
     this.context._scriptEditorContainer = this.editorContainer.dom;
+
+    this._scheduleMonacoLayout();
   }
 
   hide() {
     if (!this.isVisible) return;
 
-    this.floatingPanel.dom.remove();
+    const floatingPanel = this.floatingPanel;
+    const docked = floatingPanel && floatingPanel._dockedWorkspace;
+
+    if (docked && docked.hostDom && docked.hostDom.isConnected) {
+      this.isVisible = false;
+
+      return;
+    }
+
+    if (floatingPanel && floatingPanel.dom.parentNode) {
+      floatingPanel.dom.remove();
+    }
 
     this.isVisible = false;
   }

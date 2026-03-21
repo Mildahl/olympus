@@ -41,7 +41,6 @@ export class MonacoEditor {
   }
 
   async load() {
-
     if (this.loaded) return;
 
     if (this._loadingPromise) return this._loadingPromise;
@@ -50,15 +49,8 @@ export class MonacoEditor {
     const loaderSrc = `${absoluteBase}/vs/loader.js`;
     const editorMainUrl = `${absoluteBase}/vs/editor/editor.main.js`;
 
-    console.log('[MonacoEditor] load() called');
-    console.log('[MonacoEditor] _baseUrl (raw config):', this._baseUrl);
-    console.log('[MonacoEditor] absoluteBase (resolved):', absoluteBase);
-    console.log('[MonacoEditor] loader script URL:', loaderSrc);
-    console.log('[MonacoEditor] editor.main.js expected URL:', editorMainUrl);
-
     this._loadingPromise = new Promise((resolve, reject) => {
       if (window.monaco) {
-        console.log('[MonacoEditor] window.monaco already exists, skipping load');
         this.monaco = window.monaco;
 
         this.loaded = true;
@@ -69,122 +61,73 @@ export class MonacoEditor {
 
         return;
       }
-      console.log('[MonacoEditor] Pre-flight: fetching editor.main.js to verify content...');
-      fetch(editorMainUrl, { method: 'GET' }).then(resp => {
-        const ct = resp.headers.get('content-type') || '(none)';
-        console.log(`[MonacoEditor] Pre-flight response for editor.main.js: status=${resp.status}, content-type="${ct}"`);
-        if (!resp.ok) {
-          console.error(`[MonacoEditor] WARNING: editor.main.js returned HTTP ${resp.status}. The server may not be serving this file.`);
-        }
-        if (ct.includes('text/html')) {
-          console.error('[MonacoEditor] PROBLEM DETECTED: editor.main.js is being served as text/html!');
-        }
-        return resp.text();
-      }).then(body => {
-        const first80 = body.substring(0, 80);
-        console.log('[MonacoEditor] Pre-flight: first 80 chars:', JSON.stringify(first80));
-        console.log('[MonacoEditor] Pre-flight: total body length:', body.length);
-
-        const lines = body.split('\n');
-        console.log('[MonacoEditor] Pre-flight: total line count:', lines.length);
-        for (let i = 0; i < Math.min(lines.length, 8); i++) {
-          console.log(`[MonacoEditor] Pre-flight: line ${i + 1} length: ${lines[i].length} chars`);
-        }
-        if (lines.length >= 6) {
-          const line6 = lines[5];
-          const errorCol = 60155;
-          const start = Math.max(0, errorCol - 40);
-          const end = Math.min(line6.length, errorCol + 40);
-          console.log(`[MonacoEditor] Pre-flight: line 6 around col ${errorCol}:`, JSON.stringify(line6.substring(start, end)));
-          console.log(`[MonacoEditor] Pre-flight: line 6 char at col ${errorCol}:`, JSON.stringify(line6.charAt(errorCol)));
-          const httpsIdx = line6.indexOf('https', errorCol - 100);
-          if (httpsIdx !== -1 && httpsIdx < errorCol + 100) {
-            console.log(`[MonacoEditor] Pre-flight: found 'https' near error position at col ${httpsIdx}:`, JSON.stringify(line6.substring(httpsIdx - 20, httpsIdx + 40)));
-          }
-        }
-        const firstNul = body.indexOf('\0');
-        if (firstNul !== -1) {
-          console.error(`[MonacoEditor] PROBLEM DETECTED: file contains NUL byte at position ${firstNul}`);
-        }
-
-        if (first80.trimStart().startsWith('<')) {
-          console.error('[MonacoEditor] PROBLEM DETECTED: body starts with HTML markup!');
-        }
-        try {
-          new Function(body);
-          console.log('[MonacoEditor] Pre-flight: syntax check PASSED (body parses as valid JS)');
-        } catch (syntaxErr) {
-          console.error('[MonacoEditor] Pre-flight: syntax check FAILED:', syntaxErr.message);
-        }
-      }).catch(err => {
-        console.warn('[MonacoEditor] Pre-flight fetch failed (non-blocking):', err.message);
-      });
 
       const script = document.createElement('script');
 
       script.src = loaderSrc;
+
       script.type = 'text/javascript';
 
-      console.log('[MonacoEditor] Appending loader script tag to <head>...');
-
       script.onload = () => {
+        const requireFn = window.require;
 
-        console.log('[MonacoEditor] Loader script onload fired');
-        console.log('[MonacoEditor] typeof window.require:', typeof window.require);
-        console.log('[MonacoEditor] typeof window.require?.config:', typeof window.require?.config);
-        console.log('[MonacoEditor] typeof window.define:', typeof window.define);
+        const configFn = requireFn && requireFn.config;
 
-        if (typeof window.require?.config !== 'function') {
+        if (typeof configFn !== 'function') {
           this._loadingPromise = null;
-          const msg = `Monaco AMD loader did not initialise. The file at "${loaderSrc}" was loaded but window.require.config is not a function. ` +
-            `This usually means the server returned HTML (e.g. a 404 page) instead of JavaScript. ` +
-            `Check that the file exists and is served with Content-Type: application/javascript.`;
-          console.error('[MonacoEditor]', msg);
-          reject(new Error(msg));
+
+          reject(
+            new Error(
+              `Monaco AMD loader did not initialise for "${loaderSrc}".`
+            )
+          );
+
           return;
         }
 
-        const requireConfig = { baseUrl: absoluteBase + '/' };
-        console.log('[MonacoEditor] Calling require.config with:', JSON.stringify(requireConfig));
-        window.require.config(requireConfig);
+        configFn.call(requireFn, { baseUrl: absoluteBase + '/' });
 
-        console.log('[MonacoEditor] Calling require(["vs/editor/editor.main"]) ...');
-        window.require(['vs/editor/editor.main'], () => {
-          console.log('[MonacoEditor] editor.main loaded successfully, window.monaco:', !!window.monaco);
-          this.monaco = window.monaco;
+        requireFn(
+          ['vs/editor/editor.main'],
+          () => {
+            this.monaco = window.monaco;
 
-          window.require(['vs/basic-languages/python/python'], (pythonLang) => {
-    
+            requireFn(['vs/basic-languages/python/python'], (pythonLang) => {
               const langId = 'python';
 
-              this.monaco.languages.setMonarchTokensProvider(langId, pythonLang.language);
+              this.monaco.languages.setMonarchTokensProvider(
+                langId,
+                pythonLang.language
+              );
 
-              this.monaco.languages.setLanguageConfiguration(langId, pythonLang.conf);
-            
-          });
-          this.loaded = true;
+              this.monaco.languages.setLanguageConfiguration(
+                langId,
+                pythonLang.conf
+              );
+            });
 
-          this._loadingPromise = null;
+            this.loaded = true;
 
-          resolve();
-        }, (err) => {
-          this._loadingPromise = null;
+            this._loadingPromise = null;
 
-          const msg = `Monaco editor module failed to load. ` +
-            `Check that "${editorMainUrl}" exists and is served as JavaScript (not HTML). ` +
-            `Original error: ${err}`;
-          console.error('[MonacoEditor]', msg);
-          reject(new Error(msg));
-        });
+            resolve();
+          },
+          (err) => {
+            this._loadingPromise = null;
 
+            reject(
+              new Error(
+                `Monaco editor failed to load from "${editorMainUrl}". ${err}`
+              )
+            );
+          }
+        );
       };
 
-      script.onerror = (evt) => {
+      script.onerror = () => {
         this._loadingPromise = null;
 
-        const msg = `Failed to load Monaco loader script from "${loaderSrc}". Check the path and server configuration.`;
-        console.error('[MonacoEditor]', msg, evt);
-        reject(new Error(msg));
+        reject(new Error(`Failed to load Monaco loader from "${loaderSrc}".`));
       };
 
       document.head.appendChild(script);
@@ -195,6 +138,14 @@ export class MonacoEditor {
 
   getEditor() {
     return this._editorInstance;
+  }
+
+  layout() {
+    const editorInstance = this._editorInstance;
+
+    if (editorInstance && typeof editorInstance.layout === 'function') {
+      editorInstance.layout();
+    }
   }
 
   colorizeText(dom) {
@@ -253,16 +204,12 @@ export class MonacoEditor {
 
   activateScript(guid) {
     if (!this._editorInstance) {
-      console.warn('[MonacoEditor] No editor instance to switch model');
-
       return false;
     }
 
     const model = this._models.get(guid);
 
     if (!model) {
-      console.warn('[MonacoEditor] Model not found for guid:', guid);
-
       return false;
     }
 

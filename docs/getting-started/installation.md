@@ -41,7 +41,7 @@ The app will be available at `http://localhost:3000`.
 
 ## Running Examples
 
-After building, you can run the examples:
+You can run the examples:
 
 ### HelloWorld Example
 Navigate to: `http://localhost:3000/examples/HelloWorld/`

@@ -31,15 +31,20 @@ async function add_work_schedule(model, scheduleName, predefinedType, objectType
     return result;
 }
 
-async function enable_editing_workschedule_tasks( activeModel, GlobalId,  { ifc=IfcTool, sequence=SequenceTool, signals, context }) {
+async function enable_editing_workschedule_tasks( activeModel, GlobalId,  { ifc=IfcTool, sequence=SequenceTool, signals, context, viewType = "gantt" }) {
     if (!GlobalId) return false;
 
     const tasks =  await sequence.create_tasks_json( activeModel, GlobalId );
 
     context.activeWorkSchedule = GlobalId;
-            
-    context.signals.enableEditingWorkScheduleTasks.dispatch({ GlobalId , viewType: this.viewType, tasks });
-    
+
+    context.signals.enableEditingWorkScheduleTasks.dispatch({
+        model: activeModel,
+        workscheduleGlobalId: GlobalId,
+        viewType,
+        tasks,
+    });
+
     return true;
 }
 

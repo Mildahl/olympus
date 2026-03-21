@@ -21,11 +21,12 @@ LayoutManager controls the application's workspace layout — left, right, and b
 ## Accessing LayoutManager
 
 ```javascript
-// From context
-const layoutManager = context.editor.layoutManager;
+// Olympus / AECO host
+const layoutManager = context.layoutManager;
 
-// Or from simulation
-const layoutManager = simulation.editor.layoutManager;
+// Other embeddings may use editor
+const editor = context.editor;
+const layoutManagerFromEditor = editor ? editor.layoutManager : null;
 ```
 
 ## Configuration
@@ -60,6 +61,9 @@ layoutManager.addTab('left', 'tree', 'Tree View', treeContent, {
 layoutManager.addTab('bottom', 'logs', 'Logs', logsContent, { 
     replace: false 
 });
+
+// Tab with “undock” control on the tab label (pairs with TabPanel floatable or registerTabFloatHandler)
+layoutManager.addTab('left', 'my-tool', 'My tool', panel, { floatable: true, open: false });
 ```
 
 **Parameters:**
@@ -72,6 +76,9 @@ layoutManager.addTab('bottom', 'logs', 'Logs', logsContent, {
 | `content` | HTMLElement \| UIElement | Tab content |
 | `options.open` | boolean | Open workspace after adding (default: true) |
 | `options.replace` | boolean | Replace existing tab with same ID (default: true) |
+| `options.floatable` | boolean | Show undock icon on the tab strip (default: false) |
+
+`ensureTab(...)` accepts the same options; it only adds the tab if it is missing (defaults: `open: false`, `replace: false`).
 
 ### Removing Tabs
 
@@ -138,6 +145,34 @@ const content = layoutManager.getTabContent('right', 'settings');
 layoutManager.setTabLabel('left', 'items', `Items (${itemCount})`);
 ```
 
+## TabPanel and floating workspace tabs
+
+For most modules, use **`TabPanel`** (`drawUI/TabPanel.js` or `DrawUI.tabPanel(options)`) instead of hand-rolling `div` shells and `ensureTab`:
+
+- Pass **`context`**, **`position`**, **`tabId`**, **`tabLabel`**, **`title`**, **`icon`**
+- Set **`moduleId`** (or **`toggleElementId`**) so the world toolbar can toggle the tab via `bindToggleForModule`
+- Set **`floatable: true`** to show an **open-in-new** control on the **workspace tab label** (not inside the panel body). That detaches content into a `FloatingPanel` with dock targets wired to the same tab id.
+
+```javascript
+import { TabPanel } from './drawUI/TabPanel.js';
+
+this._tabPanel = new TabPanel({
+  context,
+  operators,
+  position: 'left',
+  tabId: 'my-module-panel',
+  tabLabel: 'My panel',
+  title: 'My panel',
+  icon: 'extension',
+  moduleId: 'my.module',
+  floatable: true,
+});
+this.content = this._tabPanel.content;
+// … add UI to this.content, then rely on ensureTab via moduleId
+```
+
+Advanced: **`layoutManager.registerTabFloatHandler(position, tabId, () => { … })`** if you implement float yourself while still using `floatable: true` on `addTab`.
+
 ## Workspace Control
 
 ### Opening and Closing
@@ -158,13 +193,13 @@ if (layoutManager.isWorkspaceOpen('bottom')) {
 ### Resizing
 
 ```javascript
-// Get current size
-const width = layoutManager.getWorkspaceWidth('right');
-const height = layoutManager.getWorkspaceHeight('bottom');
+// Get current size (width for left/right, height for bottom)
+const rightW = layoutManager.getWorkspaceSize('right');
+const bottomH = layoutManager.getWorkspaceSize('bottom');
 
 // Set size
-layoutManager.setWorkspaceWidth('left', 400);
-layoutManager.setWorkspaceHeight('bottom', 250);
+layoutManager.setWorkspaceSize('left', 400);
+layoutManager.setWorkspaceSize('bottom', 250);
 ```
 
 ## Binding UI Elements
@@ -210,22 +245,16 @@ context.signals.layoutWorkspaceChanged.add((data) => {
 });
 ```
 
-## State Persistence
+## State persistence
 
-LayoutManager automatically persists:
-- Workspace open/closed state
-- Workspace sizes
-- Selected tabs
+- **Open/closed** and **sizes** for each workspace are saved to `localStorage` (`storageKey`, default `aeco-layout-state`) whenever the user toggles or resizes panels.
+- **Which tab was selected** in each workspace is saved **only if** the user enabled **Save my settings** (Welcome or Settings → `config.app.Settings.persistSettings`).
 
-State is saved to localStorage using the configured `storageKey`.
+After registration, LayoutManager reapplies saved tab selection (with short delayed retries) so async modules can add tabs after load. You can call **`layoutManager.restoreWorkspaceTabSelections()`** again if your tabs appear very late.
 
 ```javascript
-// State is automatically saved on changes
-// To manually save:
-layoutManager._saveState();
-
-// To load saved state:
-layoutManager._loadState();
+// Internal persistence hooks exist on the instance; prefer normal UI interaction.
+layoutManager.resetLayout(); // resets layout + stored tab selection for workspaces
 ```
 
 ## Keyboard Shortcuts
@@ -246,7 +275,7 @@ class MyAddonUI {
     constructor({ context, operators }) {
         this.context = context;
         this.operators = operators;
-        this.layoutManager = context.editor.layoutManager;
+        this.layoutManager = context.layoutManager;
         
         this.mainPanel = this.createMainPanel();
         this.outputPanel = this.createOutputPanel();
@@ -380,6 +409,14 @@ new LayoutManager(options?: LayoutManagerConfig)
 | `getWorkspaceHeight(position)` | number | Get workspace height |
 | `setWorkspaceHeight(position, height)` | void | Set workspace height |
 | `bindToggle(element, position, tabId)` | Function | Bind element to toggle tab |
+| `bindToggleForModule(moduleId, position, tabId, options?)` | Function | Like `bindToggle` using World `moduleId` |
+| `ensureTab(position, id, label, content, options?)` | boolean | Add tab if missing |
+| `registerTabFloatHandler(position, tabId, fn)` | Function | Cleanup fn; tab-strip float |
+| `invokeTabFloat(position, tabId)` | void | Invoke registered float handler |
+| `restoreWorkspaceTabSelections()` | this | Re-apply saved active tabs |
+| `getWorkspaceSize(position)` | number | Width or height in px |
+| `setWorkspaceSize(position, size)` | this | Set width or height |
+| `resetLayout()` | this | Reset layout state |
 
 ## Related Documentation
 

@@ -61,29 +61,17 @@ Sets up module imports and loads the application:
 Initializes and runs the application:
 
 ```javascript
-import { DrawUI } from "./../../drawUI/index.js";
 import { AECO } from "aeco";
 import { AECOConfiguration } from "./configuration/config.js";
 
-// Show splash screen
-const splash = DrawUI.splash({ 
-    imageUrl: '/external/ifc/splash.png', 
-    text: 'Initializing...' 
-});
-splash.show(document.body);
-
-// Create AECO instance
 const simulation = new AECO();
+const context = simulation.context;
 
-// Build UI from configuration
-simulation.createUI({ 
-    config: AECOConfiguration, 
-    container: document.body 
+simulation.createUI({
+    config: AECOConfiguration,
+    container: document.body
 });
 
-splash.hide();
-
-// Add test object
 simulation.tools.world.scene.addCube(context, 1, "grey");
 ```
 

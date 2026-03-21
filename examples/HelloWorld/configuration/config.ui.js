@@ -113,6 +113,15 @@ const CoreModules = [
 
 const addons = [
   {
+    id:"AppSettings",
+    name: "Settings",
+    type: "Module",
+    icon: "settings",
+    priority: 1,
+    moduleId: "settings",
+    children: [],
+  },
+  {
       id: "NotificationsModule",
       name: "Notifications Module",
       needsCount: true,
@@ -204,13 +213,7 @@ export const WorldComponent = {
       type: 'PlaceHolder',
       priority: 4,
     },
-    {
-      id: "Configurator",
-      name: "Configuration Menu",
-      type: "Modules",
-      priority: 1,
-      children: [],//configMenu
-    },
+
     {
       id: "Information",
       name: "Information",
@@ -241,13 +244,23 @@ export const WorldComponent = {
       id: "Viewport",
       name: "Viewport",
       type: "Body",
-      children: [{
-      id: "SideBar",
-      name: "World Menu",
-      children: SideBar,
-      type: "Modules",
-      priority: 3,
-    }],
+      children: [
+        {
+          id: "SideBar",
+          name: "World Menu",
+          children: SideBar,
+          type: "Modules",
+          priority: 3,
+        },
+        {
+          id: "Windows",
+          name: "Windows Center",
+          type: "WindowManager",
+          priority: 6,
+          children: [],
+        },
+        ...ViewportComponents
+      ],
     },
     {
       id: "ViewportSnapTools",
@@ -266,13 +279,5 @@ export const WorldComponent = {
       type: "Modules",
       priority: 4,
     },
-    {
-      id: "Windows",
-      name: "Windows Center",
-      type: "WindowManager",
-      priority: 6,
-      children: [],
-    },
-    ...ViewportComponents
   ],
 };

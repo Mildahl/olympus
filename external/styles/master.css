@@ -61,7 +61,7 @@
   --brand-color: #00d4aa;
   --brand-color-soft: rgba(0, 212, 170, 0.15);
   --brand-color-alpha: rgba(0, 212, 170, 0.25);
-  --on-brand-color: #0a0e12;
+  --on-brand-color: #ffffff;
   --border-on-brand-color: rgba(0, 212, 170, 0.3);
   --brand-color-hover: #00f5c4;
 
@@ -173,7 +173,7 @@
 
   --viewport-gizmo-size: var(--phi-4);
   --viewport-gizmo-top: calc(var(--headerbar-height));
-  --viewport-gizmo-left: calc(var(--sidebar-width));
+  --viewport-gizmo-left: calc(var(--sidebar-width) + var(--phi-0-5));
 
   --viewport-information-width: calc(var(--viewport-gizmo-size) + var(--sidebar-width));
 
@@ -185,18 +185,6 @@
   --job-configuration-top: calc(var(--viewport-height) - var(--margin));
   --job-configuration-left: calc(var(--viewport-width) - var(--sidebar-width) - var(--margin));
   --exercises-width: var(--sidebar-width);
-
-  --layout-left-width: 0px;
-  --layout-left-resizer: 0px;
-  --layout-right-width: 0px;
-  --layout-right-resizer: 0px;
-  --layout-bottom-height: 0px;
-  --layout-bottom-resizer: 0px;
-  --layout-top-height: 36px;
-  --layout-resizer-size: 4px;
-  --layout-left-offset: 0px;
-  --layout-right-offset: 0px;
-  --layout-bottom-offset: 0px;
 
   --font-size-xs: 0.6875rem;
   --font-size-sm: 0.75rem;
@@ -361,11 +349,7 @@ body {
   color: var(--theme-text);
 }
 
-.has-count {
-  position: absolute;
-  top: 0;
-  right: var(--phi-0-5);
-}
+
 
 .justify-between {
   justify-content: space-between;
@@ -2426,6 +2410,64 @@ small {
   }
 }
 
+.ViewportLoadStatusStrip {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-surface) 92%, #fff 8%), color-mix(in srgb, var(--glass-surface) 88%, #000 12%));
+  border-top: 1px solid var(--border);
+  bottom: 0;
+  box-sizing: border-box;
+  flex-direction: column;
+  gap: var(--phi-0-2-5);
+  left: 0;
+  max-width: 100%;
+  padding: var(--phi-0-5) var(--phi-0-7-5);
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  z-index: 6;
+}
+
+.ViewportLoadStatusStrip-label {
+  color: var(--theme-text-light);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  line-height: 1.2;
+  overflow: hidden;
+  padding-right: var(--phi-0-5);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ViewportLoadStatusStrip-percent {
+  color: var(--theme-text);
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  min-width: 3ch;
+  text-align: right;
+}
+
+.ViewportLoadStatusStrip-track {
+  background: color-mix(in srgb, var(--theme-background-dark) 86%, #000 14%);
+  border: 1px solid color-mix(in srgb, var(--theme-text-light) 12%, transparent);
+  border-radius: 999px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.28);
+  height: 8px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.ViewportLoadStatusStrip-fill {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--theme-primary) 78%, #0f172a 22%) 0%, var(--theme-primary) 48%, color-mix(in srgb, var(--theme-primary) 80%, #ffffff 20%) 100%);
+  border-radius: inherit;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--theme-primary) 40%, transparent);
+  height: 100%;
+  min-width: 0;
+  width: 0%;
+}
+
 .StatusBar {
   --left: calc(var(--margin) + var(--sidebar-width));
   align-items: center;
@@ -2483,6 +2525,17 @@ small {
 .Tab.selected .Operator {
   border-color: var(--border-on-brand-color);
   color: var(--on-brand-color);
+  opacity: 1;
+}
+
+.Tabs .Tab > .Operator.Tab-float {
+  flex-shrink: 0;
+  opacity: 0.45;
+  padding: 1px;
+}
+
+.Tabs .Tab:hover > .Operator.Tab-float,
+.Tabs .Tab.selected > .Operator.Tab-float {
   opacity: 1;
 }
 
@@ -3303,12 +3356,12 @@ textarea.success {
 .layout-resizer-left,
 .layout-resizer-right {
   cursor: col-resize;
-  width: var(--layout-resizer-size);
+  width: 4px;
 }
 
 .layout-resizer-bottom {
   cursor: row-resize;
-  height: var(--layout-resizer-size);
+  height: 4px;
 }
 
 .layout-viewport {
@@ -3328,25 +3381,8 @@ textarea.success {
   z-index: 9999;
 }
 
-.World.layout-active {
-  display: grid !important;
-  overflow: hidden;
-}
-
-.World.layout-managed {
-  display: grid;
-  grid-template-columns: var(--layout-left-width) var(--layout-left-resizer) minmax(0, 1fr) var(--layout-right-resizer) var(--layout-right-width);
-  grid-template-rows: var(--layout-top-height, 36px) minmax(0, 1fr) var(--layout-bottom-resizer) var(--layout-bottom-height);
-  --viewport-left: var(--layout-left-offset);
-  --viewport-width: calc(100% - var(--sidebar-width) - var(--layout-left-offset) - var(--layout-right-offset));
-  --viewport-height: calc(100% - var(--layout-top-height, 36px) - var(--layout-bottom-offset));
-  --viewport-gizmo-left: calc(var(--sidebar-width) + var(--layout-right-offset));
-  --state-bar-right: calc(var(--phi-0-5) + var(--viewport-information-width) + var(--layout-right-offset));
-  --sidebar-left: calc(100% - var(--sidebar-width) - var(--layout-right-offset));
-  --sidebar-height: calc(100% - var(--layout-bottom-offset));
-}
-
-.World.layout-managed .HeaderBar {
+/* Workspace grid tracks are set inline by LayoutManager (gridTemplateColumns / gridTemplateRows). */
+.World.workspace-layout .HeaderBar {
   grid-column: 1 / -1;
   grid-row: 1;
   position: relative;
@@ -3356,64 +3392,39 @@ textarea.success {
   height: 100%;
 }
 
-.World.layout-managed .Configurator {
-  right: calc(var(--phi-0-5) + var(--sidebar-width) + var(--layout-right-offset));
-}
-
-.World.layout-managed .Information {
-  bottom: calc(var(--phi-1) + var(--layout-bottom-offset));
-  right: calc(var(--phi-1) + var(--sidebar-width) + var(--layout-right-offset));
-}
-
-.World.layout-managed .ViewportSnapTools {
-  left: calc(var(--phi-1) + var(--layout-left-offset));
-}
-
-.World.layout-managed .ViewportToolBar {
-  left: calc(var(--phi-1) + var(--layout-left-offset));
-}
-
-.World.layout-managed .Windows {
-  height: calc(100% - var(--headerbar-height) - var(--layout-bottom-offset) - var(--phi-1) * 2);
-  left: calc(var(--phi-1) + var(--layout-left-offset));
-}
-.World.layout-managed #Loader.PlaceHolder {
-  left: calc(var(--phi-1) + var(--layout-left-offset));
-}
-
-.World.layout-managed #SideWorkspaceLeft {
+.World.workspace-layout #SideWorkspaceLeft {
   grid-column: 1;
   grid-row: 2 / -1;
   min-height: 0;
 }
 
-.World.layout-managed #SideWorkspaceRight {
+.World.workspace-layout #SideWorkspaceRight {
   grid-column: 5;
   grid-row: 2 / -1;
   min-height: 0;
 }
 
-.World.layout-managed #BottomWorkspace {
+.World.workspace-layout #BottomWorkspace {
   grid-column: 3;
   grid-row: 4;
 }
 
-.World.layout-managed #Viewport {
+.World.workspace-layout #Viewport {
   grid-column: 3;
   grid-row: 2;
 }
 
-.World.layout-managed .layout-resizer-left {
+.World.workspace-layout .layout-resizer-left {
   grid-column: 2;
   grid-row: 2 / -1;
 }
 
-.World.layout-managed .layout-resizer-right {
+.World.workspace-layout .layout-resizer-right {
   grid-column: 4;
   grid-row: 2 / -1;
 }
 
-.World.layout-managed .layout-resizer-bottom {
+.World.workspace-layout .layout-resizer-bottom {
   grid-column: 3;
   grid-row: 3;
 }
@@ -3488,8 +3499,8 @@ textarea.success {
 
 /* Side workspaces: same flex height chain as bottom so tab content can use
    min-height: 0 + overflow: auto for internal scrolling (e.g. bim.sequence task tab). */
-.World.layout-managed #SideWorkspaceLeft .LeftWorkspaceTabbedPanel,
-.World.layout-managed #SideWorkspaceRight .RightWorkspaceTabbedPanel {
+.World #SideWorkspaceLeft .LeftWorkspaceTabbedPanel,
+.World #SideWorkspaceRight .RightWorkspaceTabbedPanel {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -3497,25 +3508,25 @@ textarea.success {
   width: 100%;
 }
 
-.World.layout-managed #SideWorkspaceLeft .LeftWorkspaceTabbedPanel .Panels,
-.World.layout-managed #SideWorkspaceRight .RightWorkspaceTabbedPanel .Panels {
+.World #SideWorkspaceLeft .LeftWorkspaceTabbedPanel .Panels,
+.World #SideWorkspaceRight .RightWorkspaceTabbedPanel .Panels {
   flex: 1;
   min-height: 0;
   overflow: hidden;
 }
 
-.World.layout-managed #SideWorkspaceLeft .LeftWorkspaceTabbedPanel .Panels > div,
-.World.layout-managed #SideWorkspaceRight .RightWorkspaceTabbedPanel .Panels > div {
+.World #SideWorkspaceLeft .LeftWorkspaceTabbedPanel .Panels > div,
+.World #SideWorkspaceRight .RightWorkspaceTabbedPanel .Panels > div {
   height: 100%;
 }
 
-.World.layout-managed #SideWorkspaceLeft .LeftWorkspaceTabbedPanel .Panel,
-.World.layout-managed #SideWorkspaceRight .RightWorkspaceTabbedPanel .Panel {
+.World #SideWorkspaceLeft .LeftWorkspaceTabbedPanel .Panel,
+.World #SideWorkspaceRight .RightWorkspaceTabbedPanel .Panel {
   max-width: 100%;
   width: 100%;
 }
 
-.World.layout-managed #BottomWorkspace .BottomWorkspaceTabbedPanel {
+.World #BottomWorkspace .BottomWorkspaceTabbedPanel {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -3523,13 +3534,13 @@ textarea.success {
   width: 100%;
 }
 
-.World.layout-managed #BottomWorkspace .BottomWorkspaceTabbedPanel .Panels {
+.World #BottomWorkspace .BottomWorkspaceTabbedPanel .Panels {
   flex: 1;
   min-height: 0;
   overflow: hidden;
 }
 
-.World.layout-managed #BottomWorkspace .BottomWorkspaceTabbedPanel .Panels > div {
+.World #BottomWorkspace .BottomWorkspaceTabbedPanel .Panels > div {
   height: 100%;
 }
 
@@ -3564,6 +3575,27 @@ textarea.success {
 .layout-toggle-btn.active:hover {
   background: var(--brand-color);
   color: var(--on-brand-color);
+}
+
+.layout-toggle-presets-wrap {
+  margin-right: 0.35rem;
+}
+
+.layout-toggle-presets-select {
+  background: var(--glass-surface, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.12));
+  border-radius: 3px;
+  color: var(--theme-text-light);
+  font-size: 0.75rem;
+  height: 22px;
+  line-height: 1.2;
+  max-width: 11rem;
+  padding: 0 0.35rem;
+}
+
+.layout-toggle-presets-select:hover {
+  background: var(--glass-surface-light);
+  color: var(--theme-text);
 }
 
 .ws-zoom-btn:hover {
@@ -3661,7 +3693,7 @@ textarea.success {
   display: flex;
   flex-direction: row;
   gap: 8px;
-  height: var(--layout-top-height, 36px);
+  height: var(--headerbar-height);
   justify-content: space-between;
   left: 0;
   padding: 0 12px;
@@ -3845,8 +3877,8 @@ textarea.success {
   z-index: 1;
 }
 
-.World.layout-managed .Viewport,
-.World.layout-managed #Viewport {
+.World.workspace-layout .Viewport,
+.World.workspace-layout #Viewport {
   height: auto;
   left: auto;
   min-height: 0;
@@ -3858,7 +3890,6 @@ textarea.success {
 
 .World .ViewportGizmo,
 #Loader.PlaceHolder {
-  top: calc( var(--headerbar-height));
   height: var(--viewport-gizmo-size);
   position: absolute;
   width: var(--viewport-gizmo-size);
@@ -3884,8 +3915,8 @@ textarea.success {
   
   width: fit-content;
 
-  top: calc(var(--viewport-gizmo-top) + var(--viewport-gizmo-size));
-  right: calc(var(--viewport-gizmo-left) );
+  top: calc(var(--viewport-gizmo-top) + var(--viewport-gizmo-size) + var(--phi-0-5));
+  right: calc(var(--viewport-gizmo-left) + var(--phi-0-5));
 
 
   display: flex;

@@ -41,11 +41,9 @@ class UI {
     
     console.log("CONFIGURATION", context.config);
 
-    if (context.config?.ui?.showWelcomeScreen) {
-      new WelcomeScreen({ context, operators, container: dom });
-    }
-    
-    const sidebar = new Sidebar(context, operators);
+    if (context.config.ui.showWelcomeScreen) new WelcomeScreen({ context, operators, container: dom });
+
+    new Sidebar({ context, operators });
 
     return root;
   }

@@ -65,41 +65,21 @@ Key points:
 **app.js** is where your application starts:
 
 ```javascript
-import { DrawUI } from "./../../drawUI/index.js";
-
-// Show splash screen while loading
-const splash = DrawUI.splash({ 
-    imageUrl: '/external/ifc/splash.png', 
-    text: 'Initializing...' 
-});
-splash.show(document.body);
-splash.setText('Creating UI...');
-
-// Import AECO core
 import { AECO } from "aeco";
 
-// Import your configuration
 import { AECOConfiguration } from "./configuration/config.js";
 
-// Create the simulation instance
 const simulation = new AECO();
 
-// Access the context (state container)
 const context = simulation.context;
 
-// Create the UI with your configuration
-simulation.createUI({ 
-    config: AECOConfiguration, 
-    container: document.body 
+simulation.createUI({
+    config: AECOConfiguration,
+    container: document.body
 });
 
-// Log active modules (useful for debugging)
 simulation.moduleRegistry.logActiveModulesAndUI();
 
-// Hide splash when ready
-splash.hide();
-
-// Add a simple test cube to the scene
 simulation.tools.world.scene.addCube(context, 1, "grey");
 
 export default simulation;
@@ -107,11 +87,10 @@ export default simulation;
 
 ### What happens during initialization:
 
-1. **Splash screen** shows loading progress
-2. **AECO instance** creates the core engine
-3. **createUI()** builds the interface from configuration
-4. **Module registry** activates configured modules
-5. **Scene tools** are available for adding 3D content
+1. **AECO instance** creates the core engine
+2. **createUI()** builds the interface from configuration
+3. **Module registry** activates configured modules
+4. **Scene tools** are available for adding 3D content
 
 ## Step 3: Main Configuration
 

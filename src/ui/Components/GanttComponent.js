@@ -2,15 +2,128 @@ import {Components} from "./Components.js";
 
 import Paths from "../../utils/paths.js";
 
+const injectedJsganttStyleHrefs = new Set();
+
+let jsganttScriptLoadPromise = null;
+
+function resolveBrowserGlobalObject() {
+    if (typeof globalThis !== "undefined") {
+        return globalThis;
+    }
+
+    if (typeof window !== "undefined") {
+        return window;
+    }
+
+    return null;
+}
+
+function getJsganttNamespace() {
+    const browserGlobalObject = resolveBrowserGlobalObject();
+
+    if (!browserGlobalObject) {
+        return null;
+    }
+
+    const jsganttNamespace = browserGlobalObject.JSGantt;
+
+    if (!jsganttNamespace || typeof jsganttNamespace.GanttChart !== "function") {
+        return null;
+    }
+
+    return jsganttNamespace;
+}
+
+function injectJsganttStylesOnce(cssHrefList) {
+    if (typeof document === "undefined" || !document.head) {
+        return;
+    }
+
+    for (let index = 0; index < cssHrefList.length; index++) {
+        const href = cssHrefList[index];
+
+        if (injectedJsganttStyleHrefs.has(href)) {
+            continue;
+        }
+
+        injectedJsganttStyleHrefs.add(href);
+
+        const link = document.createElement("link");
+
+        link.rel = "stylesheet";
+
+        link.href = href;
+
+        document.head.appendChild(link);
+    }
+}
+
+function loadJsganttScriptOnce(scriptSrc) {
+    if (getJsganttNamespace()) {
+        return Promise.resolve();
+    }
+
+    if (jsganttScriptLoadPromise) {
+        return jsganttScriptLoadPromise;
+    }
+
+    const browserGlobalObject = resolveBrowserGlobalObject();
+
+    if (!browserGlobalObject || typeof document === "undefined" || !document.head) {
+        return Promise.reject(new Error("Gantt chart requires a browser DOM"));
+    }
+
+    jsganttScriptLoadPromise = new Promise(function (resolve, reject) {
+        const script = document.createElement("script");
+
+        script.src = scriptSrc;
+
+        script.async = true;
+
+        script.onload = function () {
+            if (getJsganttNamespace()) {
+                resolve();
+
+                return;
+            }
+
+            jsganttScriptLoadPromise = null;
+
+            reject(new Error("JSGantt was not exposed after script load"));
+        };
+
+        script.onerror = function () {
+            jsganttScriptLoadPromise = null;
+
+            reject(new Error("Failed to load jsgantt script"));
+        };
+
+        document.head.appendChild(script);
+    });
+
+    return jsganttScriptLoadPromise;
+}
+
+function ensureJsganttReady(cssHrefList, scriptSrc) {
+    injectJsganttStylesOnce(cssHrefList);
+
+    return loadJsganttScriptOnce(scriptSrc);
+}
+
 class GanttComponent {
-    constructor(context, operators) {
+    constructor(context, options) {
         this.context = context;
 
-        this.operators = operators;
+        const ganttOptions =
+            options && typeof options === "object" && !Array.isArray(options) ? options : {};
+
+        this.operators = ganttOptions.operators || null;
+
+        this.shouldRunSelectTaskOnRowClick = ganttOptions.shouldRunSelectTaskOnRowClick;
+
+        this.onTaskRowClick = ganttOptions.onTaskRowClick;
 
         this.ganttChart = null;
-
-        this.vendorLoaded = false;
 
         this.dependencies = {
             jsLinks: [
@@ -24,37 +137,6 @@ class GanttComponent {
         this.tasksData = null;
     }
 
-    loadDependencies() {
-        
-        if (!this.vendorLoaded) {
-            for (const cssLink of this.dependencies.cssLinks) {
-                const link = document.createElement('link');
-
-                link.rel = 'stylesheet';
-
-                link.href = cssLink;
-
-                document.head.appendChild(link);
-            }
-
-            for (const jsLink of this.dependencies.jsLinks) {
-                const xhr = new XMLHttpRequest();
-
-                xhr.open('GET', jsLink, false);
-
-                xhr.send();
-
-                if (xhr.status === 200) {
-                    (0, eval)(xhr.responseText);
-                } else {
-                    console.error('Failed to load script:', jsLink);
-                }
-            }
-
-            this.vendorLoaded = true;
-        }
-    }
-
     render(taskData, container) {
         container.clear();
 
@@ -62,16 +144,30 @@ class GanttComponent {
     }
 
     displayTasks(taskData, dom) {
-        this.createGanttChart(dom, taskData);
+        const self = this;
+
+        const dependencyList = this.dependencies;
+
+        const scriptSourceUrl = dependencyList.jsLinks[0];
+
+        ensureJsganttReady(dependencyList.cssLinks, scriptSourceUrl).then(function () {
+            self.createGanttChart(dom, taskData);
+        }).catch(function (loadError) {
+            if (typeof console !== "undefined" && typeof console.error === "function") {
+                console.error(loadError);
+            }
+        });
     }
 
     createGanttChart(dom, jsonData) {
 
-        console.log("Creating Gantt chart with data:", jsonData, dom);
+        const jsganttNamespace = getJsganttNamespace();
 
-        this.loadDependencies();
+        if (!jsganttNamespace) {
+            return;
+        }
 
-        this.ganttChart = new JSGantt.GanttChart(dom, 'week');
+        this.ganttChart = new jsganttNamespace.GanttChart(dom, 'week');
 
         this.ganttChart.setOptions({
             vCaptionType: 'Caption',
@@ -97,11 +193,31 @@ class GanttComponent {
 
         const jsonString = typeof jsonData === 'string' ? jsonData : JSON.stringify(jsonData);
 
-        JSGantt.parseJSONString(jsonString, this.ganttChart);
+        jsganttNamespace.parseJSONString(jsonString, this.ganttChart);
 
         this.ganttChart.vEventClickRow = (task) => {
-            this.operators.execute("bim.select_task", this.context, task.getOriginalID()
-            );
+            const taskId = task.getOriginalID();
+
+            if (typeof this.onTaskRowClick === "function") {
+                this.onTaskRowClick(taskId);
+
+                return;
+            }
+
+            const shouldRun =
+                typeof this.shouldRunSelectTaskOnRowClick === "function"
+                    ? this.shouldRunSelectTaskOnRowClick()
+                    : true;
+
+            if (!shouldRun) {
+                return;
+            }
+
+            if (!this.operators || typeof this.operators.execute !== "function") {
+                return;
+            }
+
+            this.operators.execute("bim.select_task", this.context, taskId);
         };
 
         this.ganttChart.Draw();
@@ -138,8 +254,6 @@ class GanttComponent {
      * @param {Object} task - JSGantt task object
      */
     showDependencyDialog(task) {
-        console.log("Showing dependency dialog for task:", task);
-
         this.removeDependencyDialog();
 
         const taskdata = {
@@ -379,8 +493,6 @@ class GanttComponent {
                 data.pDepend = current.join(',');
             }
         } catch (e) {
-            console.warn('addDependency fallback mutation failed', e);
-
             return false;
         }
 
@@ -432,8 +544,6 @@ class GanttComponent {
                 data.pDepend = filtered.join(',');
             }
         } catch (e) {
-            console.warn('removeDependency fallback mutation failed', e);
-
             return false;
         }
 
@@ -487,8 +597,6 @@ class GanttComponent {
                 data.pDepend = pieces.join(',');
             }
         } catch (e) {
-            console.warn('setDependencyType fallback mutation failed', e);
-
             return false;
         }
 
@@ -538,8 +646,6 @@ class GanttComponent {
                 data.pDepend = tokens.join(',');
             }
         } catch (e) {
-            console.warn('updateDependencies failed', e);
-
             return false;
         }
 
@@ -595,11 +701,7 @@ class GanttComponent {
     handleContextMenu(event) {
         event.preventDefault();
 
-        console.log("Context menu event:", event);
-
         const task = this.getTaskFromEvent(event);
-
-        console.log("Task from event:", task);
 
         this.showDependencyDialog(task);
         

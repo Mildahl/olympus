@@ -1151,7 +1151,9 @@ class AppointedPersonUI {
   }
 
   _renderGanttView(taskData) {
-    const container = UIComponents.gantt(this.context, taskData);
+    const container = UIComponents.gantt(this.context, taskData, {
+      operators: this.ops,
+    });
 
     return container;
   }

@@ -13,7 +13,6 @@
  */
 
 export const coreModules = [
-    
     {
         id: "configurator",
         active: true,
@@ -32,6 +31,10 @@ export const coreModules = [
     },
     {
         id: "bim.project",
+        active: true,
+    },
+    {
+        id: "bim.sequence",
         active: true,
     },
     {
@@ -100,10 +103,6 @@ export const coreModules = [
     {
         id: "bim.model",
         active: false,
-    },
-    {
-        id: "bim.sequence",
-        active: true,
     },
     {
         id: "world.timeline_player",

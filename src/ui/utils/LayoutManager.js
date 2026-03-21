@@ -17,6 +17,7 @@ function workspaceTabId(tab) {
  * @typedef {Object} AddTabOptions
  * @property {boolean} [open=true] - Whether to open the panel after adding the tab.
  * @property {boolean} [replace=true] - Whether to replace an existing tab with the same ID.
+ * @property {boolean} [floatable=false] - Show undock control on the workspace tab label (TabPanel float).
  */
 
 /**
@@ -39,6 +40,7 @@ function workspaceTabId(tab) {
  * @property {number} [leftWorkspaceWidth=300] - Default width for the left workspace in pixels.
  * @property {number} [rightWorkspaceWidth=300] - Default width for the right workspace in pixels.
  * @property {number} [bottomWorkspaceHeight=200] - Default height for the bottom workspace in pixels.
+ * @property {number} [topWorkspaceHeight=36] - Height of the top bar row in pixels (grid row 1).
  * @property {number} [minPanelSize=100] - Minimum workspace size in pixels.
  * @property {number} [resizerSize=4] - Size of the resizer handle in pixels.
  * @property {string} [storageKey='aeco-layout-state'] - LocalStorage key for persisting state.
@@ -54,6 +56,11 @@ const DEFAULT_CONFIG = {
   resizerSize: 4,
   storageKey: 'aeco-layout-state'
 };
+
+const BOTTOM_WORKSPACE_TAB_GROUPS_BY_MODULE = [
+  { moduleId: 'bim.sequence', tabIds: ['sequence-scheduling', 'sequence-schedule-tasks'] },
+  { moduleId: 'world.timeline_player', tabIds: ['sequence_animation_player', 'sequence_animation_settings'] },
+];
 
 class LayoutManager {
   constructor(options = {}) {
@@ -86,10 +93,14 @@ class LayoutManager {
       bottomOpen: false,
       leftWidth: this.config.leftWorkspaceWidth,
       rightWidth: this.config.rightWorkspaceWidth,
-      bottomHeight: this.config.bottomWorkspaceHeight
+      bottomHeight: this.config.bottomWorkspaceHeight,
+      workspaceSelected: { left: null, right: null, bottom: null },
     };
 
     this.dragState = null;
+
+    /** @type {Map<string, function(): void>} */
+    this._tabFloatHandlers = new Map();
 
     this._boundMouseMove = this._onMouseMove.bind(this);
 
@@ -103,9 +114,7 @@ class LayoutManager {
 
     if (!this.container) return this;
 
-    this.container.classList.add('layout-managed');
-
-    this.container.style.setProperty('--layout-resizer-size', `${this.config.resizerSize}px`);
+    this.container.classList.add('workspace-layout');
 
     this.workspaces.top = document.getElementById('HeaderBar');
 
@@ -147,14 +156,117 @@ class LayoutManager {
    */
   registerTabbedWorkspaces(tabbedWorkspaces) {
     this.tabbedWorkspaces = tabbedWorkspaces || null;
+    if (tabbedWorkspaces) {
+      for (const position of ['left', 'right', 'bottom']) {
+        const workspace = tabbedWorkspaces[position];
+        if (workspace) {
+          workspace._layoutManager = this;
+          workspace._layoutWorkspacePosition = position;
+        }
+      }
+    }
     this._patchTabbedWorkspaces();
+    this._scheduleWorkspaceTabRestore();
     return this;
+  }
+
+  reorderBottomWorkspaceTabsByModuleOrder(appContext) {
+    const workspace = this.tabbedWorkspaces && this.tabbedWorkspaces.bottom;
+    if (!workspace || typeof workspace.reorderTabs !== 'function') {
+      return this;
+    }
+
+    const orderIds = appContext && appContext.appModuleOrderIds;
+    if (!orderIds || orderIds.length === 0) {
+      return this;
+    }
+
+    const moduleRank = new Map();
+    for (let index = 0; index < orderIds.length; index++) {
+      const moduleId = orderIds[index];
+      if (moduleId && !moduleRank.has(moduleId)) {
+        moduleRank.set(moduleId, index);
+      }
+    }
+
+    const sortedGroups = BOTTOM_WORKSPACE_TAB_GROUPS_BY_MODULE.slice().sort((a, b) => {
+      const rankA = moduleRank.has(a.moduleId) ? moduleRank.get(a.moduleId) : 1000000;
+      const rankB = moduleRank.has(b.moduleId) ? moduleRank.get(b.moduleId) : 1000000;
+      return rankA - rankB;
+    });
+
+    const existingIds = [];
+    const tabs = workspace.tabs;
+    if (Array.isArray(tabs)) {
+      for (let i = 0; i < tabs.length; i++) {
+        const tab = tabs[i];
+        const id = workspaceTabId(tab);
+        if (id) {
+          existingIds.push(id);
+        }
+      }
+    }
+
+    const assigned = new Set();
+    const desired = [];
+    for (let g = 0; g < sortedGroups.length; g++) {
+      const group = sortedGroups[g];
+      const tabIds = group.tabIds;
+      for (let t = 0; t < tabIds.length; t++) {
+        const tabId = tabIds[t];
+        if (existingIds.indexOf(tabId) !== -1) {
+          desired.push(tabId);
+          assigned.add(tabId);
+        }
+      }
+    }
+    for (let i = 0; i < existingIds.length; i++) {
+      const id = existingIds[i];
+      if (!assigned.has(id)) {
+        desired.push(id);
+      }
+    }
+
+    workspace.reorderTabs(desired);
+    return this;
+  }
+
+  prependToggleBarChild(domNode) {
+    if (!domNode || !this.toggleBar) {
+      return function noopToggleBarCleanup() {};
+    }
+
+    const toggleBarElement = this.toggleBar;
+
+    if (toggleBarElement.firstChild) {
+      toggleBarElement.insertBefore(domNode, toggleBarElement.firstChild);
+    } else {
+      toggleBarElement.appendChild(domNode);
+    }
+
+    return function removeToggleBarChild() {
+      if (domNode.parentNode === toggleBarElement) {
+        toggleBarElement.removeChild(domNode);
+      }
+    };
   }
 
   _emit(signalName, payload) {
     const sig = this.context?.signals?.[signalName];
     if (sig && typeof sig.dispatch === 'function') {
       sig.dispatch(payload);
+    }
+  }
+
+  _flushLayoutResize() {
+    const fire = () => {
+      window.dispatchEvent(new Event('resize'));
+    };
+    fire();
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(fire);
+      });
     }
   }
 
@@ -175,9 +287,74 @@ class LayoutManager {
       workspace.select = (id) => {
         const res = originalSelect(id);
         this._emit('layoutTabChanged', { position, id });
+        this._persistWorkspaceTabSelection(position, id);
         return res;
       };
     }
+  }
+
+  _shouldPersistWorkspaceTabState() {
+    return this.context?.config?.app?.Settings?.persistSettings === true;
+  }
+
+  _persistWorkspaceTabSelection(position, id) {
+    if (!this.state.workspaceSelected) {
+      this.state.workspaceSelected = { left: null, right: null, bottom: null };
+    }
+    this.state.workspaceSelected[position] = id;
+    if (this._shouldPersistWorkspaceTabState()) this._saveState();
+  }
+
+  /**
+   * Re-apply saved active tab per workspace when "Save my settings" is enabled.
+   * Safe to call after modules add tabs (e.g. delayed after load).
+   * @returns {this}
+   */
+  restoreWorkspaceTabSelections() {
+    if (!this._shouldPersistWorkspaceTabState() || !this.tabbedWorkspaces) return this;
+    const sel = this.state.workspaceSelected;
+    if (!sel) return this;
+    for (const position of ['left', 'right', 'bottom']) {
+      const id = sel[position];
+      if (!id || !this.hasTab(position, id)) continue;
+      const workspace = this.tabbedWorkspaces[position];
+      if (workspace && typeof workspace.select === 'function') {
+        workspace.select(id);
+      }
+    }
+    return this;
+  }
+
+  _scheduleWorkspaceTabRestore() {
+    const run = () => this.restoreWorkspaceTabSelections();
+    if (typeof queueMicrotask === 'function') queueMicrotask(run);
+    setTimeout(run, 0);
+    setTimeout(run, 120);
+    setTimeout(run, 600);
+  }
+
+  /**
+   * Register handler when user clicks float on a workspace tab (see UITabbedPanel).
+   * @param {LayoutPosition} position
+   * @param {string} tabId
+   * @param {function(): void} fn
+   * @returns {function(): void} Cleanup
+   */
+  registerTabFloatHandler(position, tabId, fn) {
+    const key = `${position}:${tabId}`;
+    this._tabFloatHandlers.set(key, fn);
+    return () => {
+      if (this._tabFloatHandlers.get(key) === fn) this._tabFloatHandlers.delete(key);
+    };
+  }
+
+  /**
+   * @param {LayoutPosition} position
+   * @param {string} tabId
+   */
+  invokeTabFloat(position, tabId) {
+    const fn = this._tabFloatHandlers.get(`${position}:${tabId}`);
+    if (typeof fn === 'function') fn();
   }
 
   // ════════════════════════════════════════════════════════════════════════════
@@ -217,7 +394,7 @@ class LayoutManager {
    * @fires layoutTabAdded - Dispatched after tab is added with { position, id }.
    */
   addTab(position, id, label, content, options = {}) {
-    const { open = true, replace = true } = options;
+    const { open = true, replace = true, floatable = false } = options;
     const workspace = this.tabbedWorkspaces?.[position];
     if (!workspace || typeof workspace.addTab !== 'function') return false;
 
@@ -225,7 +402,7 @@ class LayoutManager {
       try { workspace.removeTab(id); } catch (_) {}
     }
 
-    workspace.addTab(id, label, content);
+    workspace.addTab(id, label, content, undefined, { floatable });
     this._emit('layoutTabAdded', { position, id });
 
     if (open) this.openWorkspace(position);
@@ -245,9 +422,9 @@ class LayoutManager {
    * @returns {boolean} True if the tab exists after the call (added or already there).
    */
   ensureTab(position, id, label, content, options = {}) {
-    const { open = false, replace = false } = options;
+    const { open = false, replace = false, floatable = false } = options;
     if (this.hasTab(position, id)) return true;
-    return this.addTab(position, id, label, content, { open, replace });
+    return this.addTab(position, id, label, content, { open, replace, floatable });
   }
 
   /**
@@ -473,10 +650,12 @@ class LayoutManager {
     const tab = workspace.tabs.find((t) => workspaceTabId(t) === id);
     if (!tab) return false;
 
-    // UITab stores label in the text content of its dom element
-    if (tab.dom) {
-      tab.dom.textContent = label;
+    const labelEl = tab.dom?.querySelector?.(".Tab-label");
+    if (labelEl) {
+      labelEl.textContent = label;
+      return true;
     }
+    if (tab.dom) tab.dom.textContent = label;
     return true;
   }
 
@@ -568,9 +747,6 @@ class LayoutManager {
   _setupLayout() {
     this.container.style.display = 'grid';
     this.container.style.overflow = 'hidden';
-
-    const topHeight = `${this.config.topWorkspaceHeight}px`;
-    this.container.style.setProperty('--layout-top-height', topHeight);
 
     if (this.workspaces.top) {
       this.workspaces.top.style.overflow = 'hidden';
@@ -831,21 +1007,8 @@ class LayoutManager {
 
     const rightResizer = this.state.rightOpen ? `${this.config.resizerSize}px` : '0px';
 
-    const leftOffset = this.state.leftOpen ? `${this.state.leftWidth + this.config.resizerSize}px` : '0px';
-
-    const rightOffset = this.state.rightOpen ? `${this.state.rightWidth + this.config.resizerSize}px` : '0px';
-
-    this.container.style.setProperty('--layout-left-width', leftWidth);
-
-    this.container.style.setProperty('--layout-left-resizer', leftResizer);
-
-    this.container.style.setProperty('--layout-right-width', rightWidth);
-
-    this.container.style.setProperty('--layout-right-resizer', rightResizer);
-
-    this.container.style.setProperty('--layout-left-offset', leftOffset);
-
-    this.container.style.setProperty('--layout-right-offset', rightOffset);
+    this.container.style.gridTemplateColumns =
+      `${leftWidth} ${leftResizer} minmax(0, 1fr) ${rightResizer} ${rightWidth}`;
 
     this.resizers.left.style.display = this.state.leftOpen ? 'block' : 'none';
 
@@ -857,13 +1020,10 @@ class LayoutManager {
 
     const bottomResizer = this.state.bottomOpen ? `${this.config.resizerSize}px` : '0px';
 
-    const bottomOffset = this.state.bottomOpen ? `${this.state.bottomHeight + this.config.resizerSize}px` : '0px';
+    const topRow = `${this.config.topWorkspaceHeight}px`;
 
-    this.container.style.setProperty('--layout-bottom-height', bottomHeight);
-
-    this.container.style.setProperty('--layout-bottom-resizer', bottomResizer);
-
-    this.container.style.setProperty('--layout-bottom-offset', bottomOffset);
+    this.container.style.gridTemplateRows =
+      `${topRow} minmax(0, 1fr) ${bottomResizer} ${bottomHeight}`;
 
     this.resizers.bottom.style.display = this.state.bottomOpen ? 'block' : 'none';
   }
@@ -884,6 +1044,14 @@ class LayoutManager {
         const parsed = JSON.parse(saved);
 
         this.state = { ...this.state, ...parsed };
+        const ws = parsed.workspaceSelected;
+        if (ws && typeof ws === 'object') {
+          this.state.workspaceSelected = {
+            left: ws.left ?? null,
+            right: ws.right ?? null,
+            bottom: ws.bottom ?? null,
+          };
+        }
       }
     } catch (e) {
     }
@@ -937,7 +1105,7 @@ class LayoutManager {
 
     this._saveState();
 
-    window.dispatchEvent(new Event('resize'));
+    this._flushLayoutResize();
     
     return this;
   }
@@ -962,7 +1130,7 @@ class LayoutManager {
 
     this._saveState();
 
-    window.dispatchEvent(new Event('resize'));
+    this._flushLayoutResize();
     if (!wasOpen) this._emit('layoutWorkspaceChanged', { position, open: true });
     
     return this;
@@ -988,7 +1156,7 @@ class LayoutManager {
 
     this._saveState();
 
-    window.dispatchEvent(new Event('resize'));
+    this._flushLayoutResize();
     if (wasOpen) this._emit('layoutWorkspaceChanged', { position, open: false });
     
     return this;
@@ -1015,7 +1183,7 @@ class LayoutManager {
 
     this._saveState();
 
-    window.dispatchEvent(new Event('resize'));
+    this._flushLayoutResize();
     
     return this;
   }
@@ -1051,14 +1219,15 @@ class LayoutManager {
       bottomOpen: false,
       leftWidth: this.config.leftWorkspaceWidth,
       rightWidth: this.config.rightWorkspaceWidth,
-      bottomHeight: this.config.bottomWorkspaceHeight
+      bottomHeight: this.config.bottomWorkspaceHeight,
+      workspaceSelected: { left: null, right: null, bottom: null },
     };
 
     this._applyState();
 
     this._saveState();
 
-    window.dispatchEvent(new Event('resize'));
+    this._flushLayoutResize();
     
     return this;
   }

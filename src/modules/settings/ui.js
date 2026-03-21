@@ -4,8 +4,6 @@ import { resolveModuleToggleId } from "../../ui/utils/resolveModuleToggleId.js";
 
 import DayNightCheckBox from "../../ui/Components/DayNight.js";
 
-import { PRESETS, applyPresetToContext } from "../../configuration/config.presets.js";
-
 import { UI_LANGUAGE_SELECT_OPTIONS } from "../../ui/language/uiLanguageSelectOptions.js";
 
 const OPERATORS = {
@@ -13,14 +11,10 @@ const OPERATORS = {
   changeNavigationSettings: "navigation.change_settings",
 };
 
-/** Top-level layout tab id for unified settings (see `Sidebar.js`). */
-const SETTINGS_TOP_TAB_ID = "sidebar-3d-settings";
-
 const INTERNAL_SETTINGS_TABS = [
   { id: "general", label: "General" },
   { id: "navigation", label: "Navigation" },
   { id: "theme", label: "Theme" },
-  { id: "presets", label: "Presets" },
 ];
 
 class SettingsUI {
@@ -95,32 +89,33 @@ class SettingsUI {
   }
 
   _attachSettingsModuleToggle() {
-    const elId = resolveModuleToggleId(this.context, "settings");
-    if (!elId || typeof document === "undefined") return null;
+    if (typeof document === "undefined") return null;
 
-    const el = document.getElementById(elId);
+    const el =
+      document.getElementById("AppSettings") ||
+      (() => {
+        const id = resolveModuleToggleId(this.context, "settings");
+        return id ? document.getElementById(id) : null;
+      })();
+
     if (!el) return null;
 
     const handler = (e) => {
-      const lm = this.context.layoutManager;
-      if (!lm || typeof lm.hasTab !== "function" || !lm.hasTab("right", SETTINGS_TOP_TAB_ID)) {
-        return;
-      }
+      const panel = this.context.ui?.threeDSettingsPanel;
+      if (!panel || typeof panel.toggle !== "function") return;
 
       e.preventDefault();
       e.stopPropagation();
 
-      const isOpen = lm.isWorkspaceOpen("right");
-      const isTopSelected = lm.isTabSelected("right", SETTINGS_TOP_TAB_ID);
-      if (isOpen && isTopSelected) {
-        lm.closeWorkspace("right");
-        return;
-      }
+      const wasActive = panel.isActive;
 
-      lm.selectTab("right", SETTINGS_TOP_TAB_ID, { open: true });
-      const tp = this.context.ui?.sidebarSettingsTabbedPanel;
-      if (tp && typeof tp.select === "function") {
-        tp.select("general");
+      panel.toggle(this.context);
+
+      if (panel.isActive && !wasActive) {
+        const tp = this.context.ui?.sidebarSettingsTabbedPanel;
+        if (tp && typeof tp.select === "function") {
+          tp.select("general");
+        }
       }
     };
 
@@ -132,6 +127,12 @@ class SettingsUI {
     const tabbedPanel = this.context?.ui?.sidebarSettingsTabbedPanel;
     if (!tabbedPanel) {
       return;
+    }
+
+    if (typeof tabbedPanel.removeTab === "function") {
+      try {
+        tabbedPanel.removeTab("presets");
+      } catch (_) {}
     }
 
     const prevSelected =
@@ -160,16 +161,11 @@ class SettingsUI {
       this.createThemeTab(),
     );
 
-    this._replaceOrAddInternalTab(
-      tabbedPanel,
-      "presets",
-      "Presets",
-      this.createPresetsTab(),
-    );
-
     const validIds = new Set(["threejs", ...INTERNAL_SETTINGS_TABS.map((t) => t.id)]);
     if (prevSelected && validIds.has(prevSelected)) {
       tabbedPanel.select(prevSelected);
+    } else if (prevSelected === "presets" && typeof tabbedPanel.select === "function") {
+      tabbedPanel.select("general");
     }
   }
 
@@ -216,7 +212,9 @@ class SettingsUI {
 
     container.add(this.createRow("save", getString("settings/persistSettings"), persistCheckbox));
 
-    const welcomeCheckbox = UIComponents.checkbox(!!context.config?.ui?.showWelcomeScreen);
+    const welcomeCheckbox = UIComponents.checkbox();
+
+    welcomeCheckbox.setValue(context.config.ui.showWelcomeScreen);
 
     welcomeCheckbox.dom.addEventListener("change", () => {
       context.config.ui.showWelcomeScreen = welcomeCheckbox.getValue();
@@ -536,144 +534,6 @@ class SettingsUI {
     return container;
   }
 
-  createPresetsTab() {
-    const { context } = this;
-
-    const getString = context.strings?.getKey ? (k) => context.strings.getKey(k) : (k) => k;
-
-    const container = UIComponents.div();
-
-    container.dom.style.display = "flex";
-
-    container.dom.style.flexDirection = "column";
-
-    container.dom.style.gap = "0.75rem";
-
-    const intro = UIComponents.text(
-      getString("settings/presets/intro") || "Apply a module preset. The page will reload to apply changes."
-    );
-
-    intro.dom.style.fontSize = "0.85rem";
-
-    intro.dom.style.opacity = "0.9";
-
-    intro.dom.style.marginBottom = "0.25rem";
-
-    container.add(intro);
-
-    const coreModules = context.config?.app?.CoreModules;
-
-    if (!Array.isArray(coreModules) || coreModules.length === 0) {
-      container.add(UIComponents.text("No CoreModules in app config. Presets unavailable."));
-
-      return container;
-    }
-
-    const allIds = coreModules.map((m) => m.id).filter(Boolean);
-
-    const presetEntries = Object.entries(PRESETS);
-
-    for (const [presetKey, preset] of presetEntries) {
-      const card = UIComponents.div();
-
-      card.addClass("PresetCard");
-
-      Object.assign(card.dom.style, {
-        display: "flex",
-        flexDirection: "column",
-        gap: "0.5rem",
-        padding: "0.75rem 1rem",
-        background: "var(--glass-surface, rgba(255,255,255,0.04))",
-        border: "1px solid var(--theme-subtext, rgba(255,255,255,0.12))",
-        borderRadius: "8px",
-        marginBottom: "0.25rem",
-      });
-
-      const topRow = UIComponents.row();
-
-      topRow.dom.style.justifyContent = "space-between";
-
-      topRow.dom.style.alignItems = "center";
-
-      topRow.dom.style.gap = "0.5rem";
-
-      const left = UIComponents.div();
-
-      left.dom.style.display = "flex";
-
-      left.dom.style.alignItems = "center";
-
-      left.dom.style.gap = "0.5rem";
-
-      if (preset.icon) {
-        const icon = UIComponents.icon(preset.icon);
-
-        icon.dom.style.fontSize = "1.1rem";
-
-        icon.dom.style.opacity = "0.9";
-
-        left.add(icon);
-      }
-
-      const title = UIComponents.text(preset.name);
-
-      title.dom.style.fontWeight = "600";
-
-      title.dom.style.fontSize = "0.95rem";
-
-      left.add(title);
-
-      topRow.add(left);
-
-      const applyBtn = UIComponents.button(getString("settings/presets/apply") || "Apply");
-
-      applyBtn.dom.style.flexShrink = "0";
-
-      applyBtn.onClick(() => {
-        this.applyPreset(presetKey, coreModules, allIds);
-      });
-
-      topRow.add(applyBtn);
-
-      card.add(topRow);
-
-      const desc = UIComponents.text(preset.description || "");
-
-      desc.dom.style.fontSize = "0.8rem";
-
-      desc.dom.style.opacity = "0.85";
-
-      desc.dom.style.lineHeight = "1.35";
-
-      desc.dom.style.paddingLeft = preset.icon ? "1.6rem" : "0";
-
-      card.add(desc);
-
-      container.add(card);
-    }
-
-    return container;
-  }
-
-  applyPreset(presetKey, coreModules, allIds) {
-    const { context } = this;
-
-    const applied = applyPresetToContext(context, presetKey);
-
-    if (!applied) return;
-
-    context._saveConfig();
-
-    if (
-      typeof confirm !== "undefined" &&
-      confirm("Preset applied. Reload the page now to activate the new module set?")
-    ) {
-      window.location.reload();
-    } else {
-      this.refreshSettings();
-    }
-  }
-
   isHexColor(value) {
     return typeof value === 'string' && /^#[0-9A-Fa-f]{6}$/.test(value);
   }
@@ -799,4 +659,4 @@ class SettingsUI {
   }
 }
 
-export default [SettingsUI];
+export default SettingsUI;

@@ -1,5 +1,9 @@
 import { DrawUI } from "./index.js";
 
+import { FloatingPanel } from "./FloatingPanel.js";
+
+import { buildWorkspaceDockHandlers } from "./utils/workspacePanelDock.js";
+
 import { createPanelHeaderChrome, createPanelFooterRow } from "./panelChrome.js";
 
 /**
@@ -21,6 +25,7 @@ import { createPanelHeaderChrome, createPanelFooterRow } from "./panelChrome.js"
  * @property {boolean} [autoShow=false] - Whether to show the tab automatically on creation.
  * @property {string} [moduleId] - If set with layoutManager, registers the tab and binds `bindToggle` using UI config.
  * @property {string} [toggleElementId] - Explicit toolbar/control DOM id (overrides moduleId resolution).
+ * @property {boolean} [floatable=false] - Show undock on the workspace tab label (needs layoutManager).
  */
 
 /**
@@ -77,6 +82,7 @@ export class TabPanel {
       autoShow = false,
       moduleId,
       toggleElementId,
+      floatable = false,
     } = options;
 
     if (!tabId) {
@@ -116,6 +122,12 @@ export class TabPanel {
 
     /** @type {Function|null} Signal subscription cleanup */
     this._signalCleanup = null;
+
+    /** @type {Function|null} */
+    this._floatHandlerCleanup = null;
+
+    /** @type {boolean} */
+    this._floatable = floatable;
 
     // Create panel container with flex layout (similar to BasePanel structure)
     this.panel = DrawUI.div();
@@ -161,7 +173,18 @@ export class TabPanel {
       this._attachModuleLayoutBinding(moduleId, toggleElementId);
     }
 
-    // Auto-show if requested
+    if (
+      floatable &&
+      this.layoutManager &&
+      typeof this.layoutManager.registerTabFloatHandler === "function"
+    ) {
+      this._floatHandlerCleanup = this.layoutManager.registerTabFloatHandler(
+        this.position,
+        this.tabId,
+        () => this.detachToFloatingWindow(),
+      );
+    }
+
     if (autoShow) {
       this.show();
     }
@@ -178,6 +201,7 @@ export class TabPanel {
     lm.ensureTab(this.position, this.tabId, this.tabLabel, this.panel, {
       open: false,
       replace: false,
+      floatable: this._floatable,
     });
     this._isShown = true;
 
@@ -287,7 +311,11 @@ export class TabPanel {
     }
 
     const open = select;
-    lm.addTab(this.position, this.tabId, this.tabLabel, this.panel, { open, replace: true });
+    lm.addTab(this.position, this.tabId, this.tabLabel, this.panel, {
+      open,
+      replace: true,
+      floatable: this._floatable,
+    });
     
     if (select) {
       lm.selectTab(this.position, this.tabId);
@@ -329,6 +357,44 @@ export class TabPanel {
    * @example
    * toggleButton.onClick(() => panel.toggle());
    */
+  /**
+   * Remove this tab from the workspace and show the same content in a FloatingPanel (round-trip with dock buttons).
+   * @returns {FloatingPanel|null}
+   */
+  detachToFloatingWindow() {
+    const lm = this.layoutManager;
+    if (!lm) return null;
+
+    const fp = new FloatingPanel({
+      title: this.title,
+      icon: this.icon,
+      closable: true,
+      dock: buildWorkspaceDockHandlers({
+        layoutManager: lm,
+        tabId: this.tabId,
+        tabLabel: this.tabLabel,
+      }),
+    });
+
+    while (this.content.dom.firstChild) {
+      fp.content.appendChild(this.content.dom.firstChild);
+    }
+
+    lm.removeTab(this.position, this.tabId, { closeIfEmpty: true });
+    this._isShown = false;
+    this.onHide();
+
+    const win =
+      typeof document !== "undefined"
+        ? document.getElementById("Windows") || document.body
+        : null;
+    if (win) {
+      fp.show(win);
+      fp.prepareAfterRemount();
+    }
+    return fp;
+  }
+
   toggle() {
     const lm = this.layoutManager;
     if (!lm) return this;
@@ -413,6 +479,7 @@ export class TabPanel {
     lm.ensureTab(this.position, this.tabId, this.tabLabel, this.panel, {
       open: false,
       replace: false,
+      floatable: this._floatable,
     });
     this._isShown = lm.hasTab(this.position, this.tabId);
 
@@ -551,6 +618,10 @@ export class TabPanel {
    */
   destroy() {
     this.unbind();
+    if (this._floatHandlerCleanup) {
+      this._floatHandlerCleanup();
+      this._floatHandlerCleanup = null;
+    }
     if (this._signalCleanup) {
       this._signalCleanup();
       this._signalCleanup = null;

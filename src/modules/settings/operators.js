@@ -1,5 +1,29 @@
 import { Operator } from "../../operators/Operator.js";
 
+import * as ModulePresetCore from "../../core/modulePreset.js";
+
+class ApplyModulePreset extends Operator {
+  static operatorName = "settings.apply_module_preset";
+
+  static operatorLabel = "Apply module preset";
+
+  static operatorOptions = ["REGISTER", "SKIP_HISTORY"];
+
+  constructor(context, presetKey) {
+    super(context);
+
+    this.context = context;
+
+    this.presetKey = presetKey;
+  }
+
+  execute() {
+    ModulePresetCore.applyModulePresetAndReload(this.context, this.presetKey);
+
+    return { status: "FINISHED" };
+  }
+}
+
 class ChangeNavigationSettings extends Operator {
   static operatorName = "navigation.change_settings";
 
@@ -46,4 +70,4 @@ class ChangeNavigationSettings extends Operator {
   }
 }
 
-export default [ ChangeNavigationSettings ];
+export default [ApplyModulePreset, ChangeNavigationSettings];

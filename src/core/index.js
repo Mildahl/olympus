@@ -29,6 +29,9 @@ import * as BIM from "./bim.js";
 import * as Configurator from "./configurator.js";
 
 import * as Scheduling from "./bim.sequence.js";
+
+import * as ModulePreset from "./modulePreset.js";
+
 export default {
     Notification,
     Init,
@@ -45,5 +48,6 @@ export default {
     Theme,
     BIM,
     Scheduling,
-    Configurator
+    Configurator,
+    ModulePreset,
 };

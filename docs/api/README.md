@@ -21,8 +21,9 @@ Namespaced functions for high-level operations:
 - **Terminal** — Terminal interface
 
 ### UI APIs
-- [UIComponents](ui/components.md) — Component factory methods
-- [LayoutManager](ui/layoutmanager.md) — Panel and tab management
+- [UIComponents](ui/components.md) — Component factory methods (`floatingPanel`, `tabbedPanel`, …)
+- [LayoutManager](ui/layoutmanager.md) — Workspace tabs, resize, persistence, tab-strip float hooks
+- **`TabPanel`** — `drawUI/TabPanel.js` / `DrawUI.tabPanel()` (documented under [UIComponents → Panels](ui/components.md#panels) and [Using LayoutManager](../guides/using-layoutmanager.md))
 
 ### Operators
 - [Operators](operators/index.md) — Operator base class and registry

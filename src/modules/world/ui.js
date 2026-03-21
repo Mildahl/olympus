@@ -152,7 +152,7 @@ class StatusBar {
       divider3, objectsSection, divider4, verticesSection, divider5, trianglesSection
     );
 
-    context.dom.appendChild(panel.dom);
+    document.getElementById('Viewport').appendChild(panel.dom);
 
     this.listenSelection(signals, selectionValue);
 

@@ -75,11 +75,13 @@ class AECO {
       ...context.config.addons.filter(a => a.active !== false).map(a => a.module.id)
     ];
 
+    context.appModuleOrderIds = activeIds.slice();
+
     new UI(container, context, operators, activeIds);
 
-
-
     this._uiDisabledModuleIds = this._collectUiDisabledModuleIds(context.config.ui?.WorldComponent);
+
+    context.ui.threeDSettingsPanel.ensureBuilt();
 
     this._loadModules();
 
@@ -95,25 +97,116 @@ class AECO {
   
 
   async enablePython() {
+    const context = this.context;
 
-    await this.ops.execute("code.enable_python", this.context);
+    const progressSignal =
+      context.signals && context.signals.bimGeometryLoadProgress;
 
-    this.ops.execute("code.enable_viewer_api", this.context);
+    if (progressSignal) {
+      progressSignal.dispatch({
+        phase: "start",
+        category: "python",
+        message: "Loading Python runtime...",
+        percent: 12,
+      });
+    }
 
-    this.ops.execute("world.new_notification", this.context, {message: "Python loaded", type: "info"});
+    try {
+      await this.ops.execute("code.enable_python", context);
 
+      this.ops.execute("code.enable_viewer_api", context);
+
+      if (progressSignal) {
+        progressSignal.dispatch({
+          phase: "complete",
+          category: "python",
+          message: "Python ready",
+          percent: 100,
+        });
+      }
+
+      this.ops.execute("world.new_notification", context, {
+        message: "Python loaded",
+        type: "info",
+      });
+    } catch (err) {
+      let errorMessage = "Python failed to load";
+
+      if (err && err.message) {
+        errorMessage = err.message;
+      } else if (err) {
+        errorMessage = String(err);
+      }
+
+      if (progressSignal) {
+        progressSignal.dispatch({
+          phase: "error",
+          category: "python",
+          message: errorMessage,
+          percent: 0,
+        });
+      }
+
+      throw err;
+    }
   }
 
   async enableBIM() {
-    
-    const basePath = this.context.config.app.Settings.ifcOpenShellBasePath;
+    const context = this.context;
 
-    await this.ops.execute("code.enable_bim", this.context, {
-      wheelsPath: basePath,
-      pythonToolsPath: this.context.config.app.Settings.pythonToolsPath
-    });
+    const progressSignal =
+      context.signals && context.signals.bimGeometryLoadProgress;
 
-    this.ops.execute("world.new_notification", this.context, {message: "BIM loaded", type: "info"});
+    if (progressSignal) {
+      progressSignal.dispatch({
+        phase: "start",
+        category: "bim_runtime",
+        message: "Loading BIM (IfcOpenShell)...",
+        percent: 12,
+      });
+    }
+
+    try {
+      const basePath = context.config.app.Settings.ifcOpenShellBasePath;
+
+      await this.ops.execute("code.enable_bim", context, {
+        wheelsPath: basePath,
+        pythonToolsPath: context.config.app.Settings.pythonToolsPath,
+      });
+
+      if (progressSignal) {
+        progressSignal.dispatch({
+          phase: "complete",
+          category: "bim_runtime",
+          message: "BIM runtime ready",
+          percent: 100,
+        });
+      }
+
+      this.ops.execute("world.new_notification", context, {
+        message: "BIM loaded",
+        type: "info",
+      });
+    } catch (err) {
+      let errorMessage = "BIM runtime failed to load";
+
+      if (err && err.message) {
+        errorMessage = err.message;
+      } else if (err) {
+        errorMessage = String(err);
+      }
+
+      if (progressSignal) {
+        progressSignal.dispatch({
+          phase: "error",
+          category: "bim_runtime",
+          message: errorMessage,
+          percent: 0,
+        });
+      }
+
+      throw err;
+    }
   }
 
   /**
@@ -252,6 +345,11 @@ class AECO {
     this._loadCoreModules();
 
     this._loadAddons();
+
+    const layoutManager = this.context.layoutManager;
+    if (layoutManager && typeof layoutManager.reorderBottomWorkspaceTabsByModuleOrder === 'function') {
+      layoutManager.reorderBottomWorkspaceTabsByModuleOrder(this.context);
+    }
   }
   
   _createEnvironment(context, container) {

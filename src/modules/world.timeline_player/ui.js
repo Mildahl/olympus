@@ -298,36 +298,11 @@ class TimelinePlayerUI {
       );
     }
 
-    this._reorderBottomTabsWithScheduleTasks();
-    this._syncAnimationToggleLabel();
-  }
-
-  /** Best-effort tab order: schedule tasks (bim.sequence) then animation tabs. */
-  _reorderBottomTabsWithScheduleTasks() {
-    const workspace = this.context.ui?.workspaces?.bottom;
-    if (!workspace || typeof workspace.reorderTabs !== "function") return;
-
-    const taskPanelTabId = "sequence-schedule-tasks";
-    const desired = [
-      taskPanelTabId,
-      this.animationPlayerTabId,
-      this.animationSettingsTabId,
-    ];
-
-    const existing = Array.isArray(workspace.tabs)
-      ? workspace.tabs.map((t) => t.dom?.id).filter(Boolean)
-      : [];
-
-    const ordered = [
-      ...desired.filter((id) => existing.includes(id)),
-      ...existing.filter((id) => !desired.includes(id)),
-    ];
-
-    try {
-      workspace.reorderTabs(ordered);
-    } catch (e) {
-      console.warn("Failed to reorder bottom tabs:", e);
+    if (lm && typeof lm.reorderBottomWorkspaceTabsByModuleOrder === "function") {
+      lm.reorderBottomWorkspaceTabsByModuleOrder(this.context);
     }
+
+    this._syncAnimationToggleLabel();
   }
 
   _openAnimationPlayerPanel() {
