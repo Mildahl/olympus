@@ -20,7 +20,7 @@ const ApplicationConfig = {
   Settings: {
     save: true,
     persistSettings: true,
-    devMode: false,
+    devMode: true,
     amountTestCubes: 3,
     scriptBaseUrl: null,
     pyodideBaseUrl: ROOT + "/external/vendor/pyodide/v0.29.0/full",
@@ -63,7 +63,7 @@ const UIConfig = {
         },
         "border": {
           key: "--border",
-          value: "#969c94",
+          value: "#b9c2b6",
         },
         "brand-color": {
           key: "--brand-color",

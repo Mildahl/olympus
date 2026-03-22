@@ -1,8 +1,5 @@
 /* Sample CSS for jsGanttImproved v1.8.0 */
 
-:root {
-  --background-color: var(--glass-surface);
-}
 div.gantt {
   font-family: tahoma, arial, verdana, Sans-serif;
   font-size: 12px;
@@ -56,7 +53,7 @@ div.gantt {
 .gtaskheading,
 .gmajorheading,
 .gminorheading {
-  background: var(--glass-surface);
+  background-color: #ffffff;
   font-weight: bold;
   font-size: 11px;
   white-space: nowrap;
@@ -65,14 +62,14 @@ div.gantt {
 .gtaskcellwkend,
 .gtaskcellcurrent,
 .gminorheadingwkend {
-  background: var(--glass-surface);
+  background-color: #f7f7f7;
   font-weight: bold;
   font-size: 9px;
   white-space: nowrap;
 }
 
 .gtaskcellcurrent {
-  background: var(--glass-surface);
+  background-color: #e1e0f7;
 }
 
 td.gtaskcell {
@@ -449,7 +446,7 @@ span.gfoldercollapse {
 /*  END Task bar styles */
 
 .glinev {
-  border-left: 1px solid;
+  border-left: 3px solid;
   width: 0px;
 }
 

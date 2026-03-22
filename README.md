@@ -15,12 +15,9 @@ Don't waste time re-building an editor from scratch: olympus is here!
 ![Olympus — digital construction app](https://www.aeco.dev/static/img/digital_construction_app.png)
 
 <details>
-<summary>Additional demo links</summary>
+<summary>More Screenshots</summary>
 
-- [Hello World (hosted)](https://myoualid.github.io/olympus/examples/HelloWorld/index.html)
-- [Addons (hosted)](https://myoualid.github.io/olympus/examples/Addons/index.html)
-
-Local URLs (repository root served over HTTP): `/examples/HelloWorld/`, `/examples/Addons/`. Port `3000` with `npm run serve`; any other static server uses the configured port.
+![Olympus — digital construction app](https://www.aeco.dev/static/img/_digital_construction_app.png)
 
 </details>
 

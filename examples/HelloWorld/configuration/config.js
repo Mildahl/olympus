@@ -63,7 +63,7 @@ const UIConfig = {
         },
         "border": {
           key: "--border",
-          value: "#969c94",
+          value: "#b9c2b6",
         },
         "brand-color": {
           key: "--brand-color",

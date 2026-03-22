@@ -72,7 +72,15 @@ class AppointedPersonUI {
 
     const content = UIComponents.div()
       .addClass("PanelContent")
-      .setStyles({ flex: "1", overflowY: "auto", minHeight: "0" });
+      .addClass("HardHatLiftingDashboard-panelContent")
+      .setStyles({
+        flex: "1",
+        overflowX: "hidden",
+        overflowY: "auto",
+        minHeight: "0",
+        display: "flex",
+        flexDirection: "column",
+      });
 
     panel.add(content);
 
@@ -135,13 +143,24 @@ class AppointedPersonUI {
   _redraw() {
     const data = this._prepareDrawData();
 
+    const rootColumn = UIComponents.column()
+      .addClass("HardHatLiftingDashboard-root")
+      .setStyles({
+        width: "100%",
+        flex: "1",
+        minHeight: "0",
+        gap: "0.5rem",
+      });
+
     const equipmentScheduleSection = this._drawEquipmentScheduleSection(data);
 
     const statsSection = this._drawLiftingStatsSection(data.stats, data.craneOverviewStatics);
 
+    rootColumn.add(equipmentScheduleSection, statsSection);
+
     this.content.content.clear();
 
-    this.content.content.add(equipmentScheduleSection, statsSection);
+    this.content.content.add(rootColumn);
   }
 
   _prepareDrawData() {
@@ -155,7 +174,9 @@ class AppointedPersonUI {
 
     const allLifts = [...this.store.lifts];
 
-    const craneSpeed = this.store.crane?.speed || DEFAULT_CRANE_SPEED;
+    const craneForEstimates = this.store.crane;
+
+    const craneSpeed = craneForEstimates && craneForEstimates.speed != null ? craneForEstimates.speed : DEFAULT_CRANE_SPEED;
 
     enrichLiftsWithEstimates(activeLifts, craneSpeed);
 
@@ -183,7 +204,6 @@ class AppointedPersonUI {
       title: "Lifting schedule",
       icon: "precision_manufacturing",
       collapsed: false,
-      maxHeight: "50vh",
     });
 
     const toolbarRow = this._drawLiftingToolbar();
@@ -335,10 +355,11 @@ class AppointedPersonUI {
 
   _drawLiftingStatsSection(stats, craneOverviewStatics) {
     const statsSection = UIComponents.collapsibleSection({
-      title: "Lifting Stats",
+      title: "Lifting stats",
       icon: "analytics",
-      collapsed: false,
-      maxHeight: "30vh",
+      collapsed: true,
+      maxHeight: "28vh",
+      className: "HardHatLiftingDashboard-stats",
     });
 
     const overviewSection = this._drawLiftingOverviewSection(stats);
@@ -354,14 +375,15 @@ class AppointedPersonUI {
     return statsSection;
   }
 
-  _drawCapacityProgressBarRow(stats) {
-    const row = UIComponents.row().gap("0.5rem").addClass("centered-vertical").setStyles({
-      padding: "0.5rem",
-      backgroundColor: "var(--background-tertiary)",
-      borderRadius: "var(--border-radius)",
-    });
+  _drawCapacityProgressBarRow(stats, layoutOptions) {
+    const showLeadingIcon = !layoutOptions || layoutOptions.showLeadingIcon !== false;
 
-    const currentHours = this.store.workingParams?.workingHours || DEFAULT_WORKING_HOURS;
+    const workingParams = this.store.workingParams;
+
+    const currentHours =
+      workingParams && workingParams.workingHours != null
+        ? workingParams.workingHours
+        : DEFAULT_WORKING_HOURS;
 
     const progressBarContainer = this._createCapacityProgressBar();
 
@@ -373,11 +395,30 @@ class AppointedPersonUI {
 
     usageLabel.dom.textContent = `${craneUsagePercent.toFixed(1)}%`;
 
-    row.add(
-      UIComponents.icon("trending_up").addClass("lifting-overview-icon"),
-      UIComponents.div().setStyles({ flex: "1" }).add(progressBarContainer),
-      usageLabel,
-    );
+    const barWrap = UIComponents.div().setStyles({ flex: "1", minWidth: "120px" }).add(progressBarContainer);
+
+    if (showLeadingIcon) {
+      const row = UIComponents.row().gap("0.5rem").addClass("centered-vertical").setStyles({
+        padding: "0.5rem",
+        backgroundColor: "var(--background-tertiary)",
+        borderRadius: "var(--border-radius)",
+      });
+
+      row.add(
+        UIComponents.icon("trending_up").addClass("lifting-overview-icon"),
+        barWrap,
+        usageLabel,
+      );
+
+      return row;
+    }
+
+    const row = UIComponents.row().gap("0.5rem").addClass("centered-vertical").setStyles({
+      flex: "1 1 200px",
+      minWidth: "160px",
+    });
+
+    row.add(barWrap, usageLabel);
 
     return row;
   }
@@ -385,7 +426,9 @@ class AppointedPersonUI {
   _drawLiftingOverviewSection(stats) {
     const craneUsageValueSpan = UIComponents.span("").addClass("hud-input");
 
-    const currentSpeed = this.store.crane?.speed || DEFAULT_CRANE_SPEED;
+    const craneState = this.store.crane;
+
+    const currentSpeed = craneState && craneState.speed != null ? craneState.speed : DEFAULT_CRANE_SPEED;
 
     const craneSpeedInput = UIComponents.input();
 
@@ -403,7 +446,12 @@ class AppointedPersonUI {
       }
     });
 
-    const currentHours = this.store.workingParams?.workingHours || DEFAULT_WORKING_HOURS;
+    const workingParamsOverview = this.store.workingParams;
+
+    const currentHours =
+      workingParamsOverview && workingParamsOverview.workingHours != null
+        ? workingParamsOverview.workingHours
+        : DEFAULT_WORKING_HOURS;
 
     const workingTimeInput = UIComponents.input();
 
@@ -567,43 +615,78 @@ class AppointedPersonUI {
 
   _drawEquipmentScheduleSection(data) {
     const section = UIComponents.collapsibleSection({
-      title: "Lifting Schedule",
+      title: "Lifting schedule",
       icon: "precision_manufacturing",
       collapsed: false,
-      maxHeight: "60vh",
+      className: "HardHatLiftingDashboard-schedule",
     });
 
-    const content = UIComponents.column().gap("0.75rem").setStyles({ width: "100%" });
+    const content = UIComponents.column()
+      .addClass("HardHatLiftingDashboard-scheduleInner")
+      .setStyles({
+        width: "100%",
+        flex: "1",
+        minHeight: "0",
+        gap: "0.5rem",
+      });
 
-    // Capacity progress bar row
-    const progressBarRow = this._drawCapacityProgressBarRow(data.stats);
+    const dashboardCard = UIComponents.div()
+      .addClass("HardHatLiftingDashboard-card")
+      .setStyles({
+        width: "100%",
+        flex: "1",
+        minHeight: "0",
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.5rem",
+        boxSizing: "border-box",
+      });
 
-    // Actions toolbar (add, delete, export, import, etc.)
-    const actionsToolbar = this._drawScheduleActionsToolbar();
+    const topRow = this._drawScheduleDashboardTopRow(data);
 
-    // Date filter toolbar
     const filterToolbar = this._drawDateFilterToolbar();
 
-    // Equipment tabbed panel
     const tabbedPanel = this._drawEquipmentTabbedPanel(data);
 
-    // Add lift button row
     const addButtonRow = this._drawAddLiftRow();
 
-    content.add(progressBarRow, actionsToolbar, filterToolbar, tabbedPanel, addButtonRow);
+    dashboardCard.add(topRow, filterToolbar, tabbedPanel, addButtonRow);
+
+    content.add(dashboardCard);
 
     section.setContent(content);
 
     return section;
   }
 
+  _drawScheduleDashboardTopRow(data) {
+    const row = UIComponents.row()
+      .addClass("HardHatLiftingDashboard-topRow")
+      .addClass("centered-vertical")
+      .setStyles({
+        width: "100%",
+        flexWrap: "wrap",
+        gap: "0.5rem 0.75rem",
+        alignItems: "center",
+      });
+
+    const capacityBlock = this._drawCapacityProgressBarRow(data.stats, { showLeadingIcon: false });
+
+    const actionsToolbar = this._drawScheduleActionsToolbar();
+
+    const totalLiftCount = this.store.lifts.length;
+
+    const meta = UIComponents.span(`Total lifts ${totalLiftCount}`)
+      .addClass("hud-label")
+      .addClass("HardHatLiftingDashboard-meta");
+
+    row.add(capacityBlock, actionsToolbar, meta);
+
+    return row;
+  }
+
   _drawScheduleActionsToolbar() {
-    const toolbar = UIComponents.row().gap("0.5rem").addClass("centered-vertical").setStyles({
-      padding: "0.5rem",
-      backgroundColor: "var(--background-tertiary)",
-      borderRadius: "var(--border-radius)",
-      marginBottom: "0.5rem",
-    });
+    const toolbar = UIComponents.row().gap("0.35rem").addClass("centered-vertical").addClass("HardHatLiftingDashboard-actions");
 
     const deleteBtn = UIComponents.operator("delete");
 
@@ -658,23 +741,22 @@ class AppointedPersonUI {
       }
     });
 
-    const labelSpan = UIComponents.span("Total Lifts: " + this.store.lifts.length).addClass("hud-label");
-
-    toolbar.add(deleteBtn, exportBtn, exportTaskBtn, importBtn, scheduleViewBtn, clearBtn, labelSpan);
+    toolbar.add(deleteBtn, exportBtn, exportTaskBtn, importBtn, scheduleViewBtn, clearBtn);
 
     return toolbar;
   }
 
   _drawDateFilterToolbar() {
-    const toolbar = UIComponents.row().gap("0.75rem").addClass("centered-vertical").setStyles({
-      padding: "0.5rem",
-      backgroundColor: "var(--background-secondary)",
-      borderRadius: "var(--border-radius)",
-      marginBottom: "0.5rem",
-    });
+    const toolbar = UIComponents.row()
+      .gap("0.5rem")
+      .addClass("centered-vertical")
+      .addClass("HardHatLiftingDashboard-filterRow")
+      .setStyles({
+        width: "100%",
+        flexWrap: "wrap",
+      });
 
-    // Date filter label
-    const dateLabel = UIComponents.span("Filter by date:").addClass("hud-label");
+    const dateLabel = UIComponents.span("Date").addClass("hud-label");
 
     // Get unique dates from all lifts
     const allLifts = this.store.lifts;
@@ -736,9 +818,9 @@ class AppointedPersonUI {
     // Count display based on current filter
     const activeLifts = Core.getActiveLifts(this.store);
 
-    const countLabel = UIComponents.span(`${activeLifts.length} lift(s) shown`).addClass("hud-input").setStyles({
-      marginLeft: "auto",
-    });
+    const countLabel = UIComponents.span(`${activeLifts.length} shown`)
+      .addClass("hud-input")
+      .addClass("HardHatLiftingDashboard-filterCount");
 
     toolbar.add(dateLabel, dateSelect, todayBtn, allBtn, refreshBtn, countLabel);
 
@@ -746,15 +828,19 @@ class AppointedPersonUI {
   }
 
   _drawEquipmentTabbedPanel(data) {
-    const container = UIComponents.div().setStyles({
-      width: "100%",
-      minHeight: "200px",
-    });
+    const container = UIComponents.div()
+      .addClass("HardHatLiftingDashboard-tabbedHost")
+      .setStyles({
+        width: "100%",
+        flex: "1",
+        minHeight: "0",
+      });
 
-    // Create tabbed panel
     const tabbedPanel = UIComponents.tabbedPanel();
 
-    tabbedPanel.setStyles({ width: "100%" });
+    tabbedPanel.addClass("HardHatLiftingDashboard-tabbedPanel");
+
+    tabbedPanel.setStyles({ width: "100%", flex: "1", minHeight: "0" });
 
     // Get equipment list
     const equipmentList = Core.LIFTING_EQUIPMENT_LIST;
@@ -800,10 +886,19 @@ class AppointedPersonUI {
   }
 
   _createEquipmentTabContent(equipmentId, lifts, data) {
-    const content = UIComponents.div().setStyles({
-      padding: "0.5rem",
-      width: "100%",
-    });
+    const content = UIComponents.div()
+      .addClass("HardHatLiftingDashboard-tabPanel")
+      .setStyles({
+        padding: "0.25rem 0 0 0",
+        width: "100%",
+        height: "100%",
+        flex: "1",
+        minHeight: "0",
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.35rem",
+        boxSizing: "border-box",
+      });
 
     if (lifts.length === 0) {
       const emptyMsg = UIComponents.div().setStyles({
@@ -827,77 +922,102 @@ class AppointedPersonUI {
       const equipmentInfo = Core.LIFTING_EQUIPMENT[equipmentId];
 
       if (equipmentInfo) {
-        const header = UIComponents.row().gap("0.5rem").addClass("centered-vertical").setStyles({
-          padding: "0.5rem",
-          marginBottom: "0.5rem",
-          backgroundColor: "var(--background-tertiary)",
-          borderRadius: "var(--border-radius)",
-          borderLeft: `4px solid ${equipmentInfo.color}`,
+        const header = UIComponents.row()
+          .gap("0.5rem")
+          .addClass("centered-vertical")
+          .addClass("HardHatLiftingDashboard-equipmentLine")
+          .setStyles({
+          flexWrap: "wrap",
         });
 
         header.add(
           UIComponents.icon(equipmentInfo.icon).setStyles({ color: equipmentInfo.color }),
           UIComponents.span(equipmentInfo.name).addClass("hud-label"),
-          UIComponents.span(`Type: ${equipmentInfo.type}`).addClass("hud-input"),
-          UIComponents.span(`Max Capacity: ${equipmentInfo.maxCapacity}t`).addClass("hud-input"),
-          UIComponents.span(`Speed: ${equipmentInfo.speed} m/min`).addClass("hud-input")
+          UIComponents.span(`${equipmentInfo.type} · ${equipmentInfo.maxCapacity}t · ${equipmentInfo.speed} m/min`).addClass(
+            "hud-input"
+          )
         );
 
         content.add(header);
       }
     }
 
-    // Stats summary for this equipment/date
     const stats = this._computeEquipmentStats(lifts);
 
-    const statsRow = UIComponents.row().gap("1rem").setStyles({
-      padding: "0.5rem",
-      marginBottom: "0.5rem",
-    });
-
-    statsRow.add(
-      this._createStatBadge("Completed", stats.completed, "check_circle", "#22c55e"),
-      this._createStatBadge("In Progress", stats.started, "pending", "#f59e0b"),
-      this._createStatBadge("Pending", stats.notStarted, "schedule", "#6b7280"),
-      this._createStatBadge("Total Weight", `${stats.totalWeight.toFixed(1)}t`, "fitness_center", "#3b82f6")
-    );
+    const statsRow = this._drawCompactEquipmentStatsRow(stats);
 
     content.add(statsRow);
 
-    // Spreadsheet for this equipment
     const enrichedLifts = [...lifts];
 
-    const craneSpeed = this.store.crane?.speed || DEFAULT_CRANE_SPEED;
+    const craneForSpeed = this.store.crane;
+
+    const craneSpeed = craneForSpeed && craneForSpeed.speed != null ? craneForSpeed.speed : DEFAULT_CRANE_SPEED;
 
     enrichLiftsWithEstimates(enrichedLifts, craneSpeed);
 
     const gridData = buildLiftDataForGrid(enrichedLifts);
 
-    const rowCount = gridData.length || 1;
-
-    const calculatedHeight = Math.min(48 + (rowCount * 41) + 10, 300);
+    const spreadsheetShell = UIComponents.div().addClass("hardhat-spreadsheet-shell");
 
     const spreadsheet = UIComponents.spreadsheet({
       data: gridData,
       columnConfig: LIFT_COLUMN_CONFIG,
       columnOrder: LIFT_COLUMN_ORDER,
-      height: `${calculatedHeight}px`,
+      height: "100%",
+      minHeight: "240px",
       gridOptions: {
-        rowSelection: 'multiple',
+        rowSelection: "multiple",
         rowMultiSelectWithClick: true,
-      }
+      },
     });
 
     spreadsheet.init();
 
-    // Store reference to active spreadsheet if this is the active tab
     if (equipmentId === this.selectedEquipmentId) {
       this.activeSpreadsheet = spreadsheet;
     }
 
-    content.add(spreadsheet);
+    spreadsheetShell.add(spreadsheet);
+
+    content.add(spreadsheetShell);
 
     return content;
+  }
+
+  _drawCompactEquipmentStatsRow(stats) {
+    const row = UIComponents.row()
+      .addClass("HardHatLiftingDashboard-kpiRow")
+      .addClass("centered-vertical")
+      .setStyles({
+        width: "100%",
+        flexWrap: "wrap",
+        gap: "0.35rem 0.75rem",
+      });
+
+    const segments = [
+      { label: "Done", value: String(stats.completed), color: "#22c55e" },
+      { label: "Active", value: String(stats.started), color: "#f59e0b" },
+      { label: "Pending", value: String(stats.notStarted), color: "#9ca3af" },
+      { label: "Weight", value: `${stats.totalWeight.toFixed(1)} t`, color: "#60a5fa" },
+    ];
+
+    segments.forEach((segment, index) => {
+      if (index > 0) {
+        row.add(UIComponents.span("·").addClass("HardHatLiftingDashboard-kpiSep"));
+      }
+
+      const chunk = UIComponents.row().gap("0.25rem").addClass("centered-vertical");
+
+      chunk.add(
+        UIComponents.span(segment.label).addClass("hud-label"),
+        UIComponents.span(segment.value).setStyles({ fontWeight: "600", color: segment.color })
+      );
+
+      row.add(chunk);
+    });
+
+    return row;
   }
 
   _computeEquipmentStats(lifts) {
@@ -909,23 +1029,6 @@ class AppointedPersonUI {
       onHold: lifts.filter(l => l.status === "ONHOLD").length,
       totalWeight: lifts.reduce((sum, l) => sum + (l.pWeight || 0), 0),
     };
-  }
-
-  _createStatBadge(label, value, icon, color) {
-    const badge = UIComponents.row().gap("0.25rem").addClass("centered-vertical").setStyles({
-      padding: "0.25rem 0.5rem",
-      backgroundColor: "var(--background-secondary)",
-      borderRadius: "var(--border-radius)",
-      fontSize: "0.85rem",
-    });
-
-    badge.add(
-      UIComponents.icon(icon).setStyles({ fontSize: "1rem", color }),
-      UIComponents.span(label + ":").addClass("hud-label"),
-      UIComponents.span(String(value)).setStyles({ fontWeight: "600", color })
-    );
-
-    return badge;
   }
 
   _createCapacityProgressBar() {
@@ -976,30 +1079,7 @@ class AppointedPersonUI {
 
     rightLabel.dom.dataset.role = "rightLabel";
 
-    const ticksContainer = UIComponents.div().setStyles({
-      position: "absolute",
-      left: "0",
-      top: "0",
-      width: "100%",
-      height: "100%",
-      pointerEvents: "none",
-      zIndex: "1",
-    });
-
-    for (let i = 1; i < 10; i++) {
-      const tick = UIComponents.div().setStyles({
-        position: "absolute",
-        left: `${i * 10}%`,
-        top: "0",
-        width: "1px",
-        height: "100%",
-        backgroundColor: "#242222",
-      });
-
-      ticksContainer.add(tick);
-    }
-
-    container.add(fill, ticksContainer, leftLabel, rightLabel);
+    container.add(fill, leftLabel, rightLabel);
 
     return container;
   }
@@ -1097,7 +1177,9 @@ class AppointedPersonUI {
     // Prepare task data
     const lifts = [...this.store.lifts];
 
-    const craneSpeed = this.store.crane?.speed || DEFAULT_CRANE_SPEED;
+    const craneForPanel = this.store.crane;
+
+    const craneSpeed = craneForPanel && craneForPanel.speed != null ? craneForPanel.speed : DEFAULT_CRANE_SPEED;
 
     enrichLiftsWithEstimates(lifts, craneSpeed);
 

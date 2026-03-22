@@ -1,11 +1,6 @@
-/**
- * BIM Project Module Definition
- */
 import operators from './operators.js';
 
-import projectUiClasses from './ui.js';
-
-import modelAnalyticsUiClasses from './modelAnalyticsUi.js';
+import ProjectUI from './ui.js';
 
 const ModuleDefinition = {
   id: 'bim.project',
@@ -14,7 +9,7 @@ const ModuleDefinition = {
   version: '1.0.0',
   dependsOn: ['world', 'code.scripting'],
   operators: operators,
-  ui: [...projectUiClasses, ...modelAnalyticsUiClasses],
+  ui: ProjectUI,
 };
 
 export default ModuleDefinition;

@@ -24,7 +24,9 @@
 @import "./components/scheduling.css";
 @import "./components/markdown.css";
 @import "./components/split-container.css";
+/* @import "./components/kanban.css"; */
 @import "./rules.css";
+@import "./components/director-analytics.css";
 @import "./components/day_night.css";
 @import "./home-hud.css";
 
@@ -921,7 +923,7 @@ header.aeco-grid > :nth-child(3) {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
 }
 
 ::-webkit-scrollbar-track {
@@ -950,7 +952,7 @@ header.aeco-grid > :nth-child(3) {
 
 .tool-active-indicator {
   animation: pulse 2s infinite;
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   border-radius: 50%;
   height: 8px;
   position: absolute;
@@ -1147,7 +1149,6 @@ button.material-symbols-outlined {
   font-size: 12px;
   min-height: fit-content;
   overflow: visible;
-  padding: 8px;
   width: 100%;
 }
 
@@ -1366,11 +1367,10 @@ textarea:hover, select:hover {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-
-  
   -o-user-select: none;
   user-select: none;
 }
+
 
 .Outliner .option .visibility-toggle {
     display: flex;
@@ -1576,7 +1576,6 @@ button:hover,
   -webkit-overflow-scrolling: touch;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 8px 12px;
   width: 100%;
 }
 
@@ -2301,14 +2300,9 @@ input,
 textarea,
 option {
   background: var(--glass-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border: none;
   color: var(--theme-text);
-  cursor: pointer;
   display: inline-flex;
-  font-family: var(--font-ui);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
   outline: none;
   padding: 6px 10px;
   transition: all var(--transition-fast);
@@ -2577,7 +2571,6 @@ small {
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--theme-text-light);
   cursor: pointer;
   display: flex;
   font-family: var(--font-ui);
@@ -2886,7 +2879,7 @@ textarea.success {
 }
 
 .weapons-menu-header.expanded {
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   border-radius: 7px 7px 0 0;
 }
 
@@ -3064,7 +3057,7 @@ textarea.success {
 }
 
 .ws-node-handle:hover {
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   transform: scale(1.2);
 }
 
@@ -3091,7 +3084,7 @@ textarea.success {
 
 .ws-node-icon {
   align-items: center;
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   border-radius: var(--radius-sm);
   color: var(--on-brand-color);
   display: flex;
@@ -3232,13 +3225,11 @@ textarea.success {
 }
 
 .TaskSelectCheckbox:hover {
-  background: var(--brand-color-alpha);
-  border-color: var(--on-brand-color);
+  background: var(--brand-color);
 }
 
 .TaskSelectCheckbox.checked {
   background: var(--brand-color);
-  border-color: var(--brand-color);
 }
 
 .selection-enabled .TaskSelectCheckbox {
@@ -3282,16 +3273,6 @@ textarea.success {
   color: var(--on-brand-color);
 }
 
-.SelectionCounter {
-  background: var(--brand-color);
-  border-radius: 10px;
-  color: var(--on-brand-color);
-  font-size: 10px;
-  font-weight: 600;
-  min-width: 18px;
-  padding: 2px 6px;
-  text-align: center;
-}
 
 .ws-zoom-btn {
   -webkit-backdrop-filter: var(--glass-blur);
@@ -3313,7 +3294,7 @@ textarea.success {
 }
 
 .layout-panel {
-  background: var(--glass-surface);
+  background: var(--theme-background);
   border: 1px solid var(--glass-border);
   display: flex;
   flex-direction: column;
@@ -3350,7 +3331,7 @@ textarea.success {
 
 .layout-resizer:hover,
 .layout-resizer.active {
-  background: var(--brand-color) !important;
+  background: var(--brand-color-alpha) !important;
 }
 
 .layout-resizer-left,
@@ -3573,7 +3554,7 @@ textarea.success {
 }
 
 .layout-toggle-btn.active:hover {
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   color: var(--on-brand-color);
 }
 
@@ -4040,10 +4021,6 @@ textarea.success {
 
 .ag-theme-quartz .ag-list-item {
   color: #000000;
-}
-
-.ag-theme-quartz .ag-row-selected {
-  background-color: #d0e8f8 !important;
 }
 
 .ag-theme-quartz .ag-list-item:hover {

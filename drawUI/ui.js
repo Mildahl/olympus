@@ -1862,8 +1862,7 @@ class UITabbedPanel extends UIDiv {
   }
 
   addTab(id, label, items, styles, tabOptions) {
-    // Important: do not steal focus/selection from the currently active tab.
-    // Auto-select only when there is no existing (valid) selection.
+
     const hasSelection = Boolean(this.selected && this.selected.length);
     const selectedExists =
       hasSelection && this.tabs.some((t) => t.dom && t.dom.id === this.selected);

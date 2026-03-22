@@ -38,12 +38,13 @@ import CodeTerminalModule from './code.terminal/module.js';
 
 import BimProjectModule from './bim.project/module.js';
 
+import BIMAnalyticsModule from './bim.analytics/module.js';
+
 import BimAttributeModule from './bim.attribute/module.js';
 
 import BimPsetModule from './bim.pset/module.js';
 
 import SchedulingModule from './bim.sequence/module.js';
-
 
 import BimModelModule from './bim.model/module.js';
 
@@ -67,6 +68,7 @@ const CoreModuleDefinitions = [
   CodeScriptingModule,
   CodeTerminalModule,
   BimProjectModule,
+  BIMAnalyticsModule,
   BimAttributeModule,
   BimPsetModule,
   BimModelModule,

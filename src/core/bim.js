@@ -34,13 +34,6 @@ function dispatchBimGeometryLoadProgressSignal(context, payload) {
   progressSignal.dispatch(merged);
 }
 
-function dispatchBimIfcModelAnalyticsContextChanged(context, fileName) {
-  const analyticsSignal = context.signals.bimIfcModelAnalyticsContextChanged;
-
-  if (!analyticsSignal || typeof analyticsSignal.dispatch !== "function") return;
-
-  analyticsSignal.dispatch({ fileName: fileName });
-}
 
 function scheduleApproximateBimGeometryLoadProgress(
   context,
@@ -108,7 +101,7 @@ async function setActiveBIMModel(
 
   context.ifc.activeModel = file_name;
 
-  context.signals.refreshBIMLayers.dispatch();
+  context.signals.refreshBIMLayers.dispatch({ FileName: file_name});
 
   isNewModel? context.signals.newIFCModel.dispatch({ FileName: file_name}) : null;
 
@@ -116,7 +109,6 @@ async function setActiveBIMModel(
     context.signals.activeModelChanged.dispatch({ FileName: file_name });
   }
 
-  dispatchBimIfcModelAnalyticsContextChanged(context, file_name);
 }
 
 /**

@@ -14,7 +14,7 @@ import { installedPackages, setLocalToolsPath, getLocalToolsPath, getPyodide } f
 import { startPyodide, runCode, serializeForPostMessage, getVariable } from './worker_core.js';
 import { loadPackageManager, loadPackage, installPackage, uninstallPackage, installIfcOpenShell } from './worker_packages.js';
 import { fetchFile, loadLocalModule, importModule, getIfc } from './worker_files_modules.js';
-import { getAttributes, undo, redo, editAttributes, getProperties, saveModel } from './worker_ifc.js';
+import { getAttributes, undo, redo, editAttributes, getProperties, saveModel, getDirectorOverview, getDirectorFilteredSlice } from './worker_ifc.js';
 import { 
   newIFCModel, loadModelFromPath, loadModelFromBlob, 
   generateMeshLayerStructure, generateMeshForElement,
@@ -59,6 +59,8 @@ const handlerConfig = {
   getAttributes: [getAttributes, ['modelName', 'GlobalId']],
   editAttributes: [editAttributes, ['modelName', 'GlobalId', 'attributes']],
   getProperties: [getProperties, ['modelName', 'GlobalId']],
+  getDirectorOverview: [getDirectorOverview, ['modelName']],
+  getDirectorFilteredSlice: [getDirectorFilteredSlice, ['modelName', 'filterSpec']],
   getVariable: [getVariable, ['variableName']],
   executeViewerMethod: [() => undefined, []],  
 };

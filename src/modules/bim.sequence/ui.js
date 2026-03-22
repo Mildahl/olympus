@@ -1,7 +1,5 @@
 import { Components as UIComponents } from "../../ui/Components/Components.js";
 
-import dataStore from "../../data/index.js";
-
 import AECO_tools from "../../tool/index.js";
 
 import { HierarchyToggleUtil } from "../../utils/HierarchyToggleUtil.js";
@@ -10,7 +8,9 @@ import { SequenceData } from "./data.js";
 
 import { getTasksForNodeView } from "../../ui/Components/Nodes.js";
 
-import PythonSandbox from "../../tool/pyodide/Python.js";
+import { formatSchedulingDate } from "../../utils/formatSchedulingDate.js";
+
+import { TabPanel } from '../../../drawUI/TabPanel.js';
 
 async function loadData(context) {
   if (!SequenceData.is_loaded)
@@ -23,244 +23,190 @@ async function refreshSchedules(context) {
     await loadData(context);
 }
 
-class Schedule_Documentation {
-  constructor(context) {
-    this.context = context;
-
-    this.currentEntity = "IfcWorkSchedule";
-
-    this.bimReady = PythonSandbox.initialized?.bim === true;
-    
-    this.panel = UIComponents.floatingPanel();
-
-    this.panel.setTitle("Schedule Documentation");
-
-    this.panel.setIcon("menu_book");
-
-    this.panel.setStyles({
-      width: "320px",
-      maxHeight: "60vh",
-      top: "var(--headerbar-height)",
-      right: "var(--phi-1)",
+class TaskUI extends TabPanel {
+  constructor({ context, operators }) {
+    super({
+      context,
+      operators,
+      position: 'right',
+      moduleId: 'bim.sequence',
+      tabId: 'sequence-task-details',
+      tabLabel: 'Task data',
+      icon: 'info',
+      title: 'Task data',
+      showHeader: false,
+      floatable: true,
+      autoShow: false,
     });
 
-    this.contentContainer = UIComponents.column()
-      .setStyle("gap", ["var(--phi-0-5)"])
-      .setStyle("padding", ["var(--phi-0-5)"]);
 
-    this.panel.setContent(this.contentContainer);
+    this.taskDetailsBody = UIComponents.row()
+      .addClass("TaskDetails-content")
+      .setStyles({
+        flex: "1",
+        overflow: "auto",
+        padding: "var(--phi-0-5)",
+        gap: "var(--phi-1)",
+      });
 
-    this._showEmptyState();
+    this.content.add(this.taskDetailsBody);
 
-    this.listen(context)
+    this.showEmptyTaskDetails();
+
+    const signals = context.signals;
+
+    if (signals && signals.taskDetailsLoaded) {
+      signals.taskDetailsLoaded.add(({ outputs, inputs, resources }) => {
+        this.refreshTaskDetails({ outputs, inputs, resources });
+      });
+    }
   }
 
-  listen(context) {
 
-    context.signals.bimEnabled.add(() => {
 
-        this.bimReady = true;
-
-        this._buildContent();
-        
-    });
-
-  }
-
-  _showEmptyState() {
-    this.contentContainer.clear();
-
-    const emptyMessage = UIComponents.text("BIM AECO_tools not initialized. Documentation will load when available.");
-
-    emptyMessage.setStyle("font-size", ["12px"]);
-
-    emptyMessage.setStyle("color", ["var(--theme-text-light)"]);
-
-    emptyMessage.setStyle("padding", ["var(--phi-1)"]);
-
-    emptyMessage.setStyle("text-align", ["center"]);
-
-    this.contentContainer.add(emptyMessage);
-  }
-
-  _buildContent() {
-    if (!this.bimReady) {
-      this._showEmptyState();
-
+  requestTaskDetails(taskId) {
+    if (taskId === undefined || taskId === null) {
       return;
     }
 
-    this.contentContainer.clear();
+    this.operators.execute("bim.load_task_details", this.context, taskId);
+  }
 
-    const entities = ["IfcWorkSchedule", "IfcWorkPlan", "IfcTask", "IfcProcess", "IfcTrigger"];
+  showEmptyTaskDetails() {
+    if (!this.taskDetailsBody) {
+      return;
+    }
 
-    const icons = {
-      IfcWorkSchedule: "schedule",
-      IfcWorkPlan: "calendar_view_week",
-      IfcTask: "task",
-      IfcProcess: "settings",
-      IfcTrigger: "flash_on",
+    this.taskDetailsBody.clear();
+
+    const emptyState = UIComponents.text("Select a task to view its details");
+
+    emptyState.setStyles({
+      fontStyle: "italic",
+      padding: "var(--phi-1)",
+      textAlign: "center",
+      width: "100%",
+    });
+
+    this.taskDetailsBody.add(emptyState);
+  }
+
+  refreshTaskDetails(details) {
+    if (!this.taskDetailsBody) {
+      return;
+    }
+
+    this.taskDetailsBody.clear();
+
+    const createSection = (title, icon, items) => {
+      const section = UIComponents.column()
+        .setStyles({
+          flex: "1",
+          minWidth: "150px",
+          maxHeight: "100%",
+          overflow: "hidden",
+        });
+
+      const sectionHeader = UIComponents.row()
+        .gap("var(--phi-0-25)")
+        .setStyles({
+          alignItems: "center",
+          marginBottom: "var(--phi-0-5)",
+        });
+
+      const sectionIcon = UIComponents.icon(icon);
+
+      sectionIcon.setStyle("fontSize", ["14px"]);
+
+      sectionIcon.setStyle("color", ["var(--theme-accent)"]);
+
+      const sectionTitle = UIComponents.text(title);
+
+      sectionTitle.setStyles({
+        fontWeight: "600",
+        fontSize: "0.8rem",
+      });
+
+      const countBadge = UIComponents.badge(String(items.length));
+
+      countBadge.setStyles({
+        fontSize: "10px",
+        padding: "1px 6px",
+        marginLeft: "var(--phi-0-25)",
+      });
+
+      sectionHeader.add(sectionIcon, sectionTitle, countBadge);
+
+      const itemList = UIComponents.column()
+        .setStyles({
+          gap: "2px",
+          overflow: "auto",
+          flex: "1",
+          paddingRight: "var(--phi-0-25)",
+        });
+
+      if (items.length === 0) {
+        const noItems = UIComponents.text("None");
+
+        noItems.setStyles({
+          fontSize: "0.75rem",
+          fontStyle: "italic",
+        });
+
+        itemList.add(noItems);
+      } else {
+        items.forEach((item) => {
+          const itemRow = UIComponents.row()
+            .gap("var(--phi-0-25)")
+            .setStyles({
+              padding: "3px 6px",
+              background: "var(--theme-background)",
+              borderRadius: "3px",
+              alignItems: "center",
+              cursor: "pointer",
+            });
+
+          itemRow.dom.addEventListener("mouseenter", () => {
+            itemRow.dom.style.background = "var(--theme-background-hover)";
+          });
+
+          itemRow.dom.addEventListener("mouseleave", () => {
+            itemRow.dom.style.background = "var(--theme-background)";
+          });
+
+          const itemName = UIComponents.text(item.Name);
+
+          itemName.setStyles({
+            fontSize: "0.75rem",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          });
+
+          itemRow.add(itemName);
+
+          itemList.add(itemRow);
+        });
+      }
+
+      section.add(sectionHeader, itemList);
+
+      return section;
     };
 
-    const entitiesRow = UIComponents.row().gap("var(--phi-0-5)");
+    const outputsList = details.outputs ? details.outputs : [];
 
-    entities.forEach((ent) => {
-      const icon = UIComponents.icon(icons[ent]).addClass("clickable");
+    const inputsList = details.inputs ? details.inputs : [];
 
-      icon.onClick(() => this._updateDescription(ent));
+    const resourcesList = details.resources ? details.resources : [];
 
-      if (ent === this.currentEntity) icon.addClass("Active");
+    const outputsSection = createSection("Outputs", "output", outputsList);
 
-      entitiesRow.add(icon);
-    });
+    const inputsSection = createSection("Inputs", "input", inputsList);
 
-    this.contentContainer.add(entitiesRow);
+    const resourcesSection = createSection("Resources", "person", resourcesList);
 
-    this._updateDescription(this.currentEntity);
-  }
-
-  async _updateDescription(entity = "IfcWorkSchedule") {
-    
-    if (!this.bimReady) {
-      return;
-    }
-
-    this.currentEntity = entity;
-
-    const description = await AECO_tools.ifc.getDescription(entity);
-
-    const children = Array.from(this.contentContainer.dom.children);
-
-    children.slice(1).forEach(child => child.remove());
-
-    const icons = this.contentContainer.dom.querySelectorAll('.clickable');
-
-    icons.forEach(icon => icon.classList.remove('Active'));
-
-    const entities = ["IfcWorkSchedule", "IfcWorkPlan", "IfcTask", "IfcProcess", "IfcTrigger"];
-
-    const idx = entities.indexOf(entity);
-
-    if (idx >= 0 && icons[idx]) icons[idx].classList.add('Active');
-
-    const collapsibleDesc = UIComponents.collapsibleSection({
-      title: `${entity} Description`,
-      collapsed: false,
-    });
-
-    const descText = UIComponents.text(description.description);
-
-    descText.setStyle("font-size", ["12px"]);
-
-    descText.setStyle("color", ["var(--theme-text-light)"]);
-
-    collapsibleDesc.addContent(descText);
-
-    const predefinedSection = UIComponents.collapsibleSection({
-      title: "Predefined Types",
-      collapsed: true,
-    });
-
-    const predefinedList = UIComponents.list();
-
-    predefinedList.setStyle("gap", ["2px"]);
-
-    if (description.predefined_types) {
-      for (const [key, value] of Object.entries(description.predefined_types)) {
-        if (value) {
-          const item = UIComponents.listItem().addClass("justify-between");
-
-          const label = UIComponents.text(key);
-
-          label.setStyle("font-size", ["12px"]);
-
-          const val = UIComponents.text(value);
-
-          val.setStyle("font-size", ["12px"]);
-
-          val.setStyle("color", ["var(--theme-text-light)"]);
-
-          item.add(label, val);
-
-          predefinedList.add(item);
-        }
-      }
-    } else {
-      predefinedList.add(UIComponents.text("No predefined types available."));
-    }
-
-    predefinedSection.setContent(predefinedList);
-
-    collapsibleDesc.addContent(predefinedSection);
-
-    const attributesSection = UIComponents.collapsibleSection({
-      title: "Attributes",
-      collapsed: true,
-    });
-
-    const attributesList = UIComponents.list();
-
-    attributesList.setStyle("gap", ["2px"]);
-
-    if (description.attributes) {
-      for (const [key, value] of Object.entries(description.attributes)) {
-        const item = UIComponents.listItem().addClass("justify-between");
-
-        const label = UIComponents.text(key);
-
-        label.setStyle("font-size", ["12px"]);
-
-        const val = UIComponents.text(String(value));
-
-        val.setStyle("font-size", ["12px"]);
-
-        val.setStyle("color", ["var(--theme-text-light)"]);
-
-        item.add(label, val);
-
-        attributesList.add(item);
-      }
-    } else {
-      attributesList.add(UIComponents.text("No attributes available."));
-    }
-
-    attributesSection.setContent(attributesList);
-
-    collapsibleDesc.addContent(attributesSection);
-
-    if (description.spec_url) {
-      const specLink = UIComponents.link("ISO SPEC Reference", description.spec_url, "auto_stories", true);
-
-      specLink.addClass("Link");
-
-      collapsibleDesc.addContent(specLink);
-    }
-
-    this.contentContainer.add(collapsibleDesc);
-  }
-
-  show() {
-    if (!this.panel.dom.parentNode) {
-      this.context.dom.appendChild(this.panel.dom);
-    }
-
-    this.panel.dom.style.display = "flex";
-
-    return this;
-  }
-
-  hide() {
-    this.panel.dom.style.display = "none";
-
-    return this;
-  }
-
-  toggle() {
-    if (this.panel.dom.style.display === "none") {
-      return this.show();
-    }
-
-    return this.hide();
+    this.taskDetailsBody.add(outputsSection, inputsSection, resourcesSection);
   }
 }
 
@@ -399,15 +345,13 @@ class SchedulingUI {
     this.taskViewsTabbedPanel = null;
     this.taskViewHosts = new Map();
 
-    this.documentationPanel = null;
-
     this.spreadsheetComponent = null;
 
     this.taskCheckboxes = new Map();
 
-    this.showTaskInformation = false;
+    this.spreadsheetSyncedSchedulerTaskIds = new Set();
 
-    this.selectionCounter = null;
+    this.taskBatchSelectionMode = false;
 
     this._registerSchedulingWorkspaceTab(context.layoutManager);
 
@@ -469,17 +413,11 @@ class SchedulingUI {
 
     this.content.setStyles({ gap: "var(--phi-1)" });
 
-    const sourceSection = createProjectSelection(context, operators);
-
-    this.documentationPanel = new Schedule_Documentation(context);
-    
-    this.content.add(sourceSection);
-
     this.content.add(this._createSchedulesSection());
 
     this.footer.add(this._scheduleActions(context, operators));
 
-    this.footer.setStyles({ marginTop: "var(--phi-1)" });
+    this.footer.setStyles({ marginTop: "var(--phi-1)", padding:"var(--phi-1)" });
 
     this.listen(context, operators);
   }
@@ -583,7 +521,7 @@ class SchedulingUI {
         .addClass("fill-width")
         .setStyle("justify-content", ["flex-end"]);
 
-      this.taskViewSelectorRow.add(this._createSelectionToggle());
+      this.taskViewSelectorRow.add(this.drawSelectionToggle());
 
       this.taskViewsTabbedPanel = UIComponents.tabbedPanel();
       this.taskViewsTabbedPanel.addClass("inner-tabbed-panel");
@@ -642,309 +580,10 @@ class SchedulingUI {
       this.taskViewWrapper.add(this.taskViewSelectorRow);
       this.taskViewWrapper.add(this.taskViewsTabbedPanel);
 
-      this._createTaskDetailsSection();
-
-      this.taskViewWrapper.add(this.taskDetailsResizer);
-      this.taskViewWrapper.add(this.taskDetailsSection);
-
       this.taskPanelContentHost.add(this.taskViewWrapper);
-
-      this._setTaskInformationPanelVisible(false);
 
       this.addTaskPanelTab();
     }
-  }
-
-  _setTaskInformationPanelVisible(visible) {
-    if (!this.taskDetailsSection || !this.taskDetailsResizer) {
-      return;
-    }
-
-    const displayValue = visible ? "flex" : "none";
-
-    this.taskDetailsSection.setStyle("display", [displayValue]);
-
-    this.taskDetailsResizer.setStyle("display", [visible ? "block" : "none"]);
-  }
-
-  focusTaskForDetails(taskId) {
-    if (!this.showTaskInformation || taskId === undefined || taskId === null) {
-      return;
-    }
-
-    AECO_tools.scheduler.clearSelectedTasks();
-
-    this.operators.execute("bim.select_task", this.context, taskId);
-  }
-
-  _createTaskDetailsSection() {
-    this.taskDetailsSection = UIComponents.div();
-
-    this.taskDetailsSection.addClass('TaskDetails-section');
-
-    this.taskDetailsSection.setStyles({
-      height: '180px',
-      minHeight: '100px',
-      maxHeight: '50vh',
-      display: 'flex',
-      flexDirection: 'column',
-      borderTop: '1px solid var(--border)',
-      background: 'var(--glass-surface)',
-      overflow: 'hidden'
-    });
-
-    const header = UIComponents.row()
-      .addClass('TaskDetails-header')
-      .gap('var(--phi-0-5)')
-      .setStyles({
-        padding: '0.5rem',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderBottom: '1px solid var(--border)',
-        background: 'var(--theme-background-2)',
-        cursor: 'pointer'
-      });
-
-    const headerLeft = UIComponents.row().gap('var(--phi-0-5)');
-
-    const headerIcon = UIComponents.icon('info');
-
-    headerIcon.setStyle('fontSize', ['14px']);
-
-    const headerTitle = UIComponents.text('Task Details');
-
-    headerTitle.setStyle('fontWeight', ['600']);
-
-    headerTitle.setStyle('fontSize', ['0.85rem']);
-
-    headerLeft.add(headerIcon, headerTitle);
-
-    this.taskDetailsToggle = UIComponents.icon('expand_more');
-
-    this.taskDetailsToggle.setStyle('transition', ['transform 0.2s']);
-
-    this.taskDetailsVisible = true;
-
-    header.onClick(() => {
-      this.taskDetailsVisible = !this.taskDetailsVisible;
-
-      this.taskDetailsContent.dom.style.display = this.taskDetailsVisible ? 'flex' : 'none';
-
-      this.taskDetailsToggle.dom.textContent = this.taskDetailsVisible ? 'expand_more' : 'expand_less';
-    });
-
-    header.add(headerLeft, this.taskDetailsToggle);
-
-    this.taskDetailsContent = UIComponents.row()
-      .addClass('TaskDetails-content')
-      .setStyles({
-        flex: '1',
-        overflow: 'auto',
-        padding: 'var(--phi-0-5)',
-        gap: 'var(--phi-1)'
-      });
-
-    this._renderEmptyTaskDetails();
-
-    this.taskDetailsSection.add(header, this.taskDetailsContent);
-
-    this.taskDetailsResizer = this._createTaskDetailsResizer();
-  }
-
-  _createTaskDetailsResizer() {
-    const resizer = UIComponents.div();
-
-    resizer.addClass('TaskDetails-resizer');
-
-    resizer.setStyles({
-      height: '6px',
-      cursor: 'ns-resize',
-      background: 'transparent',
-      position: 'relative',
-      flexShrink: '0'
-    });
-
-    const handle = UIComponents.div();
-
-    handle.setStyles({
-      position: 'absolute',
-      left: '50%',
-      top: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: '40px',
-      height: '4px',
-      borderRadius: '2px',
-      background: 'var(--border)'
-    });
-
-    resizer.add(handle);
-
-    let isResizing = false;
-
-    let startY = 0;
-
-    let startHeight = 0;
-
-    resizer.dom.addEventListener('mousedown', (e) => {
-      isResizing = true;
-
-      startY = e.clientY;
-
-      startHeight = this.taskDetailsSection.dom.offsetHeight;
-
-      document.body.style.cursor = 'ns-resize';
-
-      document.body.style.userSelect = 'none';
-
-      e.preventDefault();
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!isResizing) return;
-
-      const deltaY = startY - e.clientY;
-
-      const newHeight = Math.max(100, Math.min(startHeight + deltaY, window.innerHeight * 0.5));
-
-      this.taskDetailsSection.dom.style.height = newHeight + 'px';
-    });
-
-    document.addEventListener('mouseup', () => {
-      if (isResizing) {
-        isResizing = false;
-
-        document.body.style.cursor = '';
-
-        document.body.style.userSelect = '';
-      }
-    });
-
-    return resizer;
-  }
-
-  _renderEmptyTaskDetails() {
-    this.taskDetailsContent.clear();
-
-    const emptyState = UIComponents.text('Click a task to view details');
-
-    emptyState.setStyles({
-      color: 'var(--theme-text-light)',
-      fontStyle: 'italic',
-      padding: 'var(--phi-1)',
-      textAlign: 'center',
-      width: '100%'
-    });
-
-    this.taskDetailsContent.add(emptyState);
-  }
-
-  _updateTaskDetails(details) {
-    this.taskDetailsContent.clear();
-
-    const createSection = (title, icon, items) => {
-      const section = UIComponents.column()
-        .setStyles({
-          flex: '1',
-          minWidth: '150px',
-          maxHeight: '100%',
-          overflow: 'hidden'
-        });
-
-      const sectionHeader = UIComponents.row()
-        .gap('var(--phi-0-25)')
-        .setStyles({
-          alignItems: 'center',
-          marginBottom: 'var(--phi-0-5)'
-        });
-
-      const sectionIcon = UIComponents.icon(icon);
-
-      sectionIcon.setStyle('fontSize', ['14px']);
-
-      sectionIcon.setStyle('color', ['var(--theme-accent)']);
-
-      const sectionTitle = UIComponents.text(title);
-
-      sectionTitle.setStyles({
-        fontWeight: '600',
-        fontSize: '0.8rem'
-      });
-
-      const countBadge = UIComponents.badge(String(items.length));
-
-      countBadge.setStyles({
-        fontSize: '10px',
-        padding: '1px 6px',
-        marginLeft: 'var(--phi-0-25)'
-      });
-
-      sectionHeader.add(sectionIcon, sectionTitle, countBadge);
-
-      const itemList = UIComponents.column()
-        .setStyles({
-          gap: '2px',
-          overflow: 'auto',
-          flex: '1',
-          paddingRight: 'var(--phi-0-25)'
-        });
-
-      if (items.length === 0) {
-        const noItems = UIComponents.text('None');
-
-        noItems.setStyles({
-          color: 'var(--theme-text-light)',
-          fontSize: '0.75rem',
-          fontStyle: 'italic'
-        });
-
-        itemList.add(noItems);
-      } else {
-        items.forEach(item => {
-          const itemRow = UIComponents.row()
-            .gap('var(--phi-0-25)')
-            .setStyles({
-              padding: '3px 6px',
-              background: 'var(--theme-background)',
-              borderRadius: '3px',
-              alignItems: 'center',
-              cursor: 'pointer'
-            });
-
-          itemRow.dom.addEventListener('mouseenter', () => {
-            itemRow.dom.style.background = 'var(--theme-background-hover)';
-          });
-
-          itemRow.dom.addEventListener('mouseleave', () => {
-            itemRow.dom.style.background = 'var(--theme-background)';
-          });
-
-          const itemName = UIComponents.text(item.Name);
-
-          itemName.setStyles({
-            fontSize: '0.75rem',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
-          });
-
-          itemRow.add(itemName);
-
-          itemList.add(itemRow);
-        });
-      }
-
-      section.add(sectionHeader, itemList);
-
-      return section;
-    };
-
-    const outputsSection = createSection('Outputs', 'output', details.outputs || []);
-
-    const inputsSection = createSection('Inputs', 'input', details.inputs || []);
-
-    const resourcesSection = createSection('Resources', 'person', details.resources || []);
-
-    this.taskDetailsContent.add(outputsSection, inputsSection, resourcesSection);
   }
 
   show() {
@@ -962,10 +601,6 @@ class SchedulingUI {
       this._isShown = true;
     }
 
-    if (this.documentationPanel) {
-      this.documentationPanel.show();
-    }
-
     return this;
   }
 
@@ -973,10 +608,6 @@ class SchedulingUI {
     const lm = this.context?.layoutManager;
     if (lm && lm.isTabSelected(this.position, this.tabId)) {
       lm.closeWorkspace(this.position);
-    }
-
-    if (this.documentationPanel) {
-      this.documentationPanel.hide();
     }
 
     return this;
@@ -1044,25 +675,10 @@ class SchedulingUI {
       this.updateTaskSelectionUI(taskId, selected);
     });
 
-    signals.taskDetailsLoaded.add(({ taskId, outputs, inputs, resources }) => {
-      this._updateTaskDetails({ outputs, inputs, resources });
-    });
-
-
   }
 
   createScheduleRow({ GlobalId, Name, StartTime, FinishTime, PredefinedType }) {
-    const item = UIComponents.listItem();
-
-    item.setStyle("flex-direction", ["column"]);
-
-    item.setStyle("gap", ["var(--phi-0-5)"]);
-
-    item.setStyle("padding", ["var(--phi-0-5)"]);
-
-    item.setStyle("border-radius", ["var(--phi-0-5)"]);
-
-    item.setStyle("background", ["var(--glass-surface)"]);
+    const item = UIComponents.div().addClass("SquareOperator").addClass("SchedulingScheduleSquare");
 
     const getModel = () => this.context.ifc.activeModel;
 
@@ -1080,23 +696,23 @@ class SchedulingUI {
 
     headerRow.add(name, predefinedType);
 
-    const dateRow = UIComponents.row().gap("var(--phi-0-5)");
+    const dateRow = UIComponents.row().gap("var(--phi-0-5)").addClass("fill-width");
 
     const dateIcon = UIComponents.icon("date_range");
 
     dateIcon.setStyle("font-size", ["14px"]);
 
-    dateIcon.setStyle("color", ["var(--theme-text-light)"]);
-
-    const dateRange = UIComponents.text(`${StartTime || "?"} - ${FinishTime || "?"}`);
+    const dateRange = UIComponents.text(
+      `${formatSchedulingDate(StartTime) || "?"} - ${formatSchedulingDate(FinishTime) || "?"}`
+    );
 
     dateRange.setStyle("font-size", ["12px"]);
-
-    dateRange.setStyle("color", ["var(--theme-text-light)"]);
 
     dateRow.add(dateIcon, dateRange);
 
     const actionsRow = UIComponents.row().gap("var(--phi-0-5)").addClass("fill-width");
+
+    actionsRow.setStyle("flex-wrap", ["wrap"]);
 
     const editBtn = UIComponents.button("Edit");
 
@@ -1132,11 +748,11 @@ class SchedulingUI {
 
     item.add(headerRow, dateRow, actionsRow);
 
-    this.schedulesLists.add(item);
+    this.schedulesGrid.add(item);
   }
 
   updateSchedulesList(schedules) {
-    this.schedulesLists.clear();
+    this.schedulesGrid.clear();
 
     schedules.forEach((workSchedule) => {
       const workscheduleData =
@@ -1163,11 +779,9 @@ class SchedulingUI {
       collapsed: false,
     });
 
-    this.schedulesLists = UIComponents.list();
+    this.schedulesGrid = UIComponents.div().addClass("SchedulingSchedulesGrid");
 
-    this.schedulesLists.setStyle("gap", ["2px"]);
-
-    this.schedulesSection.setContent(this.schedulesLists);
+    this.schedulesSection.setContent(this.schedulesGrid);
 
     return this.schedulesSection;
   }
@@ -1199,52 +813,51 @@ class SchedulingUI {
   }
 
 
-  _createSelectionToggle() {
-    const container = UIComponents.row().gap("var(--phi-0-5)").addClass("centered-vertical");
+  drawSelectionToggle() {
 
     const toggle = UIComponents.div();
 
     toggle.addClass("SelectionToggle");
 
-    const icon = UIComponents.icon("info");
+    toggle.setStyles({
+      position: 'absolute',
+      top: 'var(--phi-0-5)',
+      right: 'var(--phi-0-5)',
+    })
+
+    const icon = UIComponents.icon("checklist");
 
     icon.setStyle("font-size", ["16px"]);
 
-    const label = UIComponents.text("Show task information");
+    const label = UIComponents.text("Select tasks");
 
     label.setStyle("font-size", ["12px"]);
 
     toggle.add(icon, label);
 
-    this.selectionCounter = UIComponents.div();
-
-    this.selectionCounter.addClass("SelectionCounter");
-
-    this.selectionCounter.dom.textContent = "0";
-
-    this.selectionCounter.setStyle("display", ["none"]);
-
     toggle.onClick(() => {
-      this.showTaskInformation = !this.showTaskInformation;
+      this.taskBatchSelectionMode = !this.taskBatchSelectionMode;
 
-      const wrapper = this.taskPanelRoot?.dom?.querySelector(".task-view-wrapper");
+      const rootDom = this.taskPanelRoot && this.taskPanelRoot.dom ? this.taskPanelRoot.dom : null;
 
-      if (this.showTaskInformation) {
+      const wrapper = rootDom ? rootDom.querySelector(".task-view-wrapper") : null;
+
+      if (this.taskBatchSelectionMode) {
         toggle.addClass("active");
 
-        wrapper?.classList.add("selection-enabled");
-
-        this._setTaskInformationPanelVisible(true);
+        if (wrapper) {
+          wrapper.classList.add("selection-enabled");
+        }
       } else {
         toggle.removeClass("active");
 
-        wrapper?.classList.remove("selection-enabled");
-
-        this._setTaskInformationPanelVisible(false);
+        if (wrapper) {
+          wrapper.classList.remove("selection-enabled");
+        }
 
         AECO_tools.scheduler.clearSelectedTasks();
 
-        this.updateSelectionCounter(0);
+        this.spreadsheetSyncedSchedulerTaskIds.clear();
 
         this.taskCheckboxes.forEach(({ checkbox, taskItem }) => {
           checkbox.removeClass("checked");
@@ -1254,17 +867,7 @@ class SchedulingUI {
       }
     });
 
-    container.add(toggle, this.selectionCounter);
-
-    return container;
-  }
-
-  updateSelectionCounter(count) {
-    if (!this.selectionCounter) return;
-
-    this.selectionCounter.dom.textContent = String(count);
-
-    this.selectionCounter.setStyle("display", [count > 0 ? "block" : "none"]);
+    return toggle;
   }
 
   openTaskViewPanel(
@@ -1347,18 +950,12 @@ class SchedulingUI {
     this.taskViewsTabbedPanel.select(tabId);
 
     if (this.taskViewWrapper) {
-      if (this.showTaskInformation) {
+      if (this.taskBatchSelectionMode) {
         this.taskViewWrapper.addClass("selection-enabled");
       } else {
         this.taskViewWrapper.removeClass("selection-enabled");
       }
-
-      this._setTaskInformationPanelVisible(this.showTaskInformation);
     }
-
-    const selectedCount = AECO_tools.scheduler.getSelectionCount();
-
-    this.updateSelectionCounter(selectedCount);
   }
 
   renderHierarchyViewContent(workscheduleID, tasks) {
@@ -1366,8 +963,6 @@ class SchedulingUI {
 
     if (tasks.length === 0) {
       const empty = UIComponents.text("No tasks to display");
-
-      empty.setStyle("color", ["var(--theme-text-light)"]);
 
       empty.setStyle("text-align", ["center"]);
 
@@ -1431,14 +1026,6 @@ class SchedulingUI {
   }
 
   renderHierarchyNode(container, taskMap, currentTasks, workscheduleID, level = 0) {
-    const statusColors = {
-      NOTSTARTED: "var(--theme-warning)",
-      STARTED: "var(--theme-info)",
-      COMPLETED: "var(--theme-success)",
-      FINISHED: "var(--theme-success)",
-      ONHOLD: "var(--theme-text-light)"
-    };
-
     currentTasks.forEach((node) => {
       node.level = level;
 
@@ -1471,8 +1058,6 @@ class SchedulingUI {
 
         toggleIcon.addClass('clickable');
 
-        toggleIcon.setStyle("color", ["var(--theme-text-light)"]);
-
         toggleIcon.onClick((event) => {
           if (event && event.stopPropagation) {
             event.stopPropagation();
@@ -1501,7 +1086,9 @@ class SchedulingUI {
       taskContent.setStyle("cursor", ["pointer"]);
 
       taskContent.onClick(() => {
-        this.focusTaskForDetails(taskId);
+
+        this.operators.execute("bim.load_task_details", this.context, taskId);
+      
       });
 
       const taskName = UIComponents.text(node.task.pName);
@@ -1525,17 +1112,13 @@ class SchedulingUI {
 
         dateIcon.setStyle("font-size", ["12px"]);
 
-        dateIcon.setStyle("color", ["var(--theme-text-light)"]);
-
         dateIcon.setStyle("flex-shrink", ["0"]);
 
         const dates = UIComponents.text(
-          `${this.formatDate(node.task.pStart) || "?"} - ${this.formatDate(node.task.pEnd) || "?"}`
+          `${formatSchedulingDate(node.task.pStart) || "?"} - ${formatSchedulingDate(node.task.pEnd) || "?"}`
         );
 
         dates.setStyle("font-size", ["11px"]);
-
-        dates.setStyle("color", ["var(--theme-text-light)"]);
 
         dates.setStyle("white-space", ["nowrap"]);
 
@@ -1565,8 +1148,6 @@ class SchedulingUI {
       const status = (node.task.status || "NOTSTARTED").toUpperCase();
 
       const statusBadge = UIComponents.badge(status);
-
-      statusBadge.setStyle("background", [statusColors[status] || "var(--theme-text-light)"]);
 
       statusBadge.setStyle("color", ["var(--theme-background-0204)"]);
 
@@ -1658,7 +1239,7 @@ class SchedulingUI {
 
         if (!taskId) return;
 
-        this.focusTaskForDetails(taskId);
+        this.operators.execute("bim.load_task_details", this.context, taskId);
       },
       onEdit: (node) => {
         const GlobalId = node.data?.GlobalId;
@@ -1762,9 +1343,61 @@ class SchedulingUI {
     });
 
     this.spreadsheetComponent.on("selectionChanged", (eventData) => {
+      const selected = eventData && eventData.selected;
 
-      const { selected } = eventData;
+      if (!selected || !selected.data || selected.data.length === 0) {
+        if (this.taskBatchSelectionMode) {
+          const previousIds = this.spreadsheetSyncedSchedulerTaskIds;
 
+          previousIds.forEach((taskId) => {
+            this.operators.execute("bim.deselect_task", this.context, taskId);
+          });
+
+          previousIds.clear();
+        }
+
+        return;
+      }
+
+      const rowData = selected.data[0];
+
+      let taskId = null;
+
+      if (rowData && rowData.pID !== undefined && rowData.pID !== null) {
+        taskId = rowData.pID;
+      } else if (rowData && rowData.id !== undefined && rowData.id !== null) {
+        taskId = rowData.id;
+      }
+
+      if (taskId === undefined || taskId === null) {
+        return;
+      }
+
+      if (this.taskBatchSelectionMode) {
+        const currentIds = new Set([taskId]);
+
+        const previousIds = this.spreadsheetSyncedSchedulerTaskIds;
+
+        previousIds.forEach((id) => {
+          if (!currentIds.has(id)) {
+            this.operators.execute("bim.deselect_task", this.context, id);
+          }
+        });
+
+        currentIds.forEach((id) => {
+          if (!previousIds.has(id)) {
+            this.operators.execute("bim.select_task", this.context, id);
+          }
+        });
+
+        previousIds.clear();
+
+        currentIds.forEach((id) => {
+          previousIds.add(id);
+        });
+      } else {
+        this.operators.execute("bim.load_task_details", this.context, taskId);
+      }
     });
 
     container.add(this.spreadsheetComponent);
@@ -1776,7 +1409,7 @@ class SchedulingUI {
     const ganttChartContainer = UIComponents.gantt(context, tasks, {
       operators: this.operators,
       onTaskRowClick: (taskId) => {
-        this.focusTaskForDetails(taskId);
+        this.operators.execute("bim.load_task_details", this.context, taskId);
       },
     });
 
@@ -1874,8 +1507,6 @@ class SchedulingUI {
       if (columnData.tasks.length === 0) {
         const emptyState = UIComponents.text("No tasks");
 
-        emptyState.setStyle("color", ["var(--theme-text-light)"]);
-
         emptyState.setStyle("text-align", ["center"]);
 
         emptyState.setStyle("padding", ["var(--phi-1)"]);
@@ -1929,13 +1560,9 @@ class SchedulingUI {
 
       startIcon.setStyle("font-size", ["12px"]);
 
-      startIcon.setStyle("color", ["var(--theme-text-light)"]);
-
-      const startDate = UIComponents.text(this.formatDate(task.pStart));
+      const startDate = UIComponents.text(formatSchedulingDate(task.pStart));
 
       startDate.setStyle("font-size", ["11px"]);
-
-      startDate.setStyle("color", ["var(--theme-text-light)"]);
 
       startRow.add(startIcon, startDate);
 
@@ -1949,13 +1576,9 @@ class SchedulingUI {
 
       endIcon.setStyle("font-size", ["12px"]);
 
-      endIcon.setStyle("color", ["var(--theme-text-light)"]);
-
-      const endDate = UIComponents.text(this.formatDate(task.pEnd));
+      const endDate = UIComponents.text(formatSchedulingDate(task.pEnd));
 
       endDate.setStyle("font-size", ["11px"]);
-
-      endDate.setStyle("color", ["var(--theme-text-light)"]);
 
       endRow.add(endIcon, endDate);
 
@@ -1969,13 +1592,9 @@ class SchedulingUI {
 
       durationIcon.setStyle("font-size", ["12px"]);
 
-      durationIcon.setStyle("color", ["var(--theme-text-light)"]);
-
       const duration = UIComponents.text(task.ifcduration);
 
       duration.setStyle("font-size", ["11px"]);
-
-      duration.setStyle("color", ["var(--theme-text-light)"]);
 
       durationRow.add(durationIcon, duration);
 
@@ -2013,8 +1632,6 @@ class SchedulingUI {
 
       progressText.setStyle("font-size", ["10px"]);
 
-      progressText.setStyle("color", ["var(--theme-text-light)"]);
-
       progressContainer.add(progressBar, progressText);
 
       card.add(progressContainer);
@@ -2039,20 +1656,10 @@ class SchedulingUI {
     card.dom.insertBefore(checkboxRow.dom, card.dom.firstChild);
 
     card.onClick(() => {
-      this.focusTaskForDetails(task.pID);
+      this.operators.execute("bim.load_task_details", this.context, task.pID);
     });
 
     return card;
-  }
-
-  formatDate(dateStr) {
-    if (!dateStr) return "";
-
-    const date = new Date(dateStr);
-
-    if (isNaN(date.getTime())) return dateStr;
-
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   }
 
   renderListViewContent(workscheduleID, tasks) {
@@ -2065,8 +1672,6 @@ class SchedulingUI {
     if (tasks.length === 0) {
       const emptyState = UIComponents.text("No tasks available");
 
-      emptyState.setStyle("color", ["var(--theme-text-light)"]);
-
       emptyState.setStyle("text-align", ["center"]);
 
       emptyState.setStyle("padding", ["var(--phi-2)"]);
@@ -2075,14 +1680,6 @@ class SchedulingUI {
 
       return container;
     }
-
-    const statusColors = {
-      NOTSTARTED: "var(--theme-warning)",
-      STARTED: "var(--theme-info)",
-      COMPLETED: "var(--theme-success)",
-      FINISHED: "var(--theme-success)",
-      ONHOLD: "var(--theme-text-light)"
-    };
 
     tasks.forEach((task) => {
       const taskItem = UIComponents.row().gap("var(--phi-1)").addClass("fill-width").addClass("justify-between");
@@ -2114,15 +1711,11 @@ class SchedulingUI {
 
         dateIcon.setStyle("font-size", ["12px"]);
 
-        dateIcon.setStyle("color", ["var(--theme-text-light)"]);
-
         const dates = UIComponents.text(
-          `${this.formatDate(task.pStart) || "?"} - ${this.formatDate(task.pEnd) || "?"}`
+          `${formatSchedulingDate(task.pStart) || "?"} - ${formatSchedulingDate(task.pEnd) || "?"}`
         );
 
         dates.setStyle("font-size", ["12px"]);
-
-        dates.setStyle("color", ["var(--theme-text-light)"]);
 
         dateRow.add(dateIcon, dates);
 
@@ -2136,13 +1729,9 @@ class SchedulingUI {
 
         durationIcon.setStyle("font-size", ["12px"]);
 
-        durationIcon.setStyle("color", ["var(--theme-text-light)"]);
-
         const duration = UIComponents.text(task.ifcduration);
 
         duration.setStyle("font-size", ["12px"]);
-
-        duration.setStyle("color", ["var(--theme-text-light)"]);
 
         durationRow.add(durationIcon, duration);
 
@@ -2154,8 +1743,6 @@ class SchedulingUI {
       const status = (task.status || "NOTSTARTED").toUpperCase();
 
       const statusBadge = UIComponents.badge(status);
-
-      statusBadge.setStyle("background", [statusColors[status] || "var(--theme-text-light)"]);
 
       statusBadge.setStyle("color", ["var(--theme-background-0204)"]);
 
@@ -2180,7 +1767,7 @@ class SchedulingUI {
       taskItem.add(content, statusBadge);
 
       taskItem.onClick(() => {
-        this.focusTaskForDetails(task.pID);
+        this.operators.execute("bim.load_task_details", this.context, task.pID);
       });
 
       container.add(taskItem);
@@ -2225,14 +1812,12 @@ class SchedulingUI {
 
       taskItem.removeClass("selected");
     }
-
-    const selectedCount = AECO_tools.scheduler.getSelectionCount();
-
-    this.updateSelectionCounter(selectedCount);
   }
 
   clearTaskCheckboxes() {
     this.taskCheckboxes.clear();
+
+    this.spreadsheetSyncedSchedulerTaskIds.clear();
   }
 
   enableSelection({ taskId, taskItem, addCheckbox = true }) {
@@ -2260,41 +1845,7 @@ class SchedulingUI {
   }
 }
 
-function createProjectSelection(context, operators) {
-  const options = { "": "Data sources" };
 
-  context.ifc.availableModels.forEach((modelName) => {
-    options[modelName] = modelName;
-  });
 
-  const modelSelect = UIComponents.select();
-
-  modelSelect.setOptions(options);
-
-  modelSelect.setValue(context.ifc.activeModel || "");
-
-  modelSelect.addClass("hud-input");
-
-  modelSelect.onBlur(async () => {
-    await operators.execute("bim.set_active_model", context, modelSelect.getValue());
-  });
-
-  context.signals.newIFCModel.add(() => {
-    const opts = { "": "select source" };
-
-    context.ifc.availableModels.forEach((m) => { opts[m] = m; });
-
-    modelSelect.setOptions(opts);
-
-    modelSelect.setValue(context.ifc.activeModel || "");
-  });
-
-  const row = UIComponents.row().gap("var(--phi-0-5)");
-
-  row.add(modelSelect);
-
-  return row;
-}
-
-export default [ SchedulingUI ];
+export default [ SchedulingUI, TaskUI ];
 

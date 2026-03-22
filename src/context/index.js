@@ -209,7 +209,8 @@ class Context {
             refreshBIMLayers: new Signal(),
             newIFCModel: new Signal(),
             activeModelChanged: new Signal(),
-            bimIfcModelAnalyticsContextChanged: new Signal(),
+            directorAnalyticsContextChanged: new Signal(),
+
             activeTypeChanged: new Signal,
             newIFCGeometry: new Signal(),
             bimGeometryLoadProgress: new Signal(),

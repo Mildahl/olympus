@@ -1,5 +1,5 @@
 import { getPyodide, ifc } from './worker_state.js';
-import { getIfc } from './worker_files_modules.js';
+import { getIfc, getModule } from './worker_files_modules.js';
 export function getAttributes( modelName = "default", GlobalId ) {
     
   let model = getIfc(modelName);
@@ -219,4 +219,27 @@ export function saveModel(modelName, format) {
     mimeType,
     isBase64: normalizedFormat === "ifczip",
   };
+}
+
+export function getDirectorOverview(modelName) {
+  const model = getIfc(modelName);
+  if (!model) {
+    throw new Error(`Model ${modelName} not found`);
+  }
+  const analyticsModule = getModule("analytics");
+  const raw = analyticsModule.get_director_overview_json(model);
+  const text = typeof raw === "string" ? raw : String(raw);
+  return JSON.parse(text);
+}
+
+export function getDirectorFilteredSlice(modelName, filterSpec) {
+  const model = getIfc(modelName);
+  if (!model) {
+    throw new Error(`Model ${modelName} not found`);
+  }
+  const analyticsModule = getModule("analytics");
+  const spec = filterSpec && typeof filterSpec === "object" ? filterSpec : {};
+  const raw = analyticsModule.get_filtered_slice_json(model, spec);
+  const text = typeof raw === "string" ? raw : String(raw);
+  return JSON.parse(text);
 }

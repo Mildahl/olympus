@@ -332,7 +332,8 @@ async function enableBIM({ wheelsPath, pythonToolsPath, signals, pythonTool }) {
     "attribute",
     "pset",
     "doc",
-    "ifc_author"
+    "ifc_author",
+    "analytics"
   ];
 
   await pythonTool.startBIMTools(pythonToolsPath || `${window.location.origin}${Paths.pythonTools()}/`, modules);

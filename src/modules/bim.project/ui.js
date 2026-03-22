@@ -138,6 +138,8 @@ class ProjectUI extends TabPanel {
         });
       }
     });
+
+
   }
 
   refreshModelsList(context, operators) {
@@ -215,9 +217,9 @@ class ProjectUI extends TabPanel {
       }
     });
 
-    const loadGeometryOp = UIComponents.button("Load Geometry");
+    const loadGeometryOp = UIComponents.button("Load Geometry (Safe & Slow)");
 
-    const loadLiteGeometryOp = UIComponents.button("Load Lite");
+    const loadLiteGeometryOp = UIComponents.button("Load Lite (Fast & Experimental)");
 
     loadGeometryOp.setIcon("view_in_ar");
 
@@ -226,10 +228,6 @@ class ProjectUI extends TabPanel {
     if (context.ifc.activeModel === loadedModelName) item.addClass("Active");
 
     const runGeometryLoad = async (backend) => {
-      item.remove(loadGeometryOp);
-
-      item.remove(loadLiteGeometryOp);
-
       try {
         await operators.execute("bim.load_geometry_data", context, loadedModelName, "Buildings", backend);
       } catch {
@@ -257,6 +255,18 @@ class ProjectUI extends TabPanel {
       },
     });
 
+
+    context.signals.newIFCGeometry.add(({modelName}) => {
+
+      if ( modelName === loadedModelName ) {
+
+        item.remove(loadGeometryOp);
+
+        item.remove(loadLiteGeometryOp);
+
+      }
+    });
+
     UIHelper.bindOperatorPolling({
       element: loadLiteGeometryOp,
       operators,
@@ -281,14 +291,16 @@ class ProjectUI extends TabPanel {
     const dragComponent = UIComponents.row().addClass('centered-vertical').setStyles({
       width: "100%",
       height: "fit-content",
+      padding: "var(--phi-1)",
+      gap: "var(--phi-1)",
     }).setTooltip(message);
+
+
+    const openText = UIComponents.text('Open model')
 
     const label = UIComponents.text(message).addClass('hud-label');
 
-    const dropArea = UIComponents.div().addClass('hud-input').setStyles({
-      width: "50%",
-      height: "30px",
-    });
+    const dropArea = UIComponents.div();
 
     UIHelper.bindOperatorPolling({
       element: dropArea,
@@ -326,23 +338,27 @@ class ProjectUI extends TabPanel {
         }
       }
     });
+
+    dropArea.add(label);
     
-    dragComponent.add(label, dropArea);
+    dragComponent.add(openText, dropArea);
 
     return dragComponent;
   }
 
   drawTemplates(context, operators) {
 
-    const title = UIComponents.h5("IFC Model Templates");
+    const title = UIComponents.h5("IFC Model Templates").padding("var(--phi-0-5)")
 
     const grid = UIComponents.row()
-
-    grid.setStyle("display", ["grid"]);
-
-    grid.setStyle("grid-template-columns", ["repeat(2, 1fr)"]);
-
-    grid.setStyle("gap", ["var(--phi-0-5)"]);
+    
+    grid.setStyles({
+      display: "grid",
+      "grid-template-columns": "repeat(4, 1fr)",
+      gap: "var(--phi-0-5)",
+      padding: "var(--phi-1)",
+      marginBottom: "var(--phi-1)",
+    })
 
     for ( const template of IFC_TEMPLATES ) {
 
@@ -350,11 +366,7 @@ class ProjectUI extends TabPanel {
 
       const iconDownload = UIComponents.icon("download");
 
-      item.add(iconDownload);
-
-      item.add(UIComponents.text(template.name));
-      
-      item.add(UIComponents.span(template.size).addClass("GameNumber").setStyle("font-size", ["12px"]))
+      item.add(iconDownload, UIComponents.text(template.name), UIComponents.span(template.size).addClass("GameNumber").setStyle("font-size", ["12px"]))
       
       grid.add(item);
 

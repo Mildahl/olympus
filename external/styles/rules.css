@@ -49,38 +49,6 @@ h1 {
 
 
 
-/* SELECT DROPDOWN OPTIONS */
-
-
-input:hover,
-textarea:hover, select:hover {
-  border-color: var(--border-hover);
-  background: var(--glass-surface);
-}
-
-input:focus,
-textarea:focus, select:focus {
-  border-color: var(--border-focus);
-  background: var(--glass-surface);
-  box-shadow: 0 0 0 4px var(--brand-color-soft),
-    inset 0 1px 3px rgba(0, 0, 0, 0.1);
-  outline: none;
-}
-
-input.Number {
-  color: var(--brand-color) !important;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: "SF Mono", "Monaco", "Courier New", monospace;
-  padding: 6px 10px;
-  text-align: center;
-  min-width: 60px;
-}
-
-input.Number:focus {
-  color: var(--brand-color-hover) !important;
-}
-
 input {
   vertical-align: middle;
 }

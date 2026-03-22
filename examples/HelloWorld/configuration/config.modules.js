@@ -13,7 +13,6 @@
  */
 
 export const coreModules = [
-    
     {
         id: "configurator",
         active: true,
@@ -27,15 +26,19 @@ export const coreModules = [
         active: true,
     },
     {
-        id: "settings",
-        active: true,
-    },
-    {
         id: "world.notification",
         active: true,
     },
     {
         id: "bim.project",
+        active: true,
+    },
+    {
+        id: "bim.analytics",
+        active: true,
+    },
+    {
+        id: "bim.sequence",
         active: true,
     },
     {
@@ -63,11 +66,19 @@ export const coreModules = [
         active: true,
     },
     {
+        id: "world.sectionbox",
+        active: false,
+    },
+    {
         id: "world.history",
         active: true,
     },
     {
         id: "world.navigation",
+        active: true,
+    },
+    {
+        id: "settings",
         active: true,
     },
     {
@@ -92,10 +103,6 @@ export const coreModules = [
     },
     {
         id: "bim.model",
-        active: false,
-    },
-    {
-        id: "bim.sequence",
         active: false,
     },
     {

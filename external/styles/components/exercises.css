@@ -517,7 +517,7 @@
   }
   
   .summary-btn-primary {
-    background: var(--brand-color);
+    background: var(--brand-color-alpha);
     border: none;
     border-radius: 0.5rem;
     color: var(--on-brand-color);

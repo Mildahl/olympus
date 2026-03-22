@@ -235,6 +235,61 @@ class BIM_OP_switchView extends Operator {
 
 }
 
+class BIM_OP_loadTaskDetails extends Operator {
+  static operatorName = "bim.load_task_details";
+
+  static operatorLabel = "Load Schedule Task Details";
+
+  static operatorOptions = ["REGISTER"];
+
+  constructor(context, taskId) {
+    super(context);
+
+    this.taskId = taskId;
+  }
+
+  poll() {
+    return AECO_tools.ifc !== null && AECO_tools.bim.sequence !== null;
+  }
+
+  async execute() {
+    const activeModel = this.context.ifc.activeModel;
+
+    if (!activeModel) {
+      return { status: "CANCELLED" };
+    }
+
+    const taskDetails = await AECO_tools.bim.sequence.getTaskDetails(activeModel, this.taskId);
+
+    const outputs = taskDetails.outputs;
+
+    const outputGuids = [];
+
+    if (outputs && outputs.length > 0) {
+      for (let index = 0; index < outputs.length; index++) {
+        const outputEntry = outputs[index];
+
+        if (outputEntry && outputEntry.GlobalId) {
+          outputGuids.push(outputEntry.GlobalId);
+        }
+      }
+    }
+
+    if (outputGuids.length > 0) {
+      AECO_tools.world.scene.selectObjectsByGuid(this.context, outputGuids);
+    }
+
+    this.context.signals.taskDetailsLoaded.dispatch({
+      taskId: this.taskId,
+      outputs: outputs || [],
+      inputs: taskDetails.inputs || [],
+      resources: taskDetails.resources || [],
+    });
+
+    return { status: "FINISHED" };
+  }
+}
+
 class BIM_OP_selectTask extends Operator {
   static operatorName = "bim.select_task"
 
@@ -258,34 +313,9 @@ class BIM_OP_selectTask extends Operator {
 
       const selectedTasks = AECO_tools.scheduler.getSelectedTasks();
 
-      console.log("Selected tasks:", selectedTasks);
-
-      const lastSelected = selectedTasks[selectedTasks.length - 1];
-
-      console.log("Last selected task ID:", lastSelected);
-
-      const activeModel = this.context.ifc.activeModel;
-
-      const taskDetails = await AECO_tools.bim.sequence.getTaskDetails(activeModel, lastSelected);
-
-      const outputGuids = taskDetails.outputs?.map(o => o.GlobalId) || [];
-
-      if (outputGuids.length > 0) {
-        console.log("Output elements for task", lastSelected, ":", outputGuids);
-
-        AECO_tools.world.scene.selectObjectsByGuid(this.context, outputGuids);
-      }
-
       this.context.signals.taskSelected.dispatch({ taskId: this.taskId, selected: true });
       
       this.context.signals.taskSelectionChanged.dispatch({ selectedCount: selectedTasks.length });
-
-      this.context.signals.taskDetailsLoaded.dispatch({ 
-        taskId: this.taskId,
-        outputs: taskDetails.outputs || [],
-        inputs: taskDetails.inputs || [],
-        resources: taskDetails.resources || []
-      });
     
     }
 }
@@ -527,6 +557,7 @@ export default [
   BIM_OP_listWorkSchedules,
   BIM_OP_enableEditingWorkSchedules,
   BIM_OP_EnableEditingWorkScheduleTasks,
+  BIM_OP_loadTaskDetails,
   BIM_OP_selectTask,
   BIM_OP_deselectTask,
   BIM_OP_expandNodePath,

@@ -2,6 +2,8 @@ import { UIPanel, UIDatePicker } from "./../../../drawUI/ui.js";
 
 import Paths from "../../utils/paths.js";
 
+import { formatSchedulingDate } from "../../utils/formatSchedulingDate.js";
+
 /**
  * SpreadsheetUIComponent - A comprehensive ag-Grid wrapper for displaying tabular data
  * 
@@ -361,9 +363,7 @@ class SpreadsheetUIComponent extends UIPanel {
                     colDef.valueFormatter = (params) => {
                         if (!params.value) return '';
 
-                        const date = new Date(params.value);
-
-                        return date.toLocaleString(); 
+                        return formatSchedulingDate(params.value) || String(params.value);
                     };
 
                     colDef.valueParser = (params) => {

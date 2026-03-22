@@ -2,6 +2,8 @@ import {Components} from "./Components.js";
 
 import Paths from "../../utils/paths.js";
 
+import { formatSchedulingDate } from "../../utils/formatSchedulingDate.js";
+
 const injectedJsganttStyleHrefs = new Set();
 
 let jsganttScriptLoadPromise = null;
@@ -110,6 +112,89 @@ function ensureJsganttReady(cssHrefList, scriptSrc) {
     return loadJsganttScriptOnce(scriptSrc);
 }
 
+function installSequenceGanttLeftResizeShim(ganttRootDom) {
+    if (!ganttRootDom || typeof ganttRootDom.closest !== "function") {
+        return;
+    }
+
+    const host = ganttRootDom.closest(".sequence-task-view-host");
+
+    if (!host) {
+        return;
+    }
+
+    const chartContainer = ganttRootDom.querySelector(".gchartcontainer");
+    const leftColumn = ganttRootDom.querySelector(".gmain.gmainleft");
+
+    if (!chartContainer || !leftColumn) {
+        return;
+    }
+
+    const existingShim = leftColumn.querySelector(".sequence-gantt-left-resize-shim");
+
+    if (existingShim) {
+        existingShim.remove();
+    }
+
+    const shimElement = document.createElement("div");
+
+    shimElement.className = "sequence-gantt-left-resize-shim";
+    leftColumn.appendChild(shimElement);
+
+    shimElement.addEventListener("mousedown", function (downEvent) {
+        downEvent.preventDefault();
+
+        const startPointerX = downEvent.clientX;
+        const startLeftWidth = leftColumn.offsetWidth;
+        const minimumListWidth = 220;
+
+        function onMove(moveEvent) {
+            const chartWidth = chartContainer.clientWidth;
+            const maximumListWidth = Math.floor(chartWidth * 0.55);
+            let nextWidth = startLeftWidth + (moveEvent.clientX - startPointerX);
+
+            if (nextWidth < minimumListWidth) {
+                nextWidth = minimumListWidth;
+            }
+
+            if (nextWidth > maximumListWidth) {
+                nextWidth = maximumListWidth;
+            }
+
+            leftColumn.style.flex = "0 0 auto";
+            leftColumn.style.width = nextWidth + "px";
+        }
+
+        function onUp() {
+            document.removeEventListener("mousemove", onMove);
+            document.removeEventListener("mouseup", onUp);
+
+            if (typeof window !== "undefined") {
+                window.dispatchEvent(new Event("resize"));
+            }
+        }
+
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+    });
+}
+
+function removeDomNodesWithTimelineIndicatorClass(linesParent) {
+    if (!linesParent || typeof linesParent.querySelectorAll !== "function") {
+        return;
+    }
+
+    const markerNodeList = linesParent.querySelectorAll(".gCurDate");
+
+    for (let index = 0; index < markerNodeList.length; index++) {
+        const markerNode = markerNodeList[index];
+
+        if (markerNode.parentNode) {
+            markerNode.parentNode.removeChild(markerNode);
+        }
+    }
+}
+
 class GanttComponent {
     constructor(context, options) {
         this.context = context;
@@ -125,6 +210,16 @@ class GanttComponent {
 
         this.ganttChart = null;
 
+        this.jsganttNamespace = null;
+
+        this.timelineIndicatorOverride = undefined;
+
+        this.originalGanttDrawDependencies = null;
+
+        this.originalGanttDraw = null;
+
+        this.ganttFullDrawInProgress = false;
+
         this.dependencies = {
             jsLinks: [
                 Paths.vendor('jsgantt/jsgantt.js')
@@ -135,6 +230,169 @@ class GanttComponent {
         };
 
         this.tasksData = null;
+    }
+
+    coerceDateValueForJsgantt(value) {
+        if (value instanceof Date) {
+            return value;
+        }
+
+        const parsed = new Date(value);
+
+        if (parsed instanceof Date && !isNaN(parsed.getTime())) {
+            return parsed;
+        }
+
+        return null;
+    }
+
+    normalizeIndicatorDateForChartFormat(ganttChart, indicatorDate) {
+        const normalized = new Date(indicatorDate.getTime());
+        const format = ganttChart.vFormat;
+
+        if (format === "hour") {
+            normalized.setMinutes(0, 0, 0);
+        } else {
+            normalized.setHours(0, 0, 0, 0);
+        }
+
+        return normalized;
+    }
+
+    applyTimelineIndicatorAfterDependencies(jsganttNamespace, invocationDetails) {
+        if (!this.ganttChart) {
+            return;
+        }
+
+        if (this.timelineIndicatorOverride === undefined) {
+            return;
+        }
+
+        const linesParent = this.ganttChart.getLines();
+
+        if (!linesParent) {
+            return;
+        }
+
+        if (this.timelineIndicatorOverride === null) {
+            removeDomNodesWithTimelineIndicatorClass(linesParent);
+            return;
+        }
+
+        if (!(this.timelineIndicatorOverride instanceof Date) || isNaN(this.timelineIndicatorOverride.getTime())) {
+            return;
+        }
+
+        if (
+            invocationDetails &&
+            invocationDetails.invokedFromDrawDependencies &&
+            this.ganttFullDrawInProgress
+        ) {
+            return;
+        }
+
+        if (typeof this.ganttChart.chartRowDateToX !== "function") {
+            return;
+        }
+
+        if (!jsganttNamespace || typeof jsganttNamespace.getMinDate !== "function" || typeof jsganttNamespace.getMaxDate !== "function") {
+            return;
+        }
+
+        const taskList = this.ganttChart.getList();
+
+        if (!taskList) {
+            return;
+        }
+
+        const normalizedIndicatorDate = this.normalizeIndicatorDateForChartFormat(
+            this.ganttChart,
+            this.timelineIndicatorOverride
+        );
+
+        const configuredMinDate = this.ganttChart.getMinDate();
+        const configuredMaxDate = this.ganttChart.getMaxDate();
+        const coercedMinDate = configuredMinDate ? this.coerceDateValueForJsgantt(configuredMinDate) : null;
+        const coercedMaxDate = configuredMaxDate ? this.coerceDateValueForJsgantt(configuredMaxDate) : null;
+        const chartMinDate = jsganttNamespace.getMinDate(taskList, this.ganttChart.vFormat, coercedMinDate);
+        const chartMaxDate = jsganttNamespace.getMaxDate(taskList, this.ganttChart.vFormat, coercedMaxDate);
+
+        removeDomNodesWithTimelineIndicatorClass(linesParent);
+
+        if (chartMinDate.getTime() > normalizedIndicatorDate.getTime() || chartMaxDate.getTime() < normalizedIndicatorDate.getTime()) {
+            return;
+        }
+
+        const pixelX = this.ganttChart.chartRowDateToX(normalizedIndicatorDate);
+        const chartTable = this.ganttChart.getChartTable();
+
+        if (!chartTable) {
+            return;
+        }
+
+        this.ganttChart.sLine(pixelX, 0, pixelX, chartTable.offsetHeight - 1, "gCurDate");
+    }
+
+    installDrawDependenciesTimelineWrapper(jsganttNamespace) {
+        const ganttComponentInstance = this;
+
+        if (!this.ganttChart || typeof this.ganttChart.DrawDependencies !== "function") {
+            return;
+        }
+
+        this.originalGanttDrawDependencies = this.ganttChart.DrawDependencies.bind(this.ganttChart);
+
+        this.ganttChart.DrawDependencies = function (debugFlag) {
+            ganttComponentInstance.originalGanttDrawDependencies(debugFlag);
+            ganttComponentInstance.applyTimelineIndicatorAfterDependencies(jsganttNamespace, {
+                invokedFromDrawDependencies: true
+            });
+        };
+    }
+
+    installDrawTimelineWrapper() {
+        const ganttComponentInstance = this;
+
+        if (!this.ganttChart || typeof this.ganttChart.Draw !== "function") {
+            return;
+        }
+
+        this.originalGanttDraw = this.ganttChart.Draw.bind(this.ganttChart);
+
+        this.ganttChart.Draw = function () {
+            ganttComponentInstance.ganttFullDrawInProgress = true;
+
+            ganttComponentInstance.originalGanttDraw();
+
+            ganttComponentInstance.ganttFullDrawInProgress = false;
+        };
+    }
+
+    refreshTimelineIndicatorLine() {
+        if (!this.ganttChart || typeof this.ganttChart.DrawDependencies !== "function") {
+            return;
+        }
+
+        this.ganttChart.DrawDependencies(false);
+    }
+
+    setTimelineIndicatorDate(indicatorDate) {
+        if (!(indicatorDate instanceof Date) || isNaN(indicatorDate.getTime())) {
+            return;
+        }
+
+        this.timelineIndicatorOverride = indicatorDate;
+        this.refreshTimelineIndicatorLine();
+    }
+
+    hideTimelineIndicator() {
+        this.timelineIndicatorOverride = null;
+        this.refreshTimelineIndicatorLine();
+    }
+
+    clearTimelineIndicatorOverride() {
+        this.timelineIndicatorOverride = undefined;
+        this.refreshTimelineIndicatorLine();
     }
 
     render(taskData, container) {
@@ -185,15 +443,32 @@ class GanttComponent {
             vShowDur: false,
             vAdditionalHeaders: {
                 ifcduration: { title: 'Duration' },
-                "resourceUsage": { title: 'Resource Usage' }
             },
-            vUseToolTip: true,
-            vTooltipTemplate: this.generateTooltip.bind(this),
+            vUseToolTip: false,
+            // vTooltipTemplate: this.generateTooltip.bind(this),
         });
+
+        const ganttComponentInstance = this;
+
+        this.ganttChart.vEvents.afterDraw = function () {
+            if (!ganttComponentInstance.ganttChart || !ganttComponentInstance.ganttChart.vDiv) {
+                return;
+            }
+
+            installSequenceGanttLeftResizeShim(ganttComponentInstance.ganttChart.vDiv);
+
+            ganttComponentInstance.applyTimelineIndicatorAfterDependencies(jsganttNamespace);
+        };
 
         const jsonString = typeof jsonData === 'string' ? jsonData : JSON.stringify(jsonData);
 
         jsganttNamespace.parseJSONString(jsonString, this.ganttChart);
+
+        this.jsganttNamespace = jsganttNamespace;
+
+        this.installDrawTimelineWrapper();
+
+        this.installDrawDependenciesTimelineWrapper(jsganttNamespace);
 
         this.ganttChart.vEventClickRow = (task) => {
             const taskId = task.getOriginalID();
@@ -217,10 +492,12 @@ class GanttComponent {
                 return;
             }
 
-            this.operators.execute("bim.select_task", this.context, taskId);
+            this.operators.execute("bim.load_task_details", this.context, taskId);
         };
 
-        this.ganttChart.Draw();
+        if (typeof this.ganttChart.Draw === "function") {
+            this.ganttChart.Draw();
+        }
 
         this.enableContextMenu();
 
@@ -233,18 +510,20 @@ class GanttComponent {
     }
 
     generateTooltip(task) {
-        const dataObject = task.getDataObject();
+        const startRaw = task.getStart();
 
-        const numberResources = dataObject.resourceUsage || "NULL";
+        const endRaw = task.getEnd();
+
+        const startLabel = formatSchedulingDate(startRaw) || startRaw || "N/A";
+
+        const endLabel = formatSchedulingDate(endRaw) || endRaw || "N/A";
 
         return `
             <dl>
                 <dt>Name:</dt><dd>${task.getName()}</dd>
-                <dt>Start:</dt><dd>${task.getStart()}</dd>
-                <dt>End:</dt><dd>${task.getEnd()}</dd>
+                <dt>Start:</dt><dd>${startLabel}</dd>
+                <dt>End:</dt><dd>${endLabel}</dd>
                 <dt>Duration:</dt><dd>${task.getDuration() || 'N/A'}</dd>
-                <dt>Number of Resources:</dt><dd>${numberResources}</dd>
-                <dt>Resources:</dt><dd>${task.getResource()}</dd>
             </dl>
         `;
     }
@@ -496,7 +775,9 @@ class GanttComponent {
             return false;
         }
 
-        if (this.ganttChart && typeof this.ganttChart.Draw === 'function') this.ganttChart.Draw();
+        if (this.ganttChart && typeof this.ganttChart.Draw === "function") {
+            this.ganttChart.Draw();
+        }
 
         if (this.context && this.context.signals && typeof this.context.signals.dependencyModified !== 'undefined') {
             try {
@@ -547,7 +828,9 @@ class GanttComponent {
             return false;
         }
 
-        if (this.ganttChart && typeof this.ganttChart.Draw === 'function') this.ganttChart.Draw();
+        if (this.ganttChart && typeof this.ganttChart.Draw === "function") {
+            this.ganttChart.Draw();
+        }
 
         if (this.context && this.context.signals && typeof this.context.signals.dependencyModified !== 'undefined') {
             try {
@@ -600,7 +883,9 @@ class GanttComponent {
             return false;
         }
 
-        if (this.ganttChart && typeof this.ganttChart.Draw === 'function') this.ganttChart.Draw();
+        if (this.ganttChart && typeof this.ganttChart.Draw === "function") {
+            this.ganttChart.Draw();
+        }
 
         if (this.context && this.context.signals && typeof this.context.signals.dependencyModified !== 'undefined') {
             try {
@@ -649,7 +934,9 @@ class GanttComponent {
             return false;
         }
 
-        if (this.ganttChart && typeof this.ganttChart.Draw === 'function') this.ganttChart.Draw();
+        if (this.ganttChart && typeof this.ganttChart.Draw === "function") {
+            this.ganttChart.Draw();
+        }
 
         return true;
     }

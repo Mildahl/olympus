@@ -7,8 +7,8 @@ class SpatialManagerUI extends TabPanel{
     super({
       context,
       operators,
-      moduleId: 'world.spatial',
       position: 'left',
+      moduleId: 'world.spatial',
       tabId: 'world-spatial-structure',
       tabLabel: 'Spatial structure',
       icon: 'account_tree',
@@ -18,7 +18,7 @@ class SpatialManagerUI extends TabPanel{
       panelStyles: {
         minWidth: '240px',
       },
-      autoShow: true,
+      autoShow: false,
     });
 
     this.editor = context.editor;

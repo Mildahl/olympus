@@ -43,7 +43,7 @@ button {
   transition: background 0.2s;
 }
 .TabbedPanel .Tabs:hover::-webkit-scrollbar-thumb {
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   cursor: ew-resize;
 }
 .TabbedPanel .Tabs::-webkit-scrollbar-track {
@@ -107,7 +107,7 @@ button:active {
 }
 
 button.selected {
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   border-color: var(--brand-color);
   box-shadow: 0 4px 20px rgba(10, 132, 255, 0.4),
     0 2px 8px rgba(10, 132, 255, 0.2);
@@ -174,7 +174,7 @@ button.selected:hover {
 }
 
 #resizer:active::before {
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   box-shadow: 0 0 12px var(--brand-color-rgba-06);
   opacity: 1;
 }
@@ -301,14 +301,14 @@ br {
 }
 
 #tabs span.selected {
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   box-shadow: 0 4px 16px rgba(10, 132, 255, 0.4);
   color: var(--color-white);
   transform: translateY(-2px);
 }
 
 #tabs span.selected::after {
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   border-radius: 50%;
   bottom: -12px;
   box-shadow: 0 0 8px var(--brand-color);
@@ -356,7 +356,7 @@ br {
 }
 
 #bim-toolbar button:hover {
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   box-shadow: 0 4px 16px rgba(10, 132, 255, 0.4);
   transform: scale(1.08);
 }
@@ -435,7 +435,7 @@ button img,
 }
 
 .TabbedPanel .Tab.selected {
-  background: var(--brand-color);
+  background: var(--brand-color-alpha);
   box-shadow: 0 4px 16px rgba(10, 132, 255, 0.4);
   color: var(--color-white);
   transform: translateY(-2px);

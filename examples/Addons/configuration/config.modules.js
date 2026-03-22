@@ -34,6 +34,10 @@ export const coreModules = [
         active: true,
     },
     {
+        id: "bim.analytics",
+        active: true,
+    },
+    {
         id: "bim.sequence",
         active: true,
     },

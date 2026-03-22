@@ -49,6 +49,8 @@ import { BasePanel } from "./../../../drawUI/BasePanel.js";
 
 import { SpreadsheetUIComponent } from "./SpreadsheetUIComponent.js";
 
+import { ChartUIComponent } from "./ChartUIComponent.js";
+
 import { ReorderableList } from "./ReorderableList.js";
 
 import { Nodes } from "./Nodes.js";
@@ -511,7 +513,7 @@ export class Components {
    * Renders a Gantt chart.
    * @param {Object} context - The application context.
    * @param {Object} tasksData - The tasks data.
-   * @param {Object} [options] - Optional `{ operators, onTaskRowClick, shouldRunSelectTaskOnRowClick }` for row-click behavior.
+   * @param {Object} [options] - Optional `{ operators, onTaskRowClick, shouldRunSelectTaskOnRowClick, onGanttComponentReady }` for row-click behavior and host access to `GanttComponent`.
    */
   static gantt(context, tasksData, options) {
     const container = new UIDiv()
@@ -522,7 +524,13 @@ export class Components {
 
     const jsganttView = new GanttComponent(context, options);
 
+    container.ganttComponent = jsganttView;
+
     jsganttView.render(tasksData, container);
+
+    if (options && typeof options.onGanttComponentReady === "function") {
+      options.onGanttComponentReady(jsganttView);
+    }
 
     return container;
   }
@@ -1079,14 +1087,41 @@ export class Components {
     data,
     columnConfig,
     columnNameMapper,
+    columnOrder,
     height = "100%",
     width = "100%",
     minHeight,
+    gridOptions,
   }) {
     return new SpreadsheetUIComponent({
       data,
       columnConfig,
       columnNameMapper,
+      columnOrder,
+      height,
+      width,
+      minHeight,
+      gridOptions,
+    });
+  }
+
+  /**
+   * Create a Chart.js panel (vendor script loaded on first init, like the spreadsheet).
+   * @param {Object} [options={}]
+   * @param {Object} options.chartConfiguration - Chart.js configuration (type, data, options, …)
+   * @param {string} [options.height]
+   * @param {string} [options.width]
+   * @param {string} [options.minHeight]
+   * @returns {ChartUIComponent}
+   */
+  static chart({
+    chartConfiguration,
+    height = "240px",
+    width = "100%",
+    minHeight,
+  }) {
+    return new ChartUIComponent({
+      chartConfiguration,
       height,
       width,
       minHeight,

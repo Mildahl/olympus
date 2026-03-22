@@ -164,32 +164,18 @@ class ProjectTool {
     }
 
     static async getModelOverview(modelName) {
-        const elementTypes = await tools.ifc.get(modelName, "IfcElementType");
+        return await tools.code.pyWorker.run_api("getDirectorOverview", {
+            modelName,
+        });
+    }
 
-        const elementClasses = await tools.ifc.get(modelName, "IfcElement");
+    static async getDirectorFilteredSlice(modelName, filterSpec) {
+        const spec = filterSpec && typeof filterSpec === "object" ? filterSpec : {};
 
-        const workSchedules = await tools.ifc.get(modelName, "IfcWorkSchedule");
-
-        const workPlan = await tools.ifc.get(modelName, "IfcWorkPlan");
-
-        const costSchedules = await tools.ifc.get(modelName, "IfcCostSchedule");
-
-        const materials = await tools.ifc.get(modelName, "IfcMaterial");
-
-        const styles = await tools.ifc.get(modelName, "IfcStyle");
-
-        const classifications = await tools.ifc.get(modelName, "IfcClassification");
-
-        return {
-            elementTypes,
-            elementClasses,
-            workSchedules,
-            workPlan,
-            costSchedules,
-            materials,
-            styles,
-            classifications
-        }
+        return await tools.code.pyWorker.run_api("getDirectorFilteredSlice", {
+            modelName,
+            filterSpec: spec,
+        });
     }
 
     static async getModelElementClasses(modelName) {
