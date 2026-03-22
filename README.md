@@ -16,8 +16,10 @@ Don't waste time re-building an editor from scratch: olympus is here!
 
 <details>
 <summary>More Screenshots</summary>
-
-![Olympus — digital construction app](https://www.aeco.dev/static/img/_digital_construction_app.png)
+  
+![Olympus — digital construction app](https://www.aeco.dev/static/img/digital_construction_app3.png)
+  
+![Olympus — digital construction app2](https://www.aeco.dev/static/img/_digital_construction_app.png)
 
 </details>
 
