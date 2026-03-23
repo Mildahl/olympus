@@ -120,6 +120,7 @@ function Strings( config ) {
 			'sidebar/properties/geometry': 'ژئومتری',
 			'sidebar/properties/material': 'متریال',
 			'sidebar/properties/script': 'اسکریپت',
+			'sidebar/properties/no-selection': 'Select an object in the scene to edit its properties.',
 
 			'sidebar/object/type': 'انواع',
 			'sidebar/object/new': 'جدید',
@@ -450,7 +451,7 @@ function Strings( config ) {
 			'settings/presets/apply': 'Apply',
 			'settings/persistSettings': 'Save my settings to this browser',
 			'settings/persistSettings/title': 'Save my settings to this browser (localStorage). Uncheck to use config presets only.',
-			'settings/showWelcomeScreen': 'Show welcome screen on startup',
+			'settings/showWelcomeScreen': 'Show welcome screen on new session',
 			'settings/showToasts': 'Show notification toasts',
 			'settings/showToasts/title': 'Show toast notifications when they arrive',
 			'welcome/preset': 'Module preset',
@@ -576,6 +577,7 @@ function Strings( config ) {
 			'sidebar/properties/geometry': 'Geometry',
 			'sidebar/properties/material': 'Material',
 			'sidebar/properties/script': 'Script',
+			'sidebar/properties/no-selection': 'Select an object in the scene to edit its properties.',
 
 			'sidebar/object/type': 'Type',
 			'sidebar/object/new': 'New',
@@ -905,7 +907,7 @@ function Strings( config ) {
 			'settings/theme/glass-surface': 'Surface en verre',
 			'settings/persistSettings': 'Enregistrer mes paramètres dans ce navigateur',
 			'settings/persistSettings/title': 'Enregistrer mes paramètres dans ce navigateur (localStorage). Décochez pour n\'utiliser que les préréglages de configuration.',
-			'settings/showWelcomeScreen': 'Afficher l\'écran d\'accueil au démarrage',
+			'settings/showWelcomeScreen': 'Afficher l\'écran d\'accueil à chaque nouvelle session',
 			'settings/showToasts': 'Afficher les notifications toast',
 			'settings/showToasts/title': 'Afficher les notifications toast à l\'arrivée des messages',
 			
@@ -1028,6 +1030,7 @@ function Strings( config ) {
 			'sidebar/properties/geometry': 'Géométrie',
 			'sidebar/properties/material': 'Matériaux',
 			'sidebar/properties/script': 'Script',
+			'sidebar/properties/no-selection': 'Sélectionnez un objet dans la scène pour modifier ses propriétés.',
 
 			'sidebar/object/type': 'Type',
 			'sidebar/object/new': 'Nouveau',
@@ -1441,6 +1444,7 @@ function Strings( config ) {
 			'sidebar/properties/geometry': '几何组件',
 			'sidebar/properties/material': '材质组件',
 			'sidebar/properties/script': '脚本',
+			'sidebar/properties/no-selection': '在场景中选择对象以编辑其属性。',
 
 			'sidebar/object/type': '类型',
 			'sidebar/object/new': '更新',
@@ -1844,6 +1848,7 @@ function Strings( config ) {
 			'sidebar/properties/geometry': 'ジオメトリ',
 			'sidebar/properties/material': 'マテリアル',
 			'sidebar/properties/script': 'スクリプト',
+			'sidebar/properties/no-selection': 'シーン内のオブジェクトを選択してプロパティを編集します。',
 
 			'sidebar/object/type': 'タイプ',
 			'sidebar/object/new': '新規',
@@ -2246,6 +2251,7 @@ function Strings( config ) {
 			'sidebar/properties/geometry': '지오메트리',
 			'sidebar/properties/material': '머티리얼',
 			'sidebar/properties/script': '스크립트',
+			'sidebar/properties/no-selection': '속성을 편집하려면 장면에서 개체를 선택하세요.',
 
 			'sidebar/object/type': '타입',
 			'sidebar/object/new': '새로 만들기',

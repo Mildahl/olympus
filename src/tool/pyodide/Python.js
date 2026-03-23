@@ -75,7 +75,7 @@ class PythonSandbox {
         ? new URL(workerPath)
         : new URL(workerPath, origin);
     } else {
-      workerUrl = new URL("./pyodide.worker.js", import.meta.url);
+      workerUrl = new URL(/* webpackIgnore: true */ "./pyodide.worker.js", import.meta.url);
     }
 
     PythonSandbox.worker = new Worker(workerUrl, { type: 'module' });

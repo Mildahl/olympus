@@ -25,6 +25,8 @@ import MeasureTool from './viewer/MeasureTool.js';
 
 import SectionBoxTool from './viewer/SectionBoxTool.js';
 
+import NavigationTool from './viewer/NavigationTool.js';
+
 import PythonSandbox from './pyodide/Python.js'
 
 import JSSandboxTool from './js/JsSandbox.js';
@@ -33,20 +35,14 @@ import CodeEditorTool from './code/CodeEditorTool.js';
 
 import NodeEditorTool from './code/NodeEditorTool.js';
 
-import AttributeTool from './bim/attribute.js';
-
-import PsetTool from './bim/pset.js';
-
-import SequenceTool from './bim/sequence.js';
-
-import TypeTool from './bim/type.js';
-
 import IfcTool from './bim/ifc.js';
 
 import ProjectTool from './bim/project.js';
-
 import GeometryTool from './bim/geometry.js';
-
+import AttributeTool from './bim/attribute.js';
+import PsetTool from './bim/pset.js';
+import SequenceTool from './bim/sequence.js';
+import TypeTool from './bim/type.js';
 import BIMModelingTool from './bim/modeling.js';
 
 import SchedulerTool from './scheduler/SchedulerTool.js';
@@ -62,7 +58,7 @@ import SchedulerTool from './scheduler/SchedulerTool.js';
  * @property {Object} notification - Notification system
  * @property {Object} viewpoint - Camera viewpoint capture/restore
  * @property {Object} animationPath - Animation path management
- * @property {Object|null} navigate - Navigation controls
+ * @property {Object} navigate - Navigation scene helpers and defaults
  * @property {Object|null} gizmo - Transform gizmo
  * @property {Object|null} cursor - Cursor tool
  * @property {Object} measure - Measurement tool
@@ -112,7 +108,7 @@ class Tools  {
       notification: NotificationTool,
       viewpoint: ViewpointTool,
       animationPath: AnimationPathTool,
-      navigate: null,
+      navigate: NavigationTool,
       gizmo: null,
       cursor: null,
       measure: MeasureTool,
@@ -136,14 +132,15 @@ class Tools  {
      * @type {BIMTools}
      */
     this.bim = {
-      project: ProjectTool, 
+      project: ProjectTool,
+      loader: null,
       geometry: GeometryTool,
       attribute: AttributeTool,
       pset: PsetTool,
       sequence: SequenceTool,
       types: TypeTool,
-      modeling: BIMModelingTool, 
-    }
+      modeling: BIMModelingTool,
+    };
 
     /**
      * IFC-specific tool (requires Python sandbox)
@@ -169,6 +166,10 @@ class Tools  {
     };
 
     this.loading = false  ;
+  }
+
+  async ensureBimToolsLoaded() {
+    return;
   }
 
   exportJSON( object, name ) {

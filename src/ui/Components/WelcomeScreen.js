@@ -102,6 +102,7 @@ class WelcomeScreen {
 
     body.appendChild(this._buildPresetRow());
     body.appendChild(this._buildPersistSettingsRow());
+    body.appendChild(this._buildShowWelcomeScreenRow());
     body.appendChild(this._buildThemeRow());
     body.appendChild(this._buildLanguageRow());
     body.appendChild(this._buildToastsRow());
@@ -151,6 +152,19 @@ class WelcomeScreen {
     });
     const label = (this.context.strings && this.context.strings.getKey('welcome/persistSettings')) || 'Save my settings';
     return this._buildSettingRow(label, checkbox);
+  }
+
+  _buildShowWelcomeScreenRow() {
+    const welcomeCheckbox = UIComponents.checkbox();
+    welcomeCheckbox.setValue(this.context.config.ui.showWelcomeScreen);
+    welcomeCheckbox.dom.addEventListener('change', () => {
+      this.context.config.ui.showWelcomeScreen = welcomeCheckbox.getValue();
+      this.context._saveConfig();
+    });
+    const strings = this.context.strings;
+    const labelKey = 'settings/showWelcomeScreen';
+    const label = (strings && strings.getKey(labelKey)) || 'Show welcome screen on new session';
+    return this._buildSettingRow(label, welcomeCheckbox);
   }
 
   _buildSettingRow(label, control) {

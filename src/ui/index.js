@@ -6,6 +6,8 @@ import { WelcomeScreen } from "./Components/WelcomeScreen.js";
 
 import { Sidebar } from "./../context/world/editor/Sidebar.js";
 
+import { Properties } from "./../context/world/editor/Sidebar.js";
+
 class UI {
 
   constructor(container, context, operators, activeIds) {
@@ -44,6 +46,8 @@ class UI {
     if (context.config.ui.showWelcomeScreen) new WelcomeScreen({ context, operators, container: dom });
 
     new Sidebar({ context, operators });
+
+    // new Properties({ context, operators });
 
     return root;
   }
@@ -96,7 +100,7 @@ class UI {
   }
 
   async _loadClass(classPath, className, args) {
-    return import( classPath).then((module) => {
+    return import(/* webpackMode: "lazy" */ classPath).then((module) => {
       
       const Module = module[className];
 

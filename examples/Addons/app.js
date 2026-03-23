@@ -31,12 +31,6 @@ const listeners = [
     "issueTrackerToolChanged",
   ];
 
-simulation.createUI({config: AECOConfiguration, container: document.body, addons: {ADDONS, Listeners: listeners} });
-
-spinner.hide();
-
-simulation.tools.world.scene.addCube(context, 1, "grey");   
-
 const createLogisticsEquipment = (avatarName, definition) => {
 
 const AECOFamilies = {
@@ -66,23 +60,6 @@ simulation.tools.world.placement.rotate(null, avatarElement.object, "z", 90);
 return avatarElement;
 };
 
-
-const digger = {
-    position: { x: 20, y: 20, z: 0 },
-    rotation: { axis: 'z', angle: 0 },
-    scale: 1,
-}
-
-createLogisticsEquipment("digger", digger);
-
-const mobileCrane = simulation.tools.world.model.createMobileCrane({
-    position: { x: 10, y: 20, z: 0 },
-    rotation: { axis: 'z', angle: 90 },
-    scale: 1,
-});
-
-simulation.tools.world.scene.addToLayer(context, mobileCrane.object, "Logistics");
-
 const load5DModel = async () => {
 
     const ROOT = window.__OLYMPUS_ROOT__ || '';
@@ -103,13 +80,37 @@ const loadGeometryData = async () => {
     );
 };
 
-simulation.enablePython().then(() => {
+(async function bootstrapAddons() {
+  await simulation.createUI({config: AECOConfiguration, container: document.body, addons: {ADDONS, Listeners: listeners} });
+
+  spinner.hide();
+
+  simulation.tools.world.scene.addCube(context, 1, "grey");
+
+const digger = {
+    position: { x: 20, y: 20, z: 0 },
+    rotation: { axis: 'z', angle: 0 },
+    scale: 1,
+}
+
+createLogisticsEquipment("digger", digger);
+
+const mobileCrane = simulation.tools.world.model.createMobileCrane({
+    position: { x: 10, y: 20, z: 0 },
+    rotation: { axis: 'z', angle: 90 },
+    scale: 1,
+});
+
+simulation.tools.world.scene.addToLayer(context, mobileCrane.object, "Logistics");
+
+  simulation.enablePython().then(() => {
     simulation.enableBIM().then(() => {
         load5DModel().then(() => {
             loadGeometryData();
         });
     });
   });
+})();
 
 
 export default simulation;

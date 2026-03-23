@@ -1,4 +1,4 @@
-import { UICheckbox, UIRow, UIText } from './../../../ui/base/ui.js';
+import { UICheckbox, UIRow, UIText } from '../../../../drawUI/ui.js';
 import { SetMaterialValueCommand } from './commands/SetMaterialValueCommand.js';
 
 function SidebarMaterialBooleanProperty( editor, property, name ) {

@@ -62,7 +62,7 @@ Published examples run in the browser without cloning or Node.js.
 
 ### Local examples (prebuilt bundle)
 
-The default clone includes `dist/index.js` and `external/vendor/` so examples can run without `npm install` or `npm run build`.
+The default clone includes `dist/index.js` and `external/vendor/` so examples can run without `npm install` or `npm run build`. IFC Lite (`external/vendor/ifc-lite/`) is part of that vendor tree; if it is missing, run **`npm install`** (which runs **`npm run sync:ifc-lite`**) or **`npm run sync:ifc-lite`** after installing dependencies.
 
 ```bash
 git clone https://github.com/myoualid/olympus.git

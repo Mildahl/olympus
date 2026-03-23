@@ -46,7 +46,7 @@ Olympus/
 
 | Folder | Purpose | Needed for build? | Needed at runtime? |
 |--------|---------|-------------------|-------------------|
-| `ifc-lite/` | IFC parser and geometry engine | **Yes** | Yes |
+| `ifc-lite/` | `@ifc-lite/*` packages (geometry, parser, wasm, data, encoding, ifcx, mutations) copied from `node_modules` | **Yes** (after `npm install`) | Yes |
 | `three/` | Three.js 3D engine | No | **Yes** |
 | `three-mesh-bvh/` | BVH acceleration for Three.js | No | **Yes** |
 | `three-gpu-pathtracer/` | Path tracing renderer | No | **Yes** |
@@ -78,7 +78,9 @@ Use `npm run serve` from the repository root when you want the project’s stati
 npm install
 ```
 
-This installs webpack, style-loader, css-loader, and other build and dev tools into `node_modules/`.
+This installs webpack, style-loader, css-loader, `@ifc-lite/geometry` / `@ifc-lite/parser` (used only to populate vendor — the built `dist/index.js` does not bundle them), and other build and dev tools into `node_modules/`.
+
+The **`postinstall`** script runs **`npm run sync:ifc-lite`**, which copies `node_modules/@ifc-lite/*` into **`external/vendor/ifc-lite/`**. Examples resolve those packages via **import maps** (same idea as `three`). Run **`npm run sync:ifc-lite`** manually if you add or upgrade `@ifc-lite` packages and need vendor files refreshed.
 
 ### Build
 

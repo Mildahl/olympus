@@ -1,30 +1,18 @@
-function resolveSceneObject(scene, matcher) {
-    let resolvedObject = null;
-
-    if (!scene) {
-        return resolvedObject;
-    }
-
-    scene.traverse((object) => {
-        if (!resolvedObject && matcher(object)) {
-            resolvedObject = object;
-        }
-    });
-
-    return resolvedObject;
-}
+import NavigationTool from "../tool/viewer/NavigationTool.js";
 
 function resolveModeOptions(mode, { editor, vehicle = null, flyObject = null, grounds = [], extents = null, showInstructions = false }) {
     const modeOptions = { showInstructions };
 
+    const scene = editor && editor.scene ? editor.scene : null;
+
     if (mode === 'DRIVE' && !vehicle) {
-        modeOptions.vehicle = resolveSceneObject(editor?.scene, (object) => object.name === 'Truck' || object.userData?.type === 'Vehicle');
+        modeOptions.vehicle = NavigationTool.findDefaultVehicleInScene(scene);
     } else if (vehicle) {
         modeOptions.vehicle = vehicle;
     }
 
     if ((mode === 'FLY' || mode === 'FIRST_PERSON') && !flyObject) {
-        modeOptions.flyObject = resolveSceneObject(editor?.scene, (object) => object.name === 'Drone' || object.userData?.type === 'FlyingVehicle');
+        modeOptions.flyObject = NavigationTool.findDefaultFlyingObjectInScene(scene);
     } else if (flyObject) {
         modeOptions.flyObject = flyObject;
     }
@@ -39,8 +27,8 @@ function resolveModeOptions(mode, { editor, vehicle = null, flyObject = null, gr
 }
 
 function setNavigationMode(mode, { context, editor, signals, vehicle = null, flyObject = null, grounds = [], extents = null, showInstructions = false }) {
-    const navController = editor?.navigationController;
-    
+    const navController = editor && editor.navigationController ? editor.navigationController : null;
+
     if (!navController) {
         console.warn('Navigation controller not available');
 
@@ -48,14 +36,14 @@ function setNavigationMode(mode, { context, editor, signals, vehicle = null, fly
     }
 
     const modeOptions = resolveModeOptions(mode, { editor, vehicle, flyObject, grounds, extents, showInstructions });
-    
+
     navController.setMode(mode, modeOptions);
-    
+
     return { status: 'FINISHED', mode, options: modeOptions };
 }
 
 function toggleFlyMode({ context, editor, signals, flyObject = null, showInstructions = false }) {
-    if (!editor?.navigationController) {
+    if (!editor || !editor.navigationController) {
         console.warn('Fly mode not available');
 
         return { status: 'ERROR', message: 'Fly mode not available' };
@@ -64,12 +52,12 @@ function toggleFlyMode({ context, editor, signals, flyObject = null, showInstruc
     const mode = getNavigationMode({ editor }) === 'FLY' ? 'ORBIT' : 'FLY';
 
     setNavigationMode(mode, { context, editor, signals, flyObject, showInstructions });
-    
+
     return { status: 'FINISHED' };
 }
 
 function toggleDriveMode({ context, editor, signals, vehicle = null, grounds = [], extents = null, showInstructions = false }) {
-    if (!editor?.navigationController) {
+    if (!editor || !editor.navigationController) {
         console.warn('Drive mode not available');
 
         return { status: 'ERROR', message: 'Drive mode not available' };
@@ -78,7 +66,7 @@ function toggleDriveMode({ context, editor, signals, vehicle = null, grounds = [
     const mode = getNavigationMode({ editor }) === 'DRIVE' ? 'ORBIT' : 'DRIVE';
 
     setNavigationMode(mode, { context, editor, signals, vehicle, grounds, extents, showInstructions });
-    
+
     return { status: 'FINISHED' };
 }
 
@@ -87,48 +75,75 @@ function setOrbitMode({ context, editor, signals }) {
 }
 
 function getNavigationMode({ editor }) {
-    return editor?.navigationController?.mode || 'ORBIT';
+    if (!editor || !editor.navigationController) {
+        return 'ORBIT';
+    }
+    return editor.navigationController.mode || 'ORBIT';
+}
+
+function toggleFlyCameraRig({ editor }) {
+    const navController = editor && editor.navigationController;
+
+    if (!navController) {
+        console.warn('Navigation controller not available');
+
+        return { status: 'ERROR', message: 'Navigation controller not available' };
+    }
+
+    navController.toggleCameraViewMode();
+
+    return { status: 'FINISHED', cameraViewMode: navController.getCameraViewMode() };
+}
+
+function getFlyCameraRig({ editor }) {
+    const navController = editor && editor.navigationController;
+
+    if (!navController) {
+        return null;
+    }
+
+    return navController.getCameraViewMode();
 }
 
 function setNavigationSpeed(speed, { editor, signals }) {
-    const navController = editor?.navigationController;
-    
+    const navController = editor && editor.navigationController ? editor.navigationController : null;
+
     if (navController) {
         navController.speed = speed;
-        
-        if (signals?.navigationSpeedChanged) {
+
+        if (signals && signals.navigationSpeedChanged) {
             signals.navigationSpeedChanged.dispatch(speed);
         }
     }
-    
+
     return speed;
 }
 
 function resetCamera({ editor, signals }) {
-    if (editor?.resetCamera) {
+    if (editor && editor.resetCamera) {
         editor.resetCamera();
-        
-        if (signals?.cameraReset) {
+
+        if (signals && signals.cameraReset) {
             signals.cameraReset.dispatch();
         }
     }
 }
 
 function fitCameraToSelection({ editor, signals }) {
-    if (editor?.fitToSelection) {
+    if (editor && editor.fitToSelection) {
         editor.fitToSelection();
-        
-        if (signals?.cameraFitted) {
+
+        if (signals && signals.cameraFitted) {
             signals.cameraFitted.dispatch();
         }
     }
 }
 
 function fitCameraToAll({ editor, signals }) {
-    if (editor?.fitToAll) {
+    if (editor && editor.fitToAll) {
         editor.fitToAll();
-        
-        if (signals?.cameraFitted) {
+
+        if (signals && signals.cameraFitted) {
             signals.cameraFitted.dispatch();
         }
     }
@@ -140,6 +155,8 @@ export {
     toggleDriveMode,
     setOrbitMode,
     getNavigationMode,
+    toggleFlyCameraRig,
+    getFlyCameraRig,
     setNavigationSpeed,
     resetCamera,
     fitCameraToSelection,

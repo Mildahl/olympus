@@ -6,6 +6,12 @@ export const SceneConfig = {
     enableFog: true,
     highQuality: true,
     fogDensity: 0.0017,
+    camera: {
+      type: 'perspective',
+      fov: 65,
+      near: 0.1,
+      far: 1000,
+    },
     primaryGrid: {
       size: 10000,
       divisions: 10000,

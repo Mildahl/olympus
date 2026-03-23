@@ -21,7 +21,7 @@ const { Signal } = signals;
 /**
  * @typedef {Object} ContextConfig
  * @property {Object} ui - UI configuration
- * @property {Object} app - Application configuration
+ * @property {Object} app - Application configuration (includes `Scene`; `Scene.camera` holds viewport camera parameters, persisted when changed from Settings)
  * @property {Array} addons - Loaded addons
  */
 
@@ -172,6 +172,7 @@ class Context {
             themeChanged: new Signal(),
             themeColorsChanged: new Signal(),
             navigationModeChanged: new Signal(),
+            navigationCameraRigChanged: new Signal(),
             flyModeEnabled: new Signal(),
             driveModeEnabled: new Signal(),
             newScript: new Signal(),
@@ -449,19 +450,15 @@ class Context {
     }
 
     _saveConfig() {
-        // Persist to localStorage only when user opted in via Welcome panel (persistSettings).
-        // Acts as "should save / user confirmation"; not enforced by default.
-        if (this.config.app?.Settings?.devMode) {
+        if (this.config.app.Settings?.devMode) {
             return;
         }
 
-        if (this.config.app?.Settings?.persistSettings !== true) {
+        if (this.config.app.Settings?.persistSettings !== true) {
             return;
         }
 
         const toSave = { ui: this.config.ui, app: this.config.app };
-
-        console.log('[AECO Config] Saving to localStorage (user opted in):', JSON.parse(JSON.stringify(toSave)));
 
         localStorage.setItem('aeco-config', JSON.stringify(toSave));
     }

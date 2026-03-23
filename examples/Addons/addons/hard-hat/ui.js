@@ -574,7 +574,7 @@ class AppointedPersonUI {
 
     openLink.onClick(() => {
       if (locationDisplayData.lat != null && locationDisplayData.lon != null) {
-        this.ops.execute("addon.navigation.open_map_link", this.context, locationDisplayData.lat, locationDisplayData.lon);
+        this.ops.execute("navigation.open_map_link", this.context, locationDisplayData.lat, locationDisplayData.lon);
       }
     });
 
@@ -1458,7 +1458,7 @@ class HardHatEnvironmentUI {
 
     openLink.onClick(() => {
       if (locationDisplayData.lat != null && locationDisplayData.lon != null) {
-        this.ops.execute("addon.navigation.open_map_link", this.context, locationDisplayData.lat, locationDisplayData.lon);
+        this.ops.execute("navigation.open_map_link", this.context, locationDisplayData.lat, locationDisplayData.lon);
       }
     });
 

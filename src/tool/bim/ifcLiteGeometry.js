@@ -8,8 +8,16 @@ class IfcLiteGeometryTool {
   static initialized = false;
 
   static async loadModules() {
-    const geometryModule = await import("@ifc-lite/geometry");
-    const parserModule = await import("@ifc-lite/parser");
+    const geometryModule = await import(
+      /* webpackChunkName: "ifc-lite-geometry" */
+      /* webpackMode: "lazy" */
+      "@ifc-lite/geometry"
+    );
+    const parserModule = await import(
+      /* webpackChunkName: "ifc-lite-parser" */
+      /* webpackMode: "lazy" */
+      "@ifc-lite/parser"
+    );
 
     return {
       GeometryProcessor: geometryModule.GeometryProcessor,

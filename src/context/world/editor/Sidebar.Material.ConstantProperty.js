@@ -1,4 +1,4 @@
-import { UIRow, UISelect, UIText } from './../../../ui/base/ui.js';
+import { UIRow, UISelect, UIText } from '../../../../drawUI/ui.js';
 import { SetMaterialValueCommand } from './commands/SetMaterialValueCommand.js';
 
 function SidebarMaterialConstantProperty( editor, property, name, options ) {

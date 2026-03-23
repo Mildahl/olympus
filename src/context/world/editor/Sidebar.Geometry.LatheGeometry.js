@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { UIDiv, UIRow, UIText, UIInteger, UINumber } from './../../../ui/base/ui.js';
+import { UIDiv, UIRow, UIText, UIInteger, UINumber } from '../../../../drawUI/ui.js';
 
 import { UIPoints2 } from '../../../ui/ui.three.js';
 

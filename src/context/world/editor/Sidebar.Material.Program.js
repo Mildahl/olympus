@@ -1,4 +1,4 @@
-import { UIButton, UIRow, UIText } from './../../../ui/base/ui.js';
+import { UIButton, UIRow, UIText } from '../../../../drawUI/ui.js';
 
 function SidebarMaterialProgram( editor, property ) {
 

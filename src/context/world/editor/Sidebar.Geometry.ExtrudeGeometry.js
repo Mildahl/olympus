@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { UIDiv, UIRow, UIText, UIInteger, UICheckbox, UIButton, UINumber } from './../../../ui/base/ui.js';
+import { UIDiv, UIRow, UIText, UIInteger, UICheckbox, UIButton, UINumber } from '../../../../drawUI/ui.js';
 
 import { SetGeometryCommand } from './commands/SetGeometryCommand.js';
 

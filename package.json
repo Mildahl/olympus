@@ -1,6 +1,6 @@
 {
   "name": "aeco",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AECO library for BIM",
   "main": "src/index.js",
   "module": "src/index.js",
@@ -33,7 +33,9 @@
     "docs:olympus:serve": "npm run docs:olympus && npx serve docs/olympus",
     "serve": "node scripts/serve-static-mjs.js 3000",
     "serve:5502": "node scripts/serve-static-mjs.js 5502",
-    "analyze:bundle": "node scripts/bundle-module-sizes.js"
+    "analyze:bundle": "node scripts/bundle-module-sizes.js",
+    "sync:ifc-lite": "node scripts/sync-ifc-lite-vendor.js",
+    "postinstall": "node scripts/sync-ifc-lite-vendor.js"
   },
   "dependencies": {
     "@ifc-lite/geometry": "^1.14.3",

@@ -2,6 +2,8 @@ import { UISpan } from '../../../../drawUI/ui.js';
 
 import { SidebarSettingsScene } from './Sidebar.Settings.Scene.js';
 
+import { SidebarSettingsCamera } from './Sidebar.Settings.Camera.js';
+
 import { SidebarProjectRenderer } from './Sidebar.Project.Renderer.js';
 
 function SidebarSettings( editor ) {
@@ -13,7 +15,8 @@ function SidebarSettings( editor ) {
 	// Scene settings (background, environment, fog)
 	container.add( new SidebarSettingsScene( editor ) );
 
-	// Renderer settings (antialias, shadows, tone mapping)
+	container.add( new SidebarSettingsCamera( editor ) );
+
 	container.add( new SidebarProjectRenderer( editor ) );
 
 	// const options = Object.fromEntries( [ 'en', 'fr', 'zh', 'ja', 'ko', 'fa' ].map( locale => {

@@ -1,0 +1,358 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+/**
+ * @ifc-lite/parser - Main parser interface
+ * Supports both IFC4 (STEP) and IFC5 (IFCX/JSON) formats
+ */
+export { StepTokenizer } from './tokenizer.js';
+export { EntityIndexBuilder } from './entity-index.js';
+export { EntityExtractor } from './entity-extractor.js';
+export { CompactEntityIndex, buildCompactEntityIndex } from './compact-entity-index.js';
+export { OpfsSourceBuffer } from './opfs-source-buffer.js';
+export { PropertyExtractor } from './property-extractor.js';
+export { QuantityExtractor } from './quantity-extractor.js';
+export { RelationshipExtractor } from './relationship-extractor.js';
+export { StyleExtractor } from './style-extractor.js';
+export { SpatialHierarchyBuilder } from './spatial-hierarchy-builder.js';
+export { extractLengthUnitScale } from './unit-extractor.js';
+export { ColumnarParser, extractPropertiesOnDemand, extractQuantitiesOnDemand, extractEntityAttributesOnDemand, extractAllEntityAttributes, extractClassificationsOnDemand, extractMaterialsOnDemand, extractTypePropertiesOnDemand, extractTypeEntityOwnProperties, extractDocumentsOnDemand, extractRelationshipsOnDemand, extractGeoreferencingOnDemand } from './columnar-parser.js';
+// WorkerParser is browser-only due to Vite worker imports
+// Import from '@ifc-lite/parser/browser' instead
+// IFC5 (IFCX) support - re-export from @ifc-lite/ifcx
+export { parseIfcx, parseFederatedIfcx, addIfcxOverlay, detectFormat, composeIfcx, composeFederated, createLayerStack, createPathIndex, parsePath, } from '@ifc-lite/ifcx';
+// New extractors with 100% schema coverage
+export { extractMaterials, getMaterialForElement, getMaterialNameForElement } from './material-extractor.js';
+export { extractGeoreferencing, transformToWorld, transformToLocal, getCoordinateSystemDescription } from './georef-extractor.js';
+export { extractClassifications, getClassificationsForElement, getClassificationCodeForElement, getClassificationPath, groupElementsByClassification } from './classification-extractor.js';
+// Generated IFC4 schema (100% coverage - 776 entities, 397 types, 207 enums)
+export { SCHEMA_REGISTRY, getEntityMetadata, getAllAttributesForEntity, getInheritanceChainForEntity, isKnownEntity } from './generated/schema-registry.js';
+export * from './generated/enums.js';
+// STEP serialization support for IFC export
+export { serializeValue, toStepLine, generateHeader, generateStepFile, parseStepValue, ref, enumVal, isEntityRef, isEnumValue, } from './generated/serializers.js';
+export * from './types.js';
+export * from './style-extractor.js';
+export { getAttributeNames, getAttributeNameAt, isKnownType } from './ifc-schema.js';
+import { decodeIfcString } from '@ifc-lite/encoding';
+import { StepTokenizer } from './tokenizer.js';
+import { EntityIndexBuilder } from './entity-index.js';
+import { EntityExtractor } from './entity-extractor.js';
+import { PropertyExtractor } from './property-extractor.js';
+import { RelationshipExtractor } from './relationship-extractor.js';
+import { ColumnarParser } from './columnar-parser.js';
+/**
+ * Main parser class
+ */
+export class IfcParser {
+    /**
+     * Parse IFC file into structured data
+     */
+    async parse(buffer, options = {}) {
+        const uint8Buffer = new Uint8Array(buffer);
+        // Phase 1: Scan for entities
+        options.onProgress?.({ phase: 'scan', percent: 0 });
+        const tokenizer = new StepTokenizer(uint8Buffer);
+        const indexBuilder = new EntityIndexBuilder();
+        let scanned = 0;
+        const entityRefs = [];
+        for (const ref of tokenizer.scanEntities()) {
+            indexBuilder.addEntity({
+                expressId: ref.expressId,
+                type: ref.type,
+                byteOffset: ref.offset,
+                byteLength: ref.length,
+                lineNumber: ref.line,
+            });
+            entityRefs.push({
+                expressId: ref.expressId,
+                type: ref.type,
+                byteOffset: ref.offset,
+                byteLength: ref.length,
+                lineNumber: ref.line,
+            });
+            scanned++;
+        }
+        const entityIndex = indexBuilder.build();
+        options.onProgress?.({ phase: 'scan', percent: 100 });
+        // Phase 2: Extract entities
+        options.onProgress?.({ phase: 'extract', percent: 0 });
+        const extractor = new EntityExtractor(uint8Buffer);
+        const entities = new Map();
+        for (let i = 0; i < entityRefs.length; i++) {
+            const ref = entityRefs[i];
+            const entity = extractor.extractEntity(ref);
+            if (entity) {
+                entities.set(ref.expressId, entity);
+            }
+            if ((i + 1) % 1000 === 0) {
+                options.onProgress?.({ phase: 'extract', percent: ((i + 1) / entityRefs.length) * 100 });
+            }
+        }
+        options.onProgress?.({ phase: 'extract', percent: 100 });
+        // Phase 3: Extract properties
+        options.onProgress?.({ phase: 'properties', percent: 0 });
+        const propertyExtractor = new PropertyExtractor(entities);
+        const propertySets = propertyExtractor.extractPropertySets();
+        options.onProgress?.({ phase: 'properties', percent: 100 });
+        // Phase 4: Extract relationships
+        options.onProgress?.({ phase: 'relationships', percent: 0 });
+        const relationshipExtractor = new RelationshipExtractor(entities);
+        const relationships = relationshipExtractor.extractRelationships();
+        options.onProgress?.({ phase: 'relationships', percent: 100 });
+        return {
+            entities,
+            propertySets,
+            relationships,
+            entityIndex,
+            fileSize: buffer.byteLength,
+            entityCount: entities.size,
+        };
+    }
+    /**
+     * Parse IFC file into columnar data store
+     *
+     * Uses fast scan + on-demand property extraction for all files.
+     * Properties are extracted lazily when accessed, not upfront.
+     */
+    async parseColumnar(buffer, options = {}) {
+        const uint8Buffer = new Uint8Array(buffer);
+        const startTime = performance.now();
+        const fileSizeMB = buffer.byteLength / (1024 * 1024);
+        const scanStartTime = performance.now();
+        // Fast scan: try WASM scanner first (5-10x faster), fallback to TypeScript
+        options.onProgress?.({ phase: 'scanning', percent: 0 });
+        let entityRefs = [];
+        let processed = 0;
+        // Try WASM scanner if available
+        if (options.wasmApi && typeof options.wasmApi.scanEntitiesFast === 'function') {
+            try {
+                // Prefer scanEntitiesFastBytes (accepts Uint8Array directly, avoids
+                // TextDecoder.decode which creates a ~500MB JS string for large files).
+                const scanFn = typeof options.wasmApi.scanEntitiesFastBytes === 'function'
+                    ? () => options.wasmApi.scanEntitiesFastBytes(uint8Buffer)
+                    : () => {
+                        const decoder = new TextDecoder();
+                        const content = decoder.decode(buffer);
+                        return options.wasmApi.scanEntitiesFast(content);
+                    };
+                const wasmRefs = scanFn();
+                // Direct mapping - optimized by JS engine, no intermediate loop/push
+                entityRefs = wasmRefs.map((ref) => ({
+                    expressId: ref.express_id,
+                    type: ref.entity_type,
+                    byteOffset: ref.byte_offset,
+                    byteLength: ref.byte_length,
+                    lineNumber: ref.line_number,
+                }));
+                processed = entityRefs.length;
+            }
+            catch (error) {
+                console.warn('[IfcParser] WASM scan failed, falling back to TypeScript:', error);
+                // Fall through to TypeScript scanner
+                entityRefs.length = 0;
+                processed = 0;
+            }
+        }
+        // Fallback to TypeScript scanner if WASM not available or failed
+        if (entityRefs.length === 0) {
+            const tokenizer = new StepTokenizer(uint8Buffer);
+            // Yield frequently to avoid blocking geometry streaming
+            // Reduced from 50000 to 5000 for better interleaving with geometry processor
+            const YIELD_INTERVAL = 5000;
+            // Estimate total entities based on file size (~13,500 entities per MB typical for IFC)
+            const estimatedTotalEntities = Math.max(fileSizeMB * 13500, 10000);
+            for (const ref of tokenizer.scanEntitiesFast()) {
+                entityRefs.push({
+                    expressId: ref.expressId,
+                    type: ref.type,
+                    byteOffset: ref.offset,
+                    byteLength: ref.length,
+                    lineNumber: ref.line,
+                });
+                processed++;
+                if (processed % YIELD_INTERVAL === 0) {
+                    // Progress capped at 95% (scanning phase), 100% reported after loop completes
+                    const scanPercent = Math.min(95, (processed / estimatedTotalEntities) * 95);
+                    options.onProgress?.({ phase: 'scanning', percent: scanPercent });
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+            }
+        }
+        const scanElapsedMs = performance.now() - scanStartTime;
+        console.log(`[IfcParser] Fast scan: ${processed} entities in ${scanElapsedMs.toFixed(0)}ms`);
+        options.onProgress?.({ phase: 'scanning', percent: 100 });
+        // Build columnar structures with on-demand property extraction
+        const columnarParser = new ColumnarParser();
+        const dataStore = await columnarParser.parseLite(buffer, entityRefs, options);
+        console.log(`[ColumnarParser] Parsed ${dataStore.entityCount} entities in ${dataStore.parseTime.toFixed(0)}ms`);
+        return dataStore;
+    }
+}
+/**
+ * On-demand entity parser for lite mode
+ * Parse a single entity's attributes from the source buffer
+ */
+export function parseEntityOnDemand(source, entityRef) {
+    try {
+        const entityText = new TextDecoder().decode(source.subarray(entityRef.byteOffset, entityRef.byteOffset + entityRef.byteLength));
+        // Parse: #ID = TYPE(attr1, attr2, ...)
+        const match = entityText.match(/^#(\d+)\s*=\s*(\w+)\((.*)\)/);
+        if (!match)
+            return null;
+        const expressId = parseInt(match[1], 10);
+        const type = match[2];
+        const paramsText = match[3];
+        // Parse attributes
+        const attributes = parseAttributeList(paramsText);
+        return { expressId, type, attributes };
+    }
+    catch (error) {
+        console.warn(`Failed to parse entity #${entityRef.expressId}:`, error);
+        return null;
+    }
+}
+/**
+ * Parse attribute list from STEP format
+ */
+function parseAttributeList(paramsText) {
+    if (!paramsText.trim())
+        return [];
+    const attributes = [];
+    let depth = 0;
+    let current = '';
+    let inString = false;
+    for (let i = 0; i < paramsText.length; i++) {
+        const char = paramsText[i];
+        if (char === "'") {
+            if (inString) {
+                // Check for escaped quote ('') - STEP uses doubled quotes
+                if (i + 1 < paramsText.length && paramsText[i + 1] === "'") {
+                    current += "''";
+                    i++;
+                    continue;
+                }
+                inString = false;
+            }
+            else {
+                inString = true;
+            }
+            current += char;
+        }
+        else if (inString) {
+            current += char;
+        }
+        else if (char === '(') {
+            depth++;
+            current += char;
+        }
+        else if (char === ')') {
+            depth--;
+            current += char;
+        }
+        else if (char === ',' && depth === 0) {
+            attributes.push(parseAttributeValue(current.trim()));
+            current = '';
+        }
+        else {
+            current += char;
+        }
+    }
+    if (current.trim()) {
+        attributes.push(parseAttributeValue(current.trim()));
+    }
+    return attributes;
+}
+/**
+ * Parse a single attribute value
+ */
+function parseAttributeValue(value) {
+    value = value.trim();
+    if (!value || value === '$') {
+        return null;
+    }
+    // TypedValue: IFCTYPENAME(value) - must check before list check
+    // Pattern: identifier followed by parentheses (e.g., IFCNORMALISEDRATIOMEASURE(0.5))
+    const typedValueMatch = value.match(/^([A-Z][A-Z0-9_]*)\((.+)\)$/i);
+    if (typedValueMatch) {
+        const typeName = typedValueMatch[1];
+        const innerValue = typedValueMatch[2].trim();
+        // Return as array [typeName, parsedValue] to match Rust structure
+        return [typeName, parseAttributeValue(innerValue)];
+    }
+    // List/Array
+    if (value.startsWith('(') && value.endsWith(')')) {
+        const listContent = value.slice(1, -1).trim();
+        if (!listContent)
+            return [];
+        const items = [];
+        let depth = 0;
+        let current = '';
+        for (let i = 0; i < listContent.length; i++) {
+            const char = listContent[i];
+            if (char === '(') {
+                depth++;
+                current += char;
+            }
+            else if (char === ')') {
+                depth--;
+                current += char;
+            }
+            else if (char === ',' && depth === 0) {
+                const itemValue = current.trim();
+                if (itemValue)
+                    items.push(parseAttributeValue(itemValue));
+                current = '';
+            }
+            else {
+                current += char;
+            }
+        }
+        if (current.trim())
+            items.push(parseAttributeValue(current.trim()));
+        return items;
+    }
+    // Reference: #123
+    if (value.startsWith('#')) {
+        const id = parseInt(value.substring(1), 10);
+        return isNaN(id) ? null : id;
+    }
+    // String: 'text'
+    if (value.startsWith("'") && value.endsWith("'")) {
+        const raw = value.slice(1, -1).replace(/''/g, "'");
+        // Decode IFC STEP encoded characters (\X2\00FC\X0\ -> ü, etc.)
+        return decodeIfcString(raw);
+    }
+    // Number
+    const num = parseFloat(value);
+    if (!isNaN(num))
+        return num;
+    // Enumeration or other identifier
+    return value;
+}
+// Import for auto-parser
+import { parseIfcx, detectFormat } from '@ifc-lite/ifcx';
+/**
+ * Auto-detect file format and parse accordingly.
+ * Returns unified result with format indicator.
+ */
+export async function parseAuto(buffer, options = {}) {
+    const format = detectFormat(buffer);
+    if (format === 'ifcx') {
+        const result = await parseIfcx(buffer, options);
+        return {
+            format: 'ifcx',
+            data: result,
+            meshes: result.meshes,
+        };
+    }
+    if (format === 'ifc') {
+        const parser = new IfcParser();
+        const data = await parser.parseColumnar(buffer, options);
+        return {
+            format: 'ifc',
+            data,
+        };
+    }
+    throw new Error('Unknown file format. Expected IFC (STEP) or IFCX (JSON).');
+}
+//# sourceMappingURL=index.js.map

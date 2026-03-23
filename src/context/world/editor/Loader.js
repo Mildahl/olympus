@@ -4,8 +4,6 @@ import { AddObjectCommand } from './commands/AddObjectCommand.js';
 
 import { LoaderUtils } from './LoaderUtils.js';
 
-import { unzipSync, strFromU8 } from 'three/addons/libs/fflate.module.js';
-
 function Loader( editor ) {
 
 	const scope = this;
@@ -262,7 +260,11 @@ function Loader( editor ) {
 
 				reader.addEventListener( 'load', function ( event ) {
 
-					handleZIP( event.target.result );
+					void handleZIP( event.target.result ).catch( function ( loadError ) {
+
+						console.error( loadError );
+
+					} );
 
 				}, false );
 
@@ -355,6 +357,12 @@ function Loader( editor ) {
 	}
 
 	async function handleZIP( contents ) {
+
+		const { unzipSync, strFromU8 } = await import(
+			/* webpackChunkName: "fflate" */
+			/* webpackMode: "lazy" */
+			'three/addons/libs/fflate.module.js'
+		);
 
 		const zip = unzipSync( new Uint8Array( contents ) );
 

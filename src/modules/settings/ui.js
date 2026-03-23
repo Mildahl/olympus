@@ -439,6 +439,26 @@ class SettingsUI {
 
     nav.flySettings.verticalMax = cfg.fly.verticalMax;
 
+    if (typeof cfg.fly.chaseCameraDistance === 'number') {
+      nav.flySettings.cameraDistance = cfg.fly.chaseCameraDistance;
+    }
+
+    if (typeof cfg.fly.chaseCameraHeight === 'number') {
+      nav.flySettings.cameraHeight = cfg.fly.chaseCameraHeight;
+    }
+
+    if (typeof cfg.fly.chaseDistanceMax === 'number') {
+      nav.flySettings.chaseDistanceMax = cfg.fly.chaseDistanceMax;
+    }
+
+    if (typeof cfg.fly.chaseHeightMax === 'number') {
+      nav.flySettings.chaseHeightMax = cfg.fly.chaseHeightMax;
+    }
+
+    if (typeof cfg.fly.cockpitEyeForwardOffset === 'number') {
+      nav.flySettings.cockpitEyeForwardOffset = cfg.fly.cockpitEyeForwardOffset;
+    }
+
     nav.driveSettings.moveSpeed = cfg.drive.movementSpeed;
 
     nav.driveSettings.verticalMin = cfg.drive.verticalMin;

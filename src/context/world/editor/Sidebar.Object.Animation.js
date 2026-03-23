@@ -1,4 +1,4 @@
-import { UIBreak, UIButton, UIDiv, UIText, UINumber, UIRow } from './../../../ui/base/ui.js';
+import { UIBreak, UIButton, UIDiv, UIText, UINumber, UIRow } from '../../../../drawUI/ui.js';
 
 function SidebarObjectAnimation( editor ) {
 

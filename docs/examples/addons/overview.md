@@ -1,6 +1,6 @@
 # Addons Example Overview
 
-The Addons example demonstrates a full-featured application with custom addon modules, including construction management, issue tracking, and navigation enhancements.
+The Addons example demonstrates a full-featured application with custom addon modules, including construction management and issue tracking. Viewport navigation (toolbar, fly/drive modes, touch joysticks, and on-screen controls) is provided by the core **`world.navigation`** module (`src/modules/navigation/`), not by an addon.
 
 **Location:** `examples/Addons/`
 
@@ -8,7 +8,6 @@ The Addons example demonstrates a full-featured application with custom addon mo
 
 - **Hard Hat Addon** — Construction lifting schedules, crane visualization, weather monitoring
 - **Issue Tracker Addon** — BCF-style issue management with markup tools
-- **Navigation Addon** — Mobile joystick for touch devices
 - **PDF Markup Addon** — Annotation tools for PDF documents
 - **Demo Data** — Sample data, learning paths, and Python scripts
 
@@ -41,9 +40,6 @@ examples/Addons/
 │   │   ├── module.js
 │   │   ├── operators.js
 │   │   └── ui.js
-│   ├── navigation/         # Touch navigation
-│   │   ├── module.js
-│   │   └── MobileJoystick.js
 │   └── pdf-markup/         # PDF annotations
 │       ├── module.js
 │       └── ...
@@ -83,12 +79,10 @@ All addons are exported from a single index:
 
 ```javascript
 // addons/index.js
-import NavigationModule from './navigation/module.js';
 import HardHatModule from './hard-hat/module.js';
 import IssueTrackerModule from './issue-tracker/module.js';
 
 export const ADDONS = [
-    { module: NavigationModule, active: true },
     { module: HardHatModule, active: true },
     { module: IssueTrackerModule, active: true }
 ];
@@ -176,30 +170,15 @@ BCF-style issue management:
 - `issueUpdated`
 - `issueDeleted`
 
-## Navigation Addon
+## Core navigation (`world.navigation`)
 
-Touch-optimized navigation:
+Touch-friendly viewport controls (virtual move/look sticks, on-screen key clusters, navigation settings) live in the core navigation module, not in this example’s addon folder.
 
-**Features:**
-- Mobile joystick for touch devices
-- Auto-detection of touch capability
-- Smooth camera control
+**Location:** `src/modules/navigation/` (`module.js`, `operators.js`, `ui.js`).
 
-**Key File:**
-```javascript
-// MobileJoystick.js
-class MobileJoystick {
-    constructor(context) {
-        this.context = context;
-        this.setupTouchControls();
-    }
-    
-    setupTouchControls() {
-        // Create virtual joystick
-        // Handle touch events
-    }
-}
-```
+**Operators** use the `navigation.*` namespace (for example `navigation.toggle_fly_mode`, `navigation.configure_fly`, `navigation.enable_mobile_joystick`, `navigation.open_map_link`).
+
+Ensure **`world.navigation`** is active in your app’s core module list (see `examples/Addons/configuration/config.modules.js`).
 
 ## Addon Architecture Pattern
 

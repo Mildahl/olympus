@@ -1,5 +1,11 @@
 import { Components as UIComponents } from "../../ui/Components/Components.js";
 
+import {
+  installViewportLayoutListener,
+  shouldShowRotateToLandscapePrompt,
+  updateContextMobileViewportHints,
+} from "./mobileViewportDetection.js";
+
 class StatusBar {
   constructor({ context, operators }) {
     this.context = context;
@@ -312,6 +318,7 @@ class ToolbarUI {
     });
   }
 }
+
 class LoadingUI {
   
     constructor({ context, operators }) {
@@ -367,4 +374,80 @@ class LoadingUI {
   }
 }
 
-export default [StatusBar, ToolbarUI, LoadingUI];
+class MobileLandscapeGuidance {
+  constructor({ context }) {
+    this.context = context;
+
+    this.unsubscribeViewport = null;
+
+    this.overlayRoot = null;
+
+    const uiConfig = context.config && context.config.ui;
+
+    if (uiConfig && uiConfig.mobileLandscapePrompt === false) {
+      return;
+    }
+
+    const hostElement = context.dom;
+
+    if (!hostElement || typeof document === "undefined") {
+      return;
+    }
+
+    const overlay = UIComponents.div();
+
+    overlay.addClass("MobileLandscapeGuidance");
+
+    const panel = UIComponents.column();
+
+    panel.addClass("MobileLandscapeGuidance-panel");
+
+    const title = UIComponents.h3("Rotate your device");
+
+    title.addClass("MobileLandscapeGuidance-title");
+
+    const body = UIComponents.paragraph(
+      "Rotate to landscape orientation to use the viewport. This message clears when your device is sideways."
+    );
+
+    body.addClass("MobileLandscapeGuidance-body");
+
+    panel.add(title, body);
+
+    overlay.add(panel);
+
+    this.overlayRoot = overlay;
+
+    const applyVisibility = () => {
+      updateContextMobileViewportHints(this.context);
+
+      const show = shouldShowRotateToLandscapePrompt();
+
+      overlay.dom.style.display = show ? "flex" : "none";
+    };
+
+    hostElement.appendChild(overlay.dom);
+
+    if (typeof window !== "undefined") {
+      this.unsubscribeViewport = installViewportLayoutListener(window, applyVisibility);
+    }
+
+    applyVisibility();
+  }
+
+  destroy() {
+    if (typeof this.unsubscribeViewport === "function") {
+      this.unsubscribeViewport();
+    }
+
+    this.unsubscribeViewport = null;
+
+    if (this.overlayRoot && this.overlayRoot.dom && this.overlayRoot.dom.parentNode) {
+      this.overlayRoot.dom.parentNode.removeChild(this.overlayRoot.dom);
+    }
+
+    this.overlayRoot = null;
+  }
+}
+
+export default [StatusBar, ToolbarUI, LoadingUI, MobileLandscapeGuidance];

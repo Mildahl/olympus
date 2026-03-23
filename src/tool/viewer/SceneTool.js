@@ -12,6 +12,8 @@ import { IfcRoot, IfcModel } from "../../data/index.js";
 
 import PythonSandbox from "../pyodide/Python.js";
 
+import NavigationTool from "./NavigationTool.js";
+
 class SceneTool {
 
     static LAYERS = {
@@ -154,7 +156,10 @@ class SceneTool {
   }
 
   static findVehicle(context) {
-    return context.editor.findVehicle();
+    if (!context || !context.editor || !context.editor.scene) {
+      return null;
+    }
+    return NavigationTool.findDefaultVehicleInScene(context.editor.scene);
   }
 
   static onSelection(callback) {

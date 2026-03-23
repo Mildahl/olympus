@@ -253,16 +253,17 @@ export class AECO {
   data: DataStore;
   core: CoreNamespace;
   moduleRegistry: ModuleRegistry;
+  modulesReady?: Promise<void>;
   createUI(options: {
     config: unknown;
     container: HTMLElement;
     addons?: { ADDONS?: unknown[] } | unknown;
-  }): void;
+  }): Promise<void>;
   enablePython(): Promise<void>;
   enableBIM(): Promise<void>;
   getActiveModules(): string[];
   isModuleActive(moduleId: string): boolean;
-  activateModule(moduleId: string): boolean;
+  activateModule(moduleId: string): Promise<boolean>;
   deactivateModule(moduleId: string): boolean;
 }
 

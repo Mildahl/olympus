@@ -6,9 +6,15 @@
 async function storeEditor(context, editor) {
   context.editor = editor;
 
-  if (editor.signals?.navigationModeChanged && context.signals?.navigationModeChanged) {
+  if (editor.signals.navigationModeChanged && context.signals.navigationModeChanged) {
     editor.signals.navigationModeChanged.add((payload) => {
       context.signals.navigationModeChanged.dispatch(payload);
+    });
+  }
+
+  if (editor.signals.navigationCameraRigChanged && context.signals.navigationCameraRigChanged) {
+    editor.signals.navigationCameraRigChanged.add((payload) => {
+      context.signals.navigationCameraRigChanged.dispatch(payload);
     });
   }
 }

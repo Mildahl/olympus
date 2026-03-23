@@ -100,8 +100,19 @@ class FocusManagerClass {
     
     if (!focused) return false;
 
-    const tagName = focused.tagName?.toLowerCase();
-    if (tagName === 'input' || tagName === 'textarea' || tagName === 'select') {
+    const tagName = focused.tagName ? focused.tagName.toLowerCase() : '';
+
+    if (tagName === 'input') {
+      const inputType = focused.type ? String(focused.type).toLowerCase() : '';
+
+      if (inputType === 'checkbox' || inputType === 'radio') {
+        return false;
+      }
+
+      return true;
+    }
+
+    if (tagName === 'textarea' || tagName === 'select') {
       return true;
     }
     if (focused.isContentEditable) {

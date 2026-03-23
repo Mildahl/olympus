@@ -113,6 +113,7 @@ const UIConfig = {
     },
   },
   language: "en",
+  mobileLandscapePrompt: true,
   notifications: {
     showToasts: false,
   },

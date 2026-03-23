@@ -25,9 +25,28 @@ export default {
   },
   resolve: {
     extensions: ['.js', '.css'],
+    alias: {
+      '@tauri-apps/api/event': path.resolve(__dirname, 'scripts/webpack-tauri-event-stub.js'),
+    },
   },
   module: {
+    parser: {
+      javascript: {
+        dynamicImportMode: 'eager',
+      },
+    },
     rules: [
+      {
+        test: /[\\/]src[\\/]tool[\\/]js[\\/]js\.worker\.js$/,
+        type: 'asset/source',
+      },
+      {
+        test: /\.wasm$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'ifc-lite_bg.wasm',
+        },
+      },
       {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
@@ -38,6 +57,10 @@ export default {
     { 'three': 'three' },
     { 'three/webgpu': 'three/webgpu' },
     ({ request }, callback) => {
+      if (request && request.indexOf('@ifc-lite/') === 0) {
+        return callback(null, request);
+      }
+
       if (/^three\/addons\//.test(request)) {
         return callback(null, request);
       }

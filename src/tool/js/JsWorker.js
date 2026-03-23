@@ -1,6 +1,10 @@
+import jsWorkerSource from './js.worker.js';
+
 class JsWorker {
 
     static worker = null;
+
+    static workerObjectUrl = null;
 
     static isReady = false;
 
@@ -24,13 +28,14 @@ class JsWorker {
             return { status: "already_started" };
         }
 
-        const workerUrl = new URL(
-            
-            "./js.worker.js",
-            import.meta.url
-        );
+        const workerSourceString =
+            typeof jsWorkerSource === "string" ? jsWorkerSource : String(jsWorkerSource);
 
-        JsWorker.worker = new Worker(workerUrl);
+        const workerBlob = new Blob([workerSourceString], { type: "text/javascript" });
+
+        JsWorker.workerObjectUrl = URL.createObjectURL(workerBlob);
+
+        JsWorker.worker = new Worker(JsWorker.workerObjectUrl);
 
         JsWorker.worker.onmessage = (event) => {
             JsWorker._handleMessage(event.data);
@@ -136,6 +141,12 @@ class JsWorker {
             JsWorker.worker = null;
 
             JsWorker.isReady = false;
+        }
+
+        if (JsWorker.workerObjectUrl) {
+            URL.revokeObjectURL(JsWorker.workerObjectUrl);
+
+            JsWorker.workerObjectUrl = null;
         }
     }
 }

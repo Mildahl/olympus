@@ -1,4 +1,4 @@
-import { UIPanel } from './../../../ui/base/ui.js';
+import { UIPanel } from '../../../../drawUI/ui.js';
 
 import { ViewHelper as ViewHelperBase } from 'three/addons/helpers/ViewHelper.js';
 

@@ -1,4 +1,4 @@
-import { UIBreak, UIPanel, UIRow, UIText, UIListbox, UIButton } from './../../../ui/base/ui.js';
+import { UIBreak, UIPanel, UIRow, UIText, UIListbox, UIButton } from '../../../../drawUI/ui.js';
 
 import { SetMaterialCommand } from './commands/SetMaterialCommand.js';
 

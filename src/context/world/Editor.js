@@ -14,6 +14,8 @@ import { Selector } from './Selector.js';
 
 import { NavigationController } from "./editor/NavigationController.js";
 
+import NavigationTool from "../../tool/viewer/NavigationTool.js";
+
 let aspect = window.innerWidth / window.innerHeight; 
 
 var _DEFAULT_CAMERA = new THREE.PerspectiveCamera( 65, aspect, 0.1, 1000 );
@@ -111,6 +113,7 @@ function Editor( context ) {
 		editingDocuments: new Signal(),
 		documentsChanged: new Signal(),
 		navigationModeChanged: new Signal(),
+		navigationCameraRigChanged: new Signal(),
 
 	};
 
@@ -128,6 +131,12 @@ function Editor( context ) {
 			lookSpeed: 0.002,
 			verticalMin: -100,
 			verticalMax: 100,
+			chaseCameraDistance: 1.5,
+			chaseCameraHeight: 0.72,
+			chaseDistanceMax: 2.6,
+			chaseHeightMax: 1.55,
+			cockpitEyeForwardOffset: 0.11,
+			navigationFieldOfView: 70,
 		},
 		drive: {
 			movementSpeed: 5,
@@ -628,17 +637,6 @@ Editor.prototype = {
 
 	},
 
-	findVehicle: function() {
-		let vehicle = null;
-
-		this.scene.traverse((object) => {
-			if (object.name === 'Truck' || object.userData?.type === 'Vehicle') {
-				vehicle = object;
-			}
-		});
-
-		return vehicle;
-	},
 	select: function ( object ) {
 
 		this.selector.select( object );
@@ -856,27 +854,11 @@ Editor.prototype = {
 	},
 
 	findVehicle: function() {
-		let vehicle = null;
-
-		this.scene.traverse((object) => {
-			if (object.name === 'Truck' || object.userData?.type === 'Vehicle') {
-				vehicle = object;
-			}
-		});
-
-		return vehicle;
+		return NavigationTool.findDefaultVehicleInScene(this.scene);
 	},
 
 	findFlyObject: function() {
-		let flyObject = null;
-
-		this.scene.traverse((object) => {
-			if (object.name === 'Drone' || object.userData?.type === 'FlyingVehicle') {
-				flyObject = object;
-			}
-		});
-
-		return flyObject;
+		return NavigationTool.findDefaultFlyingObjectInScene(this.scene);
 	},
 
 	toggleDriveMode: function(vehicle, options = {}) {
@@ -896,20 +878,13 @@ Editor.prototype = {
 
 	setNavigationMode: function(mode, options = {}) {
 		const navController = this.navigationController;
-		
-		if (mode === 'DRIVE' && !options.vehicle) {
-			
-			const scene = this.scene;
 
-			scene.traverse((object) => {
-				if (object.name === 'Truck' || object.userData?.type === 'Vehicle') {
-					options.vehicle = object;
-				}
-			});
+		if (mode === 'DRIVE' && !options.vehicle) {
+			options.vehicle = NavigationTool.findDefaultVehicleInScene(this.scene);
 		}
 
 		if ((mode === 'FLY' || mode === 'FIRST_PERSON') && !options.flyObject) {
-			options.flyObject = this.findFlyObject();
+			options.flyObject = NavigationTool.findDefaultFlyingObjectInScene(this.scene);
 		}
 
 		navController.setMode(mode, options);

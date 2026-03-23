@@ -1,4 +1,4 @@
-import { UIPanel, UIBreak, UIButton, UIRow, UIInput } from './../../../ui/base/ui.js';
+import { UIPanel, UIBreak, UIButton, UIRow, UIInput } from '../../../../drawUI/ui.js';
 
 import { AddScriptCommand } from './commands/AddScriptCommand.js';
 import { SetScriptValueCommand } from './commands/SetScriptValueCommand.js';

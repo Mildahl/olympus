@@ -1,0 +1,19 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+/**
+ * @ifc-lite/data - Columnar data structures
+ */
+export { StringTable } from './string-table.js';
+export { EntityTableBuilder } from './entity-table.js';
+export { PropertyTableBuilder } from './property-table.js';
+export { QuantityTableBuilder } from './quantity-table.js';
+export { RelationshipGraphBuilder } from './relationship-graph.js';
+export * from './types.js';
+// Explicitly export const enums for runtime use
+export { IfcTypeEnum, PropertyValueType, QuantityType, RelationshipType, EntityFlags } from './types.js';
+// Entity name mapping (UPPERCASE → PascalCase)
+export { IFC_ENTITY_NAMES } from './ifc-entity-names.js';
+// Logging utilities
+export { createLogger, logger } from './logger.js';
+//# sourceMappingURL=index.js.map

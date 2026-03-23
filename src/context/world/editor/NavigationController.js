@@ -52,10 +52,21 @@ class NavigationController extends THREE.EventDispatcher {
       verticalSpeed: 8,
       verticalMin: config?.fly?.verticalMin ?? -100,
       verticalMax: config?.fly?.verticalMax ?? 100,
-      cameraDistance: 6,
-      cameraHeight: 2,
+      cameraDistance: config?.fly?.chaseCameraDistance ?? 1.5,
+      cameraHeight: config?.fly?.chaseCameraHeight ?? 0.72,
+      chaseDistanceMax: config?.fly?.chaseDistanceMax ?? 2.6,
+      chaseHeightMax: config?.fly?.chaseHeightMax ?? 1.55,
+      cockpitEyeForwardOffset: config?.fly?.cockpitEyeForwardOffset ?? 0.11,
       smoothing: 0.15,
       turnSpeed: 2.0,
+      navigationFieldOfView:
+        config && config.fly && config.fly.navigationFieldOfView != null
+          ? config.fly.navigationFieldOfView
+          : 70,
+      orbitViewPivotDistance:
+        config && config.fly && config.fly.orbitViewPivotDistance != null
+          ? config.fly.orbitViewPivotDistance
+          : 10,
     };
 
     this.driveSettings = {
@@ -122,6 +133,12 @@ class NavigationController extends THREE.EventDispatcher {
 
     this._attachedObjectData = null;
 
+    this._perspectiveFieldOfViewBeforeFlyModes = null;
+
+    this.touchSticks = null;
+
+    this.touchOverlaySuppressed = false;
+
     this.onKeyDown = this.onKeyDown.bind(this);
 
     this.onKeyUp = this.onKeyUp.bind(this);
@@ -164,6 +181,82 @@ class NavigationController extends THREE.EventDispatcher {
 
   isFirstPersonMode(mode = this.mode) {
     return mode === 'FIRST_PERSON';
+  }
+
+  _enterFlyModesFieldOfViewOverride() {
+    const camera = this.camera;
+
+    if (!camera || !camera.isPerspectiveCamera) {
+      return;
+    }
+
+    if (this._perspectiveFieldOfViewBeforeFlyModes !== null) {
+      return;
+    }
+
+    this._perspectiveFieldOfViewBeforeFlyModes = camera.fov;
+
+    camera.fov = this.flySettings.navigationFieldOfView;
+
+    camera.updateProjectionMatrix();
+
+    const signals = this.editor.signals;
+
+    if (signals && signals.cameraChanged) {
+      signals.cameraChanged.dispatch(camera);
+    }
+  }
+
+  _exitFlyModesFieldOfViewOverride(preserveFlyCameraRig) {
+    if (preserveFlyCameraRig) {
+      return;
+    }
+
+    const camera = this.camera;
+
+    if (!camera || !camera.isPerspectiveCamera) {
+      return;
+    }
+
+    if (this._perspectiveFieldOfViewBeforeFlyModes === null) {
+      return;
+    }
+
+    camera.fov = this._perspectiveFieldOfViewBeforeFlyModes;
+
+    this._perspectiveFieldOfViewBeforeFlyModes = null;
+
+    camera.updateProjectionMatrix();
+
+    const signals = this.editor.signals;
+
+    if (signals && signals.cameraChanged) {
+      signals.cameraChanged.dispatch(camera);
+    }
+  }
+
+  _syncOrbitPivotToCurrentView() {
+    const camera = this.camera;
+
+    const controls = this.controls;
+
+    if (!camera || !controls || !controls.center) {
+      return;
+    }
+
+    const forward = new THREE.Vector3();
+
+    camera.getWorldDirection(forward);
+
+    const distance = this.flySettings.orbitViewPivotDistance;
+
+    controls.center.copy(camera.position).addScaledVector(forward, distance);
+
+    const signals = this.editor.signals;
+
+    if (signals && signals.cameraChanged) {
+      signals.cameraChanged.dispatch(camera);
+    }
   }
 
   setCursorVisibility(isVisible) {
@@ -294,8 +387,6 @@ class NavigationController extends THREE.EventDispatcher {
   }
 
   toggleCameraViewMode() {
-    if (this.isFirstPersonMode()) return;
-
     if (this.cameraViewMode === 'THIRD_PERSON') {
       const target = this.targetFlyObject || this.targetVehicle;
 
@@ -319,6 +410,12 @@ class NavigationController extends THREE.EventDispatcher {
     }
 
     this._dispatchChange();
+
+    if (this.editor.signals.navigationCameraRigChanged) {
+      this.editor.signals.navigationCameraRigChanged.dispatch({
+        cameraViewMode: this.cameraViewMode,
+      });
+    }
   }
 
   getCameraViewMode() {
@@ -371,6 +468,110 @@ class NavigationController extends THREE.EventDispatcher {
     );
   }
 
+  setCameraFromDriverPOV() {
+    if (!this.driverPOV) {
+      return;
+    }
+
+    const povWorldPos = new THREE.Vector3();
+
+    this.driverPOV.getWorldPosition(povWorldPos);
+
+    if (this.isFlyMode() && this.targetFlyObject) {
+      const totalYaw = this.flyObjectRotation + this.flyLookYaw;
+
+      const pitch = this.flyLookPitch;
+
+      const lookDirection = this.getLookDirection(totalYaw, pitch);
+
+      const eyeWorldPosition = povWorldPos.clone();
+
+      const forwardOffset = this.flySettings.cockpitEyeForwardOffset;
+
+      if (typeof forwardOffset === 'number' && forwardOffset > 0) {
+        eyeWorldPosition.addScaledVector(lookDirection, forwardOffset);
+      }
+
+      const lookAtPoint = eyeWorldPosition.clone().addScaledVector(lookDirection, 100);
+
+      this.setCameraPose(eyeWorldPosition, lookAtPoint);
+
+      return;
+    }
+
+    let lookDir = this.driverPOV.userData.lookDirection;
+
+    if (!lookDir) {
+      lookDir = new THREE.Vector3(-1, 0, 0);
+    }
+
+    const worldLookDir = lookDir.clone();
+
+    const parentQuat = new THREE.Quaternion();
+
+    const parentObject = this.driverPOV.parent;
+
+    if (parentObject) {
+      parentObject.getWorldQuaternion(parentQuat);
+
+      worldLookDir.applyQuaternion(parentQuat);
+    }
+
+    const lookAtPoint = povWorldPos.clone().addScaledVector(worldLookDir, 100);
+
+    this.setCameraPose(povWorldPos, lookAtPoint);
+  }
+
+  getUnifiedChaseCameraWorldPosition(target, yaw, pitch) {
+    if (!target) {
+      return new THREE.Vector3();
+    }
+
+    const baseDistance = this.flySettings.cameraDistance;
+
+    const baseHeight = this.flySettings.cameraHeight;
+
+    const maxDistance = this.flySettings.chaseDistanceMax;
+
+    const maxHeight = this.flySettings.chaseHeightMax;
+
+    const minDistance = 0.9;
+
+    const minHeight = 0.4;
+
+    const pitchBlend = pitch * 0.2;
+
+    const box = this.getTargetBoundingBox(target);
+
+    const targetPosition = target.getWorldPosition(new THREE.Vector3());
+
+    if (!box) {
+      const distance = Math.min(Math.max(baseDistance, minDistance), maxDistance);
+
+      const height = Math.min(Math.max(baseHeight * 0.85, minHeight), maxHeight);
+
+      return targetPosition.clone().add(this.getCameraOffset(yaw, distance, height, pitchBlend));
+    }
+
+    const size = new THREE.Vector3();
+
+    box.getSize(size);
+
+    const horizontalSize = Math.sqrt(size.x * size.x + size.z * size.z);
+
+    const horizontalSpan = horizontalSize > 0.01 ? horizontalSize : minDistance;
+
+    let distance = Math.max(horizontalSpan * 0.38, baseDistance, minDistance);
+
+    distance = Math.min(distance, maxDistance);
+
+    let height = Math.max(size.y * 0.28, baseHeight * 0.85, minHeight);
+
+    height = Math.min(height, maxHeight);
+
+    return targetPosition.clone().add(this.getCameraOffset(yaw, distance, height, pitchBlend));
+  }
+
   updateFollowCamera(target, yaw, pitch, settings, smoothFactor, lookAtHeightOffset = 0.5) {
     if (!target) return;
 
@@ -383,27 +584,19 @@ class NavigationController extends THREE.EventDispatcher {
     const targetPos = target.position;
 
     if (this.cameraViewMode === 'DRIVER_POV' && this.driverPOV) {
-      const povWorldPos = new THREE.Vector3();
+      this.setCameraFromDriverPOV();
 
-      this.driverPOV.getWorldPosition(povWorldPos);
+      return;
+    }
 
-      let lookDir = this.driverPOV.userData.lookDirection;
+    if (this.mode === 'FLY') {
+      const chasePosition = this.getUnifiedChaseCameraWorldPosition(target, yaw, pitch);
 
-      if (!lookDir) {
-        lookDir = new THREE.Vector3(-1, 0, 0);
-      }
+      const lookDirection = this.getLookDirection(yaw, pitch);
 
-      const worldLookDir = lookDir.clone();
+      const lookAtPoint = chasePosition.clone().addScaledVector(lookDirection, 100);
 
-      const parentQuat = new THREE.Quaternion();
-
-      this.driverPOV.parent?.getWorldQuaternion(parentQuat);
-
-      worldLookDir.applyQuaternion(parentQuat);
-
-      const lookAtPoint = povWorldPos.clone().addScaledVector(worldLookDir, 100);
-
-      this.setCameraPose(povWorldPos, lookAtPoint);
+      this.setCameraPose(chasePosition, lookAtPoint);
 
       return;
     }
@@ -417,41 +610,19 @@ class NavigationController extends THREE.EventDispatcher {
     this.setCameraPose(targetCamPos, targetLookAt);
   }
 
-  getFirstPersonCameraPosition(target, yaw, pitch) {
-    const box = this.getTargetBoundingBox(target);
-
-    if (!box) {
-      const fallbackPosition = target.getWorldPosition(new THREE.Vector3());
-
-      fallbackPosition.add(this.getCameraOffset(yaw, Math.max(this.flySettings.cameraDistance * 0.55, 2.5), Math.max(this.flySettings.cameraHeight * 0.65, 1.2), pitch * 0.2));
-
-      return fallbackPosition;
-    }
-
-    const size = new THREE.Vector3();
-
-    const targetPosition = target.getWorldPosition(new THREE.Vector3());
-
-    box.getSize(size);
-
-    const horizontalSize = Math.max(Math.sqrt(size.x * size.x + size.z * size.z), 1);
-
-    const distance = Math.max(horizontalSize * 0.7, this.flySettings.cameraDistance * 0.55, 2.5);
-
-    const height = Math.max(size.y * 0.45, this.flySettings.cameraHeight * 0.65, 1.2);
-
-    const cameraPos = targetPosition.clone().add(this.getCameraOffset(yaw, distance, height, pitch * 0.2));
-
-    return cameraPos;
-  }
-
   updateFirstPersonCamera(smoothFactor = 0.1) {
     if (this.targetFlyObject) {
       const totalYaw = this.flyObjectRotation + this.flyLookYaw;
 
       const pitch = this.flyLookPitch;
 
-      const cameraPos = this.getFirstPersonCameraPosition(this.targetFlyObject, totalYaw, pitch);
+      if (this.cameraViewMode === 'DRIVER_POV' && this.driverPOV) {
+        this.setCameraFromDriverPOV();
+
+        return;
+      }
+
+      const cameraPos = this.getUnifiedChaseCameraWorldPosition(this.targetFlyObject, totalYaw, pitch);
 
       const lookDirection = this.getLookDirection(totalYaw, pitch);
 
@@ -628,6 +799,8 @@ class NavigationController extends THREE.EventDispatcher {
 
     this.detachControlledObjectFromCamera();
 
+    this._exitFlyModesFieldOfViewOverride(false);
+
     document.removeEventListener('keydown', this.onKeyDown);
 
     document.removeEventListener('keyup', this.onKeyUp);
@@ -654,7 +827,7 @@ class NavigationController extends THREE.EventDispatcher {
       return;
     }
 
-    this.exitCurrentMode();
+    this.exitCurrentMode(mode);
 
     this.previousMode = this.mode;
 
@@ -677,7 +850,7 @@ class NavigationController extends THREE.EventDispatcher {
         break;
 
       default:
-        this.enterOrbitMode();
+        this.enterOrbitMode({ syncPivotFromView: true });
 
         break;
     }
@@ -694,7 +867,7 @@ class NavigationController extends THREE.EventDispatcher {
       const requiresReentry = nextFlyObject ? nextFlyObject !== this.targetFlyObject : false;
 
       if (requiresReentry) {
-        this.exitCurrentMode();
+        this.exitCurrentMode('FIRST_PERSON');
 
         this.enterFirstPersonMode(nextFlyObject);
       } else {
@@ -719,7 +892,7 @@ class NavigationController extends THREE.EventDispatcher {
 
     if (mode === 'FLY') {
       if (nextFlyObject && nextFlyObject !== this.targetFlyObject) {
-        this.exitCurrentMode();
+        this.exitCurrentMode('FLY');
 
         this.enterFlyMode(nextFlyObject);
 
@@ -749,7 +922,7 @@ class NavigationController extends THREE.EventDispatcher {
 
     if (mode === 'DRIVE') {
       if (nextVehicle && nextVehicle !== this.targetVehicle) {
-        this.exitCurrentMode();
+        this.exitCurrentMode('DRIVE');
 
         this.enterDriveMode(nextVehicle, options);
 
@@ -778,23 +951,27 @@ class NavigationController extends THREE.EventDispatcher {
     }
 
     if (mode === 'ORBIT') {
-      this.enterOrbitMode();
+      this.enterOrbitMode({ syncPivotFromView: false });
 
       this._dispatchModeChange(mode, options);
     }
   }
 
-  exitCurrentMode() {
+  exitCurrentMode(nextMode) {
     this._stopUpdateLoop();
+
+    const preserveFlyCameraRig =
+      (this.mode === 'FLY' && nextMode === 'FIRST_PERSON') ||
+      (this.mode === 'FIRST_PERSON' && nextMode === 'FLY');
 
     switch (this.mode) {
       case 'FLY':
-        this.exitFlyMode();
+        this.exitFlyMode({ preserveFlyCameraRig });
 
         break;
 
       case 'FIRST_PERSON':
-        this.exitFirstPersonMode();
+        this.exitFirstPersonMode({ preserveFlyCameraRig });
 
         break;
 
@@ -805,7 +982,13 @@ class NavigationController extends THREE.EventDispatcher {
     }
   }
 
-  enterOrbitMode() {
+  enterOrbitMode(options = {}) {
+    const syncPivotFromView = options.syncPivotFromView !== false;
+
+    this.cameraViewMode = 'THIRD_PERSON';
+
+    this.driverPOV = null;
+
     if (this.controls) this.controls.enabled = true;
 
     this.removeCrosshair();
@@ -821,9 +1004,15 @@ class NavigationController extends THREE.EventDispatcher {
     if (document.pointerLockElement) {
       document.exitPointerLock();
     }
+
+    if (syncPivotFromView) {
+      this._syncOrbitPivotToCurrentView();
+    }
   }
 
   enterFlyMode(flyObject = null) {
+    this._enterFlyModesFieldOfViewOverride();
+
     flyObject = this.normalizeControlledTarget(flyObject) || this.editor.scene.getObjectByName('Drone');
 
     if (this.controls) this.controls.enabled = false;
@@ -866,6 +1055,8 @@ class NavigationController extends THREE.EventDispatcher {
   }
 
   enterFirstPersonMode(flyObject = null) {
+    this._enterFlyModesFieldOfViewOverride();
+
     flyObject = this.normalizeControlledTarget(flyObject) || this.editor.scene.getObjectByName('Drone');
 
     if (this.controls) this.controls.enabled = false;
@@ -873,8 +1064,6 @@ class NavigationController extends THREE.EventDispatcher {
     this.targetFlyObject = flyObject;
 
     this.driverPOV = this.findDriverPOV(flyObject);
-
-    this.cameraViewMode = 'FIRST_PERSON';
 
     this.createCrosshair();
 
@@ -915,14 +1104,18 @@ class NavigationController extends THREE.EventDispatcher {
     this._startUpdateLoop();
   }
 
-  exitFlyMode() {
+  exitFlyMode(options = {}) {
+    this._exitFlyModesFieldOfViewOverride(options.preserveFlyCameraRig === true);
+
     this.targetFlyObject = null;
 
     this.driverPOV = null;
 
     this.targetBoundingBox = null;
 
-    this.cameraViewMode = 'THIRD_PERSON';
+    if (!options.preserveFlyCameraRig) {
+      this.cameraViewMode = 'THIRD_PERSON';
+    }
 
     this._resetMoveState();
 
@@ -931,14 +1124,18 @@ class NavigationController extends THREE.EventDispatcher {
     this.setCursorVisibility(true);
   }
 
-  exitFirstPersonMode() {
+  exitFirstPersonMode(options = {}) {
+    this._exitFlyModesFieldOfViewOverride(options.preserveFlyCameraRig === true);
+
     this.targetFlyObject = null;
 
     this.driverPOV = null;
 
     this.targetBoundingBox = null;
 
-    this.cameraViewMode = 'THIRD_PERSON';
+    if (!options.preserveFlyCameraRig) {
+      this.cameraViewMode = 'THIRD_PERSON';
+    }
 
     this._resetMoveState();
 
@@ -1579,6 +1776,76 @@ class NavigationController extends THREE.EventDispatcher {
     if (!this._hasActiveMovement() && !this._requiresContinuousUpdate()) return;
 
     this._startUpdateLoop();
+  }
+
+  clearMoveStickAxes() {
+    if (!this.moveState) {
+      return;
+    }
+    this.moveState.forward = false;
+    this.moveState.backward = false;
+    this.moveState.left = false;
+    this.moveState.right = false;
+  }
+
+  applyOrbitPanFromStick(deltaX, deltaY, moveSensitivity) {
+    const controls = this.controls;
+    if (!controls) {
+      return;
+    }
+    const panSpeed = 0.5 * moveSensitivity;
+    controls.target.x -= deltaX * panSpeed;
+    controls.target.y += deltaY * panSpeed;
+  }
+
+  applyOrbitRotateFromStick(deltaX, deltaY, lookSensitivity) {
+    const controls = this.controls;
+    if (!controls) {
+      return;
+    }
+    const combinedSensitivity = lookSensitivity * 2;
+    controls.rotateLeft(deltaX * combinedSensitivity);
+    controls.rotateUp(deltaY * combinedSensitivity);
+  }
+
+  applyMoveStickToMoveState(deltaX, deltaY, deadzone) {
+    if (!this.moveState) {
+      return;
+    }
+    this.moveState.forward = deltaY < -deadzone;
+    this.moveState.backward = deltaY > deadzone;
+    this.moveState.left = deltaX < -deadzone;
+    this.moveState.right = deltaX > deadzone;
+    this.triggerMovementUpdate();
+  }
+
+  applyLookStickForMode(mode, deltaX, deltaY, lookSensitivity) {
+    if (mode === 'ORBIT') {
+      this.applyOrbitRotateFromStick(deltaX, deltaY, lookSensitivity);
+      return;
+    }
+    if (mode === 'FLY' || mode === 'FIRST_PERSON') {
+      if (this.targetFlyObject) {
+        this.flyLookYaw -= deltaX * lookSensitivity;
+        this.flyLookPitch = this.clampFlyPitch(
+          this.flyLookPitch - deltaY * lookSensitivity
+        );
+      } else {
+        this.yaw -= deltaX * lookSensitivity;
+        this.pitch = this.clampFlyPitch(
+          this.pitch - deltaY * lookSensitivity
+        );
+      }
+      return;
+    }
+    if (mode === 'DRIVE') {
+      this.driveLookYaw -= deltaX * lookSensitivity;
+      this.driveLookPitch -= deltaY * lookSensitivity;
+      this.driveLookPitch = Math.max(
+        -Math.PI / 3,
+        Math.min(Math.PI / 3, this.driveLookPitch)
+      );
+    }
   }
 
   getControlledObject() {

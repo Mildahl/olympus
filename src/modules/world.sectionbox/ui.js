@@ -210,7 +210,7 @@ class SectionBoxUI extends BasePanel {
 
     this.boxDataDisplay = UIComponents.div();
     this.boxDataDisplay
-      .setStyle("background", ["var(--theme-background-1012)"])
+      .setStyle("background", ["var(--theme-background-1618)"])
       .setStyle("padding", ["0.75rem"])
       .setStyle("border-radius", ["4px"])
       .setStyle("font-family", ["monospace"])
@@ -242,7 +242,7 @@ class SectionBoxUI extends BasePanel {
     const footerContent = UIComponents.div();
     footerContent
       .setStyle("padding", ["0.75rem"])
-      .setStyle("background", ["var(--theme-background-1012)"])
+      .setStyle("background", ["var(--theme-background-1618)"])
       .setStyle("font-size", ["0.7rem"])
       .setStyle("color", ["var(--theme-text-light)"])
       .setStyle("line-height", ["1.5"]);
@@ -497,7 +497,7 @@ class SectionBoxUI extends BasePanel {
 
     minInput.step = "0.5";
 
-    minInput.style.cssText = "width: 60px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--theme-background-1012); color: inherit; font-size: 0.75rem;";
+    minInput.style.cssText = "width: 60px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--theme-background-1618); color: inherit; font-size: 0.75rem;";
 
     minInput.placeholder = "Min";
 
@@ -517,7 +517,7 @@ class SectionBoxUI extends BasePanel {
 
     maxInput.step = "0.5";
 
-    maxInput.style.cssText = "width: 60px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--theme-background-1012); color: inherit; font-size: 0.75rem;";
+    maxInput.style.cssText = "width: 60px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--theme-background-1618); color: inherit; font-size: 0.75rem;";
 
     maxInput.placeholder = "Max";
 

@@ -6,6 +6,11 @@ fly: {
     lookSpeed: 0.1,
     verticalMin: -85,
     verticalMax: 85,
+    chaseCameraDistance: 1.5,
+    chaseCameraHeight: 0.72,
+    chaseDistanceMax: 2.6,
+    chaseHeightMax: 1.55,
+    cockpitEyeForwardOffset: 0.11,
     keys: {
         forward: ['', 'KeyW'],
         backward: ['', 'KeyS'],

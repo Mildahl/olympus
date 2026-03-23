@@ -1,0 +1,1 @@
+{"version":3,"file":"hierarchy-builder.d.ts","sourceRoot":"","sources":["../src/hierarchy-builder.ts"],"names":[],"mappings":"AAIA;;;GAGG;AAEH,OAAO,KAAK,EAAE,YAAY,EAAY,MAAM,YAAY,CAAC;AAGzD,OAAO,KAAK,EAAE,gBAAgB,EAAe,MAAM,gBAAgB,CAAC;AAEpE;;;;;;;GAOG;AACH,wBAAgB,cAAc,CAC5B,QAAQ,EAAE,GAAG,CAAC,MAAM,EAAE,YAAY,CAAC,EACnC,QAAQ,EAAE,GAAG,CAAC,MAAM,EAAE,MAAM,CAAC,GAC5B,gBAAgB,CAoGlB"}

@@ -1,4 +1,4 @@
-import { UIPanel, UIBreak, UIText, UIColumn } from './../../../ui/base/ui.js';
+import { UIPanel, UIBreak, UIText, UIColumn } from '../../../../drawUI/ui.js';
 function ViewportInfo( editor ) {
 
 	const signals = editor.signals;

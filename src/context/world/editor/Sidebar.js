@@ -6,6 +6,10 @@ import { Components as UIComponents } from '../../../ui/Components/Components.js
 
 import { makeDraggable } from '../../../../drawUI/utils/panelResizer.js';
 
+import { SidebarProperties } from './Sidebar.Properties.js';
+
+import { TabPanel } from '../../../../drawUI/TabPanel.js';
+
 /**
  * 3D / scene + renderer settings as a BasePanel, toggled from the AppSettings sidebar node
  * (see `moduleId: "settings"` with `id: "AppSettings"` in UI config).
@@ -87,6 +91,33 @@ class ThreeDSettingsPanel extends BasePanel {
   }
 }
 
-export { ThreeDSettingsPanel };
+class ThreeJSProperties extends TabPanel {
+  constructor({ context, operators }) {
+    super({
+      context,
+      operators,
+      position: 'right',
+      tabId: 'properties',
+      tabLabel: 'Properties',
+      icon: 'properties',
+      title: 'Properties',
+      showHeader: false,
+      floatable: true,
+      panelStyles: {
+        minWidth: '240px',
+      },
+      autoShow: true,
+    });
 
-export { ThreeDSettingsPanel as Sidebar };
+    this.draw(context, operators);
+  }
+
+  draw(context, operators ) {
+    const properties = new SidebarProperties({ context, operators })
+
+    this.content.add(properties);
+
+  }
+}
+
+export { ThreeDSettingsPanel as Sidebar, ThreeJSProperties as Properties };

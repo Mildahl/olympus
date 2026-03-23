@@ -1,0 +1,9 @@
+/**
+ * @ifc-lite/mutations - Mutation tracking for IFC data
+ */
+export * from './types.js';
+export { MutablePropertyView, type PropertyExtractor, type QuantityExtractor } from './mutable-property-view.js';
+export { ChangeSetManager } from './change-set.js';
+export { BulkQueryEngine, type SelectionCriteria, type BulkAction, type BulkQuery, type BulkQueryPreview, type BulkQueryResult, type PropertyFilter, type FilterOperator, } from './bulk-query-engine.js';
+export { CsvConnector, type CsvRow, type MatchStrategy, type PropertyMapping, type DataMapping, type MatchResult, type ImportStats, type CsvParseOptions, } from './csv-connector.js';
+//# sourceMappingURL=index.d.ts.map

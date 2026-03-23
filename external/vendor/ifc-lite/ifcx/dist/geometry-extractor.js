@@ -1,0 +1,286 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+import { ATTR } from './types.js';
+import { getNodeLineage, walkComposedFrames } from './traversal.js';
+/**
+ * Extract geometry from composed IFCX nodes.
+ *
+ * IFC5 geometry is pre-tessellated (unlike IFC4 parametric geometry),
+ * so this is straightforward mesh extraction.
+ *
+ * Note: Meshes are often on child nodes (like "Body", "Axis") that don't
+ * have their own bsi::ifc::class. We associate these with the closest
+ * ancestor entity that has an expressId.
+ *
+ * Output geometry is converted to Y-up for the viewer.
+ */
+export function extractGeometry(composed, pathToId) {
+    const meshes = [];
+    const contextByFrame = new WeakMap();
+    const transformByFrame = new WeakMap();
+    walkComposedFrames(composed, (frame) => {
+        const inheritedContext = frame.parent ? contextByFrame.get(frame.parent) ?? null : null;
+        const parentTransform = frame.parent ? transformByFrame.get(frame.parent) ?? null : null;
+        const context = resolveContext(frame.node, inheritedContext, pathToId);
+        const transform = combineTransforms(getNodeTransform(frame.node), parentTransform);
+        const lineage = getNodeLineage(frame);
+        contextByFrame.set(frame, context);
+        transformByFrame.set(frame, transform);
+        const mesh = frame.node.attributes.get(ATTR.MESH);
+        if (mesh && context && !context.isTypeDefinition && !isInvisible(lineage)) {
+            const meshData = convertUsdMesh(mesh, context.expressId, context.ifcType, transform);
+            applyPresentation(meshData, lineage);
+            meshes.push(meshData);
+        }
+    });
+    return meshes;
+}
+function resolveContext(node, context, pathToId) {
+    const ifcClass = node.attributes.get(ATTR.CLASS);
+    const expressId = pathToId.get(node.path);
+    if (expressId === undefined) {
+        return context;
+    }
+    return {
+        expressId,
+        ifcType: ifcClass?.code,
+        isTypeDefinition: (context?.isTypeDefinition ?? false) || isIfcTypeDefinition(node),
+    };
+}
+/**
+ * Convert USD mesh format to MeshData format.
+ * Applies transform in Z-up space, then converts to Y-up for the viewer.
+ */
+function convertUsdMesh(usd, expressId, ifcType, transform) {
+    // Process points: apply transform in Z-up space, then convert to Y-up
+    const positions = new Float32Array(usd.points.length * 3);
+    for (let i = 0; i < usd.points.length; i++) {
+        const [x, y, z] = usd.points[i];
+        // World position in Z-up space
+        let wx, wy, wz;
+        if (transform) {
+            [wx, wy, wz] = applyTransform(x, y, z, transform);
+        }
+        else {
+            wx = x;
+            wy = y;
+            wz = z;
+        }
+        // Convert from Z-up to Y-up: swap Y and Z
+        // Z-up: X=right, Y=forward, Z=up
+        // Y-up: X=right, Y=up, Z=back (negated for right-hand rule)
+        positions[i * 3] = wx;
+        positions[i * 3 + 1] = wz; // Y-up = Z from Z-up
+        positions[i * 3 + 2] = -wy; // Z-back = -Y from Z-up
+    }
+    // Handle face vertex counts if present (for non-triangle faces)
+    let indices;
+    if (usd.faceVertexCounts && usd.faceVertexCounts.length > 0) {
+        indices = triangulatePolygons(usd.faceVertexIndices, usd.faceVertexCounts);
+    }
+    else {
+        // Already triangle indices
+        indices = new Uint32Array(usd.faceVertexIndices);
+    }
+    // Compute or use provided normals
+    const normals = usd.normals
+        ? flattenNormals(usd.normals, transform)
+        : computeNormals(positions, indices);
+    return {
+        expressId,
+        ifcType,
+        positions,
+        indices,
+        normals,
+        color: [0.8, 0.8, 0.8, 1.0], // Default gray, will be overridden by presentation
+    };
+}
+/**
+ * Triangulate polygon faces into triangles.
+ */
+function triangulatePolygons(faceVertexIndices, faceVertexCounts) {
+    const triangles = [];
+    let indexOffset = 0;
+    for (const count of faceVertexCounts) {
+        // Fan triangulation
+        const v0 = faceVertexIndices[indexOffset];
+        for (let i = 1; i < count - 1; i++) {
+            triangles.push(v0);
+            triangles.push(faceVertexIndices[indexOffset + i]);
+            triangles.push(faceVertexIndices[indexOffset + i + 1]);
+        }
+        indexOffset += count;
+    }
+    return new Uint32Array(triangles);
+}
+/**
+ * Get node-local transform matrix in Z-up space.
+ */
+function getNodeTransform(node) {
+    const xform = node.attributes.get(ATTR.TRANSFORM);
+    return xform?.transform ? flattenMatrix(xform.transform) : null;
+}
+/**
+ * Combine transforms using row-major, right-multiply order.
+ * For point * matrix math: childWorld = point * child * parent * root.
+ */
+function combineTransforms(nodeTransform, parentTransform) {
+    if (!nodeTransform)
+        return parentTransform;
+    if (!parentTransform)
+        return nodeTransform;
+    return multiplyMatrices(nodeTransform, parentTransform);
+}
+/**
+ * Flatten 2D matrix array to 1D Float32Array.
+ */
+function flattenMatrix(m) {
+    // USD uses row-major 4x4 matrices
+    const result = new Float32Array(16);
+    for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 4; col++) {
+            result[row * 4 + col] = m[row]?.[col] ?? (row === col ? 1 : 0);
+        }
+    }
+    return result;
+}
+/**
+ * Apply 4x4 transform matrix to a point.
+ */
+function applyTransform(x, y, z, m) {
+    // Row-major matrix multiplication with perspective divide
+    const w = m[3] * x + m[7] * y + m[11] * z + m[15];
+    return [
+        (m[0] * x + m[4] * y + m[8] * z + m[12]) / w,
+        (m[1] * x + m[5] * y + m[9] * z + m[13]) / w,
+        (m[2] * x + m[6] * y + m[10] * z + m[14]) / w,
+    ];
+}
+function isIfcTypeDefinition(node) {
+    const customData = node.attributes.get('customdata');
+    const originalStepInstance = customData?.originalStepInstance;
+    if (typeof originalStepInstance !== 'string')
+        return false;
+    return /=[A-Za-z0-9_]*Type\(/i.test(originalStepInstance);
+}
+function isInvisible(lineage) {
+    for (let i = lineage.length - 1; i >= 0; i--) {
+        const current = lineage[i];
+        const visibility = current.attributes.get(ATTR.VISIBILITY);
+        if (typeof visibility?.visibility === 'string') {
+            return visibility.visibility.toLowerCase() === 'invisible';
+        }
+    }
+    return false;
+}
+/**
+ * Apply presentation attributes (color, opacity) to mesh.
+ */
+function applyPresentation(mesh, lineage) {
+    // Check this node and its ancestors for presentation attributes
+    for (let i = lineage.length - 1; i >= 0; i--) {
+        const current = lineage[i];
+        const diffuse = current.attributes.get(ATTR.DIFFUSE_COLOR);
+        const opacity = current.attributes.get(ATTR.OPACITY);
+        if (diffuse) {
+            const [r, g, b] = diffuse;
+            const a = opacity ?? 1.0;
+            mesh.color = [r, g, b, a];
+            return;
+        }
+    }
+}
+/**
+ * Compute normals from triangle mesh.
+ */
+function computeNormals(positions, indices) {
+    const normals = new Float32Array(positions.length);
+    for (let i = 0; i < indices.length; i += 3) {
+        const i0 = indices[i] * 3;
+        const i1 = indices[i + 1] * 3;
+        const i2 = indices[i + 2] * 3;
+        // Triangle vertices
+        const ax = positions[i0], ay = positions[i0 + 1], az = positions[i0 + 2];
+        const bx = positions[i1], by = positions[i1 + 1], bz = positions[i1 + 2];
+        const cx = positions[i2], cy = positions[i2 + 1], cz = positions[i2 + 2];
+        // Edge vectors
+        const e1x = bx - ax, e1y = by - ay, e1z = bz - az;
+        const e2x = cx - ax, e2y = cy - ay, e2z = cz - az;
+        // Cross product
+        const nx = e1y * e2z - e1z * e2y;
+        const ny = e1z * e2x - e1x * e2z;
+        const nz = e1x * e2y - e1y * e2x;
+        // Accumulate (will normalize later)
+        normals[i0] += nx;
+        normals[i0 + 1] += ny;
+        normals[i0 + 2] += nz;
+        normals[i1] += nx;
+        normals[i1 + 1] += ny;
+        normals[i1 + 2] += nz;
+        normals[i2] += nx;
+        normals[i2 + 1] += ny;
+        normals[i2 + 2] += nz;
+    }
+    // Normalize
+    for (let i = 0; i < normals.length; i += 3) {
+        const len = Math.sqrt(normals[i] ** 2 + normals[i + 1] ** 2 + normals[i + 2] ** 2);
+        if (len > 0) {
+            normals[i] /= len;
+            normals[i + 1] /= len;
+            normals[i + 2] /= len;
+        }
+    }
+    return normals;
+}
+/**
+ * Flatten 2D normals array to 1D, transform, and convert to Y-up.
+ */
+function flattenNormals(normals, transform) {
+    const result = new Float32Array(normals.length * 3);
+    const hasTransform = transform !== null;
+    for (let i = 0; i < normals.length; i++) {
+        // Normal in Z-up space
+        let [nx, ny, nz] = normals[i];
+        if (hasTransform && transform) {
+            // Transform normal by upper 3x3 of matrix (rotation only)
+            const tnx = transform[0] * nx + transform[4] * ny + transform[8] * nz;
+            const tny = transform[1] * nx + transform[5] * ny + transform[9] * nz;
+            const tnz = transform[2] * nx + transform[6] * ny + transform[10] * nz;
+            // Renormalize
+            const len = Math.sqrt(tnx ** 2 + tny ** 2 + tnz ** 2);
+            if (len > 0) {
+                nx = tnx / len;
+                ny = tny / len;
+                nz = tnz / len;
+            }
+            else {
+                nx = tnx;
+                ny = tny;
+                nz = tnz;
+            }
+        }
+        // Convert from Z-up to Y-up (same as positions)
+        result[i * 3] = nx;
+        result[i * 3 + 1] = nz; // Y = Z
+        result[i * 3 + 2] = -ny; // Z = -Y
+    }
+    return result;
+}
+/**
+ * Multiply two 4x4 matrices (row-major).
+ */
+function multiplyMatrices(a, b) {
+    const result = new Float32Array(16);
+    for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 4; col++) {
+            let sum = 0;
+            for (let k = 0; k < 4; k++) {
+                sum += a[row * 4 + k] * b[k * 4 + col];
+            }
+            result[row * 4 + col] = sum;
+        }
+    }
+    return result;
+}
+//# sourceMappingURL=geometry-extractor.js.map

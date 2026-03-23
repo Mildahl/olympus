@@ -1,0 +1,1 @@
+{"version":3,"file":"entity-index.d.ts","sourceRoot":"","sources":["../src/entity-index.ts"],"names":[],"mappings":"AAIA;;GAEG;AAEH,OAAO,KAAK,EAAE,SAAS,EAAE,WAAW,EAAE,MAAM,YAAY,CAAC;AAEzD,qBAAa,kBAAkB;IAC7B,OAAO,CAAC,IAAI,CAAqC;IACjD,OAAO,CAAC,MAAM,CAAoC;IAElD,SAAS,CAAC,GAAG,EAAE,SAAS,GAAG,IAAI;IAY/B,KAAK,IAAI,WAAW;CAMrB"}

@@ -18,7 +18,14 @@ import { UIElement } from "./../drawUI/ui.js";
 
 import { UI } from "./ui/index.js";
 
-import { moduleRegistry, CoreModuleDefinitions } from "./modules/index.js";
+import {
+  moduleRegistry,
+  loadAndRegisterCoreModules,
+  coreModuleClosureNeedsBimTools,
+  getAllCoreModuleDependenciesFromManifest,
+  coreModuleManifestById,
+  ensureCoreModulesRegisteredForIds,
+} from "./modules/index.js";
 
 import { Editor } from "./context/world/Editor.js";
 
@@ -27,6 +34,8 @@ import { Viewport } from "./context/world/Viewport.js";
 import { ThreeHelpers } from "./context/world/utils/ThreeHelpers.js";
 
 import { OrientationGizmo } from "./context/world/editor/ui/ViewerElements/gizmo/OrientationGizmo.js";
+
+import { updateContextMobileViewportHints } from "./modules/world/mobileViewportDetection.js";
 
 class AECO {
   constructor(container) {
@@ -47,7 +56,7 @@ class AECO {
 
   }
 
-  createUI({ config, container, addons }){
+  async createUI({ config, container, addons }){
     if (!config || !container) {
       throw new Error("AECO constructor requires a configuration object and a DOM container.");
     }
@@ -83,7 +92,11 @@ class AECO {
 
     context.ui.threeDSettingsPanel.ensureBuilt();
 
-    this._loadModules();
+    this.modulesReady = this._loadModules();
+
+    await this.modulesReady;
+
+    this._syncMobileViewportHintsOnContext();
 
     this._setDefaultTheme();
 
@@ -317,7 +330,17 @@ class AECO {
     return moduleRegistry.get(moduleId)?.isActive || false;
   }
 
-  activateModule(moduleId) {
+  async activateModule(moduleId) {
+    if (coreModuleManifestById.has(moduleId)) {
+      await ensureCoreModulesRegisteredForIds(moduleRegistry, [moduleId]);
+
+      if (coreModuleClosureNeedsBimTools(
+        getAllCoreModuleDependenciesFromManifest([moduleId])
+      )) {
+        await this.tools.ensureBimToolsLoaded();
+      }
+    }
+
     const moduleDef = moduleRegistry.get(moduleId);
 
     if (moduleDef) {
@@ -336,13 +359,35 @@ class AECO {
     return moduleRegistry.deactivate(moduleId);
   }
 
-  _loadModules() {
+  async _loadModules() {
+    const coreModulesConfig = this.context.config.app.CoreModules || [];
 
-    for (const moduleDef of CoreModuleDefinitions) {
-      moduleRegistry.register(moduleDef);
+    const initialActiveIds = coreModulesConfig
+      .filter((c) => c.active !== false)
+      .map((c) => c.id)
+      .filter((id) => id != null);
+
+    const closureForBim = getAllCoreModuleDependenciesFromManifest(initialActiveIds);
+
+    if (coreModuleClosureNeedsBimTools(closureForBim)) {
+      await this.tools.ensureBimToolsLoaded();
     }
-    
-    this._loadCoreModules();
+
+    const { loadedDefinitions } = await loadAndRegisterCoreModules(
+      moduleRegistry,
+      initialActiveIds
+    );
+
+    const allIdsToActivate = moduleRegistry
+      .getAllDependencies(initialActiveIds)
+      .filter((id) => moduleRegistry.has(id));
+
+    this.ops.registerModuleOperators(loadedDefinitions, allIdsToActivate);
+
+    moduleRegistry.activateFromConfig(coreModulesConfig, {
+      context: this.context,
+      operators: this.ops
+    }, { uiDisabledModuleIds: this._uiDisabledModuleIds });
 
     this._loadAddons();
 
@@ -350,6 +395,10 @@ class AECO {
     if (layoutManager && typeof layoutManager.reorderBottomWorkspaceTabsByModuleOrder === 'function') {
       layoutManager.reorderBottomWorkspaceTabsByModuleOrder(this.context);
     }
+  }
+
+  _syncMobileViewportHintsOnContext() {
+    updateContextMobileViewportHints(this.context);
   }
   
   _createEnvironment(context, container) {
@@ -470,6 +519,48 @@ class AECO {
 
   }
 
+  _applySceneCameraConfig(editor, cameraSettings) {
+    if (!cameraSettings || !editor || !editor.viewportCamera) return;
+
+    const viewportCamera = editor.viewportCamera;
+
+    const orthographicFromConfig = cameraSettings.type === 'orthographic';
+
+    const perspectiveFromConfig = cameraSettings.type !== 'orthographic';
+
+    if (viewportCamera.isPerspectiveCamera && perspectiveFromConfig) {
+      if (cameraSettings.fov != null) viewportCamera.fov = cameraSettings.fov;
+
+      if (cameraSettings.near != null) viewportCamera.near = cameraSettings.near;
+
+      if (cameraSettings.far != null) viewportCamera.far = cameraSettings.far;
+
+      viewportCamera.updateProjectionMatrix();
+
+      editor.signals.cameraChanged.dispatch(viewportCamera);
+
+      return;
+    }
+
+    if (viewportCamera.isOrthographicCamera && orthographicFromConfig) {
+      if (cameraSettings.left != null) viewportCamera.left = cameraSettings.left;
+
+      if (cameraSettings.right != null) viewportCamera.right = cameraSettings.right;
+
+      if (cameraSettings.top != null) viewportCamera.top = cameraSettings.top;
+
+      if (cameraSettings.bottom != null) viewportCamera.bottom = cameraSettings.bottom;
+
+      if (cameraSettings.near != null) viewportCamera.near = cameraSettings.near;
+
+      if (cameraSettings.far != null) viewportCamera.far = cameraSettings.far;
+
+      viewportCamera.updateProjectionMatrix();
+
+      editor.signals.cameraChanged.dispatch(viewportCamera);
+    }
+  }
+
   _applySceneConfig() {
     const context = this.context;
 
@@ -527,6 +618,8 @@ class AECO {
 
     context.viewport.applySceneConfig(sceneConfig);
 
+    this._applySceneCameraConfig(editor, sceneConfig.camera);
+
     const axesSize = sceneConfig.axesSize != null ? sceneConfig.axesSize : 250;
 
     const axesGroup = ThreeHelpers.addAxes(editor.sceneHelpers, axesSize);
@@ -542,30 +635,6 @@ class AECO {
     const theme = ui.theme.default;
 
     this.ops.execute("theme.change_to", this.context, theme);
-  }
-
-  _loadCoreModules() {
-    const coreModulesConfig = this.context.config.app.CoreModules || [];
-
-    const initialActiveIds = coreModulesConfig
-      .filter((c) => c.active !== false)
-      .map((c) => c.id)
-      .filter((id) => id != null);
-
-    // Register operators for the full activation set (including dependencies), so e.g.
-    // code.scripting operators are available when bim.project (and thus code.scripting) is activated.
-    const allIdsToActivate = moduleRegistry
-      .getAllDependencies(initialActiveIds)
-      .filter((id) => moduleRegistry.has(id));
-
-    const orderedIds = moduleRegistry.resolveLoadOrder(allIdsToActivate);
-
-    this.ops.registerModuleOperators(CoreModuleDefinitions, orderedIds);
-
-    moduleRegistry.activateFromConfig(coreModulesConfig, {
-      context: this.context,
-      operators: this.ops
-    }, { uiDisabledModuleIds: this._uiDisabledModuleIds });
   }
 
   _loadAddons() {

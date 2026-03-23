@@ -730,14 +730,6 @@ class FloatingPanel extends UIPanel {
 
     // Pill container styling
     Object.assign(icon.dom.style, {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '6px',
-      padding: '4px 8px',
-      borderRadius: '12px',
-      backdropFilter: 'blur(10px)',
-      background: 'var(--glass-surface)',
-      cursor: 'pointer',
       zIndex: '1',
       transition: 'transform 200ms ease, opacity 200ms ease'
     });

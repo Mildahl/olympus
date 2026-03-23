@@ -138,6 +138,8 @@ function Viewport( context, ops, parent ) {
 
 	const box = new THREE.Box3();
 
+	const orbitSelectionBounds = new THREE.Box3();
+
 	const SELECTION_BOX_COLOR_LIGHT = 0x008040; 
 
 	const SELECTION_BOX_COLOR_DARK = 0x008040;  
@@ -629,6 +631,44 @@ function Viewport( context, ops, parent ) {
 		if ( object !== null && object !== scene && object !== camera ) {
 
 			// TODO: Re-enable transform controls - will error on isInstanceProxy objects
+		}
+
+		const navigationController = editor.navigationController;
+
+		if (
+			object !== null &&
+			object !== scene &&
+			object !== camera &&
+			navigationController &&
+			navigationController.mode === 'ORBIT'
+		) {
+
+			const previousOrbitCenter = controls.center.clone();
+
+			object.updateWorldMatrix( true, true );
+
+			orbitSelectionBounds.setFromObject( object, true );
+
+			const targetOrbitCenter = new THREE.Vector3();
+
+			if ( orbitSelectionBounds.isEmpty() === false ) {
+
+				orbitSelectionBounds.getCenter( targetOrbitCenter );
+
+			} else {
+
+				object.getWorldPosition( targetOrbitCenter );
+
+			}
+
+			const orbitPivotDelta = new THREE.Vector3().subVectors( targetOrbitCenter, previousOrbitCenter );
+
+			camera.position.add( orbitPivotDelta );
+
+			controls.center.copy( targetOrbitCenter );
+
+			signals.cameraChanged.dispatch( camera );
+
 		}
 
 		editor.selector.updateSelectionColors();

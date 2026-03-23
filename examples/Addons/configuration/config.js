@@ -20,7 +20,7 @@ const ApplicationConfig = {
   Settings: {
     save: true,
     persistSettings: true,
-    devMode: true,
+    devMode: false,
     amountTestCubes: 3,
     scriptBaseUrl: null,
     pyodideBaseUrl: ROOT + "/external/vendor/pyodide/v0.29.0/full",

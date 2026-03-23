@@ -409,8 +409,45 @@ body {
   flex-direction: row;
 }
 
+#sidebar .Row,
+#properties .Row {
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  min-height: 32px;
+}
+
 #sidebar .Row {
   padding: var(--phi-0-5) var(--phi-1);
+}
+
+#sidebar .Row .Label,
+#properties .Row .Label {
+  color: var(--theme-text-secondary);
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  width: 100px;
+}
+
+.properties-panel .Panel {
+  height: 100%;
+  margin: 0;
+  overflow: auto;
+  width: 100%;
+}
+
+#viewport {
+  border-radius: 0;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+#viewport .Text {
+  pointer-events: none;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
 }
 
 #sidebar .PanelContent{
@@ -1271,7 +1308,7 @@ button.material-symbols-outlined {
 }
 
 .SectionBoxPanel input[type="number"] {
-  background: var(--theme-background-1012);
+  background: var(--theme-background-1618);
   border: 1px solid var(--border);
   border-radius: 4px;
   color: inherit;
@@ -2051,7 +2088,7 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 }
 
 .nav-kbd {
-  background: var(--theme-background-1012);
+  background: var(--theme-background-1618);
   border: 1px solid var(--border);
   border-radius: 4px;
   font-family: monospace;
@@ -2086,9 +2123,23 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   min-width: 36px;
   padding: 0 12px;
   text-transform: uppercase;
+  transition:
+    background 0.08s ease,
+    border-color 0.08s ease,
+    border-bottom-width 0.08s ease,
+    box-shadow 0.08s ease,
+    transform 0.08s ease;
 }
 
-.nav-key-group {
+.kbd-like.key--on,
+.nav-kbd.key--on {
+  background: var(--theme-background-1618);
+  border-bottom-width: 2px;
+  box-shadow: none;
+  transform: translateY(2px);
+}
+
+.nav-key-row .nav-key-group {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -2128,6 +2179,260 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   display: flex;
   gap: 12px;
   padding: 6px 0;
+}
+
+.addon-navigation-kbd-cluster {
+  --addon-nav-kbd-gap: 4px;
+  --addon-nav-kbd-key: 2.2rem;
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  gap: var(--addon-nav-kbd-gap);
+  width: 100%;
+}
+
+.addon-navigation-kbd-grid {
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--addon-nav-kbd-gap);
+  grid-auto-rows: auto;
+  grid-template-columns: repeat(3, minmax(var(--addon-nav-kbd-key), 1fr));
+  justify-content: center;
+  max-width: 100%;
+  width: min(100%, calc(3 * var(--addon-nav-kbd-key) + 2 * var(--addon-nav-kbd-gap)));
+}
+
+.addon-navigation-key-cell {
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  width: 100%;
+}
+
+.addon-navigation-kbd-row {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.addon-navigation-kbd-row--sprint {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.addon-navigation-kbd-row--sprint .addon-nav-sprint-toggle {
+  box-sizing: border-box;
+  max-width: 100%;
+  width: 100%;
+}
+
+.addon-navigation-viewport-overlay {
+  box-sizing: border-box;
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  touch-action: none;
+  width: 100%;
+  z-index: 1100;
+}
+
+.addon-navigation-viewport-overlay-inner {
+  align-items: flex-end;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  justify-content: space-between;
+  padding: 0 calc(var(--margin) * 0.65)
+    calc(var(--margin) * 0.65 + var(--addon-navigation-controls-lift))
+    calc(var(--margin) * 0.65);
+  pointer-events: none;
+  width: 100%;
+}
+
+.addon-navigation-left-stack {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  justify-content: flex-end;
+  max-width: min(92vw, 320px);
+  pointer-events: none;
+}
+
+.addon-navigation-left-primary-row {
+  align-items: flex-end;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: flex-start;
+  max-width: 100%;
+  pointer-events: none;
+}
+
+.addon-navigation-left-column-content {
+  align-items: flex-start;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 4px;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.addon-navigation-right-stack {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.addon-navigation-keys-move-checkbox-row {
+  align-items: center;
+  align-self: flex-end;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  gap: 6px;
+  margin-bottom: 2px;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+}
+
+.addon-navigation-keys-move-checkbox {
+  accent-color: rgba(0, 200, 180, 0.9);
+  cursor: pointer;
+  flex-shrink: 0;
+  height: 1rem;
+  margin: 0;
+  width: 1rem;
+}
+
+.addon-navigation-keys-move-checkbox-label {
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+
+.addon-navigation-left-keys-host {
+  max-width: min(88vw, 260px);
+  pointer-events: auto;
+  touch-action: none;
+  width: 100%;
+}
+
+
+.addon-navigation-move-stick-host,
+.addon-navigation-look-stick-host {
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.addon-navigation-joystick {
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  touch-action: none;
+}
+
+.addon-navigation-joystick-knob {
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+  pointer-events: none;
+  transition: transform 0.05s ease-out;
+}
+
+.addon-navigation-joystick-label {
+  bottom: -18px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.addon-navigation-move-aux-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.addon-navigation-move-aux-button {
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  font-size: 15px;
+  height: 40px;
+  justify-content: center;
+  padding: 0;
+  touch-action: none;
+  user-select: none;
+  width: 40px;
+}
+
+#addon-navigation-viewport-keyboard {
+  --addon-navigation-controls-lift: 3.5rem;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+#addon-navigation-viewport-keyboard .addon-navigation-kbd-grid {
+  gap: var(--addon-nav-kbd-gap);
+}
+
+
+#addon-navigation-viewport-keyboard .addon-navigation-kbd-sprint-key {
+  cursor: pointer;
+  min-width: 2.75rem;
+}
+
+.addon-nav-sprint-toggle {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
 }
 
 .Network {
@@ -2708,6 +3013,48 @@ textarea.success {
 
 .Tooltip.visible {
   opacity: 1;
+}
+
+.MobileLandscapeGuidance {
+  align-items: center;
+  background: var(--glass-surface);
+  backdrop-filter: blur(8px);
+  box-sizing: border-box;
+  display: none;
+  flex-direction: column;
+  inset: 0;
+  justify-content: center;
+  padding: var(--phi-2);
+  pointer-events: auto;
+  position: fixed;
+  z-index: 10050;
+}
+
+.MobileLandscapeGuidance-panel {
+  background: var(--theme-background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-shadow);
+  gap: var(--phi-1);
+  max-width: 22rem;
+  padding: var(--phi-2);
+  text-align: center;
+}
+
+.MobileLandscapeGuidance-title {
+  color: var(--theme-text);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin: 0 0 var(--phi-0-5) 0;
+}
+
+.MobileLandscapeGuidance-body {
+  color: var(--theme-subtext);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+  margin: 0;
 }
 
 .ViewpointAttributePanel {
@@ -3505,6 +3852,49 @@ textarea.success {
 .World #SideWorkspaceRight .RightWorkspaceTabbedPanel .Panel {
   max-width: 100%;
   width: 100%;
+}
+
+.TabPanel .PanelContent > .TabbedPanel {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  max-width: 100%;
+  min-height: 0;
+  min-width: 0;
+}
+
+.TabPanel .PanelContent > .TabbedPanel .Tabs {
+  flex-shrink: 0;
+}
+
+.TabPanel .PanelContent > .TabbedPanel .Panels {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  top: auto;
+}
+
+.TabPanel .PanelContent > .TabbedPanel .Tabs .Tab {
+  color: var(--theme-text-light);
+}
+
+.TabPanel .PanelContent > .TabbedPanel .Tabs .Tab:hover {
+  color: var(--theme-text);
+}
+
+.TabPanel .PanelContent > .TabbedPanel .Tabs .Tab.selected,
+.TabPanel .PanelContent > .TabbedPanel .Tabs .Tab.active {
+  background: transparent;
+  border-bottom: 2px solid var(--brand-color);
+  box-shadow: none;
+  color: var(--brand-color);
+  transform: none;
+}
+
+#objectTab .Panel, #geometryTab .Panel, #materialTab .Panel, #scriptTab .Panel {
+  padding: var(--phi-1);
 }
 
 .World #BottomWorkspace .BottomWorkspaceTabbedPanel {

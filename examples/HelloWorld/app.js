@@ -6,12 +6,6 @@ const simulation = new AECO();
 
 const context = simulation.context;
 
-simulation.createUI({ config: AECOConfiguration, container: document.body });
-
-simulation.moduleRegistry.logActiveModulesAndUI();
-
-simulation.tools.world.scene.addCube(context, 1, "grey");      
-
 const load5DModel = async () => {
 
     const ROOT = window.__OLYMPUS_ROOT__ || '';
@@ -32,12 +26,20 @@ const loadGeometryData = async () => {
     );
 };
 
-simulation.enablePython().then(() => {
+(async function bootstrapHelloWorld() {
+  await simulation.createUI({ config: AECOConfiguration, container: document.body });
+
+  simulation.moduleRegistry.logActiveModulesAndUI();
+
+  simulation.tools.world.scene.addCube(context, 1, "grey");
+
+  simulation.enablePython().then(() => {
     simulation.enableBIM().then(() => {
         load5DModel().then(() => {
             loadGeometryData();
         });
     });
   });
+})();
 
 export default simulation;

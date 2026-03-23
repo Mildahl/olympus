@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { UIButton, UIInput, UIPanel, UIRow, UISelect, UIText, UITextArea } from './../../../ui/base/ui.js';
+import { UIButton, UIInput, UIPanel, UIRow, UISelect, UIText, UITextArea } from '../../../../drawUI/ui.js';
 
 import { SetMaterialCommand } from './commands/SetMaterialCommand.js';
 

@@ -1,4 +1,4 @@
-import { UIRow, UIText, UISpan, UIBreak, UICheckbox } from './../../../ui/base/ui.js';
+import { UIRow, UIText, UISpan, UIBreak, UICheckbox } from '../../../../drawUI/ui.js';
 
 function SidebarGeometryBufferGeometry( editor ) {
 

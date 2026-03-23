@@ -1,0 +1,2467 @@
+/**
+ * IFC Enumerations
+ * Generated from EXPRESS schema: IFC4_ADD2_TC1
+ *
+ * DO NOT EDIT - This file is auto-generated
+ */
+/** IfcActionRequestTypeEnum */
+export var IfcActionRequestTypeEnum;
+(function (IfcActionRequestTypeEnum) {
+    IfcActionRequestTypeEnum["EMAIL"] = "EMAIL";
+    IfcActionRequestTypeEnum["FAX"] = "FAX";
+    IfcActionRequestTypeEnum["PHONE"] = "PHONE";
+    IfcActionRequestTypeEnum["POST"] = "POST";
+    IfcActionRequestTypeEnum["VERBAL"] = "VERBAL";
+    IfcActionRequestTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcActionRequestTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcActionRequestTypeEnum || (IfcActionRequestTypeEnum = {}));
+/** IfcActionSourceTypeEnum */
+export var IfcActionSourceTypeEnum;
+(function (IfcActionSourceTypeEnum) {
+    IfcActionSourceTypeEnum["DEAD_LOAD_G"] = "DEAD_LOAD_G";
+    IfcActionSourceTypeEnum["COMPLETION_G1"] = "COMPLETION_G1";
+    IfcActionSourceTypeEnum["LIVE_LOAD_Q"] = "LIVE_LOAD_Q";
+    IfcActionSourceTypeEnum["SNOW_S"] = "SNOW_S";
+    IfcActionSourceTypeEnum["WIND_W"] = "WIND_W";
+    IfcActionSourceTypeEnum["PRESTRESSING_P"] = "PRESTRESSING_P";
+    IfcActionSourceTypeEnum["SETTLEMENT_U"] = "SETTLEMENT_U";
+    IfcActionSourceTypeEnum["TEMPERATURE_T"] = "TEMPERATURE_T";
+    IfcActionSourceTypeEnum["EARTHQUAKE_E"] = "EARTHQUAKE_E";
+    IfcActionSourceTypeEnum["FIRE"] = "FIRE";
+    IfcActionSourceTypeEnum["IMPULSE"] = "IMPULSE";
+    IfcActionSourceTypeEnum["IMPACT"] = "IMPACT";
+    IfcActionSourceTypeEnum["TRANSPORT"] = "TRANSPORT";
+    IfcActionSourceTypeEnum["ERECTION"] = "ERECTION";
+    IfcActionSourceTypeEnum["PROPPING"] = "PROPPING";
+    IfcActionSourceTypeEnum["SYSTEM_IMPERFECTION"] = "SYSTEM_IMPERFECTION";
+    IfcActionSourceTypeEnum["SHRINKAGE"] = "SHRINKAGE";
+    IfcActionSourceTypeEnum["CREEP"] = "CREEP";
+    IfcActionSourceTypeEnum["LACK_OF_FIT"] = "LACK_OF_FIT";
+    IfcActionSourceTypeEnum["BUOYANCY"] = "BUOYANCY";
+    IfcActionSourceTypeEnum["ICE"] = "ICE";
+    IfcActionSourceTypeEnum["CURRENT"] = "CURRENT";
+    IfcActionSourceTypeEnum["WAVE"] = "WAVE";
+    IfcActionSourceTypeEnum["RAIN"] = "RAIN";
+    IfcActionSourceTypeEnum["BRAKES"] = "BRAKES";
+    IfcActionSourceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcActionSourceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcActionSourceTypeEnum || (IfcActionSourceTypeEnum = {}));
+/** IfcActionTypeEnum */
+export var IfcActionTypeEnum;
+(function (IfcActionTypeEnum) {
+    IfcActionTypeEnum["PERMANENT_G"] = "PERMANENT_G";
+    IfcActionTypeEnum["VARIABLE_Q"] = "VARIABLE_Q";
+    IfcActionTypeEnum["EXTRAORDINARY_A"] = "EXTRAORDINARY_A";
+    IfcActionTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcActionTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcActionTypeEnum || (IfcActionTypeEnum = {}));
+/** IfcActuatorTypeEnum */
+export var IfcActuatorTypeEnum;
+(function (IfcActuatorTypeEnum) {
+    IfcActuatorTypeEnum["ELECTRICACTUATOR"] = "ELECTRICACTUATOR";
+    IfcActuatorTypeEnum["HANDOPERATEDACTUATOR"] = "HANDOPERATEDACTUATOR";
+    IfcActuatorTypeEnum["HYDRAULICACTUATOR"] = "HYDRAULICACTUATOR";
+    IfcActuatorTypeEnum["PNEUMATICACTUATOR"] = "PNEUMATICACTUATOR";
+    IfcActuatorTypeEnum["THERMOSTATICACTUATOR"] = "THERMOSTATICACTUATOR";
+    IfcActuatorTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcActuatorTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcActuatorTypeEnum || (IfcActuatorTypeEnum = {}));
+/** IfcAddressTypeEnum */
+export var IfcAddressTypeEnum;
+(function (IfcAddressTypeEnum) {
+    IfcAddressTypeEnum["OFFICE"] = "OFFICE";
+    IfcAddressTypeEnum["SITE"] = "SITE";
+    IfcAddressTypeEnum["HOME"] = "HOME";
+    IfcAddressTypeEnum["DISTRIBUTIONPOINT"] = "DISTRIBUTIONPOINT";
+    IfcAddressTypeEnum["USERDEFINED"] = "USERDEFINED";
+})(IfcAddressTypeEnum || (IfcAddressTypeEnum = {}));
+/** IfcAirTerminalBoxTypeEnum */
+export var IfcAirTerminalBoxTypeEnum;
+(function (IfcAirTerminalBoxTypeEnum) {
+    IfcAirTerminalBoxTypeEnum["CONSTANTFLOW"] = "CONSTANTFLOW";
+    IfcAirTerminalBoxTypeEnum["VARIABLEFLOWPRESSUREDEPENDANT"] = "VARIABLEFLOWPRESSUREDEPENDANT";
+    IfcAirTerminalBoxTypeEnum["VARIABLEFLOWPRESSUREINDEPENDANT"] = "VARIABLEFLOWPRESSUREINDEPENDANT";
+    IfcAirTerminalBoxTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcAirTerminalBoxTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcAirTerminalBoxTypeEnum || (IfcAirTerminalBoxTypeEnum = {}));
+/** IfcAirTerminalTypeEnum */
+export var IfcAirTerminalTypeEnum;
+(function (IfcAirTerminalTypeEnum) {
+    IfcAirTerminalTypeEnum["DIFFUSER"] = "DIFFUSER";
+    IfcAirTerminalTypeEnum["GRILLE"] = "GRILLE";
+    IfcAirTerminalTypeEnum["LOUVRE"] = "LOUVRE";
+    IfcAirTerminalTypeEnum["REGISTER"] = "REGISTER";
+    IfcAirTerminalTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcAirTerminalTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcAirTerminalTypeEnum || (IfcAirTerminalTypeEnum = {}));
+/** IfcAirToAirHeatRecoveryTypeEnum */
+export var IfcAirToAirHeatRecoveryTypeEnum;
+(function (IfcAirToAirHeatRecoveryTypeEnum) {
+    IfcAirToAirHeatRecoveryTypeEnum["FIXEDPLATECOUNTERFLOWEXCHANGER"] = "FIXEDPLATECOUNTERFLOWEXCHANGER";
+    IfcAirToAirHeatRecoveryTypeEnum["FIXEDPLATECROSSFLOWEXCHANGER"] = "FIXEDPLATECROSSFLOWEXCHANGER";
+    IfcAirToAirHeatRecoveryTypeEnum["FIXEDPLATEPARALLELFLOWEXCHANGER"] = "FIXEDPLATEPARALLELFLOWEXCHANGER";
+    IfcAirToAirHeatRecoveryTypeEnum["ROTARYWHEEL"] = "ROTARYWHEEL";
+    IfcAirToAirHeatRecoveryTypeEnum["RUNAROUNDCOILLOOP"] = "RUNAROUNDCOILLOOP";
+    IfcAirToAirHeatRecoveryTypeEnum["HEATPIPE"] = "HEATPIPE";
+    IfcAirToAirHeatRecoveryTypeEnum["TWINTOWERENTHALPYRECOVERYLOOPS"] = "TWINTOWERENTHALPYRECOVERYLOOPS";
+    IfcAirToAirHeatRecoveryTypeEnum["THERMOSIPHONSEALEDTUBEHEATEXCHANGERS"] = "THERMOSIPHONSEALEDTUBEHEATEXCHANGERS";
+    IfcAirToAirHeatRecoveryTypeEnum["THERMOSIPHONCOILTYPEHEATEXCHANGERS"] = "THERMOSIPHONCOILTYPEHEATEXCHANGERS";
+    IfcAirToAirHeatRecoveryTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcAirToAirHeatRecoveryTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcAirToAirHeatRecoveryTypeEnum || (IfcAirToAirHeatRecoveryTypeEnum = {}));
+/** IfcAlarmTypeEnum */
+export var IfcAlarmTypeEnum;
+(function (IfcAlarmTypeEnum) {
+    IfcAlarmTypeEnum["BELL"] = "BELL";
+    IfcAlarmTypeEnum["BREAKGLASSBUTTON"] = "BREAKGLASSBUTTON";
+    IfcAlarmTypeEnum["LIGHT"] = "LIGHT";
+    IfcAlarmTypeEnum["MANUALPULLBOX"] = "MANUALPULLBOX";
+    IfcAlarmTypeEnum["SIREN"] = "SIREN";
+    IfcAlarmTypeEnum["WHISTLE"] = "WHISTLE";
+    IfcAlarmTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcAlarmTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcAlarmTypeEnum || (IfcAlarmTypeEnum = {}));
+/** IfcAnalysisModelTypeEnum */
+export var IfcAnalysisModelTypeEnum;
+(function (IfcAnalysisModelTypeEnum) {
+    IfcAnalysisModelTypeEnum["IN_PLANE_LOADING_2D"] = "IN_PLANE_LOADING_2D";
+    IfcAnalysisModelTypeEnum["OUT_PLANE_LOADING_2D"] = "OUT_PLANE_LOADING_2D";
+    IfcAnalysisModelTypeEnum["LOADING_3D"] = "LOADING_3D";
+    IfcAnalysisModelTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcAnalysisModelTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcAnalysisModelTypeEnum || (IfcAnalysisModelTypeEnum = {}));
+/** IfcAnalysisTheoryTypeEnum */
+export var IfcAnalysisTheoryTypeEnum;
+(function (IfcAnalysisTheoryTypeEnum) {
+    IfcAnalysisTheoryTypeEnum["FIRST_ORDER_THEORY"] = "FIRST_ORDER_THEORY";
+    IfcAnalysisTheoryTypeEnum["SECOND_ORDER_THEORY"] = "SECOND_ORDER_THEORY";
+    IfcAnalysisTheoryTypeEnum["THIRD_ORDER_THEORY"] = "THIRD_ORDER_THEORY";
+    IfcAnalysisTheoryTypeEnum["FULL_NONLINEAR_THEORY"] = "FULL_NONLINEAR_THEORY";
+    IfcAnalysisTheoryTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcAnalysisTheoryTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcAnalysisTheoryTypeEnum || (IfcAnalysisTheoryTypeEnum = {}));
+/** IfcArithmeticOperatorEnum */
+export var IfcArithmeticOperatorEnum;
+(function (IfcArithmeticOperatorEnum) {
+    IfcArithmeticOperatorEnum["ADD"] = "ADD";
+    IfcArithmeticOperatorEnum["DIVIDE"] = "DIVIDE";
+    IfcArithmeticOperatorEnum["MULTIPLY"] = "MULTIPLY";
+    IfcArithmeticOperatorEnum["SUBTRACT"] = "SUBTRACT";
+})(IfcArithmeticOperatorEnum || (IfcArithmeticOperatorEnum = {}));
+/** IfcAssemblyPlaceEnum */
+export var IfcAssemblyPlaceEnum;
+(function (IfcAssemblyPlaceEnum) {
+    IfcAssemblyPlaceEnum["SITE"] = "SITE";
+    IfcAssemblyPlaceEnum["FACTORY"] = "FACTORY";
+    IfcAssemblyPlaceEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcAssemblyPlaceEnum || (IfcAssemblyPlaceEnum = {}));
+/** IfcAudioVisualApplianceTypeEnum */
+export var IfcAudioVisualApplianceTypeEnum;
+(function (IfcAudioVisualApplianceTypeEnum) {
+    IfcAudioVisualApplianceTypeEnum["AMPLIFIER"] = "AMPLIFIER";
+    IfcAudioVisualApplianceTypeEnum["CAMERA"] = "CAMERA";
+    IfcAudioVisualApplianceTypeEnum["DISPLAY"] = "DISPLAY";
+    IfcAudioVisualApplianceTypeEnum["MICROPHONE"] = "MICROPHONE";
+    IfcAudioVisualApplianceTypeEnum["PLAYER"] = "PLAYER";
+    IfcAudioVisualApplianceTypeEnum["PROJECTOR"] = "PROJECTOR";
+    IfcAudioVisualApplianceTypeEnum["RECEIVER"] = "RECEIVER";
+    IfcAudioVisualApplianceTypeEnum["SPEAKER"] = "SPEAKER";
+    IfcAudioVisualApplianceTypeEnum["SWITCHER"] = "SWITCHER";
+    IfcAudioVisualApplianceTypeEnum["TELEPHONE"] = "TELEPHONE";
+    IfcAudioVisualApplianceTypeEnum["TUNER"] = "TUNER";
+    IfcAudioVisualApplianceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcAudioVisualApplianceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcAudioVisualApplianceTypeEnum || (IfcAudioVisualApplianceTypeEnum = {}));
+/** IfcBSplineCurveForm */
+export var IfcBSplineCurveForm;
+(function (IfcBSplineCurveForm) {
+    IfcBSplineCurveForm["POLYLINE_FORM"] = "POLYLINE_FORM";
+    IfcBSplineCurveForm["CIRCULAR_ARC"] = "CIRCULAR_ARC";
+    IfcBSplineCurveForm["ELLIPTIC_ARC"] = "ELLIPTIC_ARC";
+    IfcBSplineCurveForm["PARABOLIC_ARC"] = "PARABOLIC_ARC";
+    IfcBSplineCurveForm["HYPERBOLIC_ARC"] = "HYPERBOLIC_ARC";
+    IfcBSplineCurveForm["UNSPECIFIED"] = "UNSPECIFIED";
+})(IfcBSplineCurveForm || (IfcBSplineCurveForm = {}));
+/** IfcBSplineSurfaceForm */
+export var IfcBSplineSurfaceForm;
+(function (IfcBSplineSurfaceForm) {
+    IfcBSplineSurfaceForm["PLANE_SURF"] = "PLANE_SURF";
+    IfcBSplineSurfaceForm["CYLINDRICAL_SURF"] = "CYLINDRICAL_SURF";
+    IfcBSplineSurfaceForm["CONICAL_SURF"] = "CONICAL_SURF";
+    IfcBSplineSurfaceForm["SPHERICAL_SURF"] = "SPHERICAL_SURF";
+    IfcBSplineSurfaceForm["TOROIDAL_SURF"] = "TOROIDAL_SURF";
+    IfcBSplineSurfaceForm["SURF_OF_REVOLUTION"] = "SURF_OF_REVOLUTION";
+    IfcBSplineSurfaceForm["RULED_SURF"] = "RULED_SURF";
+    IfcBSplineSurfaceForm["GENERALISED_CONE"] = "GENERALISED_CONE";
+    IfcBSplineSurfaceForm["QUADRIC_SURF"] = "QUADRIC_SURF";
+    IfcBSplineSurfaceForm["SURF_OF_LINEAR_EXTRUSION"] = "SURF_OF_LINEAR_EXTRUSION";
+    IfcBSplineSurfaceForm["UNSPECIFIED"] = "UNSPECIFIED";
+})(IfcBSplineSurfaceForm || (IfcBSplineSurfaceForm = {}));
+/** IfcBeamTypeEnum */
+export var IfcBeamTypeEnum;
+(function (IfcBeamTypeEnum) {
+    IfcBeamTypeEnum["BEAM"] = "BEAM";
+    IfcBeamTypeEnum["JOIST"] = "JOIST";
+    IfcBeamTypeEnum["HOLLOWCORE"] = "HOLLOWCORE";
+    IfcBeamTypeEnum["LINTEL"] = "LINTEL";
+    IfcBeamTypeEnum["SPANDREL"] = "SPANDREL";
+    IfcBeamTypeEnum["T_BEAM"] = "T_BEAM";
+    IfcBeamTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcBeamTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcBeamTypeEnum || (IfcBeamTypeEnum = {}));
+/** IfcBenchmarkEnum */
+export var IfcBenchmarkEnum;
+(function (IfcBenchmarkEnum) {
+    IfcBenchmarkEnum["GREATERTHAN"] = "GREATERTHAN";
+    IfcBenchmarkEnum["GREATERTHANOREQUALTO"] = "GREATERTHANOREQUALTO";
+    IfcBenchmarkEnum["LESSTHAN"] = "LESSTHAN";
+    IfcBenchmarkEnum["LESSTHANOREQUALTO"] = "LESSTHANOREQUALTO";
+    IfcBenchmarkEnum["EQUALTO"] = "EQUALTO";
+    IfcBenchmarkEnum["NOTEQUALTO"] = "NOTEQUALTO";
+    IfcBenchmarkEnum["INCLUDES"] = "INCLUDES";
+    IfcBenchmarkEnum["NOTINCLUDES"] = "NOTINCLUDES";
+    IfcBenchmarkEnum["INCLUDEDIN"] = "INCLUDEDIN";
+    IfcBenchmarkEnum["NOTINCLUDEDIN"] = "NOTINCLUDEDIN";
+})(IfcBenchmarkEnum || (IfcBenchmarkEnum = {}));
+/** IfcBoilerTypeEnum */
+export var IfcBoilerTypeEnum;
+(function (IfcBoilerTypeEnum) {
+    IfcBoilerTypeEnum["WATER"] = "WATER";
+    IfcBoilerTypeEnum["STEAM"] = "STEAM";
+    IfcBoilerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcBoilerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcBoilerTypeEnum || (IfcBoilerTypeEnum = {}));
+/** IfcBooleanOperator */
+export var IfcBooleanOperator;
+(function (IfcBooleanOperator) {
+    IfcBooleanOperator["UNION"] = "UNION";
+    IfcBooleanOperator["INTERSECTION"] = "INTERSECTION";
+    IfcBooleanOperator["DIFFERENCE"] = "DIFFERENCE";
+})(IfcBooleanOperator || (IfcBooleanOperator = {}));
+/** IfcBuildingElementPartTypeEnum */
+export var IfcBuildingElementPartTypeEnum;
+(function (IfcBuildingElementPartTypeEnum) {
+    IfcBuildingElementPartTypeEnum["INSULATION"] = "INSULATION";
+    IfcBuildingElementPartTypeEnum["PRECASTPANEL"] = "PRECASTPANEL";
+    IfcBuildingElementPartTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcBuildingElementPartTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcBuildingElementPartTypeEnum || (IfcBuildingElementPartTypeEnum = {}));
+/** IfcBuildingElementProxyTypeEnum */
+export var IfcBuildingElementProxyTypeEnum;
+(function (IfcBuildingElementProxyTypeEnum) {
+    IfcBuildingElementProxyTypeEnum["COMPLEX"] = "COMPLEX";
+    IfcBuildingElementProxyTypeEnum["ELEMENT"] = "ELEMENT";
+    IfcBuildingElementProxyTypeEnum["PARTIAL"] = "PARTIAL";
+    IfcBuildingElementProxyTypeEnum["PROVISIONFORVOID"] = "PROVISIONFORVOID";
+    IfcBuildingElementProxyTypeEnum["PROVISIONFORSPACE"] = "PROVISIONFORSPACE";
+    IfcBuildingElementProxyTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcBuildingElementProxyTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcBuildingElementProxyTypeEnum || (IfcBuildingElementProxyTypeEnum = {}));
+/** IfcBuildingSystemTypeEnum */
+export var IfcBuildingSystemTypeEnum;
+(function (IfcBuildingSystemTypeEnum) {
+    IfcBuildingSystemTypeEnum["FENESTRATION"] = "FENESTRATION";
+    IfcBuildingSystemTypeEnum["FOUNDATION"] = "FOUNDATION";
+    IfcBuildingSystemTypeEnum["LOADBEARING"] = "LOADBEARING";
+    IfcBuildingSystemTypeEnum["OUTERSHELL"] = "OUTERSHELL";
+    IfcBuildingSystemTypeEnum["SHADING"] = "SHADING";
+    IfcBuildingSystemTypeEnum["TRANSPORT"] = "TRANSPORT";
+    IfcBuildingSystemTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcBuildingSystemTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcBuildingSystemTypeEnum || (IfcBuildingSystemTypeEnum = {}));
+/** IfcBurnerTypeEnum */
+export var IfcBurnerTypeEnum;
+(function (IfcBurnerTypeEnum) {
+    IfcBurnerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcBurnerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcBurnerTypeEnum || (IfcBurnerTypeEnum = {}));
+/** IfcCableCarrierFittingTypeEnum */
+export var IfcCableCarrierFittingTypeEnum;
+(function (IfcCableCarrierFittingTypeEnum) {
+    IfcCableCarrierFittingTypeEnum["BEND"] = "BEND";
+    IfcCableCarrierFittingTypeEnum["CROSS"] = "CROSS";
+    IfcCableCarrierFittingTypeEnum["REDUCER"] = "REDUCER";
+    IfcCableCarrierFittingTypeEnum["TEE"] = "TEE";
+    IfcCableCarrierFittingTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCableCarrierFittingTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCableCarrierFittingTypeEnum || (IfcCableCarrierFittingTypeEnum = {}));
+/** IfcCableCarrierSegmentTypeEnum */
+export var IfcCableCarrierSegmentTypeEnum;
+(function (IfcCableCarrierSegmentTypeEnum) {
+    IfcCableCarrierSegmentTypeEnum["CABLELADDERSEGMENT"] = "CABLELADDERSEGMENT";
+    IfcCableCarrierSegmentTypeEnum["CABLETRAYSEGMENT"] = "CABLETRAYSEGMENT";
+    IfcCableCarrierSegmentTypeEnum["CABLETRUNKINGSEGMENT"] = "CABLETRUNKINGSEGMENT";
+    IfcCableCarrierSegmentTypeEnum["CONDUITSEGMENT"] = "CONDUITSEGMENT";
+    IfcCableCarrierSegmentTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCableCarrierSegmentTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCableCarrierSegmentTypeEnum || (IfcCableCarrierSegmentTypeEnum = {}));
+/** IfcCableFittingTypeEnum */
+export var IfcCableFittingTypeEnum;
+(function (IfcCableFittingTypeEnum) {
+    IfcCableFittingTypeEnum["CONNECTOR"] = "CONNECTOR";
+    IfcCableFittingTypeEnum["ENTRY"] = "ENTRY";
+    IfcCableFittingTypeEnum["EXIT"] = "EXIT";
+    IfcCableFittingTypeEnum["JUNCTION"] = "JUNCTION";
+    IfcCableFittingTypeEnum["TRANSITION"] = "TRANSITION";
+    IfcCableFittingTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCableFittingTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCableFittingTypeEnum || (IfcCableFittingTypeEnum = {}));
+/** IfcCableSegmentTypeEnum */
+export var IfcCableSegmentTypeEnum;
+(function (IfcCableSegmentTypeEnum) {
+    IfcCableSegmentTypeEnum["BUSBARSEGMENT"] = "BUSBARSEGMENT";
+    IfcCableSegmentTypeEnum["CABLESEGMENT"] = "CABLESEGMENT";
+    IfcCableSegmentTypeEnum["CONDUCTORSEGMENT"] = "CONDUCTORSEGMENT";
+    IfcCableSegmentTypeEnum["CORESEGMENT"] = "CORESEGMENT";
+    IfcCableSegmentTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCableSegmentTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCableSegmentTypeEnum || (IfcCableSegmentTypeEnum = {}));
+/** IfcChangeActionEnum */
+export var IfcChangeActionEnum;
+(function (IfcChangeActionEnum) {
+    IfcChangeActionEnum["NOCHANGE"] = "NOCHANGE";
+    IfcChangeActionEnum["MODIFIED"] = "MODIFIED";
+    IfcChangeActionEnum["ADDED"] = "ADDED";
+    IfcChangeActionEnum["DELETED"] = "DELETED";
+    IfcChangeActionEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcChangeActionEnum || (IfcChangeActionEnum = {}));
+/** IfcChillerTypeEnum */
+export var IfcChillerTypeEnum;
+(function (IfcChillerTypeEnum) {
+    IfcChillerTypeEnum["AIRCOOLED"] = "AIRCOOLED";
+    IfcChillerTypeEnum["WATERCOOLED"] = "WATERCOOLED";
+    IfcChillerTypeEnum["HEATRECOVERY"] = "HEATRECOVERY";
+    IfcChillerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcChillerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcChillerTypeEnum || (IfcChillerTypeEnum = {}));
+/** IfcChimneyTypeEnum */
+export var IfcChimneyTypeEnum;
+(function (IfcChimneyTypeEnum) {
+    IfcChimneyTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcChimneyTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcChimneyTypeEnum || (IfcChimneyTypeEnum = {}));
+/** IfcCoilTypeEnum */
+export var IfcCoilTypeEnum;
+(function (IfcCoilTypeEnum) {
+    IfcCoilTypeEnum["DXCOOLINGCOIL"] = "DXCOOLINGCOIL";
+    IfcCoilTypeEnum["ELECTRICHEATINGCOIL"] = "ELECTRICHEATINGCOIL";
+    IfcCoilTypeEnum["GASHEATINGCOIL"] = "GASHEATINGCOIL";
+    IfcCoilTypeEnum["HYDRONICCOIL"] = "HYDRONICCOIL";
+    IfcCoilTypeEnum["STEAMHEATINGCOIL"] = "STEAMHEATINGCOIL";
+    IfcCoilTypeEnum["WATERCOOLINGCOIL"] = "WATERCOOLINGCOIL";
+    IfcCoilTypeEnum["WATERHEATINGCOIL"] = "WATERHEATINGCOIL";
+    IfcCoilTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCoilTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCoilTypeEnum || (IfcCoilTypeEnum = {}));
+/** IfcColumnTypeEnum */
+export var IfcColumnTypeEnum;
+(function (IfcColumnTypeEnum) {
+    IfcColumnTypeEnum["COLUMN"] = "COLUMN";
+    IfcColumnTypeEnum["PILASTER"] = "PILASTER";
+    IfcColumnTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcColumnTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcColumnTypeEnum || (IfcColumnTypeEnum = {}));
+/** IfcCommunicationsApplianceTypeEnum */
+export var IfcCommunicationsApplianceTypeEnum;
+(function (IfcCommunicationsApplianceTypeEnum) {
+    IfcCommunicationsApplianceTypeEnum["ANTENNA"] = "ANTENNA";
+    IfcCommunicationsApplianceTypeEnum["COMPUTER"] = "COMPUTER";
+    IfcCommunicationsApplianceTypeEnum["FAX"] = "FAX";
+    IfcCommunicationsApplianceTypeEnum["GATEWAY"] = "GATEWAY";
+    IfcCommunicationsApplianceTypeEnum["MODEM"] = "MODEM";
+    IfcCommunicationsApplianceTypeEnum["NETWORKAPPLIANCE"] = "NETWORKAPPLIANCE";
+    IfcCommunicationsApplianceTypeEnum["NETWORKBRIDGE"] = "NETWORKBRIDGE";
+    IfcCommunicationsApplianceTypeEnum["NETWORKHUB"] = "NETWORKHUB";
+    IfcCommunicationsApplianceTypeEnum["PRINTER"] = "PRINTER";
+    IfcCommunicationsApplianceTypeEnum["REPEATER"] = "REPEATER";
+    IfcCommunicationsApplianceTypeEnum["ROUTER"] = "ROUTER";
+    IfcCommunicationsApplianceTypeEnum["SCANNER"] = "SCANNER";
+    IfcCommunicationsApplianceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCommunicationsApplianceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCommunicationsApplianceTypeEnum || (IfcCommunicationsApplianceTypeEnum = {}));
+/** IfcComplexPropertyTemplateTypeEnum */
+export var IfcComplexPropertyTemplateTypeEnum;
+(function (IfcComplexPropertyTemplateTypeEnum) {
+    IfcComplexPropertyTemplateTypeEnum["P_COMPLEX"] = "P_COMPLEX";
+    IfcComplexPropertyTemplateTypeEnum["Q_COMPLEX"] = "Q_COMPLEX";
+})(IfcComplexPropertyTemplateTypeEnum || (IfcComplexPropertyTemplateTypeEnum = {}));
+/** IfcCompressorTypeEnum */
+export var IfcCompressorTypeEnum;
+(function (IfcCompressorTypeEnum) {
+    IfcCompressorTypeEnum["DYNAMIC"] = "DYNAMIC";
+    IfcCompressorTypeEnum["RECIPROCATING"] = "RECIPROCATING";
+    IfcCompressorTypeEnum["ROTARY"] = "ROTARY";
+    IfcCompressorTypeEnum["SCROLL"] = "SCROLL";
+    IfcCompressorTypeEnum["TROCHOIDAL"] = "TROCHOIDAL";
+    IfcCompressorTypeEnum["SINGLESTAGE"] = "SINGLESTAGE";
+    IfcCompressorTypeEnum["BOOSTER"] = "BOOSTER";
+    IfcCompressorTypeEnum["OPENTYPE"] = "OPENTYPE";
+    IfcCompressorTypeEnum["HERMETIC"] = "HERMETIC";
+    IfcCompressorTypeEnum["SEMIHERMETIC"] = "SEMIHERMETIC";
+    IfcCompressorTypeEnum["WELDEDSHELLHERMETIC"] = "WELDEDSHELLHERMETIC";
+    IfcCompressorTypeEnum["ROLLINGPISTON"] = "ROLLINGPISTON";
+    IfcCompressorTypeEnum["ROTARYVANE"] = "ROTARYVANE";
+    IfcCompressorTypeEnum["SINGLESCREW"] = "SINGLESCREW";
+    IfcCompressorTypeEnum["TWINSCREW"] = "TWINSCREW";
+    IfcCompressorTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCompressorTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCompressorTypeEnum || (IfcCompressorTypeEnum = {}));
+/** IfcCondenserTypeEnum */
+export var IfcCondenserTypeEnum;
+(function (IfcCondenserTypeEnum) {
+    IfcCondenserTypeEnum["AIRCOOLED"] = "AIRCOOLED";
+    IfcCondenserTypeEnum["EVAPORATIVECOOLED"] = "EVAPORATIVECOOLED";
+    IfcCondenserTypeEnum["WATERCOOLED"] = "WATERCOOLED";
+    IfcCondenserTypeEnum["WATERCOOLEDBRAZEDPLATE"] = "WATERCOOLEDBRAZEDPLATE";
+    IfcCondenserTypeEnum["WATERCOOLEDSHELLCOIL"] = "WATERCOOLEDSHELLCOIL";
+    IfcCondenserTypeEnum["WATERCOOLEDSHELLTUBE"] = "WATERCOOLEDSHELLTUBE";
+    IfcCondenserTypeEnum["WATERCOOLEDTUBEINTUBE"] = "WATERCOOLEDTUBEINTUBE";
+    IfcCondenserTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCondenserTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCondenserTypeEnum || (IfcCondenserTypeEnum = {}));
+/** IfcConnectionTypeEnum */
+export var IfcConnectionTypeEnum;
+(function (IfcConnectionTypeEnum) {
+    IfcConnectionTypeEnum["ATPATH"] = "ATPATH";
+    IfcConnectionTypeEnum["ATSTART"] = "ATSTART";
+    IfcConnectionTypeEnum["ATEND"] = "ATEND";
+    IfcConnectionTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcConnectionTypeEnum || (IfcConnectionTypeEnum = {}));
+/** IfcConstraintEnum */
+export var IfcConstraintEnum;
+(function (IfcConstraintEnum) {
+    IfcConstraintEnum["HARD"] = "HARD";
+    IfcConstraintEnum["SOFT"] = "SOFT";
+    IfcConstraintEnum["ADVISORY"] = "ADVISORY";
+    IfcConstraintEnum["USERDEFINED"] = "USERDEFINED";
+    IfcConstraintEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcConstraintEnum || (IfcConstraintEnum = {}));
+/** IfcConstructionEquipmentResourceTypeEnum */
+export var IfcConstructionEquipmentResourceTypeEnum;
+(function (IfcConstructionEquipmentResourceTypeEnum) {
+    IfcConstructionEquipmentResourceTypeEnum["DEMOLISHING"] = "DEMOLISHING";
+    IfcConstructionEquipmentResourceTypeEnum["EARTHMOVING"] = "EARTHMOVING";
+    IfcConstructionEquipmentResourceTypeEnum["ERECTING"] = "ERECTING";
+    IfcConstructionEquipmentResourceTypeEnum["HEATING"] = "HEATING";
+    IfcConstructionEquipmentResourceTypeEnum["LIGHTING"] = "LIGHTING";
+    IfcConstructionEquipmentResourceTypeEnum["PAVING"] = "PAVING";
+    IfcConstructionEquipmentResourceTypeEnum["PUMPING"] = "PUMPING";
+    IfcConstructionEquipmentResourceTypeEnum["TRANSPORTING"] = "TRANSPORTING";
+    IfcConstructionEquipmentResourceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcConstructionEquipmentResourceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcConstructionEquipmentResourceTypeEnum || (IfcConstructionEquipmentResourceTypeEnum = {}));
+/** IfcConstructionMaterialResourceTypeEnum */
+export var IfcConstructionMaterialResourceTypeEnum;
+(function (IfcConstructionMaterialResourceTypeEnum) {
+    IfcConstructionMaterialResourceTypeEnum["AGGREGATES"] = "AGGREGATES";
+    IfcConstructionMaterialResourceTypeEnum["CONCRETE"] = "CONCRETE";
+    IfcConstructionMaterialResourceTypeEnum["DRYWALL"] = "DRYWALL";
+    IfcConstructionMaterialResourceTypeEnum["FUEL"] = "FUEL";
+    IfcConstructionMaterialResourceTypeEnum["GYPSUM"] = "GYPSUM";
+    IfcConstructionMaterialResourceTypeEnum["MASONRY"] = "MASONRY";
+    IfcConstructionMaterialResourceTypeEnum["METAL"] = "METAL";
+    IfcConstructionMaterialResourceTypeEnum["PLASTIC"] = "PLASTIC";
+    IfcConstructionMaterialResourceTypeEnum["WOOD"] = "WOOD";
+    IfcConstructionMaterialResourceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+    IfcConstructionMaterialResourceTypeEnum["USERDEFINED"] = "USERDEFINED";
+})(IfcConstructionMaterialResourceTypeEnum || (IfcConstructionMaterialResourceTypeEnum = {}));
+/** IfcConstructionProductResourceTypeEnum */
+export var IfcConstructionProductResourceTypeEnum;
+(function (IfcConstructionProductResourceTypeEnum) {
+    IfcConstructionProductResourceTypeEnum["ASSEMBLY"] = "ASSEMBLY";
+    IfcConstructionProductResourceTypeEnum["FORMWORK"] = "FORMWORK";
+    IfcConstructionProductResourceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcConstructionProductResourceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcConstructionProductResourceTypeEnum || (IfcConstructionProductResourceTypeEnum = {}));
+/** IfcControllerTypeEnum */
+export var IfcControllerTypeEnum;
+(function (IfcControllerTypeEnum) {
+    IfcControllerTypeEnum["FLOATING"] = "FLOATING";
+    IfcControllerTypeEnum["PROGRAMMABLE"] = "PROGRAMMABLE";
+    IfcControllerTypeEnum["PROPORTIONAL"] = "PROPORTIONAL";
+    IfcControllerTypeEnum["MULTIPOSITION"] = "MULTIPOSITION";
+    IfcControllerTypeEnum["TWOPOSITION"] = "TWOPOSITION";
+    IfcControllerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcControllerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcControllerTypeEnum || (IfcControllerTypeEnum = {}));
+/** IfcCooledBeamTypeEnum */
+export var IfcCooledBeamTypeEnum;
+(function (IfcCooledBeamTypeEnum) {
+    IfcCooledBeamTypeEnum["ACTIVE"] = "ACTIVE";
+    IfcCooledBeamTypeEnum["PASSIVE"] = "PASSIVE";
+    IfcCooledBeamTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCooledBeamTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCooledBeamTypeEnum || (IfcCooledBeamTypeEnum = {}));
+/** IfcCoolingTowerTypeEnum */
+export var IfcCoolingTowerTypeEnum;
+(function (IfcCoolingTowerTypeEnum) {
+    IfcCoolingTowerTypeEnum["NATURALDRAFT"] = "NATURALDRAFT";
+    IfcCoolingTowerTypeEnum["MECHANICALINDUCEDDRAFT"] = "MECHANICALINDUCEDDRAFT";
+    IfcCoolingTowerTypeEnum["MECHANICALFORCEDDRAFT"] = "MECHANICALFORCEDDRAFT";
+    IfcCoolingTowerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCoolingTowerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCoolingTowerTypeEnum || (IfcCoolingTowerTypeEnum = {}));
+/** IfcCostItemTypeEnum */
+export var IfcCostItemTypeEnum;
+(function (IfcCostItemTypeEnum) {
+    IfcCostItemTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCostItemTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCostItemTypeEnum || (IfcCostItemTypeEnum = {}));
+/** IfcCostScheduleTypeEnum */
+export var IfcCostScheduleTypeEnum;
+(function (IfcCostScheduleTypeEnum) {
+    IfcCostScheduleTypeEnum["BUDGET"] = "BUDGET";
+    IfcCostScheduleTypeEnum["COSTPLAN"] = "COSTPLAN";
+    IfcCostScheduleTypeEnum["ESTIMATE"] = "ESTIMATE";
+    IfcCostScheduleTypeEnum["TENDER"] = "TENDER";
+    IfcCostScheduleTypeEnum["PRICEDBILLOFQUANTITIES"] = "PRICEDBILLOFQUANTITIES";
+    IfcCostScheduleTypeEnum["UNPRICEDBILLOFQUANTITIES"] = "UNPRICEDBILLOFQUANTITIES";
+    IfcCostScheduleTypeEnum["SCHEDULEOFRATES"] = "SCHEDULEOFRATES";
+    IfcCostScheduleTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCostScheduleTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCostScheduleTypeEnum || (IfcCostScheduleTypeEnum = {}));
+/** IfcCoveringTypeEnum */
+export var IfcCoveringTypeEnum;
+(function (IfcCoveringTypeEnum) {
+    IfcCoveringTypeEnum["CEILING"] = "CEILING";
+    IfcCoveringTypeEnum["FLOORING"] = "FLOORING";
+    IfcCoveringTypeEnum["CLADDING"] = "CLADDING";
+    IfcCoveringTypeEnum["ROOFING"] = "ROOFING";
+    IfcCoveringTypeEnum["MOLDING"] = "MOLDING";
+    IfcCoveringTypeEnum["SKIRTINGBOARD"] = "SKIRTINGBOARD";
+    IfcCoveringTypeEnum["INSULATION"] = "INSULATION";
+    IfcCoveringTypeEnum["MEMBRANE"] = "MEMBRANE";
+    IfcCoveringTypeEnum["SLEEVING"] = "SLEEVING";
+    IfcCoveringTypeEnum["WRAPPING"] = "WRAPPING";
+    IfcCoveringTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCoveringTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCoveringTypeEnum || (IfcCoveringTypeEnum = {}));
+/** IfcCrewResourceTypeEnum */
+export var IfcCrewResourceTypeEnum;
+(function (IfcCrewResourceTypeEnum) {
+    IfcCrewResourceTypeEnum["OFFICE"] = "OFFICE";
+    IfcCrewResourceTypeEnum["SITE"] = "SITE";
+    IfcCrewResourceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCrewResourceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCrewResourceTypeEnum || (IfcCrewResourceTypeEnum = {}));
+/** IfcCurtainWallTypeEnum */
+export var IfcCurtainWallTypeEnum;
+(function (IfcCurtainWallTypeEnum) {
+    IfcCurtainWallTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcCurtainWallTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCurtainWallTypeEnum || (IfcCurtainWallTypeEnum = {}));
+/** IfcCurveInterpolationEnum */
+export var IfcCurveInterpolationEnum;
+(function (IfcCurveInterpolationEnum) {
+    IfcCurveInterpolationEnum["LINEAR"] = "LINEAR";
+    IfcCurveInterpolationEnum["LOG_LINEAR"] = "LOG_LINEAR";
+    IfcCurveInterpolationEnum["LOG_LOG"] = "LOG_LOG";
+    IfcCurveInterpolationEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcCurveInterpolationEnum || (IfcCurveInterpolationEnum = {}));
+/** IfcDamperTypeEnum */
+export var IfcDamperTypeEnum;
+(function (IfcDamperTypeEnum) {
+    IfcDamperTypeEnum["BACKDRAFTDAMPER"] = "BACKDRAFTDAMPER";
+    IfcDamperTypeEnum["BALANCINGDAMPER"] = "BALANCINGDAMPER";
+    IfcDamperTypeEnum["BLASTDAMPER"] = "BLASTDAMPER";
+    IfcDamperTypeEnum["CONTROLDAMPER"] = "CONTROLDAMPER";
+    IfcDamperTypeEnum["FIREDAMPER"] = "FIREDAMPER";
+    IfcDamperTypeEnum["FIRESMOKEDAMPER"] = "FIRESMOKEDAMPER";
+    IfcDamperTypeEnum["FUMEHOODEXHAUST"] = "FUMEHOODEXHAUST";
+    IfcDamperTypeEnum["GRAVITYDAMPER"] = "GRAVITYDAMPER";
+    IfcDamperTypeEnum["GRAVITYRELIEFDAMPER"] = "GRAVITYRELIEFDAMPER";
+    IfcDamperTypeEnum["RELIEFDAMPER"] = "RELIEFDAMPER";
+    IfcDamperTypeEnum["SMOKEDAMPER"] = "SMOKEDAMPER";
+    IfcDamperTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDamperTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDamperTypeEnum || (IfcDamperTypeEnum = {}));
+/** IfcDataOriginEnum */
+export var IfcDataOriginEnum;
+(function (IfcDataOriginEnum) {
+    IfcDataOriginEnum["MEASURED"] = "MEASURED";
+    IfcDataOriginEnum["PREDICTED"] = "PREDICTED";
+    IfcDataOriginEnum["SIMULATED"] = "SIMULATED";
+    IfcDataOriginEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDataOriginEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDataOriginEnum || (IfcDataOriginEnum = {}));
+/** IfcDerivedUnitEnum */
+export var IfcDerivedUnitEnum;
+(function (IfcDerivedUnitEnum) {
+    IfcDerivedUnitEnum["ANGULARVELOCITYUNIT"] = "ANGULARVELOCITYUNIT";
+    IfcDerivedUnitEnum["AREADENSITYUNIT"] = "AREADENSITYUNIT";
+    IfcDerivedUnitEnum["COMPOUNDPLANEANGLEUNIT"] = "COMPOUNDPLANEANGLEUNIT";
+    IfcDerivedUnitEnum["DYNAMICVISCOSITYUNIT"] = "DYNAMICVISCOSITYUNIT";
+    IfcDerivedUnitEnum["HEATFLUXDENSITYUNIT"] = "HEATFLUXDENSITYUNIT";
+    IfcDerivedUnitEnum["INTEGERCOUNTRATEUNIT"] = "INTEGERCOUNTRATEUNIT";
+    IfcDerivedUnitEnum["ISOTHERMALMOISTURECAPACITYUNIT"] = "ISOTHERMALMOISTURECAPACITYUNIT";
+    IfcDerivedUnitEnum["KINEMATICVISCOSITYUNIT"] = "KINEMATICVISCOSITYUNIT";
+    IfcDerivedUnitEnum["LINEARVELOCITYUNIT"] = "LINEARVELOCITYUNIT";
+    IfcDerivedUnitEnum["MASSDENSITYUNIT"] = "MASSDENSITYUNIT";
+    IfcDerivedUnitEnum["MASSFLOWRATEUNIT"] = "MASSFLOWRATEUNIT";
+    IfcDerivedUnitEnum["MOISTUREDIFFUSIVITYUNIT"] = "MOISTUREDIFFUSIVITYUNIT";
+    IfcDerivedUnitEnum["MOLECULARWEIGHTUNIT"] = "MOLECULARWEIGHTUNIT";
+    IfcDerivedUnitEnum["SPECIFICHEATCAPACITYUNIT"] = "SPECIFICHEATCAPACITYUNIT";
+    IfcDerivedUnitEnum["THERMALADMITTANCEUNIT"] = "THERMALADMITTANCEUNIT";
+    IfcDerivedUnitEnum["THERMALCONDUCTANCEUNIT"] = "THERMALCONDUCTANCEUNIT";
+    IfcDerivedUnitEnum["THERMALRESISTANCEUNIT"] = "THERMALRESISTANCEUNIT";
+    IfcDerivedUnitEnum["THERMALTRANSMITTANCEUNIT"] = "THERMALTRANSMITTANCEUNIT";
+    IfcDerivedUnitEnum["VAPORPERMEABILITYUNIT"] = "VAPORPERMEABILITYUNIT";
+    IfcDerivedUnitEnum["VOLUMETRICFLOWRATEUNIT"] = "VOLUMETRICFLOWRATEUNIT";
+    IfcDerivedUnitEnum["ROTATIONALFREQUENCYUNIT"] = "ROTATIONALFREQUENCYUNIT";
+    IfcDerivedUnitEnum["TORQUEUNIT"] = "TORQUEUNIT";
+    IfcDerivedUnitEnum["MOMENTOFINERTIAUNIT"] = "MOMENTOFINERTIAUNIT";
+    IfcDerivedUnitEnum["LINEARMOMENTUNIT"] = "LINEARMOMENTUNIT";
+    IfcDerivedUnitEnum["LINEARFORCEUNIT"] = "LINEARFORCEUNIT";
+    IfcDerivedUnitEnum["PLANARFORCEUNIT"] = "PLANARFORCEUNIT";
+    IfcDerivedUnitEnum["MODULUSOFELASTICITYUNIT"] = "MODULUSOFELASTICITYUNIT";
+    IfcDerivedUnitEnum["SHEARMODULUSUNIT"] = "SHEARMODULUSUNIT";
+    IfcDerivedUnitEnum["LINEARSTIFFNESSUNIT"] = "LINEARSTIFFNESSUNIT";
+    IfcDerivedUnitEnum["ROTATIONALSTIFFNESSUNIT"] = "ROTATIONALSTIFFNESSUNIT";
+    IfcDerivedUnitEnum["MODULUSOFSUBGRADEREACTIONUNIT"] = "MODULUSOFSUBGRADEREACTIONUNIT";
+    IfcDerivedUnitEnum["ACCELERATIONUNIT"] = "ACCELERATIONUNIT";
+    IfcDerivedUnitEnum["CURVATUREUNIT"] = "CURVATUREUNIT";
+    IfcDerivedUnitEnum["HEATINGVALUEUNIT"] = "HEATINGVALUEUNIT";
+    IfcDerivedUnitEnum["IONCONCENTRATIONUNIT"] = "IONCONCENTRATIONUNIT";
+    IfcDerivedUnitEnum["LUMINOUSINTENSITYDISTRIBUTIONUNIT"] = "LUMINOUSINTENSITYDISTRIBUTIONUNIT";
+    IfcDerivedUnitEnum["MASSPERLENGTHUNIT"] = "MASSPERLENGTHUNIT";
+    IfcDerivedUnitEnum["MODULUSOFLINEARSUBGRADEREACTIONUNIT"] = "MODULUSOFLINEARSUBGRADEREACTIONUNIT";
+    IfcDerivedUnitEnum["MODULUSOFROTATIONALSUBGRADEREACTIONUNIT"] = "MODULUSOFROTATIONALSUBGRADEREACTIONUNIT";
+    IfcDerivedUnitEnum["PHUNIT"] = "PHUNIT";
+    IfcDerivedUnitEnum["ROTATIONALMASSUNIT"] = "ROTATIONALMASSUNIT";
+    IfcDerivedUnitEnum["SECTIONAREAINTEGRALUNIT"] = "SECTIONAREAINTEGRALUNIT";
+    IfcDerivedUnitEnum["SECTIONMODULUSUNIT"] = "SECTIONMODULUSUNIT";
+    IfcDerivedUnitEnum["SOUNDPOWERLEVELUNIT"] = "SOUNDPOWERLEVELUNIT";
+    IfcDerivedUnitEnum["SOUNDPOWERUNIT"] = "SOUNDPOWERUNIT";
+    IfcDerivedUnitEnum["SOUNDPRESSURELEVELUNIT"] = "SOUNDPRESSURELEVELUNIT";
+    IfcDerivedUnitEnum["SOUNDPRESSUREUNIT"] = "SOUNDPRESSUREUNIT";
+    IfcDerivedUnitEnum["TEMPERATUREGRADIENTUNIT"] = "TEMPERATUREGRADIENTUNIT";
+    IfcDerivedUnitEnum["TEMPERATURERATEOFCHANGEUNIT"] = "TEMPERATURERATEOFCHANGEUNIT";
+    IfcDerivedUnitEnum["THERMALEXPANSIONCOEFFICIENTUNIT"] = "THERMALEXPANSIONCOEFFICIENTUNIT";
+    IfcDerivedUnitEnum["WARPINGCONSTANTUNIT"] = "WARPINGCONSTANTUNIT";
+    IfcDerivedUnitEnum["WARPINGMOMENTUNIT"] = "WARPINGMOMENTUNIT";
+    IfcDerivedUnitEnum["USERDEFINED"] = "USERDEFINED";
+})(IfcDerivedUnitEnum || (IfcDerivedUnitEnum = {}));
+/** IfcDirectionSenseEnum */
+export var IfcDirectionSenseEnum;
+(function (IfcDirectionSenseEnum) {
+    IfcDirectionSenseEnum["POSITIVE"] = "POSITIVE";
+    IfcDirectionSenseEnum["NEGATIVE"] = "NEGATIVE";
+})(IfcDirectionSenseEnum || (IfcDirectionSenseEnum = {}));
+/** IfcDiscreteAccessoryTypeEnum */
+export var IfcDiscreteAccessoryTypeEnum;
+(function (IfcDiscreteAccessoryTypeEnum) {
+    IfcDiscreteAccessoryTypeEnum["ANCHORPLATE"] = "ANCHORPLATE";
+    IfcDiscreteAccessoryTypeEnum["BRACKET"] = "BRACKET";
+    IfcDiscreteAccessoryTypeEnum["SHOE"] = "SHOE";
+    IfcDiscreteAccessoryTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDiscreteAccessoryTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDiscreteAccessoryTypeEnum || (IfcDiscreteAccessoryTypeEnum = {}));
+/** IfcDistributionChamberElementTypeEnum */
+export var IfcDistributionChamberElementTypeEnum;
+(function (IfcDistributionChamberElementTypeEnum) {
+    IfcDistributionChamberElementTypeEnum["FORMEDDUCT"] = "FORMEDDUCT";
+    IfcDistributionChamberElementTypeEnum["INSPECTIONCHAMBER"] = "INSPECTIONCHAMBER";
+    IfcDistributionChamberElementTypeEnum["INSPECTIONPIT"] = "INSPECTIONPIT";
+    IfcDistributionChamberElementTypeEnum["MANHOLE"] = "MANHOLE";
+    IfcDistributionChamberElementTypeEnum["METERCHAMBER"] = "METERCHAMBER";
+    IfcDistributionChamberElementTypeEnum["SUMP"] = "SUMP";
+    IfcDistributionChamberElementTypeEnum["TRENCH"] = "TRENCH";
+    IfcDistributionChamberElementTypeEnum["VALVECHAMBER"] = "VALVECHAMBER";
+    IfcDistributionChamberElementTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDistributionChamberElementTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDistributionChamberElementTypeEnum || (IfcDistributionChamberElementTypeEnum = {}));
+/** IfcDistributionPortTypeEnum */
+export var IfcDistributionPortTypeEnum;
+(function (IfcDistributionPortTypeEnum) {
+    IfcDistributionPortTypeEnum["CABLE"] = "CABLE";
+    IfcDistributionPortTypeEnum["CABLECARRIER"] = "CABLECARRIER";
+    IfcDistributionPortTypeEnum["DUCT"] = "DUCT";
+    IfcDistributionPortTypeEnum["PIPE"] = "PIPE";
+    IfcDistributionPortTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDistributionPortTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDistributionPortTypeEnum || (IfcDistributionPortTypeEnum = {}));
+/** IfcDistributionSystemEnum */
+export var IfcDistributionSystemEnum;
+(function (IfcDistributionSystemEnum) {
+    IfcDistributionSystemEnum["AIRCONDITIONING"] = "AIRCONDITIONING";
+    IfcDistributionSystemEnum["AUDIOVISUAL"] = "AUDIOVISUAL";
+    IfcDistributionSystemEnum["CHEMICAL"] = "CHEMICAL";
+    IfcDistributionSystemEnum["CHILLEDWATER"] = "CHILLEDWATER";
+    IfcDistributionSystemEnum["COMMUNICATION"] = "COMMUNICATION";
+    IfcDistributionSystemEnum["COMPRESSEDAIR"] = "COMPRESSEDAIR";
+    IfcDistributionSystemEnum["CONDENSERWATER"] = "CONDENSERWATER";
+    IfcDistributionSystemEnum["CONTROL"] = "CONTROL";
+    IfcDistributionSystemEnum["CONVEYING"] = "CONVEYING";
+    IfcDistributionSystemEnum["DATA"] = "DATA";
+    IfcDistributionSystemEnum["DISPOSAL"] = "DISPOSAL";
+    IfcDistributionSystemEnum["DOMESTICCOLDWATER"] = "DOMESTICCOLDWATER";
+    IfcDistributionSystemEnum["DOMESTICHOTWATER"] = "DOMESTICHOTWATER";
+    IfcDistributionSystemEnum["DRAINAGE"] = "DRAINAGE";
+    IfcDistributionSystemEnum["EARTHING"] = "EARTHING";
+    IfcDistributionSystemEnum["ELECTRICAL"] = "ELECTRICAL";
+    IfcDistributionSystemEnum["ELECTROACOUSTIC"] = "ELECTROACOUSTIC";
+    IfcDistributionSystemEnum["EXHAUST"] = "EXHAUST";
+    IfcDistributionSystemEnum["FIREPROTECTION"] = "FIREPROTECTION";
+    IfcDistributionSystemEnum["FUEL"] = "FUEL";
+    IfcDistributionSystemEnum["GAS"] = "GAS";
+    IfcDistributionSystemEnum["HAZARDOUS"] = "HAZARDOUS";
+    IfcDistributionSystemEnum["HEATING"] = "HEATING";
+    IfcDistributionSystemEnum["LIGHTING"] = "LIGHTING";
+    IfcDistributionSystemEnum["LIGHTNINGPROTECTION"] = "LIGHTNINGPROTECTION";
+    IfcDistributionSystemEnum["MUNICIPALSOLIDWASTE"] = "MUNICIPALSOLIDWASTE";
+    IfcDistributionSystemEnum["OIL"] = "OIL";
+    IfcDistributionSystemEnum["OPERATIONAL"] = "OPERATIONAL";
+    IfcDistributionSystemEnum["POWERGENERATION"] = "POWERGENERATION";
+    IfcDistributionSystemEnum["RAINWATER"] = "RAINWATER";
+    IfcDistributionSystemEnum["REFRIGERATION"] = "REFRIGERATION";
+    IfcDistributionSystemEnum["SECURITY"] = "SECURITY";
+    IfcDistributionSystemEnum["SEWAGE"] = "SEWAGE";
+    IfcDistributionSystemEnum["SIGNAL"] = "SIGNAL";
+    IfcDistributionSystemEnum["STORMWATER"] = "STORMWATER";
+    IfcDistributionSystemEnum["TELEPHONE"] = "TELEPHONE";
+    IfcDistributionSystemEnum["TV"] = "TV";
+    IfcDistributionSystemEnum["VACUUM"] = "VACUUM";
+    IfcDistributionSystemEnum["VENT"] = "VENT";
+    IfcDistributionSystemEnum["VENTILATION"] = "VENTILATION";
+    IfcDistributionSystemEnum["WASTEWATER"] = "WASTEWATER";
+    IfcDistributionSystemEnum["WATERSUPPLY"] = "WATERSUPPLY";
+    IfcDistributionSystemEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDistributionSystemEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDistributionSystemEnum || (IfcDistributionSystemEnum = {}));
+/** IfcDocumentConfidentialityEnum */
+export var IfcDocumentConfidentialityEnum;
+(function (IfcDocumentConfidentialityEnum) {
+    IfcDocumentConfidentialityEnum["PUBLIC"] = "PUBLIC";
+    IfcDocumentConfidentialityEnum["RESTRICTED"] = "RESTRICTED";
+    IfcDocumentConfidentialityEnum["CONFIDENTIAL"] = "CONFIDENTIAL";
+    IfcDocumentConfidentialityEnum["PERSONAL"] = "PERSONAL";
+    IfcDocumentConfidentialityEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDocumentConfidentialityEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDocumentConfidentialityEnum || (IfcDocumentConfidentialityEnum = {}));
+/** IfcDocumentStatusEnum */
+export var IfcDocumentStatusEnum;
+(function (IfcDocumentStatusEnum) {
+    IfcDocumentStatusEnum["DRAFT"] = "DRAFT";
+    IfcDocumentStatusEnum["FINALDRAFT"] = "FINALDRAFT";
+    IfcDocumentStatusEnum["FINAL"] = "FINAL";
+    IfcDocumentStatusEnum["REVISION"] = "REVISION";
+    IfcDocumentStatusEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDocumentStatusEnum || (IfcDocumentStatusEnum = {}));
+/** IfcDoorPanelOperationEnum */
+export var IfcDoorPanelOperationEnum;
+(function (IfcDoorPanelOperationEnum) {
+    IfcDoorPanelOperationEnum["SWINGING"] = "SWINGING";
+    IfcDoorPanelOperationEnum["DOUBLE_ACTING"] = "DOUBLE_ACTING";
+    IfcDoorPanelOperationEnum["SLIDING"] = "SLIDING";
+    IfcDoorPanelOperationEnum["FOLDING"] = "FOLDING";
+    IfcDoorPanelOperationEnum["REVOLVING"] = "REVOLVING";
+    IfcDoorPanelOperationEnum["ROLLINGUP"] = "ROLLINGUP";
+    IfcDoorPanelOperationEnum["FIXEDPANEL"] = "FIXEDPANEL";
+    IfcDoorPanelOperationEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDoorPanelOperationEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDoorPanelOperationEnum || (IfcDoorPanelOperationEnum = {}));
+/** IfcDoorPanelPositionEnum */
+export var IfcDoorPanelPositionEnum;
+(function (IfcDoorPanelPositionEnum) {
+    IfcDoorPanelPositionEnum["LEFT"] = "LEFT";
+    IfcDoorPanelPositionEnum["MIDDLE"] = "MIDDLE";
+    IfcDoorPanelPositionEnum["RIGHT"] = "RIGHT";
+    IfcDoorPanelPositionEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDoorPanelPositionEnum || (IfcDoorPanelPositionEnum = {}));
+/** IfcDoorStyleConstructionEnum */
+export var IfcDoorStyleConstructionEnum;
+(function (IfcDoorStyleConstructionEnum) {
+    IfcDoorStyleConstructionEnum["ALUMINIUM"] = "ALUMINIUM";
+    IfcDoorStyleConstructionEnum["HIGH_GRADE_STEEL"] = "HIGH_GRADE_STEEL";
+    IfcDoorStyleConstructionEnum["STEEL"] = "STEEL";
+    IfcDoorStyleConstructionEnum["WOOD"] = "WOOD";
+    IfcDoorStyleConstructionEnum["ALUMINIUM_WOOD"] = "ALUMINIUM_WOOD";
+    IfcDoorStyleConstructionEnum["ALUMINIUM_PLASTIC"] = "ALUMINIUM_PLASTIC";
+    IfcDoorStyleConstructionEnum["PLASTIC"] = "PLASTIC";
+    IfcDoorStyleConstructionEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDoorStyleConstructionEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDoorStyleConstructionEnum || (IfcDoorStyleConstructionEnum = {}));
+/** IfcDoorStyleOperationEnum */
+export var IfcDoorStyleOperationEnum;
+(function (IfcDoorStyleOperationEnum) {
+    IfcDoorStyleOperationEnum["SINGLE_SWING_LEFT"] = "SINGLE_SWING_LEFT";
+    IfcDoorStyleOperationEnum["SINGLE_SWING_RIGHT"] = "SINGLE_SWING_RIGHT";
+    IfcDoorStyleOperationEnum["DOUBLE_DOOR_SINGLE_SWING"] = "DOUBLE_DOOR_SINGLE_SWING";
+    IfcDoorStyleOperationEnum["DOUBLE_DOOR_SINGLE_SWING_OPPOSITE_LEFT"] = "DOUBLE_DOOR_SINGLE_SWING_OPPOSITE_LEFT";
+    IfcDoorStyleOperationEnum["DOUBLE_DOOR_SINGLE_SWING_OPPOSITE_RIGHT"] = "DOUBLE_DOOR_SINGLE_SWING_OPPOSITE_RIGHT";
+    IfcDoorStyleOperationEnum["DOUBLE_SWING_LEFT"] = "DOUBLE_SWING_LEFT";
+    IfcDoorStyleOperationEnum["DOUBLE_SWING_RIGHT"] = "DOUBLE_SWING_RIGHT";
+    IfcDoorStyleOperationEnum["DOUBLE_DOOR_DOUBLE_SWING"] = "DOUBLE_DOOR_DOUBLE_SWING";
+    IfcDoorStyleOperationEnum["SLIDING_TO_LEFT"] = "SLIDING_TO_LEFT";
+    IfcDoorStyleOperationEnum["SLIDING_TO_RIGHT"] = "SLIDING_TO_RIGHT";
+    IfcDoorStyleOperationEnum["DOUBLE_DOOR_SLIDING"] = "DOUBLE_DOOR_SLIDING";
+    IfcDoorStyleOperationEnum["FOLDING_TO_LEFT"] = "FOLDING_TO_LEFT";
+    IfcDoorStyleOperationEnum["FOLDING_TO_RIGHT"] = "FOLDING_TO_RIGHT";
+    IfcDoorStyleOperationEnum["DOUBLE_DOOR_FOLDING"] = "DOUBLE_DOOR_FOLDING";
+    IfcDoorStyleOperationEnum["REVOLVING"] = "REVOLVING";
+    IfcDoorStyleOperationEnum["ROLLINGUP"] = "ROLLINGUP";
+    IfcDoorStyleOperationEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDoorStyleOperationEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDoorStyleOperationEnum || (IfcDoorStyleOperationEnum = {}));
+/** IfcDoorTypeEnum */
+export var IfcDoorTypeEnum;
+(function (IfcDoorTypeEnum) {
+    IfcDoorTypeEnum["DOOR"] = "DOOR";
+    IfcDoorTypeEnum["GATE"] = "GATE";
+    IfcDoorTypeEnum["TRAPDOOR"] = "TRAPDOOR";
+    IfcDoorTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDoorTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDoorTypeEnum || (IfcDoorTypeEnum = {}));
+/** IfcDoorTypeOperationEnum */
+export var IfcDoorTypeOperationEnum;
+(function (IfcDoorTypeOperationEnum) {
+    IfcDoorTypeOperationEnum["SINGLE_SWING_LEFT"] = "SINGLE_SWING_LEFT";
+    IfcDoorTypeOperationEnum["SINGLE_SWING_RIGHT"] = "SINGLE_SWING_RIGHT";
+    IfcDoorTypeOperationEnum["DOUBLE_DOOR_SINGLE_SWING"] = "DOUBLE_DOOR_SINGLE_SWING";
+    IfcDoorTypeOperationEnum["DOUBLE_DOOR_SINGLE_SWING_OPPOSITE_LEFT"] = "DOUBLE_DOOR_SINGLE_SWING_OPPOSITE_LEFT";
+    IfcDoorTypeOperationEnum["DOUBLE_DOOR_SINGLE_SWING_OPPOSITE_RIGHT"] = "DOUBLE_DOOR_SINGLE_SWING_OPPOSITE_RIGHT";
+    IfcDoorTypeOperationEnum["DOUBLE_SWING_LEFT"] = "DOUBLE_SWING_LEFT";
+    IfcDoorTypeOperationEnum["DOUBLE_SWING_RIGHT"] = "DOUBLE_SWING_RIGHT";
+    IfcDoorTypeOperationEnum["DOUBLE_DOOR_DOUBLE_SWING"] = "DOUBLE_DOOR_DOUBLE_SWING";
+    IfcDoorTypeOperationEnum["SLIDING_TO_LEFT"] = "SLIDING_TO_LEFT";
+    IfcDoorTypeOperationEnum["SLIDING_TO_RIGHT"] = "SLIDING_TO_RIGHT";
+    IfcDoorTypeOperationEnum["DOUBLE_DOOR_SLIDING"] = "DOUBLE_DOOR_SLIDING";
+    IfcDoorTypeOperationEnum["FOLDING_TO_LEFT"] = "FOLDING_TO_LEFT";
+    IfcDoorTypeOperationEnum["FOLDING_TO_RIGHT"] = "FOLDING_TO_RIGHT";
+    IfcDoorTypeOperationEnum["DOUBLE_DOOR_FOLDING"] = "DOUBLE_DOOR_FOLDING";
+    IfcDoorTypeOperationEnum["REVOLVING"] = "REVOLVING";
+    IfcDoorTypeOperationEnum["ROLLINGUP"] = "ROLLINGUP";
+    IfcDoorTypeOperationEnum["SWING_FIXED_LEFT"] = "SWING_FIXED_LEFT";
+    IfcDoorTypeOperationEnum["SWING_FIXED_RIGHT"] = "SWING_FIXED_RIGHT";
+    IfcDoorTypeOperationEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDoorTypeOperationEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDoorTypeOperationEnum || (IfcDoorTypeOperationEnum = {}));
+/** IfcDuctFittingTypeEnum */
+export var IfcDuctFittingTypeEnum;
+(function (IfcDuctFittingTypeEnum) {
+    IfcDuctFittingTypeEnum["BEND"] = "BEND";
+    IfcDuctFittingTypeEnum["CONNECTOR"] = "CONNECTOR";
+    IfcDuctFittingTypeEnum["ENTRY"] = "ENTRY";
+    IfcDuctFittingTypeEnum["EXIT"] = "EXIT";
+    IfcDuctFittingTypeEnum["JUNCTION"] = "JUNCTION";
+    IfcDuctFittingTypeEnum["OBSTRUCTION"] = "OBSTRUCTION";
+    IfcDuctFittingTypeEnum["TRANSITION"] = "TRANSITION";
+    IfcDuctFittingTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDuctFittingTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDuctFittingTypeEnum || (IfcDuctFittingTypeEnum = {}));
+/** IfcDuctSegmentTypeEnum */
+export var IfcDuctSegmentTypeEnum;
+(function (IfcDuctSegmentTypeEnum) {
+    IfcDuctSegmentTypeEnum["RIGIDSEGMENT"] = "RIGIDSEGMENT";
+    IfcDuctSegmentTypeEnum["FLEXIBLESEGMENT"] = "FLEXIBLESEGMENT";
+    IfcDuctSegmentTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDuctSegmentTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDuctSegmentTypeEnum || (IfcDuctSegmentTypeEnum = {}));
+/** IfcDuctSilencerTypeEnum */
+export var IfcDuctSilencerTypeEnum;
+(function (IfcDuctSilencerTypeEnum) {
+    IfcDuctSilencerTypeEnum["FLATOVAL"] = "FLATOVAL";
+    IfcDuctSilencerTypeEnum["RECTANGULAR"] = "RECTANGULAR";
+    IfcDuctSilencerTypeEnum["ROUND"] = "ROUND";
+    IfcDuctSilencerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcDuctSilencerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcDuctSilencerTypeEnum || (IfcDuctSilencerTypeEnum = {}));
+/** IfcElectricApplianceTypeEnum */
+export var IfcElectricApplianceTypeEnum;
+(function (IfcElectricApplianceTypeEnum) {
+    IfcElectricApplianceTypeEnum["DISHWASHER"] = "DISHWASHER";
+    IfcElectricApplianceTypeEnum["ELECTRICCOOKER"] = "ELECTRICCOOKER";
+    IfcElectricApplianceTypeEnum["FREESTANDINGELECTRICHEATER"] = "FREESTANDINGELECTRICHEATER";
+    IfcElectricApplianceTypeEnum["FREESTANDINGFAN"] = "FREESTANDINGFAN";
+    IfcElectricApplianceTypeEnum["FREESTANDINGWATERHEATER"] = "FREESTANDINGWATERHEATER";
+    IfcElectricApplianceTypeEnum["FREESTANDINGWATERCOOLER"] = "FREESTANDINGWATERCOOLER";
+    IfcElectricApplianceTypeEnum["FREEZER"] = "FREEZER";
+    IfcElectricApplianceTypeEnum["FRIDGE_FREEZER"] = "FRIDGE_FREEZER";
+    IfcElectricApplianceTypeEnum["HANDDRYER"] = "HANDDRYER";
+    IfcElectricApplianceTypeEnum["KITCHENMACHINE"] = "KITCHENMACHINE";
+    IfcElectricApplianceTypeEnum["MICROWAVE"] = "MICROWAVE";
+    IfcElectricApplianceTypeEnum["PHOTOCOPIER"] = "PHOTOCOPIER";
+    IfcElectricApplianceTypeEnum["REFRIGERATOR"] = "REFRIGERATOR";
+    IfcElectricApplianceTypeEnum["TUMBLEDRYER"] = "TUMBLEDRYER";
+    IfcElectricApplianceTypeEnum["VENDINGMACHINE"] = "VENDINGMACHINE";
+    IfcElectricApplianceTypeEnum["WASHINGMACHINE"] = "WASHINGMACHINE";
+    IfcElectricApplianceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcElectricApplianceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcElectricApplianceTypeEnum || (IfcElectricApplianceTypeEnum = {}));
+/** IfcElectricDistributionBoardTypeEnum */
+export var IfcElectricDistributionBoardTypeEnum;
+(function (IfcElectricDistributionBoardTypeEnum) {
+    IfcElectricDistributionBoardTypeEnum["CONSUMERUNIT"] = "CONSUMERUNIT";
+    IfcElectricDistributionBoardTypeEnum["DISTRIBUTIONBOARD"] = "DISTRIBUTIONBOARD";
+    IfcElectricDistributionBoardTypeEnum["MOTORCONTROLCENTRE"] = "MOTORCONTROLCENTRE";
+    IfcElectricDistributionBoardTypeEnum["SWITCHBOARD"] = "SWITCHBOARD";
+    IfcElectricDistributionBoardTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcElectricDistributionBoardTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcElectricDistributionBoardTypeEnum || (IfcElectricDistributionBoardTypeEnum = {}));
+/** IfcElectricFlowStorageDeviceTypeEnum */
+export var IfcElectricFlowStorageDeviceTypeEnum;
+(function (IfcElectricFlowStorageDeviceTypeEnum) {
+    IfcElectricFlowStorageDeviceTypeEnum["BATTERY"] = "BATTERY";
+    IfcElectricFlowStorageDeviceTypeEnum["CAPACITORBANK"] = "CAPACITORBANK";
+    IfcElectricFlowStorageDeviceTypeEnum["HARMONICFILTER"] = "HARMONICFILTER";
+    IfcElectricFlowStorageDeviceTypeEnum["INDUCTORBANK"] = "INDUCTORBANK";
+    IfcElectricFlowStorageDeviceTypeEnum["UPS"] = "UPS";
+    IfcElectricFlowStorageDeviceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcElectricFlowStorageDeviceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcElectricFlowStorageDeviceTypeEnum || (IfcElectricFlowStorageDeviceTypeEnum = {}));
+/** IfcElectricGeneratorTypeEnum */
+export var IfcElectricGeneratorTypeEnum;
+(function (IfcElectricGeneratorTypeEnum) {
+    IfcElectricGeneratorTypeEnum["CHP"] = "CHP";
+    IfcElectricGeneratorTypeEnum["ENGINEGENERATOR"] = "ENGINEGENERATOR";
+    IfcElectricGeneratorTypeEnum["STANDALONE"] = "STANDALONE";
+    IfcElectricGeneratorTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcElectricGeneratorTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcElectricGeneratorTypeEnum || (IfcElectricGeneratorTypeEnum = {}));
+/** IfcElectricMotorTypeEnum */
+export var IfcElectricMotorTypeEnum;
+(function (IfcElectricMotorTypeEnum) {
+    IfcElectricMotorTypeEnum["DC"] = "DC";
+    IfcElectricMotorTypeEnum["INDUCTION"] = "INDUCTION";
+    IfcElectricMotorTypeEnum["POLYPHASE"] = "POLYPHASE";
+    IfcElectricMotorTypeEnum["RELUCTANCESYNCHRONOUS"] = "RELUCTANCESYNCHRONOUS";
+    IfcElectricMotorTypeEnum["SYNCHRONOUS"] = "SYNCHRONOUS";
+    IfcElectricMotorTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcElectricMotorTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcElectricMotorTypeEnum || (IfcElectricMotorTypeEnum = {}));
+/** IfcElectricTimeControlTypeEnum */
+export var IfcElectricTimeControlTypeEnum;
+(function (IfcElectricTimeControlTypeEnum) {
+    IfcElectricTimeControlTypeEnum["TIMECLOCK"] = "TIMECLOCK";
+    IfcElectricTimeControlTypeEnum["TIMEDELAY"] = "TIMEDELAY";
+    IfcElectricTimeControlTypeEnum["RELAY"] = "RELAY";
+    IfcElectricTimeControlTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcElectricTimeControlTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcElectricTimeControlTypeEnum || (IfcElectricTimeControlTypeEnum = {}));
+/** IfcElementAssemblyTypeEnum */
+export var IfcElementAssemblyTypeEnum;
+(function (IfcElementAssemblyTypeEnum) {
+    IfcElementAssemblyTypeEnum["ACCESSORY_ASSEMBLY"] = "ACCESSORY_ASSEMBLY";
+    IfcElementAssemblyTypeEnum["ARCH"] = "ARCH";
+    IfcElementAssemblyTypeEnum["BEAM_GRID"] = "BEAM_GRID";
+    IfcElementAssemblyTypeEnum["BRACED_FRAME"] = "BRACED_FRAME";
+    IfcElementAssemblyTypeEnum["GIRDER"] = "GIRDER";
+    IfcElementAssemblyTypeEnum["REINFORCEMENT_UNIT"] = "REINFORCEMENT_UNIT";
+    IfcElementAssemblyTypeEnum["RIGID_FRAME"] = "RIGID_FRAME";
+    IfcElementAssemblyTypeEnum["SLAB_FIELD"] = "SLAB_FIELD";
+    IfcElementAssemblyTypeEnum["TRUSS"] = "TRUSS";
+    IfcElementAssemblyTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcElementAssemblyTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcElementAssemblyTypeEnum || (IfcElementAssemblyTypeEnum = {}));
+/** IfcElementCompositionEnum */
+export var IfcElementCompositionEnum;
+(function (IfcElementCompositionEnum) {
+    IfcElementCompositionEnum["COMPLEX"] = "COMPLEX";
+    IfcElementCompositionEnum["ELEMENT"] = "ELEMENT";
+    IfcElementCompositionEnum["PARTIAL"] = "PARTIAL";
+})(IfcElementCompositionEnum || (IfcElementCompositionEnum = {}));
+/** IfcEngineTypeEnum */
+export var IfcEngineTypeEnum;
+(function (IfcEngineTypeEnum) {
+    IfcEngineTypeEnum["EXTERNALCOMBUSTION"] = "EXTERNALCOMBUSTION";
+    IfcEngineTypeEnum["INTERNALCOMBUSTION"] = "INTERNALCOMBUSTION";
+    IfcEngineTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcEngineTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcEngineTypeEnum || (IfcEngineTypeEnum = {}));
+/** IfcEvaporativeCoolerTypeEnum */
+export var IfcEvaporativeCoolerTypeEnum;
+(function (IfcEvaporativeCoolerTypeEnum) {
+    IfcEvaporativeCoolerTypeEnum["DIRECTEVAPORATIVERANDOMMEDIAAIRCOOLER"] = "DIRECTEVAPORATIVERANDOMMEDIAAIRCOOLER";
+    IfcEvaporativeCoolerTypeEnum["DIRECTEVAPORATIVERIGIDMEDIAAIRCOOLER"] = "DIRECTEVAPORATIVERIGIDMEDIAAIRCOOLER";
+    IfcEvaporativeCoolerTypeEnum["DIRECTEVAPORATIVESLINGERSPACKAGEDAIRCOOLER"] = "DIRECTEVAPORATIVESLINGERSPACKAGEDAIRCOOLER";
+    IfcEvaporativeCoolerTypeEnum["DIRECTEVAPORATIVEPACKAGEDROTARYAIRCOOLER"] = "DIRECTEVAPORATIVEPACKAGEDROTARYAIRCOOLER";
+    IfcEvaporativeCoolerTypeEnum["DIRECTEVAPORATIVEAIRWASHER"] = "DIRECTEVAPORATIVEAIRWASHER";
+    IfcEvaporativeCoolerTypeEnum["INDIRECTEVAPORATIVEPACKAGEAIRCOOLER"] = "INDIRECTEVAPORATIVEPACKAGEAIRCOOLER";
+    IfcEvaporativeCoolerTypeEnum["INDIRECTEVAPORATIVEWETCOIL"] = "INDIRECTEVAPORATIVEWETCOIL";
+    IfcEvaporativeCoolerTypeEnum["INDIRECTEVAPORATIVECOOLINGTOWERORCOILCOOLER"] = "INDIRECTEVAPORATIVECOOLINGTOWERORCOILCOOLER";
+    IfcEvaporativeCoolerTypeEnum["INDIRECTDIRECTCOMBINATION"] = "INDIRECTDIRECTCOMBINATION";
+    IfcEvaporativeCoolerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcEvaporativeCoolerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcEvaporativeCoolerTypeEnum || (IfcEvaporativeCoolerTypeEnum = {}));
+/** IfcEvaporatorTypeEnum */
+export var IfcEvaporatorTypeEnum;
+(function (IfcEvaporatorTypeEnum) {
+    IfcEvaporatorTypeEnum["DIRECTEXPANSION"] = "DIRECTEXPANSION";
+    IfcEvaporatorTypeEnum["DIRECTEXPANSIONSHELLANDTUBE"] = "DIRECTEXPANSIONSHELLANDTUBE";
+    IfcEvaporatorTypeEnum["DIRECTEXPANSIONTUBEINTUBE"] = "DIRECTEXPANSIONTUBEINTUBE";
+    IfcEvaporatorTypeEnum["DIRECTEXPANSIONBRAZEDPLATE"] = "DIRECTEXPANSIONBRAZEDPLATE";
+    IfcEvaporatorTypeEnum["FLOODEDSHELLANDTUBE"] = "FLOODEDSHELLANDTUBE";
+    IfcEvaporatorTypeEnum["SHELLANDCOIL"] = "SHELLANDCOIL";
+    IfcEvaporatorTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcEvaporatorTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcEvaporatorTypeEnum || (IfcEvaporatorTypeEnum = {}));
+/** IfcEventTriggerTypeEnum */
+export var IfcEventTriggerTypeEnum;
+(function (IfcEventTriggerTypeEnum) {
+    IfcEventTriggerTypeEnum["EVENTRULE"] = "EVENTRULE";
+    IfcEventTriggerTypeEnum["EVENTMESSAGE"] = "EVENTMESSAGE";
+    IfcEventTriggerTypeEnum["EVENTTIME"] = "EVENTTIME";
+    IfcEventTriggerTypeEnum["EVENTCOMPLEX"] = "EVENTCOMPLEX";
+    IfcEventTriggerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcEventTriggerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcEventTriggerTypeEnum || (IfcEventTriggerTypeEnum = {}));
+/** IfcEventTypeEnum */
+export var IfcEventTypeEnum;
+(function (IfcEventTypeEnum) {
+    IfcEventTypeEnum["STARTEVENT"] = "STARTEVENT";
+    IfcEventTypeEnum["ENDEVENT"] = "ENDEVENT";
+    IfcEventTypeEnum["INTERMEDIATEEVENT"] = "INTERMEDIATEEVENT";
+    IfcEventTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcEventTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcEventTypeEnum || (IfcEventTypeEnum = {}));
+/** IfcExternalSpatialElementTypeEnum */
+export var IfcExternalSpatialElementTypeEnum;
+(function (IfcExternalSpatialElementTypeEnum) {
+    IfcExternalSpatialElementTypeEnum["EXTERNAL"] = "EXTERNAL";
+    IfcExternalSpatialElementTypeEnum["EXTERNAL_EARTH"] = "EXTERNAL_EARTH";
+    IfcExternalSpatialElementTypeEnum["EXTERNAL_WATER"] = "EXTERNAL_WATER";
+    IfcExternalSpatialElementTypeEnum["EXTERNAL_FIRE"] = "EXTERNAL_FIRE";
+    IfcExternalSpatialElementTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcExternalSpatialElementTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcExternalSpatialElementTypeEnum || (IfcExternalSpatialElementTypeEnum = {}));
+/** IfcFanTypeEnum */
+export var IfcFanTypeEnum;
+(function (IfcFanTypeEnum) {
+    IfcFanTypeEnum["CENTRIFUGALFORWARDCURVED"] = "CENTRIFUGALFORWARDCURVED";
+    IfcFanTypeEnum["CENTRIFUGALRADIAL"] = "CENTRIFUGALRADIAL";
+    IfcFanTypeEnum["CENTRIFUGALBACKWARDINCLINEDCURVED"] = "CENTRIFUGALBACKWARDINCLINEDCURVED";
+    IfcFanTypeEnum["CENTRIFUGALAIRFOIL"] = "CENTRIFUGALAIRFOIL";
+    IfcFanTypeEnum["TUBEAXIAL"] = "TUBEAXIAL";
+    IfcFanTypeEnum["VANEAXIAL"] = "VANEAXIAL";
+    IfcFanTypeEnum["PROPELLORAXIAL"] = "PROPELLORAXIAL";
+    IfcFanTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcFanTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcFanTypeEnum || (IfcFanTypeEnum = {}));
+/** IfcFastenerTypeEnum */
+export var IfcFastenerTypeEnum;
+(function (IfcFastenerTypeEnum) {
+    IfcFastenerTypeEnum["GLUE"] = "GLUE";
+    IfcFastenerTypeEnum["MORTAR"] = "MORTAR";
+    IfcFastenerTypeEnum["WELD"] = "WELD";
+    IfcFastenerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcFastenerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcFastenerTypeEnum || (IfcFastenerTypeEnum = {}));
+/** IfcFilterTypeEnum */
+export var IfcFilterTypeEnum;
+(function (IfcFilterTypeEnum) {
+    IfcFilterTypeEnum["AIRPARTICLEFILTER"] = "AIRPARTICLEFILTER";
+    IfcFilterTypeEnum["COMPRESSEDAIRFILTER"] = "COMPRESSEDAIRFILTER";
+    IfcFilterTypeEnum["ODORFILTER"] = "ODORFILTER";
+    IfcFilterTypeEnum["OILFILTER"] = "OILFILTER";
+    IfcFilterTypeEnum["STRAINER"] = "STRAINER";
+    IfcFilterTypeEnum["WATERFILTER"] = "WATERFILTER";
+    IfcFilterTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcFilterTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcFilterTypeEnum || (IfcFilterTypeEnum = {}));
+/** IfcFireSuppressionTerminalTypeEnum */
+export var IfcFireSuppressionTerminalTypeEnum;
+(function (IfcFireSuppressionTerminalTypeEnum) {
+    IfcFireSuppressionTerminalTypeEnum["BREECHINGINLET"] = "BREECHINGINLET";
+    IfcFireSuppressionTerminalTypeEnum["FIREHYDRANT"] = "FIREHYDRANT";
+    IfcFireSuppressionTerminalTypeEnum["HOSEREEL"] = "HOSEREEL";
+    IfcFireSuppressionTerminalTypeEnum["SPRINKLER"] = "SPRINKLER";
+    IfcFireSuppressionTerminalTypeEnum["SPRINKLERDEFLECTOR"] = "SPRINKLERDEFLECTOR";
+    IfcFireSuppressionTerminalTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcFireSuppressionTerminalTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcFireSuppressionTerminalTypeEnum || (IfcFireSuppressionTerminalTypeEnum = {}));
+/** IfcFlowDirectionEnum */
+export var IfcFlowDirectionEnum;
+(function (IfcFlowDirectionEnum) {
+    IfcFlowDirectionEnum["SOURCE"] = "SOURCE";
+    IfcFlowDirectionEnum["SINK"] = "SINK";
+    IfcFlowDirectionEnum["SOURCEANDSINK"] = "SOURCEANDSINK";
+    IfcFlowDirectionEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcFlowDirectionEnum || (IfcFlowDirectionEnum = {}));
+/** IfcFlowInstrumentTypeEnum */
+export var IfcFlowInstrumentTypeEnum;
+(function (IfcFlowInstrumentTypeEnum) {
+    IfcFlowInstrumentTypeEnum["PRESSUREGAUGE"] = "PRESSUREGAUGE";
+    IfcFlowInstrumentTypeEnum["THERMOMETER"] = "THERMOMETER";
+    IfcFlowInstrumentTypeEnum["AMMETER"] = "AMMETER";
+    IfcFlowInstrumentTypeEnum["FREQUENCYMETER"] = "FREQUENCYMETER";
+    IfcFlowInstrumentTypeEnum["POWERFACTORMETER"] = "POWERFACTORMETER";
+    IfcFlowInstrumentTypeEnum["PHASEANGLEMETER"] = "PHASEANGLEMETER";
+    IfcFlowInstrumentTypeEnum["VOLTMETER_PEAK"] = "VOLTMETER_PEAK";
+    IfcFlowInstrumentTypeEnum["VOLTMETER_RMS"] = "VOLTMETER_RMS";
+    IfcFlowInstrumentTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcFlowInstrumentTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcFlowInstrumentTypeEnum || (IfcFlowInstrumentTypeEnum = {}));
+/** IfcFlowMeterTypeEnum */
+export var IfcFlowMeterTypeEnum;
+(function (IfcFlowMeterTypeEnum) {
+    IfcFlowMeterTypeEnum["ENERGYMETER"] = "ENERGYMETER";
+    IfcFlowMeterTypeEnum["GASMETER"] = "GASMETER";
+    IfcFlowMeterTypeEnum["OILMETER"] = "OILMETER";
+    IfcFlowMeterTypeEnum["WATERMETER"] = "WATERMETER";
+    IfcFlowMeterTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcFlowMeterTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcFlowMeterTypeEnum || (IfcFlowMeterTypeEnum = {}));
+/** IfcFootingTypeEnum */
+export var IfcFootingTypeEnum;
+(function (IfcFootingTypeEnum) {
+    IfcFootingTypeEnum["CAISSON_FOUNDATION"] = "CAISSON_FOUNDATION";
+    IfcFootingTypeEnum["FOOTING_BEAM"] = "FOOTING_BEAM";
+    IfcFootingTypeEnum["PAD_FOOTING"] = "PAD_FOOTING";
+    IfcFootingTypeEnum["PILE_CAP"] = "PILE_CAP";
+    IfcFootingTypeEnum["STRIP_FOOTING"] = "STRIP_FOOTING";
+    IfcFootingTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcFootingTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcFootingTypeEnum || (IfcFootingTypeEnum = {}));
+/** IfcFurnitureTypeEnum */
+export var IfcFurnitureTypeEnum;
+(function (IfcFurnitureTypeEnum) {
+    IfcFurnitureTypeEnum["CHAIR"] = "CHAIR";
+    IfcFurnitureTypeEnum["TABLE"] = "TABLE";
+    IfcFurnitureTypeEnum["DESK"] = "DESK";
+    IfcFurnitureTypeEnum["BED"] = "BED";
+    IfcFurnitureTypeEnum["FILECABINET"] = "FILECABINET";
+    IfcFurnitureTypeEnum["SHELF"] = "SHELF";
+    IfcFurnitureTypeEnum["SOFA"] = "SOFA";
+    IfcFurnitureTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcFurnitureTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcFurnitureTypeEnum || (IfcFurnitureTypeEnum = {}));
+/** IfcGeographicElementTypeEnum */
+export var IfcGeographicElementTypeEnum;
+(function (IfcGeographicElementTypeEnum) {
+    IfcGeographicElementTypeEnum["TERRAIN"] = "TERRAIN";
+    IfcGeographicElementTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcGeographicElementTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcGeographicElementTypeEnum || (IfcGeographicElementTypeEnum = {}));
+/** IfcGeometricProjectionEnum */
+export var IfcGeometricProjectionEnum;
+(function (IfcGeometricProjectionEnum) {
+    IfcGeometricProjectionEnum["GRAPH_VIEW"] = "GRAPH_VIEW";
+    IfcGeometricProjectionEnum["SKETCH_VIEW"] = "SKETCH_VIEW";
+    IfcGeometricProjectionEnum["MODEL_VIEW"] = "MODEL_VIEW";
+    IfcGeometricProjectionEnum["PLAN_VIEW"] = "PLAN_VIEW";
+    IfcGeometricProjectionEnum["REFLECTED_PLAN_VIEW"] = "REFLECTED_PLAN_VIEW";
+    IfcGeometricProjectionEnum["SECTION_VIEW"] = "SECTION_VIEW";
+    IfcGeometricProjectionEnum["ELEVATION_VIEW"] = "ELEVATION_VIEW";
+    IfcGeometricProjectionEnum["USERDEFINED"] = "USERDEFINED";
+    IfcGeometricProjectionEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcGeometricProjectionEnum || (IfcGeometricProjectionEnum = {}));
+/** IfcGlobalOrLocalEnum */
+export var IfcGlobalOrLocalEnum;
+(function (IfcGlobalOrLocalEnum) {
+    IfcGlobalOrLocalEnum["GLOBAL_COORDS"] = "GLOBAL_COORDS";
+    IfcGlobalOrLocalEnum["LOCAL_COORDS"] = "LOCAL_COORDS";
+})(IfcGlobalOrLocalEnum || (IfcGlobalOrLocalEnum = {}));
+/** IfcGridTypeEnum */
+export var IfcGridTypeEnum;
+(function (IfcGridTypeEnum) {
+    IfcGridTypeEnum["RECTANGULAR"] = "RECTANGULAR";
+    IfcGridTypeEnum["RADIAL"] = "RADIAL";
+    IfcGridTypeEnum["TRIANGULAR"] = "TRIANGULAR";
+    IfcGridTypeEnum["IRREGULAR"] = "IRREGULAR";
+    IfcGridTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcGridTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcGridTypeEnum || (IfcGridTypeEnum = {}));
+/** IfcHeatExchangerTypeEnum */
+export var IfcHeatExchangerTypeEnum;
+(function (IfcHeatExchangerTypeEnum) {
+    IfcHeatExchangerTypeEnum["PLATE"] = "PLATE";
+    IfcHeatExchangerTypeEnum["SHELLANDTUBE"] = "SHELLANDTUBE";
+    IfcHeatExchangerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcHeatExchangerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcHeatExchangerTypeEnum || (IfcHeatExchangerTypeEnum = {}));
+/** IfcHumidifierTypeEnum */
+export var IfcHumidifierTypeEnum;
+(function (IfcHumidifierTypeEnum) {
+    IfcHumidifierTypeEnum["STEAMINJECTION"] = "STEAMINJECTION";
+    IfcHumidifierTypeEnum["ADIABATICAIRWASHER"] = "ADIABATICAIRWASHER";
+    IfcHumidifierTypeEnum["ADIABATICPAN"] = "ADIABATICPAN";
+    IfcHumidifierTypeEnum["ADIABATICWETTEDELEMENT"] = "ADIABATICWETTEDELEMENT";
+    IfcHumidifierTypeEnum["ADIABATICATOMIZING"] = "ADIABATICATOMIZING";
+    IfcHumidifierTypeEnum["ADIABATICULTRASONIC"] = "ADIABATICULTRASONIC";
+    IfcHumidifierTypeEnum["ADIABATICRIGIDMEDIA"] = "ADIABATICRIGIDMEDIA";
+    IfcHumidifierTypeEnum["ADIABATICCOMPRESSEDAIRNOZZLE"] = "ADIABATICCOMPRESSEDAIRNOZZLE";
+    IfcHumidifierTypeEnum["ASSISTEDELECTRIC"] = "ASSISTEDELECTRIC";
+    IfcHumidifierTypeEnum["ASSISTEDNATURALGAS"] = "ASSISTEDNATURALGAS";
+    IfcHumidifierTypeEnum["ASSISTEDPROPANE"] = "ASSISTEDPROPANE";
+    IfcHumidifierTypeEnum["ASSISTEDBUTANE"] = "ASSISTEDBUTANE";
+    IfcHumidifierTypeEnum["ASSISTEDSTEAM"] = "ASSISTEDSTEAM";
+    IfcHumidifierTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcHumidifierTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcHumidifierTypeEnum || (IfcHumidifierTypeEnum = {}));
+/** IfcInterceptorTypeEnum */
+export var IfcInterceptorTypeEnum;
+(function (IfcInterceptorTypeEnum) {
+    IfcInterceptorTypeEnum["CYCLONIC"] = "CYCLONIC";
+    IfcInterceptorTypeEnum["GREASE"] = "GREASE";
+    IfcInterceptorTypeEnum["OIL"] = "OIL";
+    IfcInterceptorTypeEnum["PETROL"] = "PETROL";
+    IfcInterceptorTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcInterceptorTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcInterceptorTypeEnum || (IfcInterceptorTypeEnum = {}));
+/** IfcInternalOrExternalEnum */
+export var IfcInternalOrExternalEnum;
+(function (IfcInternalOrExternalEnum) {
+    IfcInternalOrExternalEnum["INTERNAL"] = "INTERNAL";
+    IfcInternalOrExternalEnum["EXTERNAL"] = "EXTERNAL";
+    IfcInternalOrExternalEnum["EXTERNAL_EARTH"] = "EXTERNAL_EARTH";
+    IfcInternalOrExternalEnum["EXTERNAL_WATER"] = "EXTERNAL_WATER";
+    IfcInternalOrExternalEnum["EXTERNAL_FIRE"] = "EXTERNAL_FIRE";
+    IfcInternalOrExternalEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcInternalOrExternalEnum || (IfcInternalOrExternalEnum = {}));
+/** IfcInventoryTypeEnum */
+export var IfcInventoryTypeEnum;
+(function (IfcInventoryTypeEnum) {
+    IfcInventoryTypeEnum["ASSETINVENTORY"] = "ASSETINVENTORY";
+    IfcInventoryTypeEnum["SPACEINVENTORY"] = "SPACEINVENTORY";
+    IfcInventoryTypeEnum["FURNITUREINVENTORY"] = "FURNITUREINVENTORY";
+    IfcInventoryTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcInventoryTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcInventoryTypeEnum || (IfcInventoryTypeEnum = {}));
+/** IfcJunctionBoxTypeEnum */
+export var IfcJunctionBoxTypeEnum;
+(function (IfcJunctionBoxTypeEnum) {
+    IfcJunctionBoxTypeEnum["DATA"] = "DATA";
+    IfcJunctionBoxTypeEnum["POWER"] = "POWER";
+    IfcJunctionBoxTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcJunctionBoxTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcJunctionBoxTypeEnum || (IfcJunctionBoxTypeEnum = {}));
+/** IfcKnotType */
+export var IfcKnotType;
+(function (IfcKnotType) {
+    IfcKnotType["UNIFORM_KNOTS"] = "UNIFORM_KNOTS";
+    IfcKnotType["QUASI_UNIFORM_KNOTS"] = "QUASI_UNIFORM_KNOTS";
+    IfcKnotType["PIECEWISE_BEZIER_KNOTS"] = "PIECEWISE_BEZIER_KNOTS";
+    IfcKnotType["UNSPECIFIED"] = "UNSPECIFIED";
+})(IfcKnotType || (IfcKnotType = {}));
+/** IfcLaborResourceTypeEnum */
+export var IfcLaborResourceTypeEnum;
+(function (IfcLaborResourceTypeEnum) {
+    IfcLaborResourceTypeEnum["ADMINISTRATION"] = "ADMINISTRATION";
+    IfcLaborResourceTypeEnum["CARPENTRY"] = "CARPENTRY";
+    IfcLaborResourceTypeEnum["CLEANING"] = "CLEANING";
+    IfcLaborResourceTypeEnum["CONCRETE"] = "CONCRETE";
+    IfcLaborResourceTypeEnum["DRYWALL"] = "DRYWALL";
+    IfcLaborResourceTypeEnum["ELECTRIC"] = "ELECTRIC";
+    IfcLaborResourceTypeEnum["FINISHING"] = "FINISHING";
+    IfcLaborResourceTypeEnum["FLOORING"] = "FLOORING";
+    IfcLaborResourceTypeEnum["GENERAL"] = "GENERAL";
+    IfcLaborResourceTypeEnum["HVAC"] = "HVAC";
+    IfcLaborResourceTypeEnum["LANDSCAPING"] = "LANDSCAPING";
+    IfcLaborResourceTypeEnum["MASONRY"] = "MASONRY";
+    IfcLaborResourceTypeEnum["PAINTING"] = "PAINTING";
+    IfcLaborResourceTypeEnum["PAVING"] = "PAVING";
+    IfcLaborResourceTypeEnum["PLUMBING"] = "PLUMBING";
+    IfcLaborResourceTypeEnum["ROOFING"] = "ROOFING";
+    IfcLaborResourceTypeEnum["SITEGRADING"] = "SITEGRADING";
+    IfcLaborResourceTypeEnum["STEELWORK"] = "STEELWORK";
+    IfcLaborResourceTypeEnum["SURVEYING"] = "SURVEYING";
+    IfcLaborResourceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcLaborResourceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcLaborResourceTypeEnum || (IfcLaborResourceTypeEnum = {}));
+/** IfcLampTypeEnum */
+export var IfcLampTypeEnum;
+(function (IfcLampTypeEnum) {
+    IfcLampTypeEnum["COMPACTFLUORESCENT"] = "COMPACTFLUORESCENT";
+    IfcLampTypeEnum["FLUORESCENT"] = "FLUORESCENT";
+    IfcLampTypeEnum["HALOGEN"] = "HALOGEN";
+    IfcLampTypeEnum["HIGHPRESSUREMERCURY"] = "HIGHPRESSUREMERCURY";
+    IfcLampTypeEnum["HIGHPRESSURESODIUM"] = "HIGHPRESSURESODIUM";
+    IfcLampTypeEnum["LED"] = "LED";
+    IfcLampTypeEnum["METALHALIDE"] = "METALHALIDE";
+    IfcLampTypeEnum["OLED"] = "OLED";
+    IfcLampTypeEnum["TUNGSTENFILAMENT"] = "TUNGSTENFILAMENT";
+    IfcLampTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcLampTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcLampTypeEnum || (IfcLampTypeEnum = {}));
+/** IfcLayerSetDirectionEnum */
+export var IfcLayerSetDirectionEnum;
+(function (IfcLayerSetDirectionEnum) {
+    IfcLayerSetDirectionEnum["AXIS1"] = "AXIS1";
+    IfcLayerSetDirectionEnum["AXIS2"] = "AXIS2";
+    IfcLayerSetDirectionEnum["AXIS3"] = "AXIS3";
+})(IfcLayerSetDirectionEnum || (IfcLayerSetDirectionEnum = {}));
+/** IfcLightDistributionCurveEnum */
+export var IfcLightDistributionCurveEnum;
+(function (IfcLightDistributionCurveEnum) {
+    IfcLightDistributionCurveEnum["TYPE_A"] = "TYPE_A";
+    IfcLightDistributionCurveEnum["TYPE_B"] = "TYPE_B";
+    IfcLightDistributionCurveEnum["TYPE_C"] = "TYPE_C";
+    IfcLightDistributionCurveEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcLightDistributionCurveEnum || (IfcLightDistributionCurveEnum = {}));
+/** IfcLightEmissionSourceEnum */
+export var IfcLightEmissionSourceEnum;
+(function (IfcLightEmissionSourceEnum) {
+    IfcLightEmissionSourceEnum["COMPACTFLUORESCENT"] = "COMPACTFLUORESCENT";
+    IfcLightEmissionSourceEnum["FLUORESCENT"] = "FLUORESCENT";
+    IfcLightEmissionSourceEnum["HIGHPRESSUREMERCURY"] = "HIGHPRESSUREMERCURY";
+    IfcLightEmissionSourceEnum["HIGHPRESSURESODIUM"] = "HIGHPRESSURESODIUM";
+    IfcLightEmissionSourceEnum["LIGHTEMITTINGDIODE"] = "LIGHTEMITTINGDIODE";
+    IfcLightEmissionSourceEnum["LOWPRESSURESODIUM"] = "LOWPRESSURESODIUM";
+    IfcLightEmissionSourceEnum["LOWVOLTAGEHALOGEN"] = "LOWVOLTAGEHALOGEN";
+    IfcLightEmissionSourceEnum["MAINVOLTAGEHALOGEN"] = "MAINVOLTAGEHALOGEN";
+    IfcLightEmissionSourceEnum["METALHALIDE"] = "METALHALIDE";
+    IfcLightEmissionSourceEnum["TUNGSTENFILAMENT"] = "TUNGSTENFILAMENT";
+    IfcLightEmissionSourceEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcLightEmissionSourceEnum || (IfcLightEmissionSourceEnum = {}));
+/** IfcLightFixtureTypeEnum */
+export var IfcLightFixtureTypeEnum;
+(function (IfcLightFixtureTypeEnum) {
+    IfcLightFixtureTypeEnum["POINTSOURCE"] = "POINTSOURCE";
+    IfcLightFixtureTypeEnum["DIRECTIONSOURCE"] = "DIRECTIONSOURCE";
+    IfcLightFixtureTypeEnum["SECURITYLIGHTING"] = "SECURITYLIGHTING";
+    IfcLightFixtureTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcLightFixtureTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcLightFixtureTypeEnum || (IfcLightFixtureTypeEnum = {}));
+/** IfcLoadGroupTypeEnum */
+export var IfcLoadGroupTypeEnum;
+(function (IfcLoadGroupTypeEnum) {
+    IfcLoadGroupTypeEnum["LOAD_GROUP"] = "LOAD_GROUP";
+    IfcLoadGroupTypeEnum["LOAD_CASE"] = "LOAD_CASE";
+    IfcLoadGroupTypeEnum["LOAD_COMBINATION"] = "LOAD_COMBINATION";
+    IfcLoadGroupTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcLoadGroupTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcLoadGroupTypeEnum || (IfcLoadGroupTypeEnum = {}));
+/** IfcLogicalOperatorEnum */
+export var IfcLogicalOperatorEnum;
+(function (IfcLogicalOperatorEnum) {
+    IfcLogicalOperatorEnum["LOGICALAND"] = "LOGICALAND";
+    IfcLogicalOperatorEnum["LOGICALOR"] = "LOGICALOR";
+    IfcLogicalOperatorEnum["LOGICALXOR"] = "LOGICALXOR";
+    IfcLogicalOperatorEnum["LOGICALNOTAND"] = "LOGICALNOTAND";
+    IfcLogicalOperatorEnum["LOGICALNOTOR"] = "LOGICALNOTOR";
+})(IfcLogicalOperatorEnum || (IfcLogicalOperatorEnum = {}));
+/** IfcMechanicalFastenerTypeEnum */
+export var IfcMechanicalFastenerTypeEnum;
+(function (IfcMechanicalFastenerTypeEnum) {
+    IfcMechanicalFastenerTypeEnum["ANCHORBOLT"] = "ANCHORBOLT";
+    IfcMechanicalFastenerTypeEnum["BOLT"] = "BOLT";
+    IfcMechanicalFastenerTypeEnum["DOWEL"] = "DOWEL";
+    IfcMechanicalFastenerTypeEnum["NAIL"] = "NAIL";
+    IfcMechanicalFastenerTypeEnum["NAILPLATE"] = "NAILPLATE";
+    IfcMechanicalFastenerTypeEnum["RIVET"] = "RIVET";
+    IfcMechanicalFastenerTypeEnum["SCREW"] = "SCREW";
+    IfcMechanicalFastenerTypeEnum["SHEARCONNECTOR"] = "SHEARCONNECTOR";
+    IfcMechanicalFastenerTypeEnum["STAPLE"] = "STAPLE";
+    IfcMechanicalFastenerTypeEnum["STUDSHEARCONNECTOR"] = "STUDSHEARCONNECTOR";
+    IfcMechanicalFastenerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcMechanicalFastenerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcMechanicalFastenerTypeEnum || (IfcMechanicalFastenerTypeEnum = {}));
+/** IfcMedicalDeviceTypeEnum */
+export var IfcMedicalDeviceTypeEnum;
+(function (IfcMedicalDeviceTypeEnum) {
+    IfcMedicalDeviceTypeEnum["AIRSTATION"] = "AIRSTATION";
+    IfcMedicalDeviceTypeEnum["FEEDAIRUNIT"] = "FEEDAIRUNIT";
+    IfcMedicalDeviceTypeEnum["OXYGENGENERATOR"] = "OXYGENGENERATOR";
+    IfcMedicalDeviceTypeEnum["OXYGENPLANT"] = "OXYGENPLANT";
+    IfcMedicalDeviceTypeEnum["VACUUMSTATION"] = "VACUUMSTATION";
+    IfcMedicalDeviceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcMedicalDeviceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcMedicalDeviceTypeEnum || (IfcMedicalDeviceTypeEnum = {}));
+/** IfcMemberTypeEnum */
+export var IfcMemberTypeEnum;
+(function (IfcMemberTypeEnum) {
+    IfcMemberTypeEnum["BRACE"] = "BRACE";
+    IfcMemberTypeEnum["CHORD"] = "CHORD";
+    IfcMemberTypeEnum["COLLAR"] = "COLLAR";
+    IfcMemberTypeEnum["MEMBER"] = "MEMBER";
+    IfcMemberTypeEnum["MULLION"] = "MULLION";
+    IfcMemberTypeEnum["PLATE"] = "PLATE";
+    IfcMemberTypeEnum["POST"] = "POST";
+    IfcMemberTypeEnum["PURLIN"] = "PURLIN";
+    IfcMemberTypeEnum["RAFTER"] = "RAFTER";
+    IfcMemberTypeEnum["STRINGER"] = "STRINGER";
+    IfcMemberTypeEnum["STRUT"] = "STRUT";
+    IfcMemberTypeEnum["STUD"] = "STUD";
+    IfcMemberTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcMemberTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcMemberTypeEnum || (IfcMemberTypeEnum = {}));
+/** IfcMotorConnectionTypeEnum */
+export var IfcMotorConnectionTypeEnum;
+(function (IfcMotorConnectionTypeEnum) {
+    IfcMotorConnectionTypeEnum["BELTDRIVE"] = "BELTDRIVE";
+    IfcMotorConnectionTypeEnum["COUPLING"] = "COUPLING";
+    IfcMotorConnectionTypeEnum["DIRECTDRIVE"] = "DIRECTDRIVE";
+    IfcMotorConnectionTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcMotorConnectionTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcMotorConnectionTypeEnum || (IfcMotorConnectionTypeEnum = {}));
+/** IfcNullStyle */
+export var IfcNullStyle;
+(function (IfcNullStyle) {
+    IfcNullStyle["NULL"] = "NULL";
+})(IfcNullStyle || (IfcNullStyle = {}));
+/** IfcObjectTypeEnum */
+export var IfcObjectTypeEnum;
+(function (IfcObjectTypeEnum) {
+    IfcObjectTypeEnum["PRODUCT"] = "PRODUCT";
+    IfcObjectTypeEnum["PROCESS"] = "PROCESS";
+    IfcObjectTypeEnum["CONTROL"] = "CONTROL";
+    IfcObjectTypeEnum["RESOURCE"] = "RESOURCE";
+    IfcObjectTypeEnum["ACTOR"] = "ACTOR";
+    IfcObjectTypeEnum["GROUP"] = "GROUP";
+    IfcObjectTypeEnum["PROJECT"] = "PROJECT";
+    IfcObjectTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcObjectTypeEnum || (IfcObjectTypeEnum = {}));
+/** IfcObjectiveEnum */
+export var IfcObjectiveEnum;
+(function (IfcObjectiveEnum) {
+    IfcObjectiveEnum["CODECOMPLIANCE"] = "CODECOMPLIANCE";
+    IfcObjectiveEnum["CODEWAIVER"] = "CODEWAIVER";
+    IfcObjectiveEnum["DESIGNINTENT"] = "DESIGNINTENT";
+    IfcObjectiveEnum["EXTERNAL"] = "EXTERNAL";
+    IfcObjectiveEnum["HEALTHANDSAFETY"] = "HEALTHANDSAFETY";
+    IfcObjectiveEnum["MERGECONFLICT"] = "MERGECONFLICT";
+    IfcObjectiveEnum["MODELVIEW"] = "MODELVIEW";
+    IfcObjectiveEnum["PARAMETER"] = "PARAMETER";
+    IfcObjectiveEnum["REQUIREMENT"] = "REQUIREMENT";
+    IfcObjectiveEnum["SPECIFICATION"] = "SPECIFICATION";
+    IfcObjectiveEnum["TRIGGERCONDITION"] = "TRIGGERCONDITION";
+    IfcObjectiveEnum["USERDEFINED"] = "USERDEFINED";
+    IfcObjectiveEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcObjectiveEnum || (IfcObjectiveEnum = {}));
+/** IfcOccupantTypeEnum */
+export var IfcOccupantTypeEnum;
+(function (IfcOccupantTypeEnum) {
+    IfcOccupantTypeEnum["ASSIGNEE"] = "ASSIGNEE";
+    IfcOccupantTypeEnum["ASSIGNOR"] = "ASSIGNOR";
+    IfcOccupantTypeEnum["LESSEE"] = "LESSEE";
+    IfcOccupantTypeEnum["LESSOR"] = "LESSOR";
+    IfcOccupantTypeEnum["LETTINGAGENT"] = "LETTINGAGENT";
+    IfcOccupantTypeEnum["OWNER"] = "OWNER";
+    IfcOccupantTypeEnum["TENANT"] = "TENANT";
+    IfcOccupantTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcOccupantTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcOccupantTypeEnum || (IfcOccupantTypeEnum = {}));
+/** IfcOpeningElementTypeEnum */
+export var IfcOpeningElementTypeEnum;
+(function (IfcOpeningElementTypeEnum) {
+    IfcOpeningElementTypeEnum["OPENING"] = "OPENING";
+    IfcOpeningElementTypeEnum["RECESS"] = "RECESS";
+    IfcOpeningElementTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcOpeningElementTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcOpeningElementTypeEnum || (IfcOpeningElementTypeEnum = {}));
+/** IfcOutletTypeEnum */
+export var IfcOutletTypeEnum;
+(function (IfcOutletTypeEnum) {
+    IfcOutletTypeEnum["AUDIOVISUALOUTLET"] = "AUDIOVISUALOUTLET";
+    IfcOutletTypeEnum["COMMUNICATIONSOUTLET"] = "COMMUNICATIONSOUTLET";
+    IfcOutletTypeEnum["POWEROUTLET"] = "POWEROUTLET";
+    IfcOutletTypeEnum["DATAOUTLET"] = "DATAOUTLET";
+    IfcOutletTypeEnum["TELEPHONEOUTLET"] = "TELEPHONEOUTLET";
+    IfcOutletTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcOutletTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcOutletTypeEnum || (IfcOutletTypeEnum = {}));
+/** IfcPerformanceHistoryTypeEnum */
+export var IfcPerformanceHistoryTypeEnum;
+(function (IfcPerformanceHistoryTypeEnum) {
+    IfcPerformanceHistoryTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcPerformanceHistoryTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcPerformanceHistoryTypeEnum || (IfcPerformanceHistoryTypeEnum = {}));
+/** IfcPermeableCoveringOperationEnum */
+export var IfcPermeableCoveringOperationEnum;
+(function (IfcPermeableCoveringOperationEnum) {
+    IfcPermeableCoveringOperationEnum["GRILL"] = "GRILL";
+    IfcPermeableCoveringOperationEnum["LOUVER"] = "LOUVER";
+    IfcPermeableCoveringOperationEnum["SCREEN"] = "SCREEN";
+    IfcPermeableCoveringOperationEnum["USERDEFINED"] = "USERDEFINED";
+    IfcPermeableCoveringOperationEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcPermeableCoveringOperationEnum || (IfcPermeableCoveringOperationEnum = {}));
+/** IfcPermitTypeEnum */
+export var IfcPermitTypeEnum;
+(function (IfcPermitTypeEnum) {
+    IfcPermitTypeEnum["ACCESS"] = "ACCESS";
+    IfcPermitTypeEnum["BUILDING"] = "BUILDING";
+    IfcPermitTypeEnum["WORK"] = "WORK";
+    IfcPermitTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcPermitTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcPermitTypeEnum || (IfcPermitTypeEnum = {}));
+/** IfcPhysicalOrVirtualEnum */
+export var IfcPhysicalOrVirtualEnum;
+(function (IfcPhysicalOrVirtualEnum) {
+    IfcPhysicalOrVirtualEnum["PHYSICAL"] = "PHYSICAL";
+    IfcPhysicalOrVirtualEnum["VIRTUAL"] = "VIRTUAL";
+    IfcPhysicalOrVirtualEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcPhysicalOrVirtualEnum || (IfcPhysicalOrVirtualEnum = {}));
+/** IfcPileConstructionEnum */
+export var IfcPileConstructionEnum;
+(function (IfcPileConstructionEnum) {
+    IfcPileConstructionEnum["CAST_IN_PLACE"] = "CAST_IN_PLACE";
+    IfcPileConstructionEnum["COMPOSITE"] = "COMPOSITE";
+    IfcPileConstructionEnum["PRECAST_CONCRETE"] = "PRECAST_CONCRETE";
+    IfcPileConstructionEnum["PREFAB_STEEL"] = "PREFAB_STEEL";
+    IfcPileConstructionEnum["USERDEFINED"] = "USERDEFINED";
+    IfcPileConstructionEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcPileConstructionEnum || (IfcPileConstructionEnum = {}));
+/** IfcPileTypeEnum */
+export var IfcPileTypeEnum;
+(function (IfcPileTypeEnum) {
+    IfcPileTypeEnum["BORED"] = "BORED";
+    IfcPileTypeEnum["DRIVEN"] = "DRIVEN";
+    IfcPileTypeEnum["JETGROUTING"] = "JETGROUTING";
+    IfcPileTypeEnum["COHESION"] = "COHESION";
+    IfcPileTypeEnum["FRICTION"] = "FRICTION";
+    IfcPileTypeEnum["SUPPORT"] = "SUPPORT";
+    IfcPileTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcPileTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcPileTypeEnum || (IfcPileTypeEnum = {}));
+/** IfcPipeFittingTypeEnum */
+export var IfcPipeFittingTypeEnum;
+(function (IfcPipeFittingTypeEnum) {
+    IfcPipeFittingTypeEnum["BEND"] = "BEND";
+    IfcPipeFittingTypeEnum["CONNECTOR"] = "CONNECTOR";
+    IfcPipeFittingTypeEnum["ENTRY"] = "ENTRY";
+    IfcPipeFittingTypeEnum["EXIT"] = "EXIT";
+    IfcPipeFittingTypeEnum["JUNCTION"] = "JUNCTION";
+    IfcPipeFittingTypeEnum["OBSTRUCTION"] = "OBSTRUCTION";
+    IfcPipeFittingTypeEnum["TRANSITION"] = "TRANSITION";
+    IfcPipeFittingTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcPipeFittingTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcPipeFittingTypeEnum || (IfcPipeFittingTypeEnum = {}));
+/** IfcPipeSegmentTypeEnum */
+export var IfcPipeSegmentTypeEnum;
+(function (IfcPipeSegmentTypeEnum) {
+    IfcPipeSegmentTypeEnum["CULVERT"] = "CULVERT";
+    IfcPipeSegmentTypeEnum["FLEXIBLESEGMENT"] = "FLEXIBLESEGMENT";
+    IfcPipeSegmentTypeEnum["RIGIDSEGMENT"] = "RIGIDSEGMENT";
+    IfcPipeSegmentTypeEnum["GUTTER"] = "GUTTER";
+    IfcPipeSegmentTypeEnum["SPOOL"] = "SPOOL";
+    IfcPipeSegmentTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcPipeSegmentTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcPipeSegmentTypeEnum || (IfcPipeSegmentTypeEnum = {}));
+/** IfcPlateTypeEnum */
+export var IfcPlateTypeEnum;
+(function (IfcPlateTypeEnum) {
+    IfcPlateTypeEnum["CURTAIN_PANEL"] = "CURTAIN_PANEL";
+    IfcPlateTypeEnum["SHEET"] = "SHEET";
+    IfcPlateTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcPlateTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcPlateTypeEnum || (IfcPlateTypeEnum = {}));
+/** IfcPreferredSurfaceCurveRepresentation */
+export var IfcPreferredSurfaceCurveRepresentation;
+(function (IfcPreferredSurfaceCurveRepresentation) {
+    IfcPreferredSurfaceCurveRepresentation["CURVE3D"] = "CURVE3D";
+    IfcPreferredSurfaceCurveRepresentation["PCURVE_S1"] = "PCURVE_S1";
+    IfcPreferredSurfaceCurveRepresentation["PCURVE_S2"] = "PCURVE_S2";
+})(IfcPreferredSurfaceCurveRepresentation || (IfcPreferredSurfaceCurveRepresentation = {}));
+/** IfcProcedureTypeEnum */
+export var IfcProcedureTypeEnum;
+(function (IfcProcedureTypeEnum) {
+    IfcProcedureTypeEnum["ADVICE_CAUTION"] = "ADVICE_CAUTION";
+    IfcProcedureTypeEnum["ADVICE_NOTE"] = "ADVICE_NOTE";
+    IfcProcedureTypeEnum["ADVICE_WARNING"] = "ADVICE_WARNING";
+    IfcProcedureTypeEnum["CALIBRATION"] = "CALIBRATION";
+    IfcProcedureTypeEnum["DIAGNOSTIC"] = "DIAGNOSTIC";
+    IfcProcedureTypeEnum["SHUTDOWN"] = "SHUTDOWN";
+    IfcProcedureTypeEnum["STARTUP"] = "STARTUP";
+    IfcProcedureTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcProcedureTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcProcedureTypeEnum || (IfcProcedureTypeEnum = {}));
+/** IfcProfileTypeEnum */
+export var IfcProfileTypeEnum;
+(function (IfcProfileTypeEnum) {
+    IfcProfileTypeEnum["CURVE"] = "CURVE";
+    IfcProfileTypeEnum["AREA"] = "AREA";
+})(IfcProfileTypeEnum || (IfcProfileTypeEnum = {}));
+/** IfcProjectOrderTypeEnum */
+export var IfcProjectOrderTypeEnum;
+(function (IfcProjectOrderTypeEnum) {
+    IfcProjectOrderTypeEnum["CHANGEORDER"] = "CHANGEORDER";
+    IfcProjectOrderTypeEnum["MAINTENANCEWORKORDER"] = "MAINTENANCEWORKORDER";
+    IfcProjectOrderTypeEnum["MOVEORDER"] = "MOVEORDER";
+    IfcProjectOrderTypeEnum["PURCHASEORDER"] = "PURCHASEORDER";
+    IfcProjectOrderTypeEnum["WORKORDER"] = "WORKORDER";
+    IfcProjectOrderTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcProjectOrderTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcProjectOrderTypeEnum || (IfcProjectOrderTypeEnum = {}));
+/** IfcProjectedOrTrueLengthEnum */
+export var IfcProjectedOrTrueLengthEnum;
+(function (IfcProjectedOrTrueLengthEnum) {
+    IfcProjectedOrTrueLengthEnum["PROJECTED_LENGTH"] = "PROJECTED_LENGTH";
+    IfcProjectedOrTrueLengthEnum["TRUE_LENGTH"] = "TRUE_LENGTH";
+})(IfcProjectedOrTrueLengthEnum || (IfcProjectedOrTrueLengthEnum = {}));
+/** IfcProjectionElementTypeEnum */
+export var IfcProjectionElementTypeEnum;
+(function (IfcProjectionElementTypeEnum) {
+    IfcProjectionElementTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcProjectionElementTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcProjectionElementTypeEnum || (IfcProjectionElementTypeEnum = {}));
+/** IfcPropertySetTemplateTypeEnum */
+export var IfcPropertySetTemplateTypeEnum;
+(function (IfcPropertySetTemplateTypeEnum) {
+    IfcPropertySetTemplateTypeEnum["PSET_TYPEDRIVENONLY"] = "PSET_TYPEDRIVENONLY";
+    IfcPropertySetTemplateTypeEnum["PSET_TYPEDRIVENOVERRIDE"] = "PSET_TYPEDRIVENOVERRIDE";
+    IfcPropertySetTemplateTypeEnum["PSET_OCCURRENCEDRIVEN"] = "PSET_OCCURRENCEDRIVEN";
+    IfcPropertySetTemplateTypeEnum["PSET_PERFORMANCEDRIVEN"] = "PSET_PERFORMANCEDRIVEN";
+    IfcPropertySetTemplateTypeEnum["QTO_TYPEDRIVENONLY"] = "QTO_TYPEDRIVENONLY";
+    IfcPropertySetTemplateTypeEnum["QTO_TYPEDRIVENOVERRIDE"] = "QTO_TYPEDRIVENOVERRIDE";
+    IfcPropertySetTemplateTypeEnum["QTO_OCCURRENCEDRIVEN"] = "QTO_OCCURRENCEDRIVEN";
+    IfcPropertySetTemplateTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcPropertySetTemplateTypeEnum || (IfcPropertySetTemplateTypeEnum = {}));
+/** IfcProtectiveDeviceTrippingUnitTypeEnum */
+export var IfcProtectiveDeviceTrippingUnitTypeEnum;
+(function (IfcProtectiveDeviceTrippingUnitTypeEnum) {
+    IfcProtectiveDeviceTrippingUnitTypeEnum["ELECTRONIC"] = "ELECTRONIC";
+    IfcProtectiveDeviceTrippingUnitTypeEnum["ELECTROMAGNETIC"] = "ELECTROMAGNETIC";
+    IfcProtectiveDeviceTrippingUnitTypeEnum["RESIDUALCURRENT"] = "RESIDUALCURRENT";
+    IfcProtectiveDeviceTrippingUnitTypeEnum["THERMAL"] = "THERMAL";
+    IfcProtectiveDeviceTrippingUnitTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcProtectiveDeviceTrippingUnitTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcProtectiveDeviceTrippingUnitTypeEnum || (IfcProtectiveDeviceTrippingUnitTypeEnum = {}));
+/** IfcProtectiveDeviceTypeEnum */
+export var IfcProtectiveDeviceTypeEnum;
+(function (IfcProtectiveDeviceTypeEnum) {
+    IfcProtectiveDeviceTypeEnum["CIRCUITBREAKER"] = "CIRCUITBREAKER";
+    IfcProtectiveDeviceTypeEnum["EARTHLEAKAGECIRCUITBREAKER"] = "EARTHLEAKAGECIRCUITBREAKER";
+    IfcProtectiveDeviceTypeEnum["EARTHINGSWITCH"] = "EARTHINGSWITCH";
+    IfcProtectiveDeviceTypeEnum["FUSEDISCONNECTOR"] = "FUSEDISCONNECTOR";
+    IfcProtectiveDeviceTypeEnum["RESIDUALCURRENTCIRCUITBREAKER"] = "RESIDUALCURRENTCIRCUITBREAKER";
+    IfcProtectiveDeviceTypeEnum["RESIDUALCURRENTSWITCH"] = "RESIDUALCURRENTSWITCH";
+    IfcProtectiveDeviceTypeEnum["VARISTOR"] = "VARISTOR";
+    IfcProtectiveDeviceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcProtectiveDeviceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcProtectiveDeviceTypeEnum || (IfcProtectiveDeviceTypeEnum = {}));
+/** IfcPumpTypeEnum */
+export var IfcPumpTypeEnum;
+(function (IfcPumpTypeEnum) {
+    IfcPumpTypeEnum["CIRCULATOR"] = "CIRCULATOR";
+    IfcPumpTypeEnum["ENDSUCTION"] = "ENDSUCTION";
+    IfcPumpTypeEnum["SPLITCASE"] = "SPLITCASE";
+    IfcPumpTypeEnum["SUBMERSIBLEPUMP"] = "SUBMERSIBLEPUMP";
+    IfcPumpTypeEnum["SUMPPUMP"] = "SUMPPUMP";
+    IfcPumpTypeEnum["VERTICALINLINE"] = "VERTICALINLINE";
+    IfcPumpTypeEnum["VERTICALTURBINE"] = "VERTICALTURBINE";
+    IfcPumpTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcPumpTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcPumpTypeEnum || (IfcPumpTypeEnum = {}));
+/** IfcRailingTypeEnum */
+export var IfcRailingTypeEnum;
+(function (IfcRailingTypeEnum) {
+    IfcRailingTypeEnum["HANDRAIL"] = "HANDRAIL";
+    IfcRailingTypeEnum["GUARDRAIL"] = "GUARDRAIL";
+    IfcRailingTypeEnum["BALUSTRADE"] = "BALUSTRADE";
+    IfcRailingTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcRailingTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcRailingTypeEnum || (IfcRailingTypeEnum = {}));
+/** IfcRampFlightTypeEnum */
+export var IfcRampFlightTypeEnum;
+(function (IfcRampFlightTypeEnum) {
+    IfcRampFlightTypeEnum["STRAIGHT"] = "STRAIGHT";
+    IfcRampFlightTypeEnum["SPIRAL"] = "SPIRAL";
+    IfcRampFlightTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcRampFlightTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcRampFlightTypeEnum || (IfcRampFlightTypeEnum = {}));
+/** IfcRampTypeEnum */
+export var IfcRampTypeEnum;
+(function (IfcRampTypeEnum) {
+    IfcRampTypeEnum["STRAIGHT_RUN_RAMP"] = "STRAIGHT_RUN_RAMP";
+    IfcRampTypeEnum["TWO_STRAIGHT_RUN_RAMP"] = "TWO_STRAIGHT_RUN_RAMP";
+    IfcRampTypeEnum["QUARTER_TURN_RAMP"] = "QUARTER_TURN_RAMP";
+    IfcRampTypeEnum["TWO_QUARTER_TURN_RAMP"] = "TWO_QUARTER_TURN_RAMP";
+    IfcRampTypeEnum["HALF_TURN_RAMP"] = "HALF_TURN_RAMP";
+    IfcRampTypeEnum["SPIRAL_RAMP"] = "SPIRAL_RAMP";
+    IfcRampTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcRampTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcRampTypeEnum || (IfcRampTypeEnum = {}));
+/** IfcRecurrenceTypeEnum */
+export var IfcRecurrenceTypeEnum;
+(function (IfcRecurrenceTypeEnum) {
+    IfcRecurrenceTypeEnum["DAILY"] = "DAILY";
+    IfcRecurrenceTypeEnum["WEEKLY"] = "WEEKLY";
+    IfcRecurrenceTypeEnum["MONTHLY_BY_DAY_OF_MONTH"] = "MONTHLY_BY_DAY_OF_MONTH";
+    IfcRecurrenceTypeEnum["MONTHLY_BY_POSITION"] = "MONTHLY_BY_POSITION";
+    IfcRecurrenceTypeEnum["BY_DAY_COUNT"] = "BY_DAY_COUNT";
+    IfcRecurrenceTypeEnum["BY_WEEKDAY_COUNT"] = "BY_WEEKDAY_COUNT";
+    IfcRecurrenceTypeEnum["YEARLY_BY_DAY_OF_MONTH"] = "YEARLY_BY_DAY_OF_MONTH";
+    IfcRecurrenceTypeEnum["YEARLY_BY_POSITION"] = "YEARLY_BY_POSITION";
+})(IfcRecurrenceTypeEnum || (IfcRecurrenceTypeEnum = {}));
+/** IfcReflectanceMethodEnum */
+export var IfcReflectanceMethodEnum;
+(function (IfcReflectanceMethodEnum) {
+    IfcReflectanceMethodEnum["BLINN"] = "BLINN";
+    IfcReflectanceMethodEnum["FLAT"] = "FLAT";
+    IfcReflectanceMethodEnum["GLASS"] = "GLASS";
+    IfcReflectanceMethodEnum["MATT"] = "MATT";
+    IfcReflectanceMethodEnum["METAL"] = "METAL";
+    IfcReflectanceMethodEnum["MIRROR"] = "MIRROR";
+    IfcReflectanceMethodEnum["PHONG"] = "PHONG";
+    IfcReflectanceMethodEnum["PLASTIC"] = "PLASTIC";
+    IfcReflectanceMethodEnum["STRAUSS"] = "STRAUSS";
+    IfcReflectanceMethodEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcReflectanceMethodEnum || (IfcReflectanceMethodEnum = {}));
+/** IfcReinforcingBarRoleEnum */
+export var IfcReinforcingBarRoleEnum;
+(function (IfcReinforcingBarRoleEnum) {
+    IfcReinforcingBarRoleEnum["MAIN"] = "MAIN";
+    IfcReinforcingBarRoleEnum["SHEAR"] = "SHEAR";
+    IfcReinforcingBarRoleEnum["LIGATURE"] = "LIGATURE";
+    IfcReinforcingBarRoleEnum["STUD"] = "STUD";
+    IfcReinforcingBarRoleEnum["PUNCHING"] = "PUNCHING";
+    IfcReinforcingBarRoleEnum["EDGE"] = "EDGE";
+    IfcReinforcingBarRoleEnum["RING"] = "RING";
+    IfcReinforcingBarRoleEnum["ANCHORING"] = "ANCHORING";
+    IfcReinforcingBarRoleEnum["USERDEFINED"] = "USERDEFINED";
+    IfcReinforcingBarRoleEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcReinforcingBarRoleEnum || (IfcReinforcingBarRoleEnum = {}));
+/** IfcReinforcingBarSurfaceEnum */
+export var IfcReinforcingBarSurfaceEnum;
+(function (IfcReinforcingBarSurfaceEnum) {
+    IfcReinforcingBarSurfaceEnum["PLAIN"] = "PLAIN";
+    IfcReinforcingBarSurfaceEnum["TEXTURED"] = "TEXTURED";
+})(IfcReinforcingBarSurfaceEnum || (IfcReinforcingBarSurfaceEnum = {}));
+/** IfcReinforcingBarTypeEnum */
+export var IfcReinforcingBarTypeEnum;
+(function (IfcReinforcingBarTypeEnum) {
+    IfcReinforcingBarTypeEnum["ANCHORING"] = "ANCHORING";
+    IfcReinforcingBarTypeEnum["EDGE"] = "EDGE";
+    IfcReinforcingBarTypeEnum["LIGATURE"] = "LIGATURE";
+    IfcReinforcingBarTypeEnum["MAIN"] = "MAIN";
+    IfcReinforcingBarTypeEnum["PUNCHING"] = "PUNCHING";
+    IfcReinforcingBarTypeEnum["RING"] = "RING";
+    IfcReinforcingBarTypeEnum["SHEAR"] = "SHEAR";
+    IfcReinforcingBarTypeEnum["STUD"] = "STUD";
+    IfcReinforcingBarTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcReinforcingBarTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcReinforcingBarTypeEnum || (IfcReinforcingBarTypeEnum = {}));
+/** IfcReinforcingMeshTypeEnum */
+export var IfcReinforcingMeshTypeEnum;
+(function (IfcReinforcingMeshTypeEnum) {
+    IfcReinforcingMeshTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcReinforcingMeshTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcReinforcingMeshTypeEnum || (IfcReinforcingMeshTypeEnum = {}));
+/** IfcRoleEnum */
+export var IfcRoleEnum;
+(function (IfcRoleEnum) {
+    IfcRoleEnum["SUPPLIER"] = "SUPPLIER";
+    IfcRoleEnum["MANUFACTURER"] = "MANUFACTURER";
+    IfcRoleEnum["CONTRACTOR"] = "CONTRACTOR";
+    IfcRoleEnum["SUBCONTRACTOR"] = "SUBCONTRACTOR";
+    IfcRoleEnum["ARCHITECT"] = "ARCHITECT";
+    IfcRoleEnum["STRUCTURALENGINEER"] = "STRUCTURALENGINEER";
+    IfcRoleEnum["COSTENGINEER"] = "COSTENGINEER";
+    IfcRoleEnum["CLIENT"] = "CLIENT";
+    IfcRoleEnum["BUILDINGOWNER"] = "BUILDINGOWNER";
+    IfcRoleEnum["BUILDINGOPERATOR"] = "BUILDINGOPERATOR";
+    IfcRoleEnum["MECHANICALENGINEER"] = "MECHANICALENGINEER";
+    IfcRoleEnum["ELECTRICALENGINEER"] = "ELECTRICALENGINEER";
+    IfcRoleEnum["PROJECTMANAGER"] = "PROJECTMANAGER";
+    IfcRoleEnum["FACILITIESMANAGER"] = "FACILITIESMANAGER";
+    IfcRoleEnum["CIVILENGINEER"] = "CIVILENGINEER";
+    IfcRoleEnum["COMMISSIONINGENGINEER"] = "COMMISSIONINGENGINEER";
+    IfcRoleEnum["ENGINEER"] = "ENGINEER";
+    IfcRoleEnum["OWNER"] = "OWNER";
+    IfcRoleEnum["CONSULTANT"] = "CONSULTANT";
+    IfcRoleEnum["CONSTRUCTIONMANAGER"] = "CONSTRUCTIONMANAGER";
+    IfcRoleEnum["FIELDCONSTRUCTIONMANAGER"] = "FIELDCONSTRUCTIONMANAGER";
+    IfcRoleEnum["RESELLER"] = "RESELLER";
+    IfcRoleEnum["USERDEFINED"] = "USERDEFINED";
+})(IfcRoleEnum || (IfcRoleEnum = {}));
+/** IfcRoofTypeEnum */
+export var IfcRoofTypeEnum;
+(function (IfcRoofTypeEnum) {
+    IfcRoofTypeEnum["FLAT_ROOF"] = "FLAT_ROOF";
+    IfcRoofTypeEnum["SHED_ROOF"] = "SHED_ROOF";
+    IfcRoofTypeEnum["GABLE_ROOF"] = "GABLE_ROOF";
+    IfcRoofTypeEnum["HIP_ROOF"] = "HIP_ROOF";
+    IfcRoofTypeEnum["HIPPED_GABLE_ROOF"] = "HIPPED_GABLE_ROOF";
+    IfcRoofTypeEnum["GAMBREL_ROOF"] = "GAMBREL_ROOF";
+    IfcRoofTypeEnum["MANSARD_ROOF"] = "MANSARD_ROOF";
+    IfcRoofTypeEnum["BARREL_ROOF"] = "BARREL_ROOF";
+    IfcRoofTypeEnum["RAINBOW_ROOF"] = "RAINBOW_ROOF";
+    IfcRoofTypeEnum["BUTTERFLY_ROOF"] = "BUTTERFLY_ROOF";
+    IfcRoofTypeEnum["PAVILION_ROOF"] = "PAVILION_ROOF";
+    IfcRoofTypeEnum["DOME_ROOF"] = "DOME_ROOF";
+    IfcRoofTypeEnum["FREEFORM"] = "FREEFORM";
+    IfcRoofTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcRoofTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcRoofTypeEnum || (IfcRoofTypeEnum = {}));
+/** IfcSIPrefix */
+export var IfcSIPrefix;
+(function (IfcSIPrefix) {
+    IfcSIPrefix["EXA"] = "EXA";
+    IfcSIPrefix["PETA"] = "PETA";
+    IfcSIPrefix["TERA"] = "TERA";
+    IfcSIPrefix["GIGA"] = "GIGA";
+    IfcSIPrefix["MEGA"] = "MEGA";
+    IfcSIPrefix["KILO"] = "KILO";
+    IfcSIPrefix["HECTO"] = "HECTO";
+    IfcSIPrefix["DECA"] = "DECA";
+    IfcSIPrefix["DECI"] = "DECI";
+    IfcSIPrefix["CENTI"] = "CENTI";
+    IfcSIPrefix["MILLI"] = "MILLI";
+    IfcSIPrefix["MICRO"] = "MICRO";
+    IfcSIPrefix["NANO"] = "NANO";
+    IfcSIPrefix["PICO"] = "PICO";
+    IfcSIPrefix["FEMTO"] = "FEMTO";
+    IfcSIPrefix["ATTO"] = "ATTO";
+})(IfcSIPrefix || (IfcSIPrefix = {}));
+/** IfcSIUnitName */
+export var IfcSIUnitName;
+(function (IfcSIUnitName) {
+    IfcSIUnitName["AMPERE"] = "AMPERE";
+    IfcSIUnitName["BECQUEREL"] = "BECQUEREL";
+    IfcSIUnitName["CANDELA"] = "CANDELA";
+    IfcSIUnitName["COULOMB"] = "COULOMB";
+    IfcSIUnitName["CUBIC_METRE"] = "CUBIC_METRE";
+    IfcSIUnitName["DEGREE_CELSIUS"] = "DEGREE_CELSIUS";
+    IfcSIUnitName["FARAD"] = "FARAD";
+    IfcSIUnitName["GRAM"] = "GRAM";
+    IfcSIUnitName["GRAY"] = "GRAY";
+    IfcSIUnitName["HENRY"] = "HENRY";
+    IfcSIUnitName["HERTZ"] = "HERTZ";
+    IfcSIUnitName["JOULE"] = "JOULE";
+    IfcSIUnitName["KELVIN"] = "KELVIN";
+    IfcSIUnitName["LUMEN"] = "LUMEN";
+    IfcSIUnitName["LUX"] = "LUX";
+    IfcSIUnitName["METRE"] = "METRE";
+    IfcSIUnitName["MOLE"] = "MOLE";
+    IfcSIUnitName["NEWTON"] = "NEWTON";
+    IfcSIUnitName["OHM"] = "OHM";
+    IfcSIUnitName["PASCAL"] = "PASCAL";
+    IfcSIUnitName["RADIAN"] = "RADIAN";
+    IfcSIUnitName["SECOND"] = "SECOND";
+    IfcSIUnitName["SIEMENS"] = "SIEMENS";
+    IfcSIUnitName["SIEVERT"] = "SIEVERT";
+    IfcSIUnitName["SQUARE_METRE"] = "SQUARE_METRE";
+    IfcSIUnitName["STERADIAN"] = "STERADIAN";
+    IfcSIUnitName["TESLA"] = "TESLA";
+    IfcSIUnitName["VOLT"] = "VOLT";
+    IfcSIUnitName["WATT"] = "WATT";
+    IfcSIUnitName["WEBER"] = "WEBER";
+})(IfcSIUnitName || (IfcSIUnitName = {}));
+/** IfcSanitaryTerminalTypeEnum */
+export var IfcSanitaryTerminalTypeEnum;
+(function (IfcSanitaryTerminalTypeEnum) {
+    IfcSanitaryTerminalTypeEnum["BATH"] = "BATH";
+    IfcSanitaryTerminalTypeEnum["BIDET"] = "BIDET";
+    IfcSanitaryTerminalTypeEnum["CISTERN"] = "CISTERN";
+    IfcSanitaryTerminalTypeEnum["SHOWER"] = "SHOWER";
+    IfcSanitaryTerminalTypeEnum["SINK"] = "SINK";
+    IfcSanitaryTerminalTypeEnum["SANITARYFOUNTAIN"] = "SANITARYFOUNTAIN";
+    IfcSanitaryTerminalTypeEnum["TOILETPAN"] = "TOILETPAN";
+    IfcSanitaryTerminalTypeEnum["URINAL"] = "URINAL";
+    IfcSanitaryTerminalTypeEnum["WASHHANDBASIN"] = "WASHHANDBASIN";
+    IfcSanitaryTerminalTypeEnum["WCSEAT"] = "WCSEAT";
+    IfcSanitaryTerminalTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSanitaryTerminalTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSanitaryTerminalTypeEnum || (IfcSanitaryTerminalTypeEnum = {}));
+/** IfcSectionTypeEnum */
+export var IfcSectionTypeEnum;
+(function (IfcSectionTypeEnum) {
+    IfcSectionTypeEnum["UNIFORM"] = "UNIFORM";
+    IfcSectionTypeEnum["TAPERED"] = "TAPERED";
+})(IfcSectionTypeEnum || (IfcSectionTypeEnum = {}));
+/** IfcSensorTypeEnum */
+export var IfcSensorTypeEnum;
+(function (IfcSensorTypeEnum) {
+    IfcSensorTypeEnum["COSENSOR"] = "COSENSOR";
+    IfcSensorTypeEnum["CO2SENSOR"] = "CO2SENSOR";
+    IfcSensorTypeEnum["CONDUCTANCESENSOR"] = "CONDUCTANCESENSOR";
+    IfcSensorTypeEnum["CONTACTSENSOR"] = "CONTACTSENSOR";
+    IfcSensorTypeEnum["FIRESENSOR"] = "FIRESENSOR";
+    IfcSensorTypeEnum["FLOWSENSOR"] = "FLOWSENSOR";
+    IfcSensorTypeEnum["FROSTSENSOR"] = "FROSTSENSOR";
+    IfcSensorTypeEnum["GASSENSOR"] = "GASSENSOR";
+    IfcSensorTypeEnum["HEATSENSOR"] = "HEATSENSOR";
+    IfcSensorTypeEnum["HUMIDITYSENSOR"] = "HUMIDITYSENSOR";
+    IfcSensorTypeEnum["IDENTIFIERSENSOR"] = "IDENTIFIERSENSOR";
+    IfcSensorTypeEnum["IONCONCENTRATIONSENSOR"] = "IONCONCENTRATIONSENSOR";
+    IfcSensorTypeEnum["LEVELSENSOR"] = "LEVELSENSOR";
+    IfcSensorTypeEnum["LIGHTSENSOR"] = "LIGHTSENSOR";
+    IfcSensorTypeEnum["MOISTURESENSOR"] = "MOISTURESENSOR";
+    IfcSensorTypeEnum["MOVEMENTSENSOR"] = "MOVEMENTSENSOR";
+    IfcSensorTypeEnum["PHSENSOR"] = "PHSENSOR";
+    IfcSensorTypeEnum["PRESSURESENSOR"] = "PRESSURESENSOR";
+    IfcSensorTypeEnum["RADIATIONSENSOR"] = "RADIATIONSENSOR";
+    IfcSensorTypeEnum["RADIOACTIVITYSENSOR"] = "RADIOACTIVITYSENSOR";
+    IfcSensorTypeEnum["SMOKESENSOR"] = "SMOKESENSOR";
+    IfcSensorTypeEnum["SOUNDSENSOR"] = "SOUNDSENSOR";
+    IfcSensorTypeEnum["TEMPERATURESENSOR"] = "TEMPERATURESENSOR";
+    IfcSensorTypeEnum["WINDSENSOR"] = "WINDSENSOR";
+    IfcSensorTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSensorTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSensorTypeEnum || (IfcSensorTypeEnum = {}));
+/** IfcSequenceEnum */
+export var IfcSequenceEnum;
+(function (IfcSequenceEnum) {
+    IfcSequenceEnum["START_START"] = "START_START";
+    IfcSequenceEnum["START_FINISH"] = "START_FINISH";
+    IfcSequenceEnum["FINISH_START"] = "FINISH_START";
+    IfcSequenceEnum["FINISH_FINISH"] = "FINISH_FINISH";
+    IfcSequenceEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSequenceEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSequenceEnum || (IfcSequenceEnum = {}));
+/** IfcShadingDeviceTypeEnum */
+export var IfcShadingDeviceTypeEnum;
+(function (IfcShadingDeviceTypeEnum) {
+    IfcShadingDeviceTypeEnum["JALOUSIE"] = "JALOUSIE";
+    IfcShadingDeviceTypeEnum["SHUTTER"] = "SHUTTER";
+    IfcShadingDeviceTypeEnum["AWNING"] = "AWNING";
+    IfcShadingDeviceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcShadingDeviceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcShadingDeviceTypeEnum || (IfcShadingDeviceTypeEnum = {}));
+/** IfcSimplePropertyTemplateTypeEnum */
+export var IfcSimplePropertyTemplateTypeEnum;
+(function (IfcSimplePropertyTemplateTypeEnum) {
+    IfcSimplePropertyTemplateTypeEnum["P_SINGLEVALUE"] = "P_SINGLEVALUE";
+    IfcSimplePropertyTemplateTypeEnum["P_ENUMERATEDVALUE"] = "P_ENUMERATEDVALUE";
+    IfcSimplePropertyTemplateTypeEnum["P_BOUNDEDVALUE"] = "P_BOUNDEDVALUE";
+    IfcSimplePropertyTemplateTypeEnum["P_LISTVALUE"] = "P_LISTVALUE";
+    IfcSimplePropertyTemplateTypeEnum["P_TABLEVALUE"] = "P_TABLEVALUE";
+    IfcSimplePropertyTemplateTypeEnum["P_REFERENCEVALUE"] = "P_REFERENCEVALUE";
+    IfcSimplePropertyTemplateTypeEnum["Q_LENGTH"] = "Q_LENGTH";
+    IfcSimplePropertyTemplateTypeEnum["Q_AREA"] = "Q_AREA";
+    IfcSimplePropertyTemplateTypeEnum["Q_VOLUME"] = "Q_VOLUME";
+    IfcSimplePropertyTemplateTypeEnum["Q_COUNT"] = "Q_COUNT";
+    IfcSimplePropertyTemplateTypeEnum["Q_WEIGHT"] = "Q_WEIGHT";
+    IfcSimplePropertyTemplateTypeEnum["Q_TIME"] = "Q_TIME";
+})(IfcSimplePropertyTemplateTypeEnum || (IfcSimplePropertyTemplateTypeEnum = {}));
+/** IfcSlabTypeEnum */
+export var IfcSlabTypeEnum;
+(function (IfcSlabTypeEnum) {
+    IfcSlabTypeEnum["FLOOR"] = "FLOOR";
+    IfcSlabTypeEnum["ROOF"] = "ROOF";
+    IfcSlabTypeEnum["LANDING"] = "LANDING";
+    IfcSlabTypeEnum["BASESLAB"] = "BASESLAB";
+    IfcSlabTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSlabTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSlabTypeEnum || (IfcSlabTypeEnum = {}));
+/** IfcSolarDeviceTypeEnum */
+export var IfcSolarDeviceTypeEnum;
+(function (IfcSolarDeviceTypeEnum) {
+    IfcSolarDeviceTypeEnum["SOLARCOLLECTOR"] = "SOLARCOLLECTOR";
+    IfcSolarDeviceTypeEnum["SOLARPANEL"] = "SOLARPANEL";
+    IfcSolarDeviceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSolarDeviceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSolarDeviceTypeEnum || (IfcSolarDeviceTypeEnum = {}));
+/** IfcSpaceHeaterTypeEnum */
+export var IfcSpaceHeaterTypeEnum;
+(function (IfcSpaceHeaterTypeEnum) {
+    IfcSpaceHeaterTypeEnum["CONVECTOR"] = "CONVECTOR";
+    IfcSpaceHeaterTypeEnum["RADIATOR"] = "RADIATOR";
+    IfcSpaceHeaterTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSpaceHeaterTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSpaceHeaterTypeEnum || (IfcSpaceHeaterTypeEnum = {}));
+/** IfcSpaceTypeEnum */
+export var IfcSpaceTypeEnum;
+(function (IfcSpaceTypeEnum) {
+    IfcSpaceTypeEnum["SPACE"] = "SPACE";
+    IfcSpaceTypeEnum["PARKING"] = "PARKING";
+    IfcSpaceTypeEnum["GFA"] = "GFA";
+    IfcSpaceTypeEnum["INTERNAL"] = "INTERNAL";
+    IfcSpaceTypeEnum["EXTERNAL"] = "EXTERNAL";
+    IfcSpaceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSpaceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSpaceTypeEnum || (IfcSpaceTypeEnum = {}));
+/** IfcSpatialZoneTypeEnum */
+export var IfcSpatialZoneTypeEnum;
+(function (IfcSpatialZoneTypeEnum) {
+    IfcSpatialZoneTypeEnum["CONSTRUCTION"] = "CONSTRUCTION";
+    IfcSpatialZoneTypeEnum["FIRESAFETY"] = "FIRESAFETY";
+    IfcSpatialZoneTypeEnum["LIGHTING"] = "LIGHTING";
+    IfcSpatialZoneTypeEnum["OCCUPANCY"] = "OCCUPANCY";
+    IfcSpatialZoneTypeEnum["SECURITY"] = "SECURITY";
+    IfcSpatialZoneTypeEnum["THERMAL"] = "THERMAL";
+    IfcSpatialZoneTypeEnum["TRANSPORT"] = "TRANSPORT";
+    IfcSpatialZoneTypeEnum["VENTILATION"] = "VENTILATION";
+    IfcSpatialZoneTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSpatialZoneTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSpatialZoneTypeEnum || (IfcSpatialZoneTypeEnum = {}));
+/** IfcStackTerminalTypeEnum */
+export var IfcStackTerminalTypeEnum;
+(function (IfcStackTerminalTypeEnum) {
+    IfcStackTerminalTypeEnum["BIRDCAGE"] = "BIRDCAGE";
+    IfcStackTerminalTypeEnum["COWL"] = "COWL";
+    IfcStackTerminalTypeEnum["RAINWATERHOPPER"] = "RAINWATERHOPPER";
+    IfcStackTerminalTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcStackTerminalTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcStackTerminalTypeEnum || (IfcStackTerminalTypeEnum = {}));
+/** IfcStairFlightTypeEnum */
+export var IfcStairFlightTypeEnum;
+(function (IfcStairFlightTypeEnum) {
+    IfcStairFlightTypeEnum["STRAIGHT"] = "STRAIGHT";
+    IfcStairFlightTypeEnum["WINDER"] = "WINDER";
+    IfcStairFlightTypeEnum["SPIRAL"] = "SPIRAL";
+    IfcStairFlightTypeEnum["CURVED"] = "CURVED";
+    IfcStairFlightTypeEnum["FREEFORM"] = "FREEFORM";
+    IfcStairFlightTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcStairFlightTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcStairFlightTypeEnum || (IfcStairFlightTypeEnum = {}));
+/** IfcStairTypeEnum */
+export var IfcStairTypeEnum;
+(function (IfcStairTypeEnum) {
+    IfcStairTypeEnum["STRAIGHT_RUN_STAIR"] = "STRAIGHT_RUN_STAIR";
+    IfcStairTypeEnum["TWO_STRAIGHT_RUN_STAIR"] = "TWO_STRAIGHT_RUN_STAIR";
+    IfcStairTypeEnum["QUARTER_WINDING_STAIR"] = "QUARTER_WINDING_STAIR";
+    IfcStairTypeEnum["QUARTER_TURN_STAIR"] = "QUARTER_TURN_STAIR";
+    IfcStairTypeEnum["HALF_WINDING_STAIR"] = "HALF_WINDING_STAIR";
+    IfcStairTypeEnum["HALF_TURN_STAIR"] = "HALF_TURN_STAIR";
+    IfcStairTypeEnum["TWO_QUARTER_WINDING_STAIR"] = "TWO_QUARTER_WINDING_STAIR";
+    IfcStairTypeEnum["TWO_QUARTER_TURN_STAIR"] = "TWO_QUARTER_TURN_STAIR";
+    IfcStairTypeEnum["THREE_QUARTER_WINDING_STAIR"] = "THREE_QUARTER_WINDING_STAIR";
+    IfcStairTypeEnum["THREE_QUARTER_TURN_STAIR"] = "THREE_QUARTER_TURN_STAIR";
+    IfcStairTypeEnum["SPIRAL_STAIR"] = "SPIRAL_STAIR";
+    IfcStairTypeEnum["DOUBLE_RETURN_STAIR"] = "DOUBLE_RETURN_STAIR";
+    IfcStairTypeEnum["CURVED_RUN_STAIR"] = "CURVED_RUN_STAIR";
+    IfcStairTypeEnum["TWO_CURVED_RUN_STAIR"] = "TWO_CURVED_RUN_STAIR";
+    IfcStairTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcStairTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcStairTypeEnum || (IfcStairTypeEnum = {}));
+/** IfcStateEnum */
+export var IfcStateEnum;
+(function (IfcStateEnum) {
+    IfcStateEnum["READWRITE"] = "READWRITE";
+    IfcStateEnum["READONLY"] = "READONLY";
+    IfcStateEnum["LOCKED"] = "LOCKED";
+    IfcStateEnum["READWRITELOCKED"] = "READWRITELOCKED";
+    IfcStateEnum["READONLYLOCKED"] = "READONLYLOCKED";
+})(IfcStateEnum || (IfcStateEnum = {}));
+/** IfcStructuralCurveActivityTypeEnum */
+export var IfcStructuralCurveActivityTypeEnum;
+(function (IfcStructuralCurveActivityTypeEnum) {
+    IfcStructuralCurveActivityTypeEnum["CONST"] = "CONST";
+    IfcStructuralCurveActivityTypeEnum["LINEAR"] = "LINEAR";
+    IfcStructuralCurveActivityTypeEnum["POLYGONAL"] = "POLYGONAL";
+    IfcStructuralCurveActivityTypeEnum["EQUIDISTANT"] = "EQUIDISTANT";
+    IfcStructuralCurveActivityTypeEnum["SINUS"] = "SINUS";
+    IfcStructuralCurveActivityTypeEnum["PARABOLA"] = "PARABOLA";
+    IfcStructuralCurveActivityTypeEnum["DISCRETE"] = "DISCRETE";
+    IfcStructuralCurveActivityTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcStructuralCurveActivityTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcStructuralCurveActivityTypeEnum || (IfcStructuralCurveActivityTypeEnum = {}));
+/** IfcStructuralCurveMemberTypeEnum */
+export var IfcStructuralCurveMemberTypeEnum;
+(function (IfcStructuralCurveMemberTypeEnum) {
+    IfcStructuralCurveMemberTypeEnum["RIGID_JOINED_MEMBER"] = "RIGID_JOINED_MEMBER";
+    IfcStructuralCurveMemberTypeEnum["PIN_JOINED_MEMBER"] = "PIN_JOINED_MEMBER";
+    IfcStructuralCurveMemberTypeEnum["CABLE"] = "CABLE";
+    IfcStructuralCurveMemberTypeEnum["TENSION_MEMBER"] = "TENSION_MEMBER";
+    IfcStructuralCurveMemberTypeEnum["COMPRESSION_MEMBER"] = "COMPRESSION_MEMBER";
+    IfcStructuralCurveMemberTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcStructuralCurveMemberTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcStructuralCurveMemberTypeEnum || (IfcStructuralCurveMemberTypeEnum = {}));
+/** IfcStructuralSurfaceActivityTypeEnum */
+export var IfcStructuralSurfaceActivityTypeEnum;
+(function (IfcStructuralSurfaceActivityTypeEnum) {
+    IfcStructuralSurfaceActivityTypeEnum["CONST"] = "CONST";
+    IfcStructuralSurfaceActivityTypeEnum["BILINEAR"] = "BILINEAR";
+    IfcStructuralSurfaceActivityTypeEnum["DISCRETE"] = "DISCRETE";
+    IfcStructuralSurfaceActivityTypeEnum["ISOCONTOUR"] = "ISOCONTOUR";
+    IfcStructuralSurfaceActivityTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcStructuralSurfaceActivityTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcStructuralSurfaceActivityTypeEnum || (IfcStructuralSurfaceActivityTypeEnum = {}));
+/** IfcStructuralSurfaceMemberTypeEnum */
+export var IfcStructuralSurfaceMemberTypeEnum;
+(function (IfcStructuralSurfaceMemberTypeEnum) {
+    IfcStructuralSurfaceMemberTypeEnum["BENDING_ELEMENT"] = "BENDING_ELEMENT";
+    IfcStructuralSurfaceMemberTypeEnum["MEMBRANE_ELEMENT"] = "MEMBRANE_ELEMENT";
+    IfcStructuralSurfaceMemberTypeEnum["SHELL"] = "SHELL";
+    IfcStructuralSurfaceMemberTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcStructuralSurfaceMemberTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcStructuralSurfaceMemberTypeEnum || (IfcStructuralSurfaceMemberTypeEnum = {}));
+/** IfcSubContractResourceTypeEnum */
+export var IfcSubContractResourceTypeEnum;
+(function (IfcSubContractResourceTypeEnum) {
+    IfcSubContractResourceTypeEnum["PURCHASE"] = "PURCHASE";
+    IfcSubContractResourceTypeEnum["WORK"] = "WORK";
+    IfcSubContractResourceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSubContractResourceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSubContractResourceTypeEnum || (IfcSubContractResourceTypeEnum = {}));
+/** IfcSurfaceFeatureTypeEnum */
+export var IfcSurfaceFeatureTypeEnum;
+(function (IfcSurfaceFeatureTypeEnum) {
+    IfcSurfaceFeatureTypeEnum["MARK"] = "MARK";
+    IfcSurfaceFeatureTypeEnum["TAG"] = "TAG";
+    IfcSurfaceFeatureTypeEnum["TREATMENT"] = "TREATMENT";
+    IfcSurfaceFeatureTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSurfaceFeatureTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSurfaceFeatureTypeEnum || (IfcSurfaceFeatureTypeEnum = {}));
+/** IfcSurfaceSide */
+export var IfcSurfaceSide;
+(function (IfcSurfaceSide) {
+    IfcSurfaceSide["POSITIVE"] = "POSITIVE";
+    IfcSurfaceSide["NEGATIVE"] = "NEGATIVE";
+    IfcSurfaceSide["BOTH"] = "BOTH";
+})(IfcSurfaceSide || (IfcSurfaceSide = {}));
+/** IfcSwitchingDeviceTypeEnum */
+export var IfcSwitchingDeviceTypeEnum;
+(function (IfcSwitchingDeviceTypeEnum) {
+    IfcSwitchingDeviceTypeEnum["CONTACTOR"] = "CONTACTOR";
+    IfcSwitchingDeviceTypeEnum["DIMMERSWITCH"] = "DIMMERSWITCH";
+    IfcSwitchingDeviceTypeEnum["EMERGENCYSTOP"] = "EMERGENCYSTOP";
+    IfcSwitchingDeviceTypeEnum["KEYPAD"] = "KEYPAD";
+    IfcSwitchingDeviceTypeEnum["MOMENTARYSWITCH"] = "MOMENTARYSWITCH";
+    IfcSwitchingDeviceTypeEnum["SELECTORSWITCH"] = "SELECTORSWITCH";
+    IfcSwitchingDeviceTypeEnum["STARTER"] = "STARTER";
+    IfcSwitchingDeviceTypeEnum["SWITCHDISCONNECTOR"] = "SWITCHDISCONNECTOR";
+    IfcSwitchingDeviceTypeEnum["TOGGLESWITCH"] = "TOGGLESWITCH";
+    IfcSwitchingDeviceTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSwitchingDeviceTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSwitchingDeviceTypeEnum || (IfcSwitchingDeviceTypeEnum = {}));
+/** IfcSystemFurnitureElementTypeEnum */
+export var IfcSystemFurnitureElementTypeEnum;
+(function (IfcSystemFurnitureElementTypeEnum) {
+    IfcSystemFurnitureElementTypeEnum["PANEL"] = "PANEL";
+    IfcSystemFurnitureElementTypeEnum["WORKSURFACE"] = "WORKSURFACE";
+    IfcSystemFurnitureElementTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcSystemFurnitureElementTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcSystemFurnitureElementTypeEnum || (IfcSystemFurnitureElementTypeEnum = {}));
+/** IfcTankTypeEnum */
+export var IfcTankTypeEnum;
+(function (IfcTankTypeEnum) {
+    IfcTankTypeEnum["BASIN"] = "BASIN";
+    IfcTankTypeEnum["BREAKPRESSURE"] = "BREAKPRESSURE";
+    IfcTankTypeEnum["EXPANSION"] = "EXPANSION";
+    IfcTankTypeEnum["FEEDANDEXPANSION"] = "FEEDANDEXPANSION";
+    IfcTankTypeEnum["PRESSUREVESSEL"] = "PRESSUREVESSEL";
+    IfcTankTypeEnum["STORAGE"] = "STORAGE";
+    IfcTankTypeEnum["VESSEL"] = "VESSEL";
+    IfcTankTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcTankTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcTankTypeEnum || (IfcTankTypeEnum = {}));
+/** IfcTaskDurationEnum */
+export var IfcTaskDurationEnum;
+(function (IfcTaskDurationEnum) {
+    IfcTaskDurationEnum["ELAPSEDTIME"] = "ELAPSEDTIME";
+    IfcTaskDurationEnum["WORKTIME"] = "WORKTIME";
+    IfcTaskDurationEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcTaskDurationEnum || (IfcTaskDurationEnum = {}));
+/** IfcTaskTypeEnum */
+export var IfcTaskTypeEnum;
+(function (IfcTaskTypeEnum) {
+    IfcTaskTypeEnum["ATTENDANCE"] = "ATTENDANCE";
+    IfcTaskTypeEnum["CONSTRUCTION"] = "CONSTRUCTION";
+    IfcTaskTypeEnum["DEMOLITION"] = "DEMOLITION";
+    IfcTaskTypeEnum["DISMANTLE"] = "DISMANTLE";
+    IfcTaskTypeEnum["DISPOSAL"] = "DISPOSAL";
+    IfcTaskTypeEnum["INSTALLATION"] = "INSTALLATION";
+    IfcTaskTypeEnum["LOGISTIC"] = "LOGISTIC";
+    IfcTaskTypeEnum["MAINTENANCE"] = "MAINTENANCE";
+    IfcTaskTypeEnum["MOVE"] = "MOVE";
+    IfcTaskTypeEnum["OPERATION"] = "OPERATION";
+    IfcTaskTypeEnum["REMOVAL"] = "REMOVAL";
+    IfcTaskTypeEnum["RENOVATION"] = "RENOVATION";
+    IfcTaskTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcTaskTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcTaskTypeEnum || (IfcTaskTypeEnum = {}));
+/** IfcTendonAnchorTypeEnum */
+export var IfcTendonAnchorTypeEnum;
+(function (IfcTendonAnchorTypeEnum) {
+    IfcTendonAnchorTypeEnum["COUPLER"] = "COUPLER";
+    IfcTendonAnchorTypeEnum["FIXED_END"] = "FIXED_END";
+    IfcTendonAnchorTypeEnum["TENSIONING_END"] = "TENSIONING_END";
+    IfcTendonAnchorTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcTendonAnchorTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcTendonAnchorTypeEnum || (IfcTendonAnchorTypeEnum = {}));
+/** IfcTendonTypeEnum */
+export var IfcTendonTypeEnum;
+(function (IfcTendonTypeEnum) {
+    IfcTendonTypeEnum["BAR"] = "BAR";
+    IfcTendonTypeEnum["COATED"] = "COATED";
+    IfcTendonTypeEnum["STRAND"] = "STRAND";
+    IfcTendonTypeEnum["WIRE"] = "WIRE";
+    IfcTendonTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcTendonTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcTendonTypeEnum || (IfcTendonTypeEnum = {}));
+/** IfcTextPath */
+export var IfcTextPath;
+(function (IfcTextPath) {
+    IfcTextPath["LEFT"] = "LEFT";
+    IfcTextPath["RIGHT"] = "RIGHT";
+    IfcTextPath["UP"] = "UP";
+    IfcTextPath["DOWN"] = "DOWN";
+})(IfcTextPath || (IfcTextPath = {}));
+/** IfcTimeSeriesDataTypeEnum */
+export var IfcTimeSeriesDataTypeEnum;
+(function (IfcTimeSeriesDataTypeEnum) {
+    IfcTimeSeriesDataTypeEnum["CONTINUOUS"] = "CONTINUOUS";
+    IfcTimeSeriesDataTypeEnum["DISCRETE"] = "DISCRETE";
+    IfcTimeSeriesDataTypeEnum["DISCRETEBINARY"] = "DISCRETEBINARY";
+    IfcTimeSeriesDataTypeEnum["PIECEWISEBINARY"] = "PIECEWISEBINARY";
+    IfcTimeSeriesDataTypeEnum["PIECEWISECONSTANT"] = "PIECEWISECONSTANT";
+    IfcTimeSeriesDataTypeEnum["PIECEWISECONTINUOUS"] = "PIECEWISECONTINUOUS";
+    IfcTimeSeriesDataTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcTimeSeriesDataTypeEnum || (IfcTimeSeriesDataTypeEnum = {}));
+/** IfcTransformerTypeEnum */
+export var IfcTransformerTypeEnum;
+(function (IfcTransformerTypeEnum) {
+    IfcTransformerTypeEnum["CURRENT"] = "CURRENT";
+    IfcTransformerTypeEnum["FREQUENCY"] = "FREQUENCY";
+    IfcTransformerTypeEnum["INVERTER"] = "INVERTER";
+    IfcTransformerTypeEnum["RECTIFIER"] = "RECTIFIER";
+    IfcTransformerTypeEnum["VOLTAGE"] = "VOLTAGE";
+    IfcTransformerTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcTransformerTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcTransformerTypeEnum || (IfcTransformerTypeEnum = {}));
+/** IfcTransitionCode */
+export var IfcTransitionCode;
+(function (IfcTransitionCode) {
+    IfcTransitionCode["DISCONTINUOUS"] = "DISCONTINUOUS";
+    IfcTransitionCode["CONTINUOUS"] = "CONTINUOUS";
+    IfcTransitionCode["CONTSAMEGRADIENT"] = "CONTSAMEGRADIENT";
+    IfcTransitionCode["CONTSAMEGRADIENTSAMECURVATURE"] = "CONTSAMEGRADIENTSAMECURVATURE";
+})(IfcTransitionCode || (IfcTransitionCode = {}));
+/** IfcTransportElementTypeEnum */
+export var IfcTransportElementTypeEnum;
+(function (IfcTransportElementTypeEnum) {
+    IfcTransportElementTypeEnum["ELEVATOR"] = "ELEVATOR";
+    IfcTransportElementTypeEnum["ESCALATOR"] = "ESCALATOR";
+    IfcTransportElementTypeEnum["MOVINGWALKWAY"] = "MOVINGWALKWAY";
+    IfcTransportElementTypeEnum["CRANEWAY"] = "CRANEWAY";
+    IfcTransportElementTypeEnum["LIFTINGGEAR"] = "LIFTINGGEAR";
+    IfcTransportElementTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcTransportElementTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcTransportElementTypeEnum || (IfcTransportElementTypeEnum = {}));
+/** IfcTrimmingPreference */
+export var IfcTrimmingPreference;
+(function (IfcTrimmingPreference) {
+    IfcTrimmingPreference["CARTESIAN"] = "CARTESIAN";
+    IfcTrimmingPreference["PARAMETER"] = "PARAMETER";
+    IfcTrimmingPreference["UNSPECIFIED"] = "UNSPECIFIED";
+})(IfcTrimmingPreference || (IfcTrimmingPreference = {}));
+/** IfcTubeBundleTypeEnum */
+export var IfcTubeBundleTypeEnum;
+(function (IfcTubeBundleTypeEnum) {
+    IfcTubeBundleTypeEnum["FINNED"] = "FINNED";
+    IfcTubeBundleTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcTubeBundleTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcTubeBundleTypeEnum || (IfcTubeBundleTypeEnum = {}));
+/** IfcUnitEnum */
+export var IfcUnitEnum;
+(function (IfcUnitEnum) {
+    IfcUnitEnum["ABSORBEDDOSEUNIT"] = "ABSORBEDDOSEUNIT";
+    IfcUnitEnum["AMOUNTOFSUBSTANCEUNIT"] = "AMOUNTOFSUBSTANCEUNIT";
+    IfcUnitEnum["AREAUNIT"] = "AREAUNIT";
+    IfcUnitEnum["DOSEEQUIVALENTUNIT"] = "DOSEEQUIVALENTUNIT";
+    IfcUnitEnum["ELECTRICCAPACITANCEUNIT"] = "ELECTRICCAPACITANCEUNIT";
+    IfcUnitEnum["ELECTRICCHARGEUNIT"] = "ELECTRICCHARGEUNIT";
+    IfcUnitEnum["ELECTRICCONDUCTANCEUNIT"] = "ELECTRICCONDUCTANCEUNIT";
+    IfcUnitEnum["ELECTRICCURRENTUNIT"] = "ELECTRICCURRENTUNIT";
+    IfcUnitEnum["ELECTRICRESISTANCEUNIT"] = "ELECTRICRESISTANCEUNIT";
+    IfcUnitEnum["ELECTRICVOLTAGEUNIT"] = "ELECTRICVOLTAGEUNIT";
+    IfcUnitEnum["ENERGYUNIT"] = "ENERGYUNIT";
+    IfcUnitEnum["FORCEUNIT"] = "FORCEUNIT";
+    IfcUnitEnum["FREQUENCYUNIT"] = "FREQUENCYUNIT";
+    IfcUnitEnum["ILLUMINANCEUNIT"] = "ILLUMINANCEUNIT";
+    IfcUnitEnum["INDUCTANCEUNIT"] = "INDUCTANCEUNIT";
+    IfcUnitEnum["LENGTHUNIT"] = "LENGTHUNIT";
+    IfcUnitEnum["LUMINOUSFLUXUNIT"] = "LUMINOUSFLUXUNIT";
+    IfcUnitEnum["LUMINOUSINTENSITYUNIT"] = "LUMINOUSINTENSITYUNIT";
+    IfcUnitEnum["MAGNETICFLUXDENSITYUNIT"] = "MAGNETICFLUXDENSITYUNIT";
+    IfcUnitEnum["MAGNETICFLUXUNIT"] = "MAGNETICFLUXUNIT";
+    IfcUnitEnum["MASSUNIT"] = "MASSUNIT";
+    IfcUnitEnum["PLANEANGLEUNIT"] = "PLANEANGLEUNIT";
+    IfcUnitEnum["POWERUNIT"] = "POWERUNIT";
+    IfcUnitEnum["PRESSUREUNIT"] = "PRESSUREUNIT";
+    IfcUnitEnum["RADIOACTIVITYUNIT"] = "RADIOACTIVITYUNIT";
+    IfcUnitEnum["SOLIDANGLEUNIT"] = "SOLIDANGLEUNIT";
+    IfcUnitEnum["THERMODYNAMICTEMPERATUREUNIT"] = "THERMODYNAMICTEMPERATUREUNIT";
+    IfcUnitEnum["TIMEUNIT"] = "TIMEUNIT";
+    IfcUnitEnum["VOLUMEUNIT"] = "VOLUMEUNIT";
+    IfcUnitEnum["USERDEFINED"] = "USERDEFINED";
+})(IfcUnitEnum || (IfcUnitEnum = {}));
+/** IfcUnitaryControlElementTypeEnum */
+export var IfcUnitaryControlElementTypeEnum;
+(function (IfcUnitaryControlElementTypeEnum) {
+    IfcUnitaryControlElementTypeEnum["ALARMPANEL"] = "ALARMPANEL";
+    IfcUnitaryControlElementTypeEnum["CONTROLPANEL"] = "CONTROLPANEL";
+    IfcUnitaryControlElementTypeEnum["GASDETECTIONPANEL"] = "GASDETECTIONPANEL";
+    IfcUnitaryControlElementTypeEnum["INDICATORPANEL"] = "INDICATORPANEL";
+    IfcUnitaryControlElementTypeEnum["MIMICPANEL"] = "MIMICPANEL";
+    IfcUnitaryControlElementTypeEnum["HUMIDISTAT"] = "HUMIDISTAT";
+    IfcUnitaryControlElementTypeEnum["THERMOSTAT"] = "THERMOSTAT";
+    IfcUnitaryControlElementTypeEnum["WEATHERSTATION"] = "WEATHERSTATION";
+    IfcUnitaryControlElementTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcUnitaryControlElementTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcUnitaryControlElementTypeEnum || (IfcUnitaryControlElementTypeEnum = {}));
+/** IfcUnitaryEquipmentTypeEnum */
+export var IfcUnitaryEquipmentTypeEnum;
+(function (IfcUnitaryEquipmentTypeEnum) {
+    IfcUnitaryEquipmentTypeEnum["AIRHANDLER"] = "AIRHANDLER";
+    IfcUnitaryEquipmentTypeEnum["AIRCONDITIONINGUNIT"] = "AIRCONDITIONINGUNIT";
+    IfcUnitaryEquipmentTypeEnum["DEHUMIDIFIER"] = "DEHUMIDIFIER";
+    IfcUnitaryEquipmentTypeEnum["SPLITSYSTEM"] = "SPLITSYSTEM";
+    IfcUnitaryEquipmentTypeEnum["ROOFTOPUNIT"] = "ROOFTOPUNIT";
+    IfcUnitaryEquipmentTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcUnitaryEquipmentTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcUnitaryEquipmentTypeEnum || (IfcUnitaryEquipmentTypeEnum = {}));
+/** IfcValveTypeEnum */
+export var IfcValveTypeEnum;
+(function (IfcValveTypeEnum) {
+    IfcValveTypeEnum["AIRRELEASE"] = "AIRRELEASE";
+    IfcValveTypeEnum["ANTIVACUUM"] = "ANTIVACUUM";
+    IfcValveTypeEnum["CHANGEOVER"] = "CHANGEOVER";
+    IfcValveTypeEnum["CHECK"] = "CHECK";
+    IfcValveTypeEnum["COMMISSIONING"] = "COMMISSIONING";
+    IfcValveTypeEnum["DIVERTING"] = "DIVERTING";
+    IfcValveTypeEnum["DRAWOFFCOCK"] = "DRAWOFFCOCK";
+    IfcValveTypeEnum["DOUBLECHECK"] = "DOUBLECHECK";
+    IfcValveTypeEnum["DOUBLEREGULATING"] = "DOUBLEREGULATING";
+    IfcValveTypeEnum["FAUCET"] = "FAUCET";
+    IfcValveTypeEnum["FLUSHING"] = "FLUSHING";
+    IfcValveTypeEnum["GASCOCK"] = "GASCOCK";
+    IfcValveTypeEnum["GASTAP"] = "GASTAP";
+    IfcValveTypeEnum["ISOLATING"] = "ISOLATING";
+    IfcValveTypeEnum["MIXING"] = "MIXING";
+    IfcValveTypeEnum["PRESSUREREDUCING"] = "PRESSUREREDUCING";
+    IfcValveTypeEnum["PRESSURERELIEF"] = "PRESSURERELIEF";
+    IfcValveTypeEnum["REGULATING"] = "REGULATING";
+    IfcValveTypeEnum["SAFETYCUTOFF"] = "SAFETYCUTOFF";
+    IfcValveTypeEnum["STEAMTRAP"] = "STEAMTRAP";
+    IfcValveTypeEnum["STOPCOCK"] = "STOPCOCK";
+    IfcValveTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcValveTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcValveTypeEnum || (IfcValveTypeEnum = {}));
+/** IfcVibrationIsolatorTypeEnum */
+export var IfcVibrationIsolatorTypeEnum;
+(function (IfcVibrationIsolatorTypeEnum) {
+    IfcVibrationIsolatorTypeEnum["COMPRESSION"] = "COMPRESSION";
+    IfcVibrationIsolatorTypeEnum["SPRING"] = "SPRING";
+    IfcVibrationIsolatorTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcVibrationIsolatorTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcVibrationIsolatorTypeEnum || (IfcVibrationIsolatorTypeEnum = {}));
+/** IfcVoidingFeatureTypeEnum */
+export var IfcVoidingFeatureTypeEnum;
+(function (IfcVoidingFeatureTypeEnum) {
+    IfcVoidingFeatureTypeEnum["CUTOUT"] = "CUTOUT";
+    IfcVoidingFeatureTypeEnum["NOTCH"] = "NOTCH";
+    IfcVoidingFeatureTypeEnum["HOLE"] = "HOLE";
+    IfcVoidingFeatureTypeEnum["MITER"] = "MITER";
+    IfcVoidingFeatureTypeEnum["CHAMFER"] = "CHAMFER";
+    IfcVoidingFeatureTypeEnum["EDGE"] = "EDGE";
+    IfcVoidingFeatureTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcVoidingFeatureTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcVoidingFeatureTypeEnum || (IfcVoidingFeatureTypeEnum = {}));
+/** IfcWallTypeEnum */
+export var IfcWallTypeEnum;
+(function (IfcWallTypeEnum) {
+    IfcWallTypeEnum["MOVABLE"] = "MOVABLE";
+    IfcWallTypeEnum["PARAPET"] = "PARAPET";
+    IfcWallTypeEnum["PARTITIONING"] = "PARTITIONING";
+    IfcWallTypeEnum["PLUMBINGWALL"] = "PLUMBINGWALL";
+    IfcWallTypeEnum["SHEAR"] = "SHEAR";
+    IfcWallTypeEnum["SOLIDWALL"] = "SOLIDWALL";
+    IfcWallTypeEnum["STANDARD"] = "STANDARD";
+    IfcWallTypeEnum["POLYGONAL"] = "POLYGONAL";
+    IfcWallTypeEnum["ELEMENTEDWALL"] = "ELEMENTEDWALL";
+    IfcWallTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcWallTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcWallTypeEnum || (IfcWallTypeEnum = {}));
+/** IfcWasteTerminalTypeEnum */
+export var IfcWasteTerminalTypeEnum;
+(function (IfcWasteTerminalTypeEnum) {
+    IfcWasteTerminalTypeEnum["FLOORTRAP"] = "FLOORTRAP";
+    IfcWasteTerminalTypeEnum["FLOORWASTE"] = "FLOORWASTE";
+    IfcWasteTerminalTypeEnum["GULLYSUMP"] = "GULLYSUMP";
+    IfcWasteTerminalTypeEnum["GULLYTRAP"] = "GULLYTRAP";
+    IfcWasteTerminalTypeEnum["ROOFDRAIN"] = "ROOFDRAIN";
+    IfcWasteTerminalTypeEnum["WASTEDISPOSALUNIT"] = "WASTEDISPOSALUNIT";
+    IfcWasteTerminalTypeEnum["WASTETRAP"] = "WASTETRAP";
+    IfcWasteTerminalTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcWasteTerminalTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcWasteTerminalTypeEnum || (IfcWasteTerminalTypeEnum = {}));
+/** IfcWindowPanelOperationEnum */
+export var IfcWindowPanelOperationEnum;
+(function (IfcWindowPanelOperationEnum) {
+    IfcWindowPanelOperationEnum["SIDEHUNGRIGHTHAND"] = "SIDEHUNGRIGHTHAND";
+    IfcWindowPanelOperationEnum["SIDEHUNGLEFTHAND"] = "SIDEHUNGLEFTHAND";
+    IfcWindowPanelOperationEnum["TILTANDTURNRIGHTHAND"] = "TILTANDTURNRIGHTHAND";
+    IfcWindowPanelOperationEnum["TILTANDTURNLEFTHAND"] = "TILTANDTURNLEFTHAND";
+    IfcWindowPanelOperationEnum["TOPHUNG"] = "TOPHUNG";
+    IfcWindowPanelOperationEnum["BOTTOMHUNG"] = "BOTTOMHUNG";
+    IfcWindowPanelOperationEnum["PIVOTHORIZONTAL"] = "PIVOTHORIZONTAL";
+    IfcWindowPanelOperationEnum["PIVOTVERTICAL"] = "PIVOTVERTICAL";
+    IfcWindowPanelOperationEnum["SLIDINGHORIZONTAL"] = "SLIDINGHORIZONTAL";
+    IfcWindowPanelOperationEnum["SLIDINGVERTICAL"] = "SLIDINGVERTICAL";
+    IfcWindowPanelOperationEnum["REMOVABLECASEMENT"] = "REMOVABLECASEMENT";
+    IfcWindowPanelOperationEnum["FIXEDCASEMENT"] = "FIXEDCASEMENT";
+    IfcWindowPanelOperationEnum["OTHEROPERATION"] = "OTHEROPERATION";
+    IfcWindowPanelOperationEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcWindowPanelOperationEnum || (IfcWindowPanelOperationEnum = {}));
+/** IfcWindowPanelPositionEnum */
+export var IfcWindowPanelPositionEnum;
+(function (IfcWindowPanelPositionEnum) {
+    IfcWindowPanelPositionEnum["LEFT"] = "LEFT";
+    IfcWindowPanelPositionEnum["MIDDLE"] = "MIDDLE";
+    IfcWindowPanelPositionEnum["RIGHT"] = "RIGHT";
+    IfcWindowPanelPositionEnum["BOTTOM"] = "BOTTOM";
+    IfcWindowPanelPositionEnum["TOP"] = "TOP";
+    IfcWindowPanelPositionEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcWindowPanelPositionEnum || (IfcWindowPanelPositionEnum = {}));
+/** IfcWindowStyleConstructionEnum */
+export var IfcWindowStyleConstructionEnum;
+(function (IfcWindowStyleConstructionEnum) {
+    IfcWindowStyleConstructionEnum["ALUMINIUM"] = "ALUMINIUM";
+    IfcWindowStyleConstructionEnum["HIGH_GRADE_STEEL"] = "HIGH_GRADE_STEEL";
+    IfcWindowStyleConstructionEnum["STEEL"] = "STEEL";
+    IfcWindowStyleConstructionEnum["WOOD"] = "WOOD";
+    IfcWindowStyleConstructionEnum["ALUMINIUM_WOOD"] = "ALUMINIUM_WOOD";
+    IfcWindowStyleConstructionEnum["PLASTIC"] = "PLASTIC";
+    IfcWindowStyleConstructionEnum["OTHER_CONSTRUCTION"] = "OTHER_CONSTRUCTION";
+    IfcWindowStyleConstructionEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcWindowStyleConstructionEnum || (IfcWindowStyleConstructionEnum = {}));
+/** IfcWindowStyleOperationEnum */
+export var IfcWindowStyleOperationEnum;
+(function (IfcWindowStyleOperationEnum) {
+    IfcWindowStyleOperationEnum["SINGLE_PANEL"] = "SINGLE_PANEL";
+    IfcWindowStyleOperationEnum["DOUBLE_PANEL_VERTICAL"] = "DOUBLE_PANEL_VERTICAL";
+    IfcWindowStyleOperationEnum["DOUBLE_PANEL_HORIZONTAL"] = "DOUBLE_PANEL_HORIZONTAL";
+    IfcWindowStyleOperationEnum["TRIPLE_PANEL_VERTICAL"] = "TRIPLE_PANEL_VERTICAL";
+    IfcWindowStyleOperationEnum["TRIPLE_PANEL_BOTTOM"] = "TRIPLE_PANEL_BOTTOM";
+    IfcWindowStyleOperationEnum["TRIPLE_PANEL_TOP"] = "TRIPLE_PANEL_TOP";
+    IfcWindowStyleOperationEnum["TRIPLE_PANEL_LEFT"] = "TRIPLE_PANEL_LEFT";
+    IfcWindowStyleOperationEnum["TRIPLE_PANEL_RIGHT"] = "TRIPLE_PANEL_RIGHT";
+    IfcWindowStyleOperationEnum["TRIPLE_PANEL_HORIZONTAL"] = "TRIPLE_PANEL_HORIZONTAL";
+    IfcWindowStyleOperationEnum["USERDEFINED"] = "USERDEFINED";
+    IfcWindowStyleOperationEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcWindowStyleOperationEnum || (IfcWindowStyleOperationEnum = {}));
+/** IfcWindowTypeEnum */
+export var IfcWindowTypeEnum;
+(function (IfcWindowTypeEnum) {
+    IfcWindowTypeEnum["WINDOW"] = "WINDOW";
+    IfcWindowTypeEnum["SKYLIGHT"] = "SKYLIGHT";
+    IfcWindowTypeEnum["LIGHTDOME"] = "LIGHTDOME";
+    IfcWindowTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcWindowTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcWindowTypeEnum || (IfcWindowTypeEnum = {}));
+/** IfcWindowTypePartitioningEnum */
+export var IfcWindowTypePartitioningEnum;
+(function (IfcWindowTypePartitioningEnum) {
+    IfcWindowTypePartitioningEnum["SINGLE_PANEL"] = "SINGLE_PANEL";
+    IfcWindowTypePartitioningEnum["DOUBLE_PANEL_VERTICAL"] = "DOUBLE_PANEL_VERTICAL";
+    IfcWindowTypePartitioningEnum["DOUBLE_PANEL_HORIZONTAL"] = "DOUBLE_PANEL_HORIZONTAL";
+    IfcWindowTypePartitioningEnum["TRIPLE_PANEL_VERTICAL"] = "TRIPLE_PANEL_VERTICAL";
+    IfcWindowTypePartitioningEnum["TRIPLE_PANEL_BOTTOM"] = "TRIPLE_PANEL_BOTTOM";
+    IfcWindowTypePartitioningEnum["TRIPLE_PANEL_TOP"] = "TRIPLE_PANEL_TOP";
+    IfcWindowTypePartitioningEnum["TRIPLE_PANEL_LEFT"] = "TRIPLE_PANEL_LEFT";
+    IfcWindowTypePartitioningEnum["TRIPLE_PANEL_RIGHT"] = "TRIPLE_PANEL_RIGHT";
+    IfcWindowTypePartitioningEnum["TRIPLE_PANEL_HORIZONTAL"] = "TRIPLE_PANEL_HORIZONTAL";
+    IfcWindowTypePartitioningEnum["USERDEFINED"] = "USERDEFINED";
+    IfcWindowTypePartitioningEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcWindowTypePartitioningEnum || (IfcWindowTypePartitioningEnum = {}));
+/** IfcWorkCalendarTypeEnum */
+export var IfcWorkCalendarTypeEnum;
+(function (IfcWorkCalendarTypeEnum) {
+    IfcWorkCalendarTypeEnum["FIRSTSHIFT"] = "FIRSTSHIFT";
+    IfcWorkCalendarTypeEnum["SECONDSHIFT"] = "SECONDSHIFT";
+    IfcWorkCalendarTypeEnum["THIRDSHIFT"] = "THIRDSHIFT";
+    IfcWorkCalendarTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcWorkCalendarTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcWorkCalendarTypeEnum || (IfcWorkCalendarTypeEnum = {}));
+/** IfcWorkPlanTypeEnum */
+export var IfcWorkPlanTypeEnum;
+(function (IfcWorkPlanTypeEnum) {
+    IfcWorkPlanTypeEnum["ACTUAL"] = "ACTUAL";
+    IfcWorkPlanTypeEnum["BASELINE"] = "BASELINE";
+    IfcWorkPlanTypeEnum["PLANNED"] = "PLANNED";
+    IfcWorkPlanTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcWorkPlanTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcWorkPlanTypeEnum || (IfcWorkPlanTypeEnum = {}));
+/** IfcWorkScheduleTypeEnum */
+export var IfcWorkScheduleTypeEnum;
+(function (IfcWorkScheduleTypeEnum) {
+    IfcWorkScheduleTypeEnum["ACTUAL"] = "ACTUAL";
+    IfcWorkScheduleTypeEnum["BASELINE"] = "BASELINE";
+    IfcWorkScheduleTypeEnum["PLANNED"] = "PLANNED";
+    IfcWorkScheduleTypeEnum["USERDEFINED"] = "USERDEFINED";
+    IfcWorkScheduleTypeEnum["NOTDEFINED"] = "NOTDEFINED";
+})(IfcWorkScheduleTypeEnum || (IfcWorkScheduleTypeEnum = {}));
+//# sourceMappingURL=enums.js.map

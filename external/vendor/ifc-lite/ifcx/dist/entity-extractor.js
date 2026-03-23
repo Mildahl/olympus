@@ -1,0 +1,89 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+import { ATTR, BUILDING_ELEMENT_TYPES } from './types.js';
+import { buildReachableAttributeIndex, collectIncomingEdgeNames } from './traversal.js';
+import { EntityTableBuilder, } from '@ifc-lite/data';
+/**
+ * Extract entities from composed IFCX nodes.
+ *
+ * Mapping:
+ * - path -> expressId (synthetic, auto-incrementing)
+ * - bsi::ifc::class.code -> typeEnum
+ * - children hierarchy -> spatial structure
+ */
+export function extractEntities(composed, strings) {
+    const pathToId = new Map();
+    const idToPath = new Map();
+    const incomingEdgeNames = collectIncomingEdgeNames(composed);
+    const geometryIndex = buildReachableAttributeIndex(composed, ATTR.MESH);
+    // First pass: count entities to allocate builder
+    let entityCount = 0;
+    for (const node of composed.values()) {
+        const ifcClass = node.attributes.get(ATTR.CLASS);
+        if (ifcClass) {
+            entityCount++;
+        }
+    }
+    const builder = new EntityTableBuilder(Math.max(entityCount, 100), strings);
+    let nextExpressId = 1;
+    // Second pass: extract entities
+    for (const node of composed.values()) {
+        const ifcClass = node.attributes.get(ATTR.CLASS);
+        if (!ifcClass)
+            continue; // Skip non-IFC nodes (geometry-only, materials, etc.)
+        const typeCode = ifcClass.code ?? '';
+        const expressId = nextExpressId++;
+        pathToId.set(node.path, expressId);
+        idToPath.set(expressId, node.path);
+        // Extract name from attributes
+        const name = extractName(node, incomingEdgeNames.get(node.path) ?? []) ?? node.path.slice(0, 8);
+        // Check if has geometry
+        const hasGeometry = geometryIndex.get(node.path) ?? false;
+        // Check if this is a type definition
+        const isType = typeCode.toUpperCase().endsWith('TYPE');
+        // Add entity to builder
+        builder.add(expressId, typeCode, node.path, // Use path as GlobalId
+        name, '', // description
+        typeCode, // objectType
+        hasGeometry, isType);
+    }
+    return {
+        entities: builder.build(),
+        pathToId,
+        idToPath,
+    };
+}
+/**
+ * Extract entity name from node attributes.
+ */
+function extractName(node, incomingEdgeNames) {
+    // Try direct IFC name attribute (written by IFCX exporter/writer)
+    const ifcName = node.attributes.get('bsi::ifc::name');
+    if (typeof ifcName === 'string')
+        return ifcName;
+    // Try common property patterns
+    const name = node.attributes.get('bsi::ifc::prop::Name');
+    if (typeof name === 'string')
+        return name;
+    const typeName = node.attributes.get('bsi::ifc::prop::TypeName');
+    if (typeof typeName === 'string')
+        return typeName;
+    const objectName = node.attributes.get('bsi::ifc::prop::ObjectName');
+    if (typeof objectName === 'string')
+        return objectName;
+    // Fall back to readable incoming edge names when the entity itself has no name.
+    for (const edgeName of incomingEdgeNames) {
+        if (edgeName !== node.path && !edgeName.match(/^[0-9a-f-]{36}$/i)) {
+            return edgeName;
+        }
+    }
+    return null;
+}
+/**
+ * Check if a type code represents a building element.
+ */
+export function isBuildingElement(typeCode) {
+    return BUILDING_ELEMENT_TYPES.has(typeCode);
+}
+//# sourceMappingURL=entity-extractor.js.map

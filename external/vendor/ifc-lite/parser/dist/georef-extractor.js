@@ -1,0 +1,175 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+import { getString, getNumber, getReference } from './attribute-helpers.js';
+/**
+ * Extract georeferencing information from IFC entities
+ */
+export function extractGeoreferencing(entities, entitiesByType) {
+    const info = {
+        hasGeoreference: false,
+    };
+    // Extract IfcMapConversion
+    const mapConversionIds = entitiesByType.get('IfcMapConversion') || [];
+    if (mapConversionIds.length > 0) {
+        const entity = entities.get(mapConversionIds[0]);
+        if (entity) {
+            info.mapConversion = extractMapConversion(entity);
+            info.hasGeoreference = true;
+        }
+    }
+    // Extract IfcProjectedCRS
+    const projectedCRSIds = entitiesByType.get('IfcProjectedCRS') || [];
+    if (projectedCRSIds.length > 0) {
+        const entity = entities.get(projectedCRSIds[0]);
+        if (entity) {
+            info.projectedCRS = extractProjectedCRS(entity);
+            info.hasGeoreference = true;
+        }
+    }
+    // Compute transformation matrix if we have map conversion
+    if (info.mapConversion) {
+        info.transformMatrix = computeTransformMatrix(info.mapConversion);
+    }
+    return info;
+}
+function extractMapConversion(entity) {
+    // IfcMapConversion attributes (IFC4):
+    // [0] SourceCRS (IfcCoordinateReferenceSystem)
+    // [1] TargetCRS (IfcCoordinateReferenceSystem)
+    // [2] Eastings (IfcLengthMeasure)
+    // [3] Northings (IfcLengthMeasure)
+    // [4] OrthogonalHeight (IfcLengthMeasure)
+    // [5] XAxisAbscissa (OPTIONAL IfcReal)
+    // [6] XAxisOrdinate (OPTIONAL IfcReal)
+    // [7] Scale (OPTIONAL IfcReal)
+    return {
+        id: entity.expressId,
+        sourceCRS: getReference(entity.attributes[0]) || 0,
+        targetCRS: getReference(entity.attributes[1]) || 0,
+        eastings: getNumber(entity.attributes[2]) || 0,
+        northings: getNumber(entity.attributes[3]) || 0,
+        orthogonalHeight: getNumber(entity.attributes[4]) || 0,
+        xAxisAbscissa: getNumber(entity.attributes[5]),
+        xAxisOrdinate: getNumber(entity.attributes[6]),
+        scale: getNumber(entity.attributes[7]),
+    };
+}
+function extractProjectedCRS(entity) {
+    // IfcProjectedCRS attributes (IFC4):
+    // [0] Name (IfcLabel)
+    // [1] Description (OPTIONAL IfcText)
+    // [2] GeodeticDatum (OPTIONAL IfcIdentifier)
+    // [3] VerticalDatum (OPTIONAL IfcIdentifier)
+    // [4] MapProjection (OPTIONAL IfcIdentifier)
+    // [5] MapZone (OPTIONAL IfcIdentifier)
+    // [6] MapUnit (OPTIONAL IfcNamedUnit)
+    // Parse MapUnit if it's a reference
+    let mapUnit;
+    const mapUnitRef = getReference(entity.attributes[6]);
+    if (mapUnitRef) {
+        // Would need to resolve the IfcNamedUnit entity
+        mapUnit = 'METRE'; // Default assumption
+    }
+    return {
+        id: entity.expressId,
+        name: getString(entity.attributes[0]) || '',
+        description: getString(entity.attributes[1]),
+        geodeticDatum: getString(entity.attributes[2]),
+        verticalDatum: getString(entity.attributes[3]),
+        mapProjection: getString(entity.attributes[4]),
+        mapZone: getString(entity.attributes[5]),
+        mapUnit,
+    };
+}
+/**
+ * Compute 4x4 transformation matrix from local to world coordinates
+ */
+function computeTransformMatrix(mapConversion) {
+    const { eastings, northings, orthogonalHeight, xAxisAbscissa, xAxisOrdinate, scale } = mapConversion;
+    // Default scale to 1.0 if not specified
+    const s = scale || 1.0;
+    // Compute rotation angle from X-axis direction
+    let angle = 0;
+    if (xAxisAbscissa !== undefined && xAxisOrdinate !== undefined) {
+        angle = Math.atan2(xAxisOrdinate, xAxisAbscissa);
+    }
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    // Build 4x4 transformation matrix:
+    // [scale*cos  -scale*sin  0  eastings  ]
+    // [scale*sin   scale*cos  0  northings ]
+    // [0           0          1  height    ]
+    // [0           0          0  1         ]
+    return [
+        s * cos, s * sin, 0, 0,
+        -s * sin, s * cos, 0, 0,
+        0, 0, 1, 0,
+        eastings, northings, orthogonalHeight, 1,
+    ];
+}
+/**
+ * Transform a point from local to world coordinates
+ */
+export function transformToWorld(localPoint, georef) {
+    if (!georef.transformMatrix) {
+        return null;
+    }
+    const [x, y, z] = localPoint;
+    const m = georef.transformMatrix;
+    // Apply transformation: [x', y', z', 1] = [x, y, z, 1] * M
+    const xWorld = m[0] * x + m[4] * y + m[8] * z + m[12];
+    const yWorld = m[1] * x + m[5] * y + m[9] * z + m[13];
+    const zWorld = m[2] * x + m[6] * y + m[10] * z + m[14];
+    return [xWorld, yWorld, zWorld];
+}
+/**
+ * Transform a point from world to local coordinates
+ */
+export function transformToLocal(worldPoint, georef) {
+    if (!georef.transformMatrix) {
+        return null;
+    }
+    // Compute inverse transformation
+    const m = georef.transformMatrix;
+    const [xWorld, yWorld, zWorld] = worldPoint;
+    // Extract rotation and scale
+    const scale = georef.mapConversion?.scale || 1.0;
+    const angle = Math.atan2(m[1], m[0]);
+    const cos = Math.cos(-angle);
+    const sin = Math.sin(-angle);
+    const invScale = 1.0 / scale;
+    // Apply inverse translation
+    const xTrans = xWorld - m[12];
+    const yTrans = yWorld - m[13];
+    const zTrans = zWorld - m[14];
+    // Apply inverse rotation and scale
+    const x = invScale * (cos * xTrans - sin * yTrans);
+    const y = invScale * (sin * xTrans + cos * yTrans);
+    const z = zTrans;
+    return [x, y, z];
+}
+/**
+ * Get coordinate system description
+ */
+export function getCoordinateSystemDescription(georef) {
+    if (!georef.hasGeoreference) {
+        return 'Local Engineering Coordinates';
+    }
+    const parts = [];
+    if (georef.projectedCRS) {
+        parts.push(georef.projectedCRS.name);
+        if (georef.projectedCRS.mapProjection) {
+            parts.push(`(${georef.projectedCRS.mapProjection})`);
+        }
+        if (georef.projectedCRS.geodeticDatum) {
+            parts.push(`Datum: ${georef.projectedCRS.geodeticDatum}`);
+        }
+    }
+    if (georef.mapConversion) {
+        const { eastings, northings, orthogonalHeight } = georef.mapConversion;
+        parts.push(`Origin: (${eastings.toFixed(2)}, ${northings.toFixed(2)}, ${orthogonalHeight.toFixed(2)})`);
+    }
+    return parts.join(' ');
+}
+//# sourceMappingURL=georef-extractor.js.map

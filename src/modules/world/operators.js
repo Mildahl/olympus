@@ -184,5 +184,5 @@ export default [
   ShowAllElements,
   SelectAll,
   DeselectAll,
-  SetView
+  SetView,
 ];

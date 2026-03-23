@@ -1,6 +1,6 @@
 # Getting started
 
-This guide explains how to set up the basic **HelloWorld** example and the **GameExperience** example (which includes addons). Both live under **`examples/`**.
+This guide explains how to set up the **HelloWorld** example (minimal app) and the **Addons** example (app that loads custom addon modules). Both live under **`examples/`**.
 
 ## HelloWorld: minimal app
 
@@ -31,44 +31,29 @@ Serve the project from a root that allows the import map to resolve (e.g. projec
 
 ---
 
-## GameExperience: app with addons
+## Addons: app with custom modules
 
-GameExperience is a full example that enables **addons** (custom modules) for experiences, navigation, and other features.
+The **Addons** example (**`examples/Addons`**) is a full app that registers **addon** modules (same contract as core modules) alongside the usual configuration. Viewport navigation comes from the core **`world.navigation`** module (`src/modules/navigation/`), not from an addon.
 
 ### Structure
 
-- **`examples/GameExperience/index.html`** — Similar to HelloWorld: import map, scripts, and **`<script type="module" src="./app.demo.js">`** (or `app.js`).
-- **`examples/GameExperience/app.js`** — Can export a **`Demo()`** function that:
-  1. Creates **`const simulation = new AECO(document.body)`**.
-  2. Passes **ADDONS** and optional **Listeners** into **`simulation.createUI({ config: AECOConfiguration, container: document.body, addons: { ADDONS, Listeners: listeners } })`**.
-  3. Uses **`simulation.tools`** and **`simulation.ops`** (e.g. add cube, run operators).
-- **`examples/GameExperience/addons/index.js`** — Exports **`ADDONS`** as an array of `{ module, active }`, e.g.:
-  - **Course Experience** (`experiences/module.js`) — `active: true`.
-  - **Navigation** (`navigation/module.js`) — e.g. `active: false`.
+- **`examples/Addons/index.html`** — Import map and script entry (e.g. **`app.js`**).
+- **`examples/Addons/app.js`** — Creates **`new AECO()`**, passes **ADDONS** and **Listeners** into **`simulation.createUI({ config: AECOConfiguration, container: document.body, addons: { ADDONS, Listeners: listeners } })`**, and may use **`simulation.tools`** / **`simulation.ops`**.
+- **`examples/Addons/addons/index.js`** — Exports **`ADDONS`** as an array of `{ module, active }` (see the **Hard Hat** addon in **`addons/hard-hat/`**).
 
 Each addon is a **module definition** (id, name, dependsOn, operators, ui). See [Creating addons](creating-addons.md).
 
-### Addon demo: Course Experience
-
-The **Course Experience** addon (**`addons/experiences/`**) is a simple addon demo:
-
-- **`module.js`** — Defines `id: 'course.experiences'`, name, operators, and UI.
-- **`operators.js`** — Exports an array of operator classes (e.g. for enabling a demo or welcome flow).
-- **`ui.js`** — UI class instantiated with `{ context, operators }`; builds panels or welcome screens and calls **`operators.execute(...)`** when the user acts.
-
-Enabling it in **`addons/index.js`** with **`active: true`** is enough for the app to register and activate it; no change to Olympus core is needed.
-
 ### Running
 
-Serve the project so that **`examples/GameExperience`** is reachable and the import map resolves (e.g. `aeco` → `./../../static/dist/aeco.js` or your build). Open the GameExperience index page. You should see the full UI and the Course Experience addon (welcome/demo) if it is active. Use the browser console to inspect **`simulation.ops`** and **`simulation.tools`** if needed.
+Serve the project so that **`examples/Addons`** is reachable and the import map resolves (e.g. `aeco` → your built bundle or `src/index.js`). Open **`examples/Addons/index.html`**. Use the browser console to inspect **`simulation.ops`** and **`simulation.tools`** if needed.
 
 ---
 
 ## Summary
 
-| Example        | Purpose                         | Addons                          |
-|----------------|----------------------------------|---------------------------------|
-| **HelloWorld** | Minimal Olympus app and config  | Optional (empty or simple list) |
-| **GameExperience** | Full app with addon demos   | Yes — `addons/index.js`, e.g. Course Experience |
+| Example       | Purpose                        | Addons                                  |
+|---------------|--------------------------------|-----------------------------------------|
+| **HelloWorld** | Minimal Olympus app and config | Optional (empty list or simple addons) |
+| **Addons**     | Host app for custom modules    | Yes — `examples/Addons/addons/index.js` |
 
 For more on the app architecture, see [How the app works](how-the-app-works.md). For config details, see [Configuration](configuration.md). For defining your own addon, see [Creating addons](creating-addons.md).

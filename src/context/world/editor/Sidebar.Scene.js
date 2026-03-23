@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { UIPanel, UIBreak, UIRow, UIColor, UISelect, UIText, UINumber, UIButton } from './../../../ui/base/ui.js';
+import { UIPanel, UIBreak, UIRow, UIColor, UISelect, UIText, UINumber, UIButton } from '../../../../drawUI/ui.js';
 
 import { UIOutliner, UITexture } from '../../../ui/ui.three.js';
 

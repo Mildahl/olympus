@@ -1,4 +1,4 @@
-import { UIDiv, UIButton, UIRow } from './../../../ui/base/ui.js';
+import { UIDiv, UIButton, UIRow } from '../../../../drawUI/ui.js';
 
 import { computeMikkTSpaceTangents } from 'three/addons/utils/BufferGeometryUtils.js';
 import * as MikkTSpace from 'three/addons/libs/mikktspace.module.js';

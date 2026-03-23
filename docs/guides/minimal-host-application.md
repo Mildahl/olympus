@@ -1,6 +1,8 @@
 # Minimal host application
 
-Smallest pattern for bootstrapping an `AECO` instance with configuration and addons. Paths match an example-style app that lives under `examples/<YourApp>/` with local `configuration/` and `addons/` folders.
+Smallest pattern for bootstrapping an `AECO` instance with configuration and addons. Paths match an example-style app that lives under `examples/<YourApp>/` with `configuration/` and `addons/` folders.
+
+`createUI` returns a **Promise** (it loads core module chunks asynchronously). Await it before using operators that depend on loaded modules, or await `aecoApplication.modulesReady` after assigning it from `createUI(...)`.
 
 ```javascript
 import { AECO } from "./../../src/index.js";
@@ -9,11 +11,13 @@ import { ADDONS } from "./addons/index.js";
 
 const aecoApplication = new AECO(document.body);
 
-aecoApplication.createUI({
-  config: AECOConfiguration,
-  container: document.body,
-  addons: { ADDONS },
-});
+void (async function start() {
+  await aecoApplication.createUI({
+    config: AECOConfiguration,
+    container: document.body,
+    addons: { ADDONS },
+  });
+})();
 ```
 
 For project layout and build steps, see [Repository setup](repository-setup.md). For architecture, see [How the app works](../olympus/guides/how-the-app-works.md) (generated doc site) or [Project structure](../getting-started/project-structure.md).

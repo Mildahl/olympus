@@ -1,13 +1,52 @@
 import * as THREE from 'three';
 
-import { UIPanel, UIRow, UIText, UIInput, UIButton, UISpan, UITextArea } from './../../../ui/base/ui.js';
+import { UIPanel, UIRow, UIText, UIInput, UIButton, UISpan, UITextArea } from '../../../../drawUI/ui.js';
 
 import { SetGeometryValueCommand } from './commands/SetGeometryValueCommand.js';
 
 import { SidebarGeometryBufferGeometry } from './Sidebar.Geometry.BufferGeometry.js';
+
 import { SidebarGeometryModifiers } from './Sidebar.Geometry.Modifiers.js';
 
+import { GeometryParametersPanel as BoxGeometryParametersPanel } from './Sidebar.Geometry.BoxGeometry.js';
+import { GeometryParametersPanel as CapsuleGeometryParametersPanel } from './Sidebar.Geometry.CapsuleGeometry.js';
+import { GeometryParametersPanel as CircleGeometryParametersPanel } from './Sidebar.Geometry.CircleGeometry.js';
+import { GeometryParametersPanel as CylinderGeometryParametersPanel } from './Sidebar.Geometry.CylinderGeometry.js';
+import { GeometryParametersPanel as DodecahedronGeometryParametersPanel } from './Sidebar.Geometry.DodecahedronGeometry.js';
+import { GeometryParametersPanel as ExtrudeGeometryParametersPanel } from './Sidebar.Geometry.ExtrudeGeometry.js';
+import { GeometryParametersPanel as IcosahedronGeometryParametersPanel } from './Sidebar.Geometry.IcosahedronGeometry.js';
+import { GeometryParametersPanel as LatheGeometryParametersPanel } from './Sidebar.Geometry.LatheGeometry.js';
+import { GeometryParametersPanel as OctahedronGeometryParametersPanel } from './Sidebar.Geometry.OctahedronGeometry.js';
+import { GeometryParametersPanel as PlaneGeometryParametersPanel } from './Sidebar.Geometry.PlaneGeometry.js';
+import { GeometryParametersPanel as RingGeometryParametersPanel } from './Sidebar.Geometry.RingGeometry.js';
+import { GeometryParametersPanel as ShapeGeometryParametersPanel } from './Sidebar.Geometry.ShapeGeometry.js';
+import { GeometryParametersPanel as SphereGeometryParametersPanel } from './Sidebar.Geometry.SphereGeometry.js';
+import { GeometryParametersPanel as TetrahedronGeometryParametersPanel } from './Sidebar.Geometry.TetrahedronGeometry.js';
+import { GeometryParametersPanel as TorusGeometryParametersPanel } from './Sidebar.Geometry.TorusGeometry.js';
+import { GeometryParametersPanel as TorusKnotGeometryParametersPanel } from './Sidebar.Geometry.TorusKnotGeometry.js';
+import { GeometryParametersPanel as TubeGeometryParametersPanel } from './Sidebar.Geometry.TubeGeometry.js';
+
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
+
+const geometryParametersPanelConstructorsByGeometryType = {
+	BoxGeometry: BoxGeometryParametersPanel,
+	CapsuleGeometry: CapsuleGeometryParametersPanel,
+	CircleGeometry: CircleGeometryParametersPanel,
+	CylinderGeometry: CylinderGeometryParametersPanel,
+	DodecahedronGeometry: DodecahedronGeometryParametersPanel,
+	ExtrudeGeometry: ExtrudeGeometryParametersPanel,
+	IcosahedronGeometry: IcosahedronGeometryParametersPanel,
+	LatheGeometry: LatheGeometryParametersPanel,
+	OctahedronGeometry: OctahedronGeometryParametersPanel,
+	PlaneGeometry: PlaneGeometryParametersPanel,
+	RingGeometry: RingGeometryParametersPanel,
+	ShapeGeometry: ShapeGeometryParametersPanel,
+	SphereGeometry: SphereGeometryParametersPanel,
+	TetrahedronGeometry: TetrahedronGeometryParametersPanel,
+	TorusGeometry: TorusGeometryParametersPanel,
+	TorusKnotGeometry: TorusKnotGeometryParametersPanel,
+	TubeGeometry: TubeGeometryParametersPanel
+};
 
 function SidebarGeometry( editor ) {
 
@@ -153,7 +192,7 @@ function SidebarGeometry( editor ) {
 
 	} );
 	container.add( exportJson );
-	async function build() {
+	function build() {
 
 		const object = editor.selected;
 
@@ -177,9 +216,14 @@ function SidebarGeometry( editor ) {
 
 				} else {
 
-					const { GeometryParametersPanel } = await import( `./Sidebar.Geometry.${ geometry.type }.js` );
+					const GeometryParametersPanelConstructor =
+						geometryParametersPanelConstructorsByGeometryType[ geometry.type ];
 
-					parameters.add( new GeometryParametersPanel( editor, object ) );
+					if ( GeometryParametersPanelConstructor ) {
+
+						parameters.add( new GeometryParametersPanelConstructor( editor, object ) );
+
+					}
 
 				}
 

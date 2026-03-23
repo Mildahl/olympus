@@ -1,4 +1,4 @@
-import { UINumber, UIRow, UIText } from './../../../ui/base/ui.js';
+import { UINumber, UIRow, UIText } from '../../../../drawUI/ui.js';
 import { SetMaterialValueCommand } from './commands/SetMaterialValueCommand.js';
 
 function SidebarMaterialNumberProperty( editor, property, name, range = [ - Infinity, Infinity ], precision = 2 ) {
