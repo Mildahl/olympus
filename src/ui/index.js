@@ -40,8 +40,6 @@ class UI {
     this.model.layoutManager.registerTabbedWorkspaces(this.workspaces);
 
     context.ui = this;
-    
-    console.log("CONFIGURATION", context.config);
 
     if (context.config.ui.showWelcomeScreen) new WelcomeScreen({ context, operators, container: dom });
 

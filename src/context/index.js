@@ -287,25 +287,12 @@ class Context {
             if (userOptedInToPersist && saved) {
                 const parsed = JSON.parse(saved);
 
-                console.group('[AECO Config] Loading (user opted in to persist)');
-
-                console.log('Saved localStorage config:', JSON.parse(JSON.stringify(parsed)));
-
                 this.config.ui = this._deepMerge(uiConfig, parsed.ui || {});
 
                 this.config.app = this._deepMerge(appConfig, parsed.app || {});
 
-                console.log('Final merged UI config:', JSON.parse(JSON.stringify(this.config.ui)));
-
-                console.log('Final merged App config:', JSON.parse(JSON.stringify(this.config.app)));
-
-                console.groupEnd();
+                
             } else {
-                if (saved) {
-                    console.log('[AECO Config] Using config presets (persist not opted in). Ignoring localStorage.');
-                } else {
-                    console.log('[AECO Config] No saved config; using config presets.');
-                }
 
                 this.config.ui = uiConfig;
 
