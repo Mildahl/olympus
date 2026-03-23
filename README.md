@@ -12,12 +12,14 @@ Don't waste time re-building an editor from scratch: olympus is here!
 
 [**Hello World (reference app)**](https://myoualid.github.io/olympus/examples/HelloWorld/index.html) · [**Addons (build your host app)**](https://myoualid.github.io/olympus/examples/Addons/index.html)
 
-![Olympus — digital construction app](https://www.aeco.dev/static/img/digital_construction_app.png)
+![Olympus — digital construction app](https://www.aeco.dev/static/img/digital_construction_app2.png)
 
 <details>
 <summary>More Screenshots</summary>
-
-![Olympus — digital construction app](https://www.aeco.dev/static/img/_digital_construction_app.png)
+  
+![Olympus — digital construction app](https://www.aeco.dev/static/img/digital_construction_app3.png)
+  
+![Olympus — digital construction app2](https://www.aeco.dev/static/img/_digital_construction_app.png)
 
 </details>
 
