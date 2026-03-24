@@ -643,8 +643,6 @@ function Viewport( context, ops, parent ) {
 			navigationController.mode === 'ORBIT'
 		) {
 
-			const previousOrbitCenter = controls.center.clone();
-
 			object.updateWorldMatrix( true, true );
 
 			orbitSelectionBounds.setFromObject( object, true );
@@ -660,10 +658,6 @@ function Viewport( context, ops, parent ) {
 				object.getWorldPosition( targetOrbitCenter );
 
 			}
-
-			const orbitPivotDelta = new THREE.Vector3().subVectors( targetOrbitCenter, previousOrbitCenter );
-
-			camera.position.add( orbitPivotDelta );
 
 			controls.center.copy( targetOrbitCenter );
 

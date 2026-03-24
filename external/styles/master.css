@@ -2184,7 +2184,7 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 .addon-navigation-kbd-cluster {
   --addon-nav-kbd-gap: 4px;
   --addon-nav-kbd-key: 2.2rem;
-  align-items: center;
+  align-items: flex-end;
   box-sizing: border-box;
   display: flex;
   gap: var(--addon-nav-kbd-gap);
@@ -2221,14 +2221,17 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 }
 
 .addon-navigation-kbd-row--sprint {
+  align-self: flex-end;
   box-sizing: border-box;
-  width: 100%;
+  flex-shrink: 0;
+  width: auto;
 }
 
 .addon-navigation-kbd-row--sprint .addon-nav-sprint-toggle {
   box-sizing: border-box;
-  max-width: 100%;
-  width: 100%;
+  flex-shrink: 0;
+  max-width: none;
+  width: auto;
 }
 
 .addon-navigation-viewport-overlay {
@@ -2240,21 +2243,23 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   top: 0;
   touch-action: none;
   width: 100%;
-  z-index: 1100;
+  z-index: 6;
 }
 
-.addon-navigation-viewport-overlay-inner {
+#addon-navigation-viewport-keyboard.addon-navigation-viewport-overlay {
   align-items: flex-end;
-  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   height: 100%;
   justify-content: space-between;
   padding: 0 calc(var(--margin) * 0.65)
-    calc(var(--margin) * 0.65 + var(--addon-navigation-controls-lift))
+    calc(var(--margin) * 0.65 + var(--addon-navigation-controls-lift, 0px))
     calc(var(--margin) * 0.65);
-  pointer-events: none;
   width: 100%;
+}
+
+#addon-navigation-viewport-keyboard.nav-instructions-content {
+  padding: 0;
 }
 
 .addon-navigation-left-stack {
@@ -2264,17 +2269,6 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   gap: 0;
   justify-content: flex-end;
   max-width: min(92vw, 320px);
-  pointer-events: none;
-}
-
-.addon-navigation-left-primary-row {
-  align-items: flex-end;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  justify-content: flex-start;
-  max-width: 100%;
   pointer-events: none;
 }
 
@@ -2295,7 +2289,26 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   flex-direction: column;
   gap: 0;
   justify-content: flex-end;
+  margin-bottom: var(--phi-3);
+  margin-right: var(--state-bar-right);
   pointer-events: none;
+}
+
+.addon-navigation-left-options-column {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  width: 100%;
+}
+
+.addon-navigation-left-options-column .addon-navigation-keys-move-checkbox-row {
+  align-self: flex-start;
+  margin-bottom: 0;
 }
 
 .addon-navigation-keys-move-checkbox-row {
@@ -2410,7 +2423,6 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 }
 
 #addon-navigation-viewport-keyboard {
-  --addon-navigation-controls-lift: 3.5rem;
   background: none;
   border: none;
   border-radius: 0;
@@ -2424,7 +2436,9 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 
 #addon-navigation-viewport-keyboard .addon-navigation-kbd-sprint-key {
   cursor: pointer;
+  font-size: 0.65rem;
   min-width: 2.75rem;
+  padding-inline: 0.2rem;
 }
 
 .addon-nav-sprint-toggle {

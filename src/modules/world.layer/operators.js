@@ -41,10 +41,6 @@ class ActivateLayer extends Operator {
 
     const layer = result.layer;
 
-    SpatialCore.openSpatialManager({
-      signals: this.context.signals
-    });
-
     SpatialCore.enableEditingForLayer(this.layerGuid, {
       signals: this.context.signals
     });

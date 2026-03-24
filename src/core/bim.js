@@ -435,9 +435,15 @@ async function loadGeometryData(
       },
     };
 
+    const ifcGeometryAssembly =
+      context.ifc && context.ifc.ifcGeometryAssembly === "multiMesh"
+        ? "multiMesh"
+        : "merged";
+
     const projectRootGroup = projectTool.createLayer(
       spatialStructure,
       instancedGeometryMap || {},
+      { ifcGeometryAssembly },
     );
 
     const projectTransform = transform || {
@@ -730,7 +736,16 @@ function addIfcElementToScene(
   { bimTools, worldTools, context },
 ) {
 
-  const { meshes, lines } = bimTools.geometry.createThreeJSMesh(meshData, GlobalId);
+  const ifcGeometryAssembly =
+    context.ifc && context.ifc.ifcGeometryAssembly === "multiMesh"
+      ? "multiMesh"
+      : "merged";
+
+  const { meshes, lines } = bimTools.geometry.createThreeJSMesh(
+    meshData,
+    GlobalId,
+    { assembly: ifcGeometryAssembly },
+  );
 
   if (!meshes || meshes.length === 0) {
     console.warn(
@@ -750,11 +765,7 @@ function addIfcElementToScene(
 
   group.userData.entityType = meshData.entityType || "IfcWall";
 
-  meshes.forEach((mesh, i) => {
-    mesh.isIfc = true;
-
-    mesh.GlobalId = `IFC/BodyRepresentation/${GlobalId}`;
-
+  meshes.forEach((mesh) => {
     group.add(mesh);
   });
 

@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
 const lineBasicMaterial = new THREE.LineBasicMaterial({ color: 0x222222 });
 
 class GeometryTool {
@@ -165,31 +167,31 @@ class GeometryTool {
     return { instancedMeshes, instanceMapping };
   }
 
-  /**
-   * Generate regular mesh for non-instanced geometry
-   * @param {Object} meshData - The mesh data with geometries and matrix
-   * @param {string} GlobalId - The element's GlobalId
-   * @returns {Object} { meshes: THREE.Mesh[], lines: THREE.LineSegments | null }
-   */
-  static createThreeJSMesh(meshData, GlobalId) {
-    const { geometries, matrix } = meshData;
-  
-    let meshes = [];
+  static applyIfcBodyMeshUserData(mesh, GlobalId) {
+    mesh.isIfc = true;
 
-    let lines = null;
+    mesh.uuid = `IFC/BodyRepresentation/${GlobalId}`;
+
+    mesh.userData.ifcBodyMesh = true;
+
+    mesh.userData.ifcElementGlobalId = GlobalId;
+  }
+
+  static collectGeometryMaterialPairs(meshData, GlobalId) {
+    const pairs = [];
+
+    const { geometries } = meshData;
 
     if (!geometries || !Array.isArray(geometries) || geometries.length === 0) {
-
-      return { meshes, lines };
+      return pairs;
     }
-  
-    for (const geomData of geometries) {
 
+    for (const geomData of geometries) {
       const { materialData, mapping } = geomData;
-      
+
       if (!materialData || !Array.isArray(materialData)) {
         console.warn(`[GeometryTool.createThreeJSMesh] No material data for GlobalId: ${GlobalId}, using default material`);
-        
+
         const geometry = new THREE.BufferGeometry();
 
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(geomData.vertices, 3));
@@ -201,71 +203,120 @@ class GeometryTool {
         if (geomData.faces) {
           geometry.setIndex(Array.from(geomData.faces));
         }
-        
+
         const defaultMaterial = new THREE.MeshLambertMaterial({
           color: new THREE.Color(0.6, 0.6, 0.6),
           side: THREE.DoubleSide,
           polygonOffset: true,
           polygonOffsetFactor: 1.0,
         });
-        
-        const mesh = new THREE.Mesh(geometry, defaultMaterial);
-        
-        if (matrix) {
-          const mat = this.matrixFromArray(matrix);
 
-          mesh.matrixAutoUpdate = false;
-
-          mesh.matrix = mat;
-        }
-        
-        mesh.isIfc = true;
-
-        mesh.uuid = `IFC/BodyRepresentation/${GlobalId}`;
-
-        meshes.push(mesh);
+        pairs.push({ geometry, material: defaultMaterial });
 
         continue;
       }
 
-      let materials = materialData.map(m => this.createMaterial(m));
-  
+      let materials = materialData.map((m) => this.createMaterial(m));
+
       let offset = 0;
 
       if (mapping && mapping[-1]) {
-        materials.unshift(new THREE.MeshLambertMaterial({
-          color: new THREE.Color(0.6, 0.6, 0.6),
-          side: THREE.DoubleSide
-        }));
+        materials.unshift(
+          new THREE.MeshLambertMaterial({
+            color: new THREE.Color(0.6, 0.6, 0.6),
+            side: THREE.DoubleSide,
+          }),
+        );
 
         offset = 1;
       }
-  
+
       materials.forEach((material, materialIndex) => {
         const faceIndices = mapping ? mapping[materialIndex - offset] : null;
 
         if (!faceIndices) return;
-  
+
         const geometry = this.createBufferGeometry(geomData, faceIndices);
-        
-        const mesh = new THREE.Mesh(geometry, material);
-        
-        if (matrix) {
-          const mat = this.matrixFromArray(matrix);
 
-          mesh.matrixAutoUpdate = false;
-
-          mesh.matrix = mat;
-        }
-  
-        mesh.isIfc = true;
-
-        mesh.uuid = `IFC/BodyRepresentation/${GlobalId}`;
-
-        meshes.push(mesh);
+        pairs.push({ geometry, material });
       });
     }
-  
+
+    return pairs;
+  }
+
+  /**
+   * Generate regular mesh for non-instanced geometry
+   * @param {Object} meshData - The mesh data with geometries and matrix
+   * @param {string} GlobalId - The element's GlobalId
+   * @param {Object} [options]
+   * @param {'merged'|'multiMesh'} [options.assembly='merged']
+   * @returns {Object} { meshes: THREE.Mesh[], lines: THREE.LineSegments | null }
+   */
+  static createThreeJSMesh(meshData, GlobalId, options) {
+    const assembly =
+      options && options.assembly === 'multiMesh' ? 'multiMesh' : 'merged';
+
+    const { matrix } = meshData;
+
+    const pairs = this.collectGeometryMaterialPairs(meshData, GlobalId);
+
+    const meshes = [];
+
+    const lines = null;
+
+    if (pairs.length === 0) {
+      return { meshes, lines };
+    }
+
+    const attachMatrixAndIfcBody = (mesh) => {
+      if (matrix) {
+        const mat = this.matrixFromArray(matrix);
+
+        mesh.matrixAutoUpdate = false;
+
+        mesh.matrix = mat;
+      }
+
+      this.applyIfcBodyMeshUserData(mesh, GlobalId);
+    };
+
+    const buildSeparateMeshes = () => {
+      const result = [];
+
+      for (let i = 0; i < pairs.length; i++) {
+        const { geometry, material } = pairs[i];
+
+        const mesh = new THREE.Mesh(geometry, material);
+
+        attachMatrixAndIfcBody(mesh);
+
+        result.push(mesh);
+      }
+
+      return result;
+    };
+
+    if (assembly === 'multiMesh' || pairs.length === 1) {
+      return { meshes: buildSeparateMeshes(), lines };
+    }
+
+    const geometryList = pairs.map((entry) => entry.geometry);
+
+    const materialList = pairs.map((entry) => entry.material);
+
+    const mergedGeometry = mergeGeometries(geometryList, true);
+
+    if (!mergedGeometry) {
+      return { meshes: buildSeparateMeshes(), lines };
+    }
+
+    const mergedMesh = new THREE.Mesh(mergedGeometry, materialList);
+
+    attachMatrixAndIfcBody(mergedMesh);
+
+    meshes.push(mergedMesh);
+
     return { meshes, lines };
   }
   

@@ -10,6 +10,8 @@ import * as THREE from "three";
 
 import IfcLiteGeometryTool from "./ifcLiteGeometry.js";
 
+import GeometryTool from "./geometry.js";
+
 class ProjectTool {
 
     static projectName = "default";
@@ -218,13 +220,20 @@ class ProjectTool {
    * 
    * @param {Object} spatialStructure - The spatial structure with meshData
    * @param {Object} instancedGeometryMap - Map of geometryId to instance data
+   * @param {Object} [layerOptions]
+   * @param {'merged'|'multiMesh'} [layerOptions.ifcGeometryAssembly='merged']
    * @returns {THREE.Group} The project root group
    */
-  static createLayer(spatialStructure, instancedGeometryMap = {}) {
+  static createLayer(spatialStructure, instancedGeometryMap = {}, layerOptions = {}) {
+      const ifcGeometryAssembly =
+        layerOptions.ifcGeometryAssembly === "multiMesh" ? "multiMesh" : "merged";
+
+      const meshAssemblyOptions = { assembly: ifcGeometryAssembly };
+
       const globalIdToInstanceInfo = new Map();
 
       for (const [geometryId, instanceData] of Object.entries(instancedGeometryMap)) {
-        const { instancedMeshes, instanceMapping } = tools.bim.geometry.generateInstancedMesh(instanceData);
+        const { instancedMeshes, instanceMapping } = GeometryTool.generateInstancedMesh(instanceData);
 
         for (const [globalId, meshInfos] of instanceMapping.entries()) {
           globalIdToInstanceInfo.set(globalId, { 
@@ -268,7 +277,11 @@ class ProjectTool {
                 group.instancedMeshInfos = instanceInfo.instanceInfos; 
               } else if (meshData && meshData.geometries) {
                 
-                const { meshes, lines } = tools.bim.geometry.createThreeJSMesh(meshData, GlobalId);
+                const { meshes, lines } = GeometryTool.createThreeJSMesh(
+                  meshData,
+                  GlobalId,
+                  meshAssemblyOptions,
+                );
                 
                 meshes.forEach(mesh => group.add(mesh));
 
@@ -359,7 +372,11 @@ class ProjectTool {
 
                       group.instancedMeshInfos = instanceInfo.instanceInfos;
                   } else if (objectData.meshData && objectData.meshData.geometries) {
-                      const { meshes, lines } = tools.bim.geometry.createThreeJSMesh(objectData.meshData, globalId);
+                      const { meshes, lines } = GeometryTool.createThreeJSMesh(
+                        objectData.meshData,
+                        globalId,
+                        meshAssemblyOptions,
+                      );
 
                       meshes.forEach(mesh => group.add(mesh));
 

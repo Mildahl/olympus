@@ -232,7 +232,28 @@ class Selector {
 			}
 		}
 
-		this.selectObjects(selectedObjects, deselect, additive);
+		const dedupedSelection = [];
+
+		const seenKeys = new Set();
+
+		for (let i = 0; i < selectedObjects.length; i++) {
+			const resolved = this.resolveIfcSelectionTarget(selectedObjects[i]);
+
+			const key =
+				resolved && resolved.GlobalId
+					? resolved.GlobalId
+					: resolved
+						? resolved.uuid
+						: null;
+
+			if (key === null || seenKeys.has(key)) continue;
+
+			seenKeys.add(key);
+
+			dedupedSelection.push(resolved);
+		}
+
+		this.selectObjects(dedupedSelection, deselect, additive);
 	}
 
 	isPointerLockedToCanvas() {
@@ -342,8 +363,40 @@ class Selector {
 		return found;
 	}
 
+	resolveIfcSelectionTarget(object3D) {
+		if (!object3D) return object3D;
+
+		if (object3D.userData && object3D.userData.ifcBodyMesh === true) {
+			let walk = object3D.parent;
+
+			while (walk) {
+				if (walk.isIfc && walk.GlobalId && !walk.isMesh) return walk;
+
+				walk = walk.parent;
+			}
+
+			return object3D;
+		}
+
+		if (object3D.isIfc && object3D.GlobalId && !object3D.isMesh) {
+			return object3D;
+		}
+
+		if (object3D.isMesh && object3D.isIfc) {
+			let walk = object3D.parent;
+
+			while (walk) {
+				if (walk.isIfc && walk.GlobalId && !walk.isMesh) return walk;
+
+				walk = walk.parent;
+			}
+		}
+
+		return object3D;
+	}
+
 	findSelectableObject(intersects) {
-		if (!intersects?.length) return null;
+		if (!intersects || intersects.length === 0) return null;
 
 		for (const intersect of intersects) {
 			let obj = intersect.object;
@@ -360,10 +413,12 @@ class Selector {
 			while (obj) {
 				if (obj.userData.object !== undefined) {
 					const targetObj = obj.userData.object;
-					if (this.isObjectVisible(targetObj)) return targetObj;
+					if (this.isObjectVisible(targetObj)) return this.resolveIfcSelectionTarget(targetObj);
 				}
 
-				if (obj.isMesh && !obj.isLine && this.isObjectVisible(obj)) return obj;
+				if (obj.isMesh && !obj.isLine && this.isObjectVisible(obj)) {
+					return this.resolveIfcSelectionTarget(obj);
+				}
 
 				obj = obj.parent;
 			}

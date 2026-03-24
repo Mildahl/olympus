@@ -15,6 +15,7 @@ const { Signal } = signals;
  * @property {Object|null} activeWorkSchedule - Currently active work schedule
  * @property {Object|null} activeElement - Currently selected element
  * @property {string} geometryBackend - Preferred backend for IFC mesh generation
+ * @property {'merged'|'multiMesh'} ifcGeometryAssembly - Per-element mesh assembly when building IFC layers
  * @property {boolean} geometryLoadInProgress - True while loadGeometryData is running
  */
 
@@ -102,6 +103,7 @@ class Context {
             activeWorkSchedule: null,
             activeElement: null,
             geometryBackend: "ifcopenshell",
+            ifcGeometryAssembly: "merged",
             geometryLoadInProgress: false,
         }
 

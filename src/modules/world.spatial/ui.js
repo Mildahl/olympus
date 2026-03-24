@@ -25,8 +25,6 @@ class SpatialManagerUI extends TabPanel{
 
     this.nodeStates = new WeakMap();
 
-    this.ignoreObjectSelectedSignal = false;
-
     this.currentDrag = null;
 
     this.searchQuery = "";
@@ -68,9 +66,7 @@ class SpatialManagerUI extends TabPanel{
         return;
       }
 
-      if (!this._isSpatialTabActive()) {
-        this.show();
-      } else {
+      if (this._isSpatialTabActive()) {
         this.refreshTree();
       }
     });
@@ -86,13 +82,15 @@ class SpatialManagerUI extends TabPanel{
     editorSignals.objectSelected.add((object) => {
       if (!this._isSpatialTabActive()) return;
 
-      if (this.ignoreObjectSelectedSignal) return;
+      if (!object) {
+        this.applySpatialOutlinerSelectionHighlight(null);
 
-      if (!object) return this.scrollIntoView(null);
+        return;
+      }
 
       this.expandParents(object);
 
-      this.scrollIntoView(object.id);
+      this.applySpatialOutlinerSelectionHighlight(object.id);
     });
   }
 
@@ -163,6 +161,86 @@ class SpatialManagerUI extends TabPanel{
     this.footer.add(footerContent);
   }
 
+  shouldIncludeInSpatialOutliner(object) {
+    if (!object || object.isLine) return false;
+
+    if (object.isHelperGroup || object.name === "_InstancedMeshes") return false;
+
+    const parentIfc = object.parent;
+
+    if (
+      object.userData &&
+      object.userData.ifcBodyMesh === true &&
+      parentIfc &&
+      parentIfc.isIfc &&
+      parentIfc.GlobalId
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  getSpatialOutlinerChildCount(object) {
+    let count = 0;
+
+    const children = object.children;
+
+    for (let i = 0, l = children.length; i < l; i++) {
+      if (this.shouldIncludeInSpatialOutliner(children[i])) count++;
+    }
+
+    return count;
+  }
+
+  hasSpatialOutlinerChildren(object) {
+    return this.getSpatialOutlinerChildCount(object) > 0;
+  }
+
+  getSortedSpatialOutlinerSiblings(objects) {
+    const list = [];
+
+    if (!objects || objects.length === 0) {
+      return list;
+    }
+
+    for (let i = 0, l = objects.length; i < l; i++) {
+      const object = objects[i];
+
+      if (this.shouldIncludeInSpatialOutliner(object)) {
+        list.push(object);
+      }
+    }
+
+    list.sort((first, second) => {
+      const firstBranch = this.hasSpatialOutlinerChildren(first);
+
+      const secondBranch = this.hasSpatialOutlinerChildren(second);
+
+      if (firstBranch !== secondBranch) {
+        return firstBranch ? -1 : 1;
+      }
+
+      const firstSpatial =
+        first.isIfc === true && first.isSpatialContainer === true;
+
+      const secondSpatial =
+        second.isIfc === true && second.isSpatialContainer === true;
+
+      if (firstSpatial !== secondSpatial) {
+        return firstSpatial ? -1 : 1;
+      }
+
+      const firstName = first.name ? String(first.name).toLowerCase() : "";
+
+      const secondName = second.name ? String(second.name).toLowerCase() : "";
+
+      return firstName.localeCompare(secondName);
+    });
+
+    return list;
+  }
+
   expandParents(object) {
     if (!object) return;
 
@@ -183,24 +261,28 @@ class SpatialManagerUI extends TabPanel{
     if (parentNeedsExpansion) this.refreshTree();
   }
 
-  scrollIntoView(id) {
+  applySpatialOutlinerSelectionHighlight(objectId) {
     if (!this.container) return;
 
-    const options = this.container.dom.querySelectorAll(".option");
+    const optionElements = this.container.dom.querySelectorAll(".option");
 
-    options.forEach((opt) => opt.classList.remove("active"));
+    for (let index = 0; index < optionElements.length; index++) {
+      optionElements[index].classList.remove("active");
+    }
 
-    if (id !== null) {
+    if (objectId !== null && objectId !== undefined) {
       const selectedOption = this.container.dom.querySelector(
-        `.option[value="${id}"]`,
+        `.option[value="${objectId}"]`,
       );
 
       if (selectedOption) {
         selectedOption.classList.add("active");
-
-        selectedOption.scrollIntoView({ block: "center", behavior: "smooth" });
       }
     }
+  }
+
+  onTabSelected() {
+    this.refreshTree();
   }
 
   traverse(object, callback) {
@@ -258,7 +340,7 @@ class SpatialManagerUI extends TabPanel{
 
     const opener = UIComponents.div();
 
-    if (object.children.length > 0) {
+    if (this.hasSpatialOutlinerChildren(object)) {
       const state = this.nodeStates.get(object);
 
       const icon = UIComponents.icon(state ? "remove" : "add");
@@ -330,15 +412,28 @@ class SpatialManagerUI extends TabPanel{
       option.add(badge);
     }
 
-    const hasMeshChild =
-      object.isMesh ||
-      object.isInstancedRef ||
-      (object.children && object.children.some((c) => c.isMesh));
+    const hasIfcBodyMeshChild =
+      object.children &&
+      object.children.some(
+        (child) => child.userData && child.userData.ifcBodyMesh === true,
+      );
 
-    if (hasMeshChild) {
-      const meshBadge = UIComponents.badge("Mesh");
+    const ifcGroupWithGeometry =
+      object.isIfc &&
+      !object.isMesh &&
+      (object.isInstancedRef === true || hasIfcBodyMeshChild);
 
-      option.add(meshBadge);
+    if (ifcGroupWithGeometry) {
+      option.add(UIComponents.badge("Group"));
+    } else {
+      const hasMeshChild =
+        object.isMesh ||
+        object.isInstancedRef ||
+        (object.children && object.children.some((c) => c.isMesh));
+
+      if (hasMeshChild) {
+        option.add(UIComponents.badge("Mesh"));
+      }
     }
 
     this.buildExtras(option, object);
@@ -374,15 +469,7 @@ class SpatialManagerUI extends TabPanel{
     option.add(visibilityBtn);
 
     option.onClick(() => {
-      this.ignoreObjectSelectedSignal = true;
-
       this.editor.select(object);
-
-      this.editor.signals.objectSelected.dispatch(object);
-
-      this.ignoreObjectSelectedSignal = false;
-
-      this.scrollIntoView(object.id);
     });
 
     option.onDblClick(() => {
@@ -459,11 +546,10 @@ class SpatialManagerUI extends TabPanel{
     }
 
     const addObjects = (objects, pad) => {
-      for (let i = 0, l = objects.length; i < l; i++) {
-        const object = objects[i];
+      const sortedSiblings = this.getSortedSpatialOutlinerSiblings(objects);
 
-        if (!object || object.isLine) continue;
-        if (object.isHelperGroup || object.name === "_InstancedMeshes") continue;
+      for (let i = 0, l = sortedSiblings.length; i < l; i++) {
+        const object = sortedSiblings[i];
 
         if (this.nodeStates.has(object) === false) {
           this.nodeStates.set(object, true);
@@ -484,7 +570,7 @@ class SpatialManagerUI extends TabPanel{
     addObjects([threeGroup], 0);
 
     if (this.editor.selected !== null) {
-      this.scrollIntoView(this.editor.selected.id);
+      this.applySpatialOutlinerSelectionHighlight(this.editor.selected.id);
     }
   }
 

@@ -14,9 +14,8 @@
  * @returns {Object} Status result
  */
 function openSpatialManager({ signals }) {
-    if (signals?.openSpatialManager) {
-        signals.openSpatialManager.dispatch();
-    }
+
+    signals.openSpatialManager.dispatch();
     
     return { status: 'FINISHED' };
 }
@@ -94,12 +93,7 @@ function expandToLevel(level, { signals }) {
  * @param {Object} options.signals - Context signals
  */
 function selectObject(GlobalId, additive = false, { editor, signals }) {
-    if (!editor?.scene) {
-        console.warn('Editor scene not available');
 
-        return { status: 'ERROR', message: 'Editor scene not available' };
-    }
-    
     let selectedObject = null;
     
     editor.scene.traverse((object) => {
@@ -109,16 +103,11 @@ function selectObject(GlobalId, additive = false, { editor, signals }) {
     });
     
     if (selectedObject) {
-        if (additive) {
-            editor.addToSelection(selectedObject);
-        } else {
-            editor.select(selectedObject);
-        }
-        
-        if (signals?.objectSelected) {
-            signals.objectSelected.dispatch(selectedObject);
-        }
-        
+
+        additive ? editor.addToSelection(selectedObject) : editor.select(selectedObject);
+
+        signals.objectSelected.dispatch(selectedObject);
+
         return { status: 'FINISHED', object: selectedObject };
     }
     
@@ -126,17 +115,12 @@ function selectObject(GlobalId, additive = false, { editor, signals }) {
 }
 
 /**
- * Deselect all objects
+ * Deselect all objectsssss
  * @param {Object} options
  */
 function deselectAll({ editor, signals }) {
-    if (editor?.deselect) {
-        editor.deselect();
-        
-        if (signals?.objectDeselected) {
-            signals.objectDeselected.dispatch();
-        }
-    }
+
+    editor.deselect();
     
     return { status: 'FINISHED' };
 }

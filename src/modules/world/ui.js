@@ -184,9 +184,17 @@ class StatusBar {
         const object = scene.children[i];
 
         object.traverseVisible(function (child) {
-          objects++;
+          if (
+            child.isMesh ||
+            child.isInstancedMesh ||
+            child.isPoints ||
+            child.isLine ||
+            child.isLight
+          ) {
+            objects++;
+          }
 
-          if (child.isMesh || child.isPoints) {
+          if (child.isMesh || child.isInstancedMesh || child.isPoints) {
             const geometry = child.geometry;
             const positionAttribute = geometry.attributes.position;
 
@@ -194,7 +202,7 @@ class StatusBar {
               vertices += positionAttribute.count;
             }
 
-            if (child.isMesh) {
+            if (child.isMesh || child.isInstancedMesh) {
               if (geometry.index !== null) {
                 triangles += geometry.index.count / 3;
               } else if (positionAttribute !== undefined && positionAttribute !== null) {

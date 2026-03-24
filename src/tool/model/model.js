@@ -429,6 +429,19 @@ class ModelTool {
 
     return { model, element };
   }
+
+  static createMeshesFromIfcMeshData(meshData, globalId, options = {}) {
+    const assembly =
+      options.assembly === "multiMesh" ||
+      options.ifcGeometryAssembly === "multiMesh"
+        ? "multiMesh"
+        : "merged";
+
+    return tools.bim.geometry.createThreeJSMesh(meshData, globalId, {
+      assembly,
+    });
+  }
+
   /**
    * Creates a DriverPOV (Driver Point of View) empty object for vehicle cabins
    * This is used by NavigationController for first-person driving view
