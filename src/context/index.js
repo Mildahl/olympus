@@ -254,54 +254,24 @@ class Context {
             snapOptionChanged: new Signal(),
             sectionBoxToggled: new Signal(),
             sectionBoxChanged: new Signal(),
+            projectionCutPlaneChanged: new Signal(),
+            projectionSectionRegenerated: new Signal(),
         };
     }
 
     setConfig(uiConfig, appConfig) {
-        
-        const devMode = appConfig?.Settings?.devMode || false;
+        const devMode = appConfig.Settings.devMode || false;
 
         this.initialUIConfig = JSON.parse(JSON.stringify(uiConfig));
 
         this.initialAppConfig = JSON.parse(JSON.stringify(appConfig));
-        
-        if (devMode) {
-            this.config.ui = uiConfig;
 
-            this.config.app = appConfig;
-        } else {
-            // Only use localStorage when user has opted in via Welcome panel (persistSettings).
-            // Config / Settings Presets are the source of truth by default.
-            const saved = localStorage.getItem('aeco-config');
+        this.config.ui = uiConfig;
 
-            const userOptedInToPersist = (() => {
-                if (!saved) return false;
+        this.config.app = appConfig;
 
-                try {
-                    const parsed = JSON.parse(saved);
-
-                    return parsed?.app?.Settings?.persistSettings === true;
-                } catch (_) {
-                    return false;
-                }
-            })();
-
-            if (userOptedInToPersist && saved) {
-                const parsed = JSON.parse(saved);
-
-                this.config.ui = this._deepMerge(uiConfig, parsed.ui || {});
-
-                this.config.app = this._deepMerge(appConfig, parsed.app || {});
-
-                
-            } else {
-
-                this.config.ui = uiConfig;
-
-                this.config.app = appConfig;
-            }
-
-            this._migrateEditorConfig();
+        if (!devMode) {
+            this._restoreScopedSettings();
 
             this._saveConfig();
         }
@@ -413,43 +383,42 @@ class Context {
         this._saveConfig();
     }
 
-    _migrateEditorConfig() {
-        const legacyKey = 'threejs-editor';
+    _restoreScopedSettings() {
+        const saved = localStorage.getItem('aeco-config');
 
-        const legacy = localStorage.getItem(legacyKey);
-
-        if (!legacy) return;
+        if (!saved) return;
 
         try {
-            const data = JSON.parse(legacy);
+            const parsed = JSON.parse(saved);
 
-            if (!this.config.app.Editor) this.config.app.Editor = {};
+            if (parsed.theme) this.config.ui.theme = parsed.theme;
 
-            for (const key in data) {
-                if (!(key in this.config.app.Editor) || 
-                    JSON.stringify(this.config.app.Editor[key]) === JSON.stringify(this._getNestedValue(this.initialAppConfig, 'Editor.' + key))) {
-                    this.config.app.Editor[key] = data[key];
-                }
-            }
+            if (parsed.shortcuts) Object.assign(this.config.app.Editor, parsed.shortcuts);
 
-            localStorage.removeItem(legacyKey);
-        } catch (_) {
-            localStorage.removeItem(legacyKey);
-        }
+            if (parsed.renderer) Object.assign(this.config.app.Editor, parsed.renderer);
+        } catch (_) {}
     }
 
     _saveConfig() {
-        if (this.config.app.Settings?.devMode) {
-            return;
+        if (this.config.app.Settings.devMode) return;
+
+        const editor = this.config.app.Editor || {};
+
+        const shortcuts = {};
+
+        const renderer = {};
+
+        for (const key in editor) {
+            if (key.startsWith('settings/shortcuts/')) shortcuts[key] = editor[key];
+
+            if (key.startsWith('project/renderer/')) renderer[key] = editor[key];
         }
 
-        if (this.config.app.Settings?.persistSettings !== true) {
-            return;
-        }
-
-        const toSave = { ui: this.config.ui, app: this.config.app };
-
-        localStorage.setItem('aeco-config', JSON.stringify(toSave));
+        localStorage.setItem('aeco-config', JSON.stringify({
+            theme: this.config.ui.theme,
+            shortcuts,
+            renderer,
+        }));
     }
 
     /**
@@ -458,7 +427,8 @@ class Context {
      */
     static clearStorage() {
         const keysToRemove = [
-            'aeco-config'
+            'aeco-config',
+            'aeco-layout-state',
         ];
 
         for (let i = 0; i < localStorage.length; i++) {

@@ -1,25 +1,34 @@
 import Paths from "../../utils/paths.js";
 import { Components as UIComponents } from "../../ui/Components/Components.js";
-import { TabPanel } from '../../../drawUI/TabPanel.js';
+import { focusDockedWorkspaceTab } from "../../../drawUI/utils/workspacePanelDock.js";
 
-class SpatialManagerUI extends TabPanel{
+class SpatialManagerUI {
   constructor({ context, operators }) {
-    super({
+    this.context = context;
+    this.operators = operators;
+    this.isActive = false;
+
+    this.panel = UIComponents.floatingPanel({
       context,
-      operators,
-      position: 'left',
-      moduleId: 'world.spatial',
-      tabId: 'world-spatial-structure',
-      tabLabel: 'Spatial structure',
-      icon: 'account_tree',
-      title: 'Spatial Structure',
-      showHeader: false,
-      floatable: true,
-      panelStyles: {
-        minWidth: '240px',
-      },
-      autoShow: false,
+      title: "World structure",
+      icon: "account_tree",
+      minimizedImageSrc: Paths.data("/resources/images/spatial_structure.svg"),
+      workspaceTabId: "world-spatial-structure",
+      workspaceTabLabel: "World structure",
+      startMinimized: true,
     });
+
+    this.panel
+      .setStyle("width", ["320px"])
+      .setStyle("height", ["min(65vh, 680px)"])
+      .setStyle("min-width", ["240px"])
+      .setStyle("max-width", ["45vw"])
+      .setStyle("max-height", ["85vh"]);
+
+    this.content = UIComponents.column();
+    this.content.setStyle("height", ["100%"]);
+    this.content.setStyle("gap", ["0"]);
+    this.panel.setContent(this.content);
 
     this.editor = context.editor;
 
@@ -29,21 +38,19 @@ class SpatialManagerUI extends TabPanel{
 
     this.searchQuery = "";
 
+    this.searchInput = null;
+
     this.container = null;
 
     this.draw();
+    this.appendDom(context);
+    this.isActive = true;
 
     this.listen(context, operators);
   }
 
   _isSpatialTabActive() {
-    const lm = this.context?.layoutManager;
-
-    return !!(
-      lm &&
-      lm.isWorkspaceOpen(this.position) &&
-      lm.isTabSelected(this.position, this.tabId)
-    );
+    return this.isActive;
   }
 
   listen(context, operators) {
@@ -97,14 +104,14 @@ class SpatialManagerUI extends TabPanel{
   draw() {
     this.content.clear();
 
-    this.footer.clear();
-
     this.container = UIComponents.div();
 
     this.container.addClass("Outliner");
 
     this.container.setStyle("padding", ["0.5rem"]);
 
+    this.container.setStyle("flex", ["1"]);
+    this.container.setStyle("overflow-y", ["auto"]);
     this.content.add(this.container);
 
     const footerContent = UIComponents.column();
@@ -119,7 +126,8 @@ class SpatialManagerUI extends TabPanel{
 
     const searchInput = UIComponents.input();
 
-    searchInput.setValue("Search...");
+    searchInput.dom.setAttribute("placeholder", "Search...");
+    searchInput.addClass("SpatialPanel-searchInput");
 
     searchInput.setStyle("width", ["100%"]);
 
@@ -128,6 +136,8 @@ class SpatialManagerUI extends TabPanel{
     searchInput.dom.addEventListener("input", (e) => {
       this.filterSpatial(e.target.value);
     });
+
+    this.searchInput = searchInput;
 
     searchRow.add(searchInput);
 
@@ -158,7 +168,37 @@ class SpatialManagerUI extends TabPanel{
 
     footerContent.add(buttonsRow);
 
-    this.footer.add(footerContent);
+    this.content.add(footerContent);
+  }
+
+  appendDom(context) {
+    const panelDom = this.panel.dom;
+    if (!panelDom.parentNode) {
+      context.dom.appendChild(panelDom);
+    }
+  }
+
+  show() {
+    if (this.panel && this.panel.isMinimized) {
+      this.panel.restore();
+    }
+
+    if (focusDockedWorkspaceTab(this.context, this.panel)) {
+      this.isActive = true;
+      return this;
+    }
+
+    this.appendDom(this.context);
+    this.isActive = true;
+    return this;
+  }
+
+  hide() {
+    if (this.panel && this.panel.dom.parentNode) {
+      this.panel.dom.parentNode.removeChild(this.panel.dom);
+    }
+    this.isActive = false;
+    return this;
   }
 
   shouldIncludeInSpatialOutliner(object) {
@@ -335,13 +375,13 @@ class SpatialManagerUI extends TabPanel{
     return option;
   }
 
-  buildOption(object, draggable) {
+  buildOption(object, draggable, forceExpanded = false) {
     const option = this.newNode(object, draggable);
 
     const opener = UIComponents.div();
 
     if (this.hasSpatialOutlinerChildren(object)) {
-      const state = this.nodeStates.get(object);
+      const state = forceExpanded ? true : this.nodeStates.get(object);
 
       const icon = UIComponents.icon(state ? "remove" : "add");
 
@@ -412,29 +452,6 @@ class SpatialManagerUI extends TabPanel{
       option.add(badge);
     }
 
-    const hasIfcBodyMeshChild =
-      object.children &&
-      object.children.some(
-        (child) => child.userData && child.userData.ifcBodyMesh === true,
-      );
-
-    const ifcGroupWithGeometry =
-      object.isIfc &&
-      !object.isMesh &&
-      (object.isInstancedRef === true || hasIfcBodyMeshChild);
-
-    if (ifcGroupWithGeometry) {
-      option.add(UIComponents.badge("Group"));
-    } else {
-      const hasMeshChild =
-        object.isMesh ||
-        object.isInstancedRef ||
-        (object.children && object.children.some((c) => c.isMesh));
-
-      if (hasMeshChild) {
-        option.add(UIComponents.badge("Mesh"));
-      }
-    }
 
     this.buildExtras(option, object);
 
@@ -545,6 +562,16 @@ class SpatialManagerUI extends TabPanel{
       return;
     }
 
+    const searchActive = this.searchQuery.length > 0;
+
+    if (searchActive) {
+      this.container.dom.classList.add("Outliner-search-active");
+    } else {
+      this.container.dom.classList.remove("Outliner-search-active");
+    }
+
+    let visibleNodeCount = 0;
+
     const addObjects = (objects, pad) => {
       const sortedSiblings = this.getSortedSpatialOutlinerSiblings(objects);
 
@@ -555,19 +582,42 @@ class SpatialManagerUI extends TabPanel{
           this.nodeStates.set(object, true);
         }
 
-        const option = this.buildOption(object, object !== threeGroup);
+        if (searchActive && !this.subtreeHasMatch(object, this.searchQuery)) {
+          continue;
+        }
+
+        const option = this.buildOption(object, object !== threeGroup, searchActive);
 
         option.setStyle("paddingLeft", [pad * 18 + "px"]);
 
         this.container.add(option);
 
-        if (this.nodeStates.get(object) === true) {
+        visibleNodeCount++;
+
+        const shouldRecurse = searchActive
+          ? true
+          : this.nodeStates.get(object) === true;
+
+        if (shouldRecurse) {
           addObjects(object.children, pad + 1);
         }
       }
     };
 
     addObjects([threeGroup], 0);
+
+    if (searchActive && visibleNodeCount === 0) {
+      const emptyMessage = UIComponents.text("No nodes match your search");
+
+      emptyMessage
+        .setStyle("padding", ["1rem"])
+        .setStyle("text-align", ["center"])
+        .setStyle("color", ["var(--theme-text-light)"])
+        .setStyle("font-size", ["0.8rem"])
+        .setStyle("display", ["block"]);
+
+      this.container.add(emptyMessage);
+    }
 
     if (this.editor.selected !== null) {
       this.applySpatialOutlinerSelectionHighlight(this.editor.selected.id);
@@ -685,8 +735,27 @@ class SpatialManagerUI extends TabPanel{
       .replace(/>/g, "&gt;");
   }
 
+  subtreeHasMatch(object, query) {
+    const name = object.name ? object.name.toLowerCase() : "";
+
+    if (name.includes(query)) return true;
+
+    const children = object.children;
+
+    for (let i = 0; i < children.length; i++) {
+      if (
+        this.shouldIncludeInSpatialOutliner(children[i]) &&
+        this.subtreeHasMatch(children[i], query)
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   filterSpatial(query) {
-    this.searchQuery = query;
+    this.searchQuery = query.trim().toLowerCase();
 
     this.refreshTree();
   }

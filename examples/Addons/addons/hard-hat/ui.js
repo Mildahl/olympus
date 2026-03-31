@@ -1,4 +1,4 @@
-import { UIComponents, moduleRegistry } from "aeco";
+import { UIComponents, moduleRegistry, getLayoutManagerFromContext } from "aeco";
 import { tools } from "aeco";
 
 import * as Core from "./core.js";
@@ -54,58 +54,63 @@ class AppointedPersonUI {
 
     this.equipmentSpreadsheets = {}; // Cache spreadsheets per equipment tab
 
-    const panelStyles = {
-      boxSizing: "border-box",
-      width: "100%",
-      height: "100%",
-      maxHeight: "100%",
-      overflow: "hidden",
-      display: "flex",
-      flexDirection: "column",
-      position: "relative",
-      parentId: "AddonHardHatSchedule",
-    };
+    this.panel = UIComponents.floatingPanel({
+      context,
+      title: "Lifting schedule",
+      icon: "precision_manufacturing",
+      workspaceTabId: "addon.hardhat.schedule",
+      workspaceTabLabel: "Lifting schedule",
+      startMinimized: true,
+    });
 
-    const panel = UIComponents.div()
-      .addClass("Panel")
-      .setStyles(panelStyles);
+    this.panel
+      .setStyle("width", ["min(72vw, 1100px)"])
+      .setStyle("height", ["min(72vh, 820px)"])
+      .setStyle("min-width", ["480px"])
+      .setStyle("max-width", ["90vw"])
+      .setStyle("max-height", ["90vh"]);
 
-    const content = UIComponents.div()
-      .addClass("PanelContent")
+    this.contentArea = UIComponents.column()
       .addClass("HardHatLiftingDashboard-panelContent")
       .setStyles({
         flex: "1",
         overflowX: "hidden",
         overflowY: "auto",
         minHeight: "0",
-        display: "flex",
-        flexDirection: "column",
       });
 
-    panel.add(content);
-
-    this.content = { panel, content };
-
-    context.layoutManager.ensureTab("bottom", "addon.hardhat.schedule", "Lifting Schedule", panel, {
-      open: false,
-      replace: false,
-    });
-
-    this._unbindToggle = context.layoutManager?.bindToggle("AddonHardHatSchedule", "bottom", "addon.hardhat.schedule") || null;
-
-    this.firstDisplay = true;
+    this.panel.setContent(this.contentArea);
 
     this.drawDevUI(context);
 
+    this.appendDom(context);
+
     this.listen(context);
 
-    // Populate panel content on first open (refactoring: _redraw was only called from signals)
     this._redraw();
   }
 
+  appendDom(context) {
+    if (!this.panel.dom.parentNode) {
+      context.dom.appendChild(this.panel.dom);
+    }
+  }
+
+  show() {
+    if (this.panel.isMinimized) {
+      this.panel.restore();
+    }
+    this.appendDom(this.context);
+  }
+
+  hide() {
+    if (this.panel.dom.parentNode) {
+      this.panel.dom.parentNode.removeChild(this.panel.dom);
+    }
+  }
+
   destroy() {
-    if (this._unbindToggle) this._unbindToggle();
-    this.context?.layoutManager?.removeTab("bottom", "addon.hardhat.schedule");
+    this.hide();
   }
 
   listen(context) {
@@ -158,9 +163,9 @@ class AppointedPersonUI {
 
     rootColumn.add(equipmentScheduleSection, statsSection);
 
-    this.content.content.clear();
+    this.contentArea.clear();
 
-    this.content.content.add(rootColumn);
+    this.contentArea.add(rootColumn);
   }
 
   _prepareDrawData() {
@@ -1370,11 +1375,17 @@ class HardHatEnvironmentUI {
     panel.add(content);
     this.content = { panel, content };
 
-    context.layoutManager.ensureTab("bottom", "addon.hardhat.environment", "Environment", panel, {
-      open: false,
-      replace: false,
-    });
-    this._unbindToggle = context.layoutManager?.bindToggle("AddonHardHatEnvironment", "bottom", "addon.hardhat.environment") || null;
+    const layoutManager = getLayoutManagerFromContext(context);
+    if (layoutManager) {
+      layoutManager.ensureTab("bottom", "addon.hardhat.environment", "Environment", panel, {
+        open: false,
+        replace: false,
+      });
+      const unbind = layoutManager.bindToggle("AddonHardHatEnvironment", "bottom", "addon.hardhat.environment");
+      this._unbindToggle = unbind || null;
+    } else {
+      this._unbindToggle = null;
+    }
 
     this.listen(context);
     this._redraw();
@@ -1382,7 +1393,10 @@ class HardHatEnvironmentUI {
 
   destroy() {
     if (this._unbindToggle) this._unbindToggle();
-    this.context?.layoutManager?.removeTab("bottom", "addon.hardhat.environment");
+    const layoutManager = getLayoutManagerFromContext(this.context);
+    if (layoutManager) {
+      layoutManager.removeTab("bottom", "addon.hardhat.environment");
+    }
   }
 
   listen(context) {

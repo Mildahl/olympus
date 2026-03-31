@@ -5,7 +5,9 @@ import { resolveModuleToggleId } from './resolveModuleToggleId.js';
 /** @param {any} tab - UITab or tab-like entry from UITabbedPanel */
 function workspaceTabId(tab) {
   if (!tab) return null;
-  return tab.dom?.id ?? tab.id ?? null;
+  if (tab.dom && tab.dom.id) return tab.dom.id;
+  if (tab.id) return tab.id;
+  return null;
 }
 
 /**
@@ -18,6 +20,7 @@ function workspaceTabId(tab) {
  * @property {boolean} [open=true] - Whether to open the panel after adding the tab.
  * @property {boolean} [replace=true] - Whether to replace an existing tab with the same ID.
  * @property {boolean} [floatable=false] - Show undock control on the workspace tab label (TabPanel float).
+ * @property {Object<string, string>} [panelStyles] - Inline styles for the tab page root (`.Panels` direct child; for TabPanel this is `this.panel`).
  */
 
 /**
@@ -36,6 +39,10 @@ function workspaceTabId(tab) {
  */
 
 /**
+ * @typedef {{ moduleId: string, tabIds: string[] }} WorkspaceTabGroupByModule
+ */
+
+/**
  * @typedef {Object} LayoutManagerConfig
  * @property {number} [leftWorkspaceWidth=300] - Default width for the left workspace in pixels.
  * @property {number} [rightWorkspaceWidth=300] - Default width for the right workspace in pixels.
@@ -43,7 +50,8 @@ function workspaceTabId(tab) {
  * @property {number} [topWorkspaceHeight=36] - Height of the top bar row in pixels (grid row 1).
  * @property {number} [minPanelSize=100] - Minimum workspace size in pixels.
  * @property {number} [resizerSize=4] - Size of the resizer handle in pixels.
- * @property {string} [storageKey='aeco-layout-state'] - LocalStorage key for persisting state.
+ * @property {WorkspaceTabGroupByModule[]} [leftWorkspaceTabGroupsByModule=[]] - Tab order groups for `reorderLeftWorkspaceTabsByModuleOrder` (from `config.ui.layout`).
+ * @property {WorkspaceTabGroupByModule[]} [bottomWorkspaceTabGroupsByModule=[]] - Tab order groups for `reorderBottomWorkspaceTabsByModuleOrder` (from `config.ui.layout`).
  */
 
 /** @type {LayoutManagerConfig} */
@@ -54,12 +62,41 @@ const DEFAULT_CONFIG = {
   topWorkspaceHeight: 36,
   minPanelSize: 100,
   resizerSize: 4,
-  storageKey: 'aeco-layout-state'
+  leftWorkspaceTabGroupsByModule: [],
+  bottomWorkspaceTabGroupsByModule: [],
 };
 
-const BOTTOM_WORKSPACE_TAB_GROUPS_BY_MODULE = [
-  { moduleId: 'bim.sequence', tabIds: ['sequence-scheduling', 'sequence-schedule-tasks'] },
-];
+/**
+ * @param {unknown} raw
+ * @returns {WorkspaceTabGroupByModule[]}
+ */
+function normalizeWorkspaceTabGroupsByModule(raw) {
+  if (!raw || !Array.isArray(raw)) {
+    return [];
+  }
+
+  const result = [];
+  for (let i = 0; i < raw.length; i++) {
+    const entry = raw[i];
+    if (!entry || typeof entry.moduleId !== 'string') {
+      continue;
+    }
+
+    const tabIds = Array.isArray(entry.tabIds)
+      ? entry.tabIds.filter(function (id) {
+          return typeof id === 'string';
+        })
+      : [];
+
+    if (tabIds.length === 0) {
+      continue;
+    }
+
+    result.push({ moduleId: entry.moduleId, tabIds: tabIds });
+  }
+
+  return result;
+}
 
 class LayoutManager {
   constructor(options = {}) {
@@ -104,8 +141,6 @@ class LayoutManager {
     this._boundMouseMove = this._onMouseMove.bind(this);
 
     this._boundMouseUp = this._onMouseUp.bind(this);
-
-    this._loadState();
   }
 
   init(containerId = 'World') {
@@ -133,45 +168,93 @@ class LayoutManager {
 
     this._applyState();
 
+    this._flushLayoutResize();
+
     this._setupKeyboardShortcuts();
 
     return this;
   }
 
-  setContext(context) {
-    this.context = context || null;
-    this.context?.addListeners?.([
-      'layoutTabChanged',
-      'layoutTabAdded',
-      'layoutTabRemoved',
-      'layoutWorkspaceChanged',
-    ]);
+  /**
+   * Canonical DOM parent for full floating panels (drag/resize chrome). Matches the layout root
+   * from init (typically #World), not #Windows (minimized pills / window bar).
+   * @returns {HTMLElement|null}
+   */
+  getFloatingPanelMountElement() {
+    const container = this.container;
+    return container instanceof HTMLElement ? container : null;
+  }
+
+  /**
+   * @param {{ left: object, right: object, bottom: object }} tabbedPanels
+   * @returns {this}
+   */
+  attachWorkspaceTabPanels(tabbedPanels) {
+    if (!tabbedPanels) return this;
+    const leftPanel = tabbedPanels.left;
+    const rightPanel = tabbedPanels.right;
+    const bottomPanel = tabbedPanels.bottom;
+    if (!leftPanel || !rightPanel || !bottomPanel) return this;
+    this.tabbedWorkspaces = {
+      left: leftPanel,
+      right: rightPanel,
+      bottom: bottomPanel,
+    };
+    for (const position of ['left', 'right', 'bottom']) {
+      const workspace = this.tabbedWorkspaces[position];
+      if (workspace) {
+        workspace._layoutManager = this;
+        workspace._layoutWorkspacePosition = position;
+      }
+    }
     return this;
   }
 
   /**
-   * Register tabbed workspaces created by the UI (left/right/bottom).
-   * @param {{left?: any, right?: any, bottom?: any}} tabbedWorkspaces
+   * @param {LayoutPosition} position
+   * @returns {object|null}
    */
-  registerTabbedWorkspaces(tabbedWorkspaces) {
-    this.tabbedWorkspaces = tabbedWorkspaces || null;
-    if (tabbedWorkspaces) {
-      for (const position of ['left', 'right', 'bottom']) {
-        const workspace = tabbedWorkspaces[position];
-        if (workspace) {
-          workspace._layoutManager = this;
-          workspace._layoutWorkspacePosition = position;
-        }
-      }
+  _workspaceTabPanel(position) {
+    const map = this.tabbedWorkspaces;
+    if (!map) return null;
+    const workspace = map[position];
+    return workspace || null;
+  }
+
+  setContext(context) {
+    this.context = context || null;
+    if (this.context && typeof this.context.addListeners === 'function') {
+      this.context.addListeners([
+        'layoutTabChanged',
+        'layoutTabAdded',
+        'layoutTabRemoved',
+        'layoutWorkspaceChanged',
+      ]);
     }
-    this._patchTabbedWorkspaces();
-    this._scheduleWorkspaceTabRestore();
     return this;
   }
 
+
+
   reorderBottomWorkspaceTabsByModuleOrder(appContext) {
-    const workspace = this.tabbedWorkspaces && this.tabbedWorkspaces.bottom;
-    if (!workspace || typeof workspace.reorderTabs !== 'function') {
+    const groups = normalizeWorkspaceTabGroupsByModule(this.config.bottomWorkspaceTabGroupsByModule);
+    return this._reorderWorkspaceTabsByModuleOrder('bottom', appContext, groups);
+  }
+
+  reorderLeftWorkspaceTabsByModuleOrder(appContext) {
+    const groups = normalizeWorkspaceTabGroupsByModule(this.config.leftWorkspaceTabGroupsByModule);
+    return this._reorderWorkspaceTabsByModuleOrder('left', appContext, groups);
+  }
+
+  /**
+   * @param {'left' | 'bottom'} position
+   * @param {Object|null|undefined} appContext
+   * @param {WorkspaceTabGroupByModule[]} tabGroups
+   * @returns {LayoutManager}
+   */
+  _reorderWorkspaceTabsByModuleOrder(position, appContext, tabGroups) {
+    const workspace = this._workspaceTabPanel(position);
+    if (!workspace) {
       return this;
     }
 
@@ -188,7 +271,7 @@ class LayoutManager {
       }
     }
 
-    const sortedGroups = BOTTOM_WORKSPACE_TAB_GROUPS_BY_MODULE.slice().sort((a, b) => {
+    const sortedGroups = tabGroups.slice().sort(function (a, b) {
       const rankA = moduleRank.has(a.moduleId) ? moduleRank.get(a.moduleId) : 1000000;
       const rankB = moduleRank.has(b.moduleId) ? moduleRank.get(b.moduleId) : 1000000;
       return rankA - rankB;
@@ -251,7 +334,11 @@ class LayoutManager {
   }
 
   _emit(signalName, payload) {
-    const sig = this.context?.signals?.[signalName];
+    const ctx = this.context;
+    if (!ctx) return;
+    const signals = ctx.signals;
+    if (!signals) return;
+    const sig = signals[signalName];
     if (sig && typeof sig.dispatch === 'function') {
       sig.dispatch(payload);
     }
@@ -261,75 +348,11 @@ class LayoutManager {
     const fire = () => {
       window.dispatchEvent(new Event('resize'));
     };
-    fire();
     if (typeof requestAnimationFrame === 'function') {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(fire);
-      });
+      requestAnimationFrame(fire);
+    } else {
+      fire();
     }
-  }
-
-  /**
-   * @private
-   * Patches the select method on tabbed panels to emit layoutTabChanged signals.
-   */
-  _patchTabbedWorkspaces() {
-    const workspaces = this.tabbedWorkspaces;
-    if (!workspaces) return;
-    for (const position of ['left', 'right', 'bottom']) {
-      const workspace = workspaces[position];
-      if (!workspace || typeof workspace.select !== 'function') continue;
-      if (this._patchedTabbedWorkspaces.has(workspace)) continue;
-      this._patchedTabbedWorkspaces.add(workspace);
-
-      const originalSelect = workspace.select.bind(workspace);
-      workspace.select = (id) => {
-        const res = originalSelect(id);
-        this._emit('layoutTabChanged', { position, id });
-        this._persistWorkspaceTabSelection(position, id);
-        return res;
-      };
-    }
-  }
-
-  _shouldPersistWorkspaceTabState() {
-    return this.context?.config?.app?.Settings?.persistSettings === true;
-  }
-
-  _persistWorkspaceTabSelection(position, id) {
-    if (!this.state.workspaceSelected) {
-      this.state.workspaceSelected = { left: null, right: null, bottom: null };
-    }
-    this.state.workspaceSelected[position] = id;
-    if (this._shouldPersistWorkspaceTabState()) this._saveState();
-  }
-
-  /**
-   * Re-apply saved active tab per workspace when "Save my settings" is enabled.
-   * Safe to call after modules add tabs (e.g. delayed after load).
-   * @returns {this}
-   */
-  restoreWorkspaceTabSelections() {
-    if (!this._shouldPersistWorkspaceTabState() || !this.tabbedWorkspaces) return this;
-    const sel = this.state.workspaceSelected;
-    if (!sel) return this;
-    for (const position of ['left', 'right', 'bottom']) {
-      const id = sel[position];
-      if (!id || !this.hasTab(position, id)) continue;
-      const workspace = this.tabbedWorkspaces[position];
-      if (workspace && typeof workspace.select === 'function') {
-        workspace.select(id);
-      }
-    }
-    return this;
-  }
-
-  _scheduleWorkspaceTabRestore() {
-    const run = () => this.restoreWorkspaceTabSelections();
-    if (typeof queueMicrotask === 'function') queueMicrotask(run);
-    setTimeout(run, 0);
-    setTimeout(run, 120);
-    setTimeout(run, 600);
   }
 
   /**
@@ -393,15 +416,19 @@ class LayoutManager {
    * @fires layoutTabAdded - Dispatched after tab is added with { position, id }.
    */
   addTab(position, id, label, content, options = {}) {
-    const { open = true, replace = true, floatable = false } = options;
-    const workspace = this.tabbedWorkspaces?.[position];
-    if (!workspace || typeof workspace.addTab !== 'function') return false;
+    const { open = true, replace = true, floatable = false, panelStyles } = options;
+    const workspace = this._workspaceTabPanel(position);
+    if (!workspace) return false;
 
-    if (replace && typeof workspace.removeTab === 'function') {
-      try { workspace.removeTab(id); } catch (_) {}
+    if (replace) {
+      try {
+        workspace.removeTab(id);
+      } catch (_) {}
     }
 
-    workspace.addTab(id, label, content, undefined, { floatable });
+    const tabSlotStyles =
+      panelStyles && typeof panelStyles === 'object' ? panelStyles : undefined;
+    workspace.addTab(id, label, content, tabSlotStyles, { floatable });
     this._emit('layoutTabAdded', { position, id });
 
     if (open) this.openWorkspace(position);
@@ -421,9 +448,14 @@ class LayoutManager {
    * @returns {boolean} True if the tab exists after the call (added or already there).
    */
   ensureTab(position, id, label, content, options = {}) {
-    const { open = false, replace = false, floatable = false } = options;
+    const { open = false, replace = false, floatable = false, panelStyles } = options;
     if (this.hasTab(position, id)) return true;
-    return this.addTab(position, id, label, content, { open, replace, floatable });
+    return this.addTab(position, id, label, content, {
+      open,
+      replace,
+      floatable,
+      panelStyles,
+    });
   }
 
   /**
@@ -465,8 +497,8 @@ class LayoutManager {
    */
   removeTab(position, id, options = {}) {
     const { closeIfEmpty = false } = options;
-    const workspace = this.tabbedWorkspaces?.[position];
-    if (!workspace || typeof workspace.removeTab !== 'function') return false;
+    const workspace = this._workspaceTabPanel(position);
+    if (!workspace) return false;
 
     workspace.removeTab(id);
     this._emit('layoutTabRemoved', { position, id });
@@ -499,8 +531,8 @@ class LayoutManager {
    */
   selectTab(position, id, options = {}) {
     const { open = true } = options;
-    const workspace = this.tabbedWorkspaces?.[position];
-    if (!workspace || typeof workspace.select !== 'function') return false;
+    const workspace = this._workspaceTabPanel(position);
+    if (!workspace) return false;
 
     workspace.select(id);
     if (open) this.openWorkspace(position);
@@ -520,7 +552,7 @@ class LayoutManager {
    * }
    */
   isTabSelected(position, id) {
-    const workspace = this.tabbedWorkspaces?.[position];
+    const workspace = this._workspaceTabPanel(position);
     if (!workspace) return false;
     return workspace.selected === id;
   }
@@ -564,7 +596,7 @@ class LayoutManager {
    * }
    */
   hasTab(position, id) {
-    const workspace = this.tabbedWorkspaces?.[position];
+    const workspace = this._workspaceTabPanel(position);
     if (!workspace || !workspace.tabs) return false;
     return workspace.tabs.some((tab) => workspaceTabId(tab) === id);
   }
@@ -580,7 +612,7 @@ class LayoutManager {
    * console.log('Right panel tabs:', tabIds); // ['settings', 'properties']
    */
   getTabIds(position) {
-    const workspace = this.tabbedWorkspaces?.[position];
+    const workspace = this._workspaceTabPanel(position);
     if (!workspace || !workspace.tabs) return [];
     return workspace.tabs.map((tab) => workspaceTabId(tab)).filter(Boolean);
   }
@@ -598,8 +630,9 @@ class LayoutManager {
    * }
    */
   getSelectedTabId(position) {
-    const workspace = this.tabbedWorkspaces?.[position];
-    return workspace?.selected || null;
+    const workspace = this._workspaceTabPanel(position);
+    if (!workspace) return null;
+    return workspace.selected || null;
   }
 
   /**
@@ -618,7 +651,7 @@ class LayoutManager {
    * layoutManager.clearTabs('right', false);
    */
   clearTabs(position, closeWorkspace = true) {
-    const workspace = this.tabbedWorkspaces?.[position];
+    const workspace = this._workspaceTabPanel(position);
     if (!workspace || !workspace.tabs) return false;
     
     const ids = this.getTabIds(position);
@@ -643,18 +676,22 @@ class LayoutManager {
    * layoutManager.setTabLabel('left', 'items', `Items (${itemCount})`);
    */
   setTabLabel(position, id, label) {
-    const workspace = this.tabbedWorkspaces?.[position];
+    const workspace = this._workspaceTabPanel(position);
     if (!workspace || !workspace.tabs) return false;
     
     const tab = workspace.tabs.find((t) => workspaceTabId(t) === id);
     if (!tab) return false;
 
-    const labelEl = tab.dom?.querySelector?.(".Tab-label");
+    const tabDom = tab.dom;
+    let labelEl = null;
+    if (tabDom && typeof tabDom.querySelector === 'function') {
+      labelEl = tabDom.querySelector('.Tab-label');
+    }
     if (labelEl) {
       labelEl.textContent = label;
       return true;
     }
-    if (tab.dom) tab.dom.textContent = label;
+    if (tabDom) tabDom.textContent = label;
     return true;
   }
 
@@ -672,14 +709,16 @@ class LayoutManager {
    * }
    */
   getTabContent(position, id) {
-    const workspace = this.tabbedWorkspaces?.[position];
+    const workspace = this._workspaceTabPanel(position);
     if (!workspace || !workspace.tabs || !workspace.panels) return null;
     
     const tabIndex = workspace.tabs.findIndex((t) => workspaceTabId(t) === id);
     if (tabIndex === -1) return null;
 
     const panelEl = workspace.panels[tabIndex];
-    return panelEl?.dom || panelEl || null;
+    if (!panelEl) return null;
+    if (panelEl.dom) return panelEl.dom;
+    return panelEl;
   }
 
   /**
@@ -720,10 +759,12 @@ class LayoutManager {
     };
     el.style.cursor = 'pointer';
     el.addEventListener('click', handler);
-    const s = this.context?.signals;
+    const ctx = this.context;
+    const signals = ctx && ctx.signals;
     const unsubs = [];
     const sub = (name) => {
-      const sig = s?.[name];
+      if (!signals) return;
+      const sig = signals[name];
       if (!sig || typeof sig.add !== 'function' || typeof sig.remove !== 'function') return;
       sig.add(syncActive);
       unsubs.push(() => sig.remove(syncActive));
@@ -956,8 +997,6 @@ class LayoutManager {
     document.removeEventListener('mouseup', this._boundMouseUp);
 
     this._removeOverlay();
-
-    this._saveState();
   }
 
   _onDoubleClick(position) {
@@ -1035,34 +1074,6 @@ class LayoutManager {
     this._updateToggleButtons();
   }
 
-  _loadState() {
-    try {
-      const saved = localStorage.getItem(this.config.storageKey);
-
-      if (saved) {
-        const parsed = JSON.parse(saved);
-
-        this.state = { ...this.state, ...parsed };
-        const ws = parsed.workspaceSelected;
-        if (ws && typeof ws === 'object') {
-          this.state.workspaceSelected = {
-            left: ws.left ?? null,
-            right: ws.right ?? null,
-            bottom: ws.bottom ?? null,
-          };
-        }
-      }
-    } catch (e) {
-    }
-  }
-
-  _saveState() {
-    try {
-      localStorage.setItem(this.config.storageKey, JSON.stringify(this.state));
-    } catch (e) {
-    }
-  }
-
   _setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.key === 'b') {
@@ -1102,8 +1113,6 @@ class LayoutManager {
 
     this._updateToggleButtons();
 
-    this._saveState();
-
     this._flushLayoutResize();
     
     return this;
@@ -1126,8 +1135,6 @@ class LayoutManager {
     }
 
     this._updateToggleButtons();
-
-    this._saveState();
 
     this._flushLayoutResize();
     if (!wasOpen) this._emit('layoutWorkspaceChanged', { position, open: true });
@@ -1153,8 +1160,6 @@ class LayoutManager {
 
     this._updateToggleButtons();
 
-    this._saveState();
-
     this._flushLayoutResize();
     if (wasOpen) this._emit('layoutWorkspaceChanged', { position, open: false });
     
@@ -1179,8 +1184,6 @@ class LayoutManager {
     }
 
     this._updateToggleButtons();
-
-    this._saveState();
 
     this._flushLayoutResize();
     
@@ -1223,8 +1226,6 @@ class LayoutManager {
     };
 
     this._applyState();
-
-    this._saveState();
 
     this._flushLayoutResize();
     

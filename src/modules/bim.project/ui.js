@@ -47,7 +47,6 @@ class ProjectUI extends TabPanel {
       title: 'IFC Building Models',
       showHeader: false,
       floatable: true,
-      panelStyles: { "min-width": "0" },
       autoShow: true,
     });
 

@@ -2,6 +2,8 @@ import { DrawUI } from "../../../drawUI/index.js";
 
 import { UICheckbox, UILabel } from "../../../drawUI/ui.js";
 
+import * as THREE from "three";
+
 function humanizeKeyCode(keyCode) {
   if (!keyCode || typeof keyCode !== "string") {
     return "";
@@ -1316,5 +1318,4 @@ class NavigationUI {
     }
   }
 }
-
-export { NavigationUI };
+export default NavigationUI;

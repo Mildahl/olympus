@@ -2,6 +2,8 @@ import { UIDiv, UISelect } from "../../../drawUI/ui.js";
 
 import { getPresetOptions } from "../../configuration/config.presets.js";
 
+import { getLayoutManagerFromContext } from "../../ui/utils/layoutManagerAccess.js";
+
 const APPLY_PRESET_OPERATOR = "settings.apply_module_preset";
 
 class ModulePresetsHeaderUI {
@@ -12,8 +14,8 @@ class ModulePresetsHeaderUI {
     this._selectDom = null;
     this._suppressPresetChange = false;
 
-    const layoutManager = context && context.layoutManager;
-    if (!layoutManager || typeof layoutManager.prependToggleBarChild !== "function") {
+    const layoutManager = getLayoutManagerFromContext(context);
+    if (!layoutManager) {
       return;
     }
 

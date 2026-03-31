@@ -1,8 +1,9 @@
 import { Components as UIComponents } from "../../ui/Components/Components.js";
+import { focusDockedWorkspaceTab } from "../../../drawUI/utils/workspacePanelDock.js";
 
 import AECO_tools from "../../tool/index.js";
 
-import { TabPanel } from "../../../drawUI/TabPanel.js";
+import Paths from "../../utils/paths.js";
 
 import { DirectorAnalyticsFilterState } from "./DirectorAnalyticsFilterState.js";
 
@@ -24,22 +25,28 @@ import { DirectorCostPresenceSection } from "./DirectorCostPresenceSection.js";
 
 import { DirectorMaterialClassificationSection } from "./DirectorMaterialClassificationSection.js";
 
-class BIMAnalyticsUI extends TabPanel {
+class BIMAnalyticsUI {
   constructor({ context, operators }) {
-    super({
+    this.context = context;
+    this.operators = operators;
+    this.isActive = false;
+    this.panel = UIComponents.floatingPanel({
       context,
-      operators,
-      position: "left",
-      moduleId: "bim.analytics",
-      tabId: "bim-project-model-analytics",
-      tabLabel: "Model data",
-      icon: "analytics",
       title: "Model data",
-      showHeader: false,
-      floatable: true,
-      panelStyles: { "min-width": "35vw" },
-      autoShow: false,
+      icon: "analytics",
+      minimizedImageSrc: Paths.data("/resources/images/dashboard.svg"),
+      workspaceTabId: "bim-project-model-analytics",
+      workspaceTabLabel: "Model data",
+      startMinimized: true,
     });
+    this.panel
+      .setStyle("width", ["min(60vw, 1100px)"])
+      .setStyle("height", ["min(80vh, 900px)"])
+      .setStyle("min-width", ["35vw"])
+      .setStyle("max-width", ["90vw"]);
+    this.content = UIComponents.column();
+    this.content.setStyle("height", ["100%"]);
+    this.panel.setContent(this.content);
 
     this.analyticsRoot = null;
 
@@ -90,6 +97,8 @@ class BIMAnalyticsUI extends TabPanel {
     this.filterState.addChangeListener(this._onFilterStateChanged);
 
     this.draw(context);
+    this.appendDom(context);
+    this.isActive = true;
 
     this.listen(context);
 
@@ -104,6 +113,36 @@ class BIMAnalyticsUI extends TabPanel {
     this.analyticsRoot = UIComponents.column().gap("var(--phi-1)");
 
     this.content.add(this.analyticsRoot);
+  }
+
+  appendDom(context) {
+    const panelDom = this.panel.dom;
+    if (!panelDom.parentNode) {
+      context.dom.appendChild(panelDom);
+    }
+  }
+
+  show() {
+    if (this.panel && this.panel.isMinimized) {
+      this.panel.restore();
+    }
+
+    if (focusDockedWorkspaceTab(this.context, this.panel)) {
+      this.isActive = true;
+      return this;
+    }
+
+    this.appendDom(this.context);
+    this.isActive = true;
+    return this;
+  }
+
+  hide() {
+    if (this.panel && this.panel.dom.parentNode) {
+      this.panel.dom.parentNode.removeChild(this.panel.dom);
+    }
+    this.isActive = false;
+    return this;
   }
 
   listen(context) {

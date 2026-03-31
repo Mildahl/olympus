@@ -51,6 +51,7 @@ class FloatingPanel extends UIPanel {
     super();
 
     this.panelIcon = null;
+    this.minimizedImageSrc = null;
 
     this.title = { icon: null, text: null };
 
@@ -65,6 +66,12 @@ class FloatingPanel extends UIPanel {
     this._minimizedIcon = null;
 
     this._onCloseCallback = null;
+
+    this._restoreContainer = options && options.restoreContainer ? options.restoreContainer : null;
+
+    if (options && options.minimizedImageSrc) {
+      this.minimizedImageSrc = options.minimizedImageSrc;
+    }
 
     /** @type {boolean} When false, the close button is hidden and the panel cannot be closed. */
     this.closable = options?.closable !== false;
@@ -81,6 +88,15 @@ class FloatingPanel extends UIPanel {
      */
     this._dockedWorkspace = null;
 
+    /**
+     * When set, dock-from-float restores body into this TabPanel instead of a WorkspaceDockHost wrapper.
+     * @type {object|null}
+     */
+    this._sourceTabPanel = null;
+    if (options && options.sourceTabPanel) {
+      this._sourceTabPanel = options.sourceTabPanel;
+    }
+
     this.setClass("FloatingPanel");
 
     this.header = this._buildHeader();
@@ -95,6 +111,10 @@ class FloatingPanel extends UIPanel {
     if (options) this._buildContent(options);
 
     this._setupMobileSheet();
+
+    if (!options || !options.startMinimized) {
+      this._ensurePillRegistered(true);
+    }
   }
 
   // ==================== Public API ====================
@@ -113,6 +133,12 @@ class FloatingPanel extends UIPanel {
     this.panelIcon = iconName;
 
     this.title.icon.setIcon(iconName);
+
+    return this;
+  }
+
+  setMinimizedImageSrc(imageSource) {
+    this.minimizedImageSrc = imageSource;
 
     return this;
   }
@@ -174,27 +200,17 @@ class FloatingPanel extends UIPanel {
   maximize() {
 
     if (this.isMinimized) {
-      this._cleanupMinimizedIcon();
-
-      // Reset all styles that may have been set during minimize animation
       this.dom.style.display = '';
-
       this.dom.style.opacity = '';
-
       this.dom.style.transform = '';
-
       this.dom.style.visibility = '';
-
       this.dom.style.transition = '';
-
       this.dom.classList.remove("minimized");
-
       this.isMinimized = false;
-
+      this._updatePillActiveState(true);
     }
 
     if (!this.isMaximized) {
-
       this._toggleMaximize();
     }
 
@@ -324,6 +340,38 @@ class FloatingPanel extends UIPanel {
   }
 
   /**
+   * Attach to the layout floating layer (typically #World), clear dock/minimized shell state, sync geometry.
+   * @param {HTMLElement} containerElement
+   * @returns {this}
+   */
+  mountFloating(containerElement) {
+    if (!containerElement || !(containerElement instanceof HTMLElement)) {
+      return this;
+    }
+
+    containerElement.appendChild(this.dom);
+
+    this.isClosed = false;
+
+    this.dom.style.display = '';
+
+    if (this.isMinimized) {
+      this.dom.classList.remove("minimized");
+      this.isMinimized = false;
+      this.dom.style.transform = '';
+      this.dom.style.opacity = '';
+      this.dom.style.transition = '';
+      this.dom.style.visibility = '';
+    }
+
+    this._ensurePillRegistered(true);
+
+    this.prepareAfterRemount();
+
+    return this;
+  }
+
+  /**
    * After the panel was re-attached (e.g. undock from workspace), sync left/top to the
    * new offset parent so absolute positioning + drag match the visible box.
    * @returns {this}
@@ -331,34 +379,29 @@ class FloatingPanel extends UIPanel {
   prepareAfterRemount() {
     if (FloatingPanel.isMobile) return this;
 
-    const sync = () => {
-      this.dom.classList.remove("maximized");
-      this.isMaximized = false;
-      this._pinned = null;
+    this.dom.classList.remove("maximized");
+    this.isMaximized = false;
+    this._pinned = null;
 
-      const rect = this.dom.getBoundingClientRect();
-      const op = this.dom.offsetParent;
+    void this.dom.offsetWidth;
 
-      this.dom.style.right = "";
-      this.dom.style.bottom = "";
+    const rect = this.dom.getBoundingClientRect();
+    const op = this.dom.offsetParent;
 
-      if (op instanceof HTMLElement) {
-        const pr = op.getBoundingClientRect();
-        this.dom.style.left = `${Math.round(rect.left - pr.left + op.scrollLeft)}px`;
-        this.dom.style.top = `${Math.round(rect.top - pr.top + op.scrollTop)}px`;
-      } else {
-        this.dom.style.left = `${Math.round(rect.left)}px`;
-        this.dom.style.top = `${Math.round(rect.top)}px`;
-      }
+    this.dom.style.right = "";
+    this.dom.style.bottom = "";
 
-      if (rect.width > 0) this.dom.style.width = `${Math.round(rect.width)}px`;
-      if (rect.height > 0) this.dom.style.height = `${Math.round(rect.height)}px`;
-    };
+    if (op instanceof HTMLElement) {
+      const pr = op.getBoundingClientRect();
+      this.dom.style.left = `${Math.round(rect.left - pr.left + op.scrollLeft)}px`;
+      this.dom.style.top = `${Math.round(rect.top - pr.top + op.scrollTop)}px`;
+    } else {
+      this.dom.style.left = `${Math.round(rect.left)}px`;
+      this.dom.style.top = `${Math.round(rect.top)}px`;
+    }
 
-    requestAnimationFrame(() => {
-      sync();
-      requestAnimationFrame(sync);
-    });
+    if (rect.width > 0) this.dom.style.width = `${Math.round(rect.width)}px`;
+    if (rect.height > 0) this.dom.style.height = `${Math.round(rect.height)}px`;
 
     return this;
   }
@@ -405,13 +448,10 @@ class FloatingPanel extends UIPanel {
 
     tools.add(this._createPinButton('dock_to_right', 'Pin right', 'right'));
 
-    // Window control circles
-    tools.add(this._createCircleButton('yellow', 'remove', () => this._toggleMinimize()));
-
     tools.add(this._createCircleButton('green', 'open_in_full', () => this._toggleMaximize()));
 
     if (this.closable) {
-      tools.add(this._createCircleButton('red', 'close', () => this.close()));
+      tools.add(this._createCircleButton('red', 'close', () => this.minimize()));
     }
 
     return header;
@@ -425,11 +465,9 @@ class FloatingPanel extends UIPanel {
 
   _prepareForPin() {
     if (this.isMinimized) {
-      this._cleanupMinimizedIcon();
-
       this.dom.style.display = '';
-
       this.isMinimized = false;
+      this._updatePillActiveState(true);
     }
 
     if (this.isMaximized) {
@@ -516,18 +554,38 @@ class FloatingPanel extends UIPanel {
     if (!this._minimizedIcon) return;
 
     try {
-      this._minimizedIcon.dom?.parentElement?.removeChild(this._minimizedIcon.dom);
+      const iconDom = this._minimizedIcon.dom;
 
-      // Properly destroy UITooltip instance
-      if (this._minimizedIcon._tooltip?.destroy) {
-        this._minimizedIcon._tooltip.destroy();
-      } else if (this._minimizedIcon._tooltip?.dom?.parentElement) {
-        this._minimizedIcon._tooltip.dom.parentElement.removeChild(this._minimizedIcon._tooltip.dom);
+      const tooltip = /** @type {any} */ (this._minimizedIcon)._tooltip;
+      if (tooltip) {
+        if (typeof tooltip.destroy === 'function') tooltip.destroy();
+        if (tooltip.dom && tooltip.dom.parentElement) {
+          tooltip.dom.parentElement.removeChild(tooltip.dom);
+        }
+      }
+
+      if (iconDom && iconDom.parentElement) {
+        iconDom.parentElement.removeChild(iconDom);
       }
     } catch (e) {
     }
 
     this._minimizedIcon = null;
+  }
+
+  _updatePillActiveState(isActive) {
+    if (this._minimizedIcon && this._minimizedIcon.dom) {
+      this._minimizedIcon.dom.classList.toggle('active', isActive);
+    }
+  }
+
+  _ensurePillRegistered(isActive) {
+    if (!this._minimizedIcon) {
+      const icon = this._createMinimizedIcon();
+      icon.dom.style.opacity = '1';
+      icon.dom.style.transform = '';
+    }
+    this._updatePillActiveState(isActive);
   }
 
   // ==================== Private Toggle Methods ====================
@@ -597,29 +655,26 @@ class FloatingPanel extends UIPanel {
   _minimizePanel() {
     if (this.isMaximized) {
       this.dom.classList.remove('maximized');
-
       this.isMaximized = false;
     }
 
+    if (!this._minimizedIcon) {
+      this._ensurePillRegistered(true);
+    }
+
     const panelRect = this.dom.getBoundingClientRect();
+    const pillRect = this._minimizedIcon.dom.getBoundingClientRect();
 
-    const icon = this._createMinimizedIcon();
-
-    const iconRect = icon.dom.getBoundingClientRect();
-
-    const translateX = (iconRect.left + iconRect.width / 2) - (panelRect.left + panelRect.width / 2);
-
-    const translateY = (iconRect.top + iconRect.height / 2) - (panelRect.top + panelRect.height / 2);
-
-    this.dom.style.transition = 'transform 500ms cubic-bezier(.2,.8,.2,1), opacity 320ms linear';
+    const translateX = (pillRect.left + pillRect.width / 2) - (panelRect.left + panelRect.width / 2);
+    const translateY = (pillRect.top + pillRect.height / 2) - (panelRect.top + panelRect.height / 2);
 
     this.dom.style.transformOrigin = 'center center';
 
-    requestAnimationFrame(() => {
-      this.dom.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.08)`;
+    void this.dom.offsetWidth;
 
-      this.dom.style.opacity = '0';
-    });
+    this.dom.style.transition = 'transform 500ms cubic-bezier(.2,.8,.2,1), opacity 320ms linear';
+    this.dom.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.08)`;
+    this.dom.style.opacity = '0';
 
     const onEnd = (e) => {
       if (e.propertyName !== 'transform') return;
@@ -627,86 +682,58 @@ class FloatingPanel extends UIPanel {
       this.dom.removeEventListener('transitionend', onEnd);
 
       this.dom.style.display = 'none';
-
       this.dom.style.transform = '';
-
       this.dom.style.opacity = '';
-
       this.dom.style.transition = '';
 
-      // Show icon
-      icon.dom.style.transition = 'transform 220ms cubic-bezier(.2,.8,.2,1), opacity 160ms linear';
-
-      icon.dom.style.opacity = '1';
-
-      icon.dom.style.transform = '';
-
-      icon.dom.onclick = () => this._restoreFromMinimized();
-
       this.dom.classList.add("minimized");
-
       this.isMinimized = true;
-
+      this._updatePillActiveState(false);
     };
 
     this.dom.addEventListener('transitionend', onEnd);
   }
 
   _restoreFromMinimized() {
-    if (!this._minimizedIcon?.dom?.parentElement) {
+    if (!this.dom.parentElement) {
+      const panelContainer = this._getPanelContainer();
+      panelContainer.appendChild(this.dom);
+    }
+
+    if (!this._minimizedIcon || !this._minimizedIcon.dom.parentElement) {
       this.dom.style.display = '';
-
       this.dom.classList.remove("minimized");
-
       this.isMinimized = false;
-
+      this._updatePillActiveState(true);
       return;
     }
 
     const iconRect = this._minimizedIcon.dom.getBoundingClientRect();
-
     const iconCenterX = iconRect.left + iconRect.width / 2;
-
     const iconCenterY = iconRect.top + iconRect.height / 2;
 
-    // Show panel hidden for measurement - MUST set to empty string or 'flex', NOT keep 'none'!
     this.dom.style.display = '';
-
     this.dom.style.visibility = 'hidden';
-
     this.dom.style.transform = '';
-
     this.dom.style.opacity = '0';
 
     const panelRect = this.dom.getBoundingClientRect();
 
-    this._cleanupMinimizedIcon();
-
     const startX = iconCenterX - (panelRect.left + panelRect.width / 2);
-
     const startY = iconCenterY - (panelRect.top + panelRect.height / 2);
 
     this.dom.classList.remove('minimized');
-
     this.dom.style.visibility = 'visible';
-
     this.dom.style.transition = 'none';
-
     this.dom.style.transformOrigin = 'center center';
-
     this.dom.style.transform = `translate(${startX}px, ${startY}px) scale(0.08)`;
-
     this.dom.style.opacity = '0';
 
-    void this.dom.offsetWidth; // Force reflow
+    void this.dom.offsetWidth;
 
-    requestAnimationFrame(() => {
-      this.dom.style.transition = 'transform 500ms cubic-bezier(.2,.8,.2,1), opacity 320ms linear';
-
-      this.dom.style.transform = '';
-
-      this.dom.style.opacity = '1';
-    });
+    this.dom.style.transition = 'transform 500ms cubic-bezier(.2,.8,.2,1), opacity 320ms linear';
+    this.dom.style.transform = '';
+    this.dom.style.opacity = '1';
 
     const onEnd = (ev) => {
       if (ev.propertyName !== 'transform') return;
@@ -714,10 +741,9 @@ class FloatingPanel extends UIPanel {
       this.dom.removeEventListener('transitionend', onEnd);
 
       this.dom.style.transition = '';
-
       this.dom.style.opacity = '';
-
       this.isMinimized = false;
+      this._updatePillActiveState(true);
     };
 
     this.dom.addEventListener('transitionend', onEnd);
@@ -725,47 +751,33 @@ class FloatingPanel extends UIPanel {
 
   _createMinimizedIcon() {
     const icon = new UIDiv();
+    /** @type {any} */ const dockItem = icon;
 
     icon.dom.classList.add('minimized-pill');
 
-    // Pill container styling
-    Object.assign(icon.dom.style, {
-      zIndex: '1',
-      transition: 'transform 200ms ease, opacity 200ms ease'
-    });
+    icon.dom.style.zIndex = '1';
 
-    // Dragon pill SVG
-    const pillImg = document.createElement('img');
+    const titleText = this.title && this.title.text && this.title.text.dom
+      ? this.title.text.dom.textContent || ''
+      : '';
 
-    pillImg.src = (window.__OLYMPUS_ROOT__ || '') + '/external/data/resources/icons/dragon_pill.svg';
+    let panelIconElement = null;
 
-    Object.assign(pillImg.style, {
-      width: '36px',
-      height: '16px',
-      flexShrink: '0'
-    });
+    if (this.minimizedImageSrc) {
+      const panelImageElement = document.createElement('img');
+      panelImageElement.className = 'minimized-pill-image';
+      panelImageElement.src = this.minimizedImageSrc;
+      panelImageElement.alt = titleText || 'Floating panel';
+      icon.dom.appendChild(panelImageElement);
+      panelIconElement = panelImageElement;
+    } else {
+      const panelIconSpan = new UIIcon(this.panelIcon || 'open_in_full');
+      icon.dom.appendChild(panelIconSpan.dom);
+      panelIconElement = panelIconSpan.dom;
+    }
 
-    icon.dom.appendChild(pillImg);
-
-    // Small panel icon (subtle, shown next to pill)
-    const panelIconSpan = new UIIcon(this.panelIcon || 'open_in_full');
-
-    Object.assign(panelIconSpan.dom.style, {
-      fontSize: '14px',
-      opacity: '0.7',
-      transition: 'opacity 200ms ease'
-    });
-
-    icon.dom.appendChild(panelIconSpan.dom);
-
-    icon.dom.style.opacity = '0';
-
-    icon.dom.style.transform = 'scale(0.08)';
-
-    // Tooltip showing panel name on hover using UITooltip component
-    const tooltip = new UITooltip(this.title.text.dom.textContent || '', {
-      position: 'right',
-      theme: 'orange'
+    const tooltip = new UITooltip(titleText, {
+      theme: 'above'
     });
 
     tooltip.attachTo(icon.dom, { followMouse: true });
@@ -774,26 +786,34 @@ class FloatingPanel extends UIPanel {
 
     container.appendChild(icon.dom);
 
-    icon._tooltip = tooltip;
+    dockItem._tooltip = tooltip;
 
-    // Hover effects - enhance icon appearance
     icon.dom.addEventListener('mouseenter', () => {
-      // Enhance panel icon visibility on hover
-      panelIconSpan.dom.style.opacity = '1';
-
-      icon.dom.style.transform = 'scale(1.05)';
+      panelIconElement.style.opacity = '1';
     });
 
     icon.dom.addEventListener('mouseleave', () => {
-      // Restore subtle icon appearance
-      panelIconSpan.dom.style.opacity = '0.7';
-
-      icon.dom.style.transform = 'scale(1)';
+      panelIconElement.style.opacity = '0.85';
     });
+
+    icon.dom.onclick = () => {
+      if (this.isMinimized) {
+        this._restoreFromMinimized();
+      }
+    };
 
     this._minimizedIcon = icon;
 
     return icon;
+  }
+
+  _getPanelContainer() {
+    if (this._restoreContainer) return this._restoreContainer;
+    const worldContainer = document.getElementById('World');
+    if (worldContainer) return worldContainer;
+    const windowsContainer = document.getElementById('Windows');
+    if (windowsContainer) return windowsContainer;
+    return document.body;
   }
 
   // ==================== Content Building ====================
@@ -804,13 +824,12 @@ class FloatingPanel extends UIPanel {
     if (options.icon) this.setIcon(options.icon);
 
     if (options.startMinimized) {
-      requestAnimationFrame(() => this._initializeMinimized());
+      this._initializeMinimized();
     }
 
     if (options.input) {
       const input = new UIInput(options.input.defaultValue || "");
-
-      input.dom.placeholder = options.input.placeholder;
+      /** @type {HTMLInputElement} */ (input.dom).placeholder = options.input.placeholder;
 
       this.input = input;
 
@@ -820,9 +839,9 @@ class FloatingPanel extends UIPanel {
     if (options.fileInput) {
       const fileInput = new UIInput();
 
-      fileInput.dom.type = "file";
+      /** @type {HTMLInputElement} */ (fileInput.dom).type = "file";
 
-      fileInput.dom.accept = options.fileInput.accept || "";
+      /** @type {HTMLInputElement} */ (fileInput.dom).accept = options.fileInput.accept || "";
 
       this.fileInput = fileInput;
 
@@ -862,7 +881,13 @@ class FloatingPanel extends UIPanel {
         const confirmButton = new UIButton(options.confirm.text);
 
         confirmButton.onClick(() => {
-          const value = this.input ? this.input.getValue() : this.fileInput?.files[0];
+          let value = null;
+          if (this.input) {
+            value = this.input.getValue();
+          } else if (this.fileInput && this.fileInput.dom) {
+            const fileInputElement = /** @type {HTMLInputElement} */ (this.fileInput.dom);
+            value = fileInputElement.files && fileInputElement.files[0] ? fileInputElement.files[0] : null;
+          }
 
           options.confirm.onClick(value);
 
@@ -887,20 +912,11 @@ class FloatingPanel extends UIPanel {
   _initializeMinimized() {
     if (this.isMinimized) return;
 
-    const icon = this._createMinimizedIcon();
-
-    icon.dom.style.opacity = '1';
-
-    icon.dom.style.transform = '';
-
-    icon.dom.onclick = () => this._restoreFromMinimized();
+    this._ensurePillRegistered(false);
 
     this.dom.style.display = 'none';
-
     this.dom.classList.add('minimized');
-
     this.isMinimized = true;
-
     this._pinned = null;
   }
 

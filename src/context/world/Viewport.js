@@ -24,8 +24,6 @@ import { ViewportPathtracer } from './editor/Viewport.Pathtracer.js';
 
 import FocusManager from '../../utils/FocusManager.js';
 
-import { attachViewportLoadStatusStrip } from './ViewportLoadStatusStrip.js';
-
 function Viewport( context, ops, parent ) {
 
 	const editor = context.editor;
@@ -1280,8 +1278,6 @@ function Viewport( context, ops, parent ) {
 		editor.signals.sceneRendered.dispatch( endTime - startTime );
 
 	}
-
-	attachViewportLoadStatusStrip( context, container );
 
 	container.applySceneConfig = function ( sceneConfig ) {
 

@@ -9,6 +9,8 @@ export class BasePanel {
     const {
       context,
       operators,
+      id,
+      shouldRegister = false,
       parentId,
       panelStyles = {},
       resizeHandles = ['e', 's', 'se'],
@@ -34,12 +36,8 @@ export class BasePanel {
     // Store parentId and get parent element
     this.parentId = parentId;
 
-    // Track if we have a valid parent element (for positioning)
-    this.hasParentElement = Boolean(parentId);
-
     this.parent = parentId ? document.getElementById(parentId) : null;
 
-    // Create panel with flex layout for header/content/footer structure
     this.panel = DrawUI.panel();
 
     this.panel.setStyle('display', ['flex']);
@@ -107,6 +105,8 @@ export class BasePanel {
     if (testing) {
       this.toggle(context);
     }
+
+    shouldRegister? this.context.ui.model.registerChild(this.parentId, id, this):null;
   }
 
   clearPanel() {

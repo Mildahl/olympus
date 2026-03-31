@@ -4,6 +4,8 @@ import Paths from "../../utils/paths.js";
 
 import { formatSchedulingDate } from "../../utils/formatSchedulingDate.js";
 
+import { suspendAmdForUmdScript } from "../../utils/vendorUmdLoaderBypass.js";
+
 const injectedJsganttStyleHrefs = new Set();
 
 let jsganttScriptLoadPromise = null;
@@ -82,7 +84,11 @@ function loadJsganttScriptOnce(scriptSrc) {
 
         script.async = true;
 
+        const resumeAmdForUmdScript = suspendAmdForUmdScript();
+
         script.onload = function () {
+            resumeAmdForUmdScript();
+
             if (getJsganttNamespace()) {
                 resolve();
 
@@ -95,6 +101,8 @@ function loadJsganttScriptOnce(scriptSrc) {
         };
 
         script.onerror = function () {
+            resumeAmdForUmdScript();
+
             jsganttScriptLoadPromise = null;
 
             reject(new Error("Failed to load jsgantt script"));

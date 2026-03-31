@@ -8,7 +8,9 @@ class AttributeTool {
 
     static projectName = "default";
     static async loadAttributes( modelName, GlobalId ) {
+        
         const response = await AttributeTool.getAttributes( modelName, GlobalId );
+
         const attributes = response.attributes || response;
 
         const entityClass = response.entityClass || null;
@@ -18,17 +20,6 @@ class AttributeTool {
 
             return;
         }
-
-        console.log("[BIM Attributes] loadAttributes response:", {
-            modelName,
-            GlobalId,
-            entityClass,
-            attributeCount: attributes.length,
-            rawFirst: attributes[0],
-            rawRepContext: attributes.find(a => a.name === "RepresentationContexts"),
-            allNames: attributes.map(a => a.name),
-        });
-
         return { attributes, ifcClass: entityClass}
 
     }

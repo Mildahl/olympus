@@ -367,6 +367,11 @@
       max-height: calc(100vh - 168px);
       overflow-y: auto;
     }
+
+    .FloatingPanel .FloatingPanel-content:has(> .TabPanel) {
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
   
     .FloatingPanel.maximized {
       max-height: 100% !important;
@@ -662,4 +667,4 @@
       width: 32vw !important;
     }
   }
-  
+

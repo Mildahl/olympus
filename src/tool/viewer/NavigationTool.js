@@ -1,14 +1,17 @@
 class NavigationTool {
   static findFirstObjectInScene(scene, predicate) {
     let resolvedObject = null;
+
     if (!scene || typeof predicate !== "function") {
       return resolvedObject;
     }
+
     scene.traverse((object) => {
       if (!resolvedObject && predicate(object)) {
         resolvedObject = object;
       }
     });
+
     return resolvedObject;
   }
 
@@ -17,7 +20,9 @@ class NavigationTool {
       if (object.name === "Truck") {
         return true;
       }
+
       const userData = object.userData;
+
       return userData && userData.type === "Vehicle";
     });
   }
@@ -27,7 +32,9 @@ class NavigationTool {
       if (object.name === "Drone") {
         return true;
       }
+
       const userData = object.userData;
+
       return userData && userData.type === "FlyingVehicle";
     });
   }

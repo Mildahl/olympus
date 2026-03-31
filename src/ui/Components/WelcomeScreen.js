@@ -101,7 +101,6 @@ class WelcomeScreen {
     body.appendChild(title);
 
     body.appendChild(this._buildPresetRow());
-    body.appendChild(this._buildPersistSettingsRow());
     body.appendChild(this._buildShowWelcomeScreenRow());
     body.appendChild(this._buildThemeRow());
     body.appendChild(this._buildLanguageRow());
@@ -133,25 +132,6 @@ class WelcomeScreen {
 
     const label = (this.context.strings && this.context.strings.getKey('welcome/preset')) || 'Module preset';
     return this._buildSettingRow(label, select);
-  }
-
-  _buildPersistSettingsRow() {
-    const persistSettings = this.context.config?.app?.Settings?.persistSettings === true;
-    const checkbox = UIComponents.checkbox(persistSettings);
-    checkbox.dom.title = (this.context.strings && this.context.strings.getKey('welcome/persistSettings/title')) || 'Save my settings to this browser (localStorage). Uncheck to use config presets only.';
-    checkbox.dom.addEventListener('change', () => {
-      if (!this.context.config.app.Settings) this.context.config.app.Settings = {};
-      this.context.config.app.Settings.persistSettings = checkbox.getValue();
-      if (this.context.config.app.Settings.persistSettings) {
-        this.context._saveConfig();
-      } else {
-        try {
-          localStorage.removeItem('aeco-config');
-        } catch (_) {}
-      }
-    });
-    const label = (this.context.strings && this.context.strings.getKey('welcome/persistSettings')) || 'Save my settings';
-    return this._buildSettingRow(label, checkbox);
   }
 
   _buildShowWelcomeScreenRow() {

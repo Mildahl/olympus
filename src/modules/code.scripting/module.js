@@ -6,7 +6,7 @@
  */
 import operators from './operators.js';
 
-import { ScriptsUI, CodingUI } from './ui.js';
+import { ScriptsUI } from './ui.js';
 
 const ModuleDefinition = {
   id: 'code.scripting',
@@ -15,7 +15,7 @@ const ModuleDefinition = {
   version: '1.0.0',
   dependsOn: ['world'],
   operators: operators,
-  ui: [ScriptsUI, CodingUI],
+  ui: [ScriptsUI],
 };
 
 export default ModuleDefinition;

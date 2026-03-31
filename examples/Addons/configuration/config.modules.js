@@ -58,6 +58,10 @@ export const coreModules = [
         active: true,
     },
     {
+        id: "world.projection",
+        active: true,
+    },
+    {
         id: "world.snap",
         active: true,
     },
@@ -85,7 +89,6 @@ export const coreModules = [
         id: "tiles",
         active: true, 
     },
-    
     {
         id: "code.scripting",
         active: true,
@@ -94,8 +97,6 @@ export const coreModules = [
         id: "code.terminal",
         active: true,
     },
-    
-
     {
         id: "bim.attribute",
         active: true,

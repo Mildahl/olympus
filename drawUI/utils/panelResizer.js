@@ -45,6 +45,16 @@ export function makeDraggable(panel, header) {
     header.addEventListener('mousedown', (e) => {
       if (e.target.tagName === 'BUTTON') return;
 
+      const eventTarget = e.target;
+      if (
+        eventTarget &&
+        eventTarget.nodeType === 1 &&
+        typeof eventTarget.closest === 'function' &&
+        eventTarget.closest('.resize-handle')
+      ) {
+        return;
+      }
+
       isDragging = true;
 
       startX = e.clientX;

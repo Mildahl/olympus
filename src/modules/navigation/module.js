@@ -3,7 +3,7 @@
  */
 import operators from './operators.js';
 
-import { NavigationUI } from './ui.js';
+import NavigationUI from './ui.js';
 
 const ModuleDefinition = {
   id: 'world.navigation',

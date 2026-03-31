@@ -3,7 +3,6 @@ export interface AECOContext {
   viewport: HTMLElement | null;
   root: unknown;
   appModuleOrderIds?: string[];
-  layoutManager?: unknown;
   ui?: unknown;
   config: {
     ui: Record<string, unknown>;
@@ -272,4 +271,5 @@ export const tools: Tools;
 export const dataStore: DataStore;
 export const moduleRegistry: ModuleRegistry;
 export const Core: CoreNamespace;
+export function getLayoutManagerFromContext(context: AECOContext | null | undefined): unknown;
 export default AECO;

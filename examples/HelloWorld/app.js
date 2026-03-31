@@ -29,7 +29,7 @@ const loadGeometryData = async () => {
 (async function bootstrapHelloWorld() {
   await simulation.createUI({ config: AECOConfiguration, container: document.body });
 
-  simulation.moduleRegistry.logActiveModulesAndUI();
+//   simulation.moduleRegistry.logActiveModulesAndUI();
 
   simulation.tools.world.scene.addCube(context, 1, "grey");
 

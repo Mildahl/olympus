@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export default {
   entry: './src/index.js',
+  devtool: 'source-map',
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
@@ -71,6 +72,10 @@ export default {
 
       if (request === 'three-gpu-pathtracer') {
         return callback(null, 'three-gpu-pathtracer');
+      }
+
+      if (request === 'three-mesh-bvh') {
+        return callback(null, 'three-mesh-bvh');
       }
 
       callback();

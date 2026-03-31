@@ -2,6 +2,96 @@ import * as THREE from "three";
 
 export class ThreeHelpers {
 
+  static normalizeProjectionCutAxis(axis) {
+    const normalizedAxis = typeof axis === "string" ? axis.trim().toLowerCase() : "";
+
+    if (normalizedAxis === "x" || normalizedAxis === "y" || normalizedAxis === "z") {
+      return normalizedAxis;
+    }
+
+    return "z";
+  }
+
+  static getProjectionCutMetadata(axis) {
+    const normalizedAxis = ThreeHelpers.normalizeProjectionCutAxis(axis);
+
+    const projectionCutMetadataByAxis = {
+      z: {
+        constantAxis: "y",
+        planeName: "XY",
+        uiLabel: "Plan - Z (XY)",
+        positionAxisLetter: "Y",
+        normal: new THREE.Vector3(0, 1, 0),
+        previewViewDirection: new THREE.Vector3(0, 1, 0),
+        previewUpVector: new THREE.Vector3(0, 0, 1),
+        previewRollDegrees: 180,
+        indicatorSizeAxes: { width: "x", height: "z" },
+        previewBoundsAxes: { horizontal: "x", vertical: "z" },
+      },
+      y: {
+        constantAxis: "x",
+        planeName: "ZY",
+        uiLabel: "Section - Y (ZY)",
+        positionAxisLetter: "X",
+        normal: new THREE.Vector3(1, 0, 0),
+        previewViewDirection: new THREE.Vector3(1, 0, 0),
+        previewUpVector: new THREE.Vector3(0, 0, 1),
+        previewRollDegrees: 90,
+        indicatorSizeAxes: { width: "y", height: "z" },
+        previewBoundsAxes: { horizontal: "y", vertical: "z" },
+      },
+      x: {
+        constantAxis: "z",
+        planeName: "ZX",
+        uiLabel: "Section - X (ZX)",
+        positionAxisLetter: "Z",
+        normal: new THREE.Vector3(0, 0, 1),
+        previewViewDirection: new THREE.Vector3(0, 0, 1),
+        previewUpVector: new THREE.Vector3(0, 1, 0),
+        previewRollDegrees: 0,
+        indicatorSizeAxes: { width: "x", height: "y" },
+        previewBoundsAxes: { horizontal: "x", vertical: "y" },
+      },
+    };
+
+    const projectionCutMetadata = projectionCutMetadataByAxis[normalizedAxis];
+
+    return {
+      axis: normalizedAxis,
+      constantAxis: projectionCutMetadata.constantAxis,
+      planeName: projectionCutMetadata.planeName,
+      uiLabel: projectionCutMetadata.uiLabel,
+      positionAxisLetter: projectionCutMetadata.positionAxisLetter,
+      normal: projectionCutMetadata.normal.clone(),
+      previewViewDirection: projectionCutMetadata.previewViewDirection.clone(),
+      previewUpVector: projectionCutMetadata.previewUpVector.clone(),
+      previewRollDegrees: projectionCutMetadata.previewRollDegrees,
+      indicatorSizeAxes: {
+        width: projectionCutMetadata.indicatorSizeAxes.width,
+        height: projectionCutMetadata.indicatorSizeAxes.height,
+      },
+      previewBoundsAxes: {
+        horizontal: projectionCutMetadata.previewBoundsAxes.horizontal,
+        vertical: projectionCutMetadata.previewBoundsAxes.vertical,
+      },
+    };
+  }
+
+  static applyProjectionPreviewRoll(camera, rollDegrees) {
+    if (!Number.isFinite(rollDegrees) || rollDegrees === 0) return;
+
+    const forward = new THREE.Vector3();
+
+    camera.getWorldDirection(forward);
+
+    const rollQuaternion = new THREE.Quaternion().setFromAxisAngle(
+      forward,
+      THREE.MathUtils.degToRad(rollDegrees)
+    );
+
+    camera.up.applyQuaternion(rollQuaternion);
+  }
+
   static createCamera(container) {
     let aspect = window.innerWidth / window.innerHeight; 
   

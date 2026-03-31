@@ -19,16 +19,14 @@
 } */
 
 
-@import "./components/exercises.css";
 @import "./components/code-editor.css";
 @import "./components/scheduling.css";
 @import "./components/markdown.css";
 @import "./components/split-container.css";
-/* @import "./components/kanban.css"; */
+@import "./components/kanban.css";
 @import "./rules.css";
 @import "./components/director-analytics.css";
 @import "./components/day_night.css";
-@import "./home-hud.css";
 
 
 
@@ -75,7 +73,7 @@
 
   --active: var(--brand-color-alpha);
 
-  --border: rgba(48, 54, 61, 0.8);
+  --border: rgba(48, 54, 61, 0.281);
   --border-hover: var(--brand-color-alpha);
   --glass-blur: saturate(50%) blur(20px);
   --glass-strong-blur: saturate(60%) blur(40px);
@@ -88,6 +86,13 @@
   --glass-surface-light: rgba(22, 27, 34, 0.95);
   --glass-surface-hover: rgba(33, 38, 45, 0.95);
   --glass-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  --windowbar-surface: rgba(18, 20, 24, 0.55);
+  --windowbar-surface-strong: rgba(10, 12, 16, 0.75);
+  --windowbar-border: rgba(255, 255, 255, 0.10);
+  --windowbar-highlight: rgba(255, 255, 255, 0.12);
+  --windowbar-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --windowbar-blur: saturate(180%) blur(28px);
 
   --spacing-xs: var(--phi-0-2-5);
   --spacing-sm: var(--phi-0-5);
@@ -113,7 +118,7 @@
   --config-width: 20vw;
 
   --phi-0-2-5: 3px;
-  --phi-0-5: 5px;
+  --phi-0-5: 7px;
   --phi-0-51: 7px;
   --phi-0: 12px;
   --phi-0-1: 17.28px;
@@ -196,6 +201,341 @@
   --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
   --font-ui: 'Rajdhani', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
+
+
+:root {
+  --border-game-hud: 1px solid rgba(100, 159, 248, 0.3);
+  --game-font: 'Rajdhani', 'Orbitron', sans-serif;
+  }
+  
+  
+  
+  #GameHUD, .IntroductionHUD {
+    font-family: var(--game-font);
+    gap: var(--phi-1); 
+    padding: var(--phi-0-5);
+    position: absolute;
+    z-index: 8;
+  }
+  
+  #GameHUD {
+    align-items: center;
+    backdrop-filter: var(--glass-blur);
+    bottom: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem 1rem;
+    height: var(--headerbar-height);
+    left: 0;
+    max-width: calc(100% - var(--sidebar-width));
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 var(--phi-1);
+    right: auto;
+    top: 0;
+    width: calc(100% - var(--sidebar-width));
+  }
+  
+  #GameTimer {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.5rem;
+    height: auto;
+    margin-left: auto;
+    position: relative;
+    z-index: 8;
+  }
+  
+  #TimerDisplay {
+    color: var(--brand-color);
+    font-family: 'Orbitron', monospace;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: var(--phi-0-2-5);
+  }
+  
+  
+  #BudgetOptions {
+    width: 100%;
+  }
+  
+  /* Active exercise ball next to timer */
+  .active-exercise-ball {
+    cursor: pointer;
+    height: 1.75rem;
+    width: 1.75rem;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+  
+  .active-exercise-ball:hover {
+    transform: scale(1.15);
+  }
+  
+  .active-exercise-ball .SVG,
+  .active-exercise-ball .SVG svg,
+  .active-exercise-ball svg {
+    height: 100%;
+    width: 100%;
+  }
+  
+  #ActiveBall {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Exercise progress panel (popover on ball click) */
+  .exercise-progress-panel {
+    backdrop-filter: var(--glass-blur);
+    background: var(--glass-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    bottom: calc(var(--phi-1) + 2.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    left: var(--phi-1);
+    max-width: 340px;
+    min-width: 220px;
+    padding: var(--phi-0-5);
+    position: absolute;
+    z-index: 9;
+  }
+  
+  .exercise-progress-row {
+    align-items: center;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.35rem 0.5rem;
+    transition: background 0.15s ease;
+  }
+  
+  .exercise-progress-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  
+  .exercise-progress-row.current {
+    background: rgba(255, 190, 68, 0.1);
+    border-left: 2px solid var(--yellow);
+  }
+  
+  .exercise-progress-row.completed {
+    opacity: 0.6;
+  }
+  
+  .exercise-progress-ball {
+    flex-shrink: 0;
+    height: 1.4rem;
+    width: 1.4rem;
+  }
+  
+  .exercise-progress-ball .SVG,
+  .exercise-progress-ball .SVG svg,
+  .exercise-progress-ball svg {
+    height: 100%;
+    width: 100%;
+  }
+  
+  .exercise-progress-name {
+    color: var(--theme-text);
+    flex: 1;
+    font-family: var(--game-font);
+    font-size: 0.85rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .exercise-progress-reward {
+    color: #ffd700;
+    flex-shrink: 0;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+  
+  
+  /* HUD Labels */
+  .hud-label {
+    color: var(--brand-color);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    /*  text in one line and overflow with ellipses */
+    white-space: nowrap;
+  }
+  
+  /* HUD Input Fields */
+  .hud-input {
+    background: transparent;
+    border: 0;
+    color: var(--theme-text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    min-width: 0;
+    outline: none;
+    padding: 0;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.45);
+    transition: all 0.2s ease;
+  }
+  
+  .hud-input:focus {
+    border: 0;
+    box-shadow: none;
+  }
+  
+  .hud-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+  
+  /* HUD Coins Display */
+  .hud-coins {
+    color: #ffd700;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+  
+  /* HUD Divider */
+  .hud-divider {
+    background: linear-gradient(180deg, transparent 0%, rgba(100, 159, 248, 0.5) 50%, transparent 100%);
+    flex: 0 0 1px;
+    height: 2.1rem;
+    width: 1px;
+  }
+  
+  #GameHUD .hud-module {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    max-width: min(28vw, 240px);
+    min-width: fit-content;
+  }
+  
+  #GameHUD .hud-module-budget {
+    max-width: 180px;
+  }
+  
+  #GameHUD .hud-editable .hud-input {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  #HudProjectInput,
+  #HudLocationInput {
+    min-width: 0;
+    width: 100% !important;
+  }
+  
+  #GameHUD .hud-budget-row {
+    min-width: 0;
+  }
+  
+  /* =========================
+     Draggable Items
+     ========================= */
+  
+  .draggable-item {
+    cursor: grab;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  .draggable-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  .draggable-item.dragging {
+    cursor: grabbing;
+    opacity: 0.5;
+  }
+  
+  .dragging {
+    opacity: 0.5 !important;
+    transform: scale(1.05);
+  }
+  
+  /* =========================
+     Touch Drag States
+     ========================= */
+  
+  .touch-active {
+    background: var(--brand-color-alpha, rgba(0, 123, 255, 0.1));
+    transform: scale(0.98);
+  }
+  
+  .touch-ghost {
+    background: var(--surface-color, #fff);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    opacity: 0.8;
+    pointer-events: none;
+    position: fixed;
+    transform: scale(1.05);
+    transition: transform 0.1s ease;
+    z-index: 10000;
+  }
+  
+  /* =========================
+     Drop Zones
+     ========================= */
+  
+  .DropZone {
+    background-color: var(--surface-color, rgba(255, 255, 255, 0.05));
+    border: 2px dashed var(--brand-color, #007bff);
+    border-radius: 8px;
+    justify-content: center;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .DropZone.drag-over {
+    background: var(--brand-color-alpha, rgba(0, 123, 255, 0.1));
+    border-color: var(--brand-color, #007bff);
+    transform: scale(1.02);
+  }
+  
+  .drop-value {
+    font-size: 1.1em;
+    font-weight: bold;
+  }
+  
+  /* =========================
+     Drop Zone States
+     ========================= */
+  
+  .DropZone.correct {
+    background-color: var(--success-color, #4CAF50);
+    border-color: var(--success-color, #4CAF50);
+    border-style: solid;
+    color: var(--on-success-color, white);
+  }
+  
+  .DropZone.incorrect {
+    animation: shake 0.5s ease-in-out;
+    background-color: var(--error-color, #f44336);
+    border-color: var(--error-color, #f44336);
+    border-style: solid;
+    color: var(--on-error-color, white);
+  }
 
 
 @media screen and (min-width: 769px) {
@@ -399,6 +739,14 @@ body {
   color: var(--theme-text);
 }
 
+
+.Clickable:hover {
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+
 .red {
   background: var(--red);
 }
@@ -410,19 +758,22 @@ body {
 }
 
 #sidebar .Row,
-#properties .Row {
+#properties .Row,
+.SideBar .Row {
   align-items: center;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-md);
   min-height: 32px;
 }
 
-#sidebar .Row {
+#sidebar .Row,
+.SideBar .Row {
   padding: var(--phi-0-5) var(--phi-1);
 }
 
 #sidebar .Row .Label,
-#properties .Row .Label {
+#properties .Row .Label,
+.SideBar .Row .Label {
   color: var(--theme-text-secondary);
   flex-shrink: 0;
   font-size: 12px;
@@ -450,7 +801,8 @@ body {
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
 }
 
-#sidebar .PanelContent{
+#sidebar .PanelContent,
+.World .SideBar .PanelContent {
   padding: var(--phi-0-5);
 }
 
@@ -1223,12 +1575,14 @@ button.material-symbols-outlined {
 
 .minimized-pill {
   align-items: center;
-  backdrop-filter: blur(8px);
-  border-radius: var(--border-radius);
+  justify-content: center;
   cursor: pointer;
-  display: flex;
-  gap: 6px;
-  transition: all 200ms ease;
+  display: inline-flex;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  position: relative;
+  transition: transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 160ms ease, background 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
 }
 
 .Module .ModuleCount,
@@ -1413,6 +1767,18 @@ textarea:hover, select:hover {
     display: flex;
     height: 24px;
     width: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+}
+
+.Outliner .option:hover .visibility-toggle {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.Outliner .option.object-hidden .object-name {
+    text-decoration: line-through;
 }
 
 .CollapsiblePanel.SpatialManager {
@@ -1713,8 +2079,16 @@ button:hover,
 }
 
 .FloatingPanel {
-  border: 1px solid var(--border);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--windowbar-surface) 88%, transparent 12%),
+    var(--windowbar-surface-strong)
+  );
+  -webkit-backdrop-filter: var(--windowbar-blur);
+  backdrop-filter: var(--windowbar-blur);
+  border: 1px solid var(--windowbar-border);
   border-radius: var(--radius-md);
+  box-shadow: var(--windowbar-shadow);
   display: flex;
   flex-direction: column;
   margin: 0 auto;
@@ -1726,9 +2100,25 @@ button:hover,
   position: absolute;
   transition: all var(--transition-medium);
   z-index: 12;
-  backdrop-filter: blur(10px);
-  background: var(--glass-surface);
+}
 
+.FloatingPanel::before {
+  border-radius: inherit;
+  border-top: 1px solid var(--windowbar-highlight);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.FloatingPanel-header {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--windowbar-surface-strong) 55%, transparent 45%),
+    transparent
+  );
+  border-bottom: 1px solid var(--windowbar-border);
 }
 
 .FloatingPanel-content {
@@ -1739,6 +2129,22 @@ button:hover,
   min-height: 0;
   overflow: auto;
   position: relative;
+}
+
+.FloatingPanel-content:has(> .TabPanel) {
+  overflow: hidden;
+}
+
+.FloatingPanel-content > .TabPanel {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  max-width: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  width: 100%;
 }
 
 #ExerciseNotes {
@@ -2022,30 +2428,40 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   background: var(--glass-surface-light);
 }
 
-.minimized-pill .UIIcon {
-  color: var(--theme-text);
-  font-size: 14px;
-  opacity: 0.7;
-  transition: opacity 200ms ease;
+.minimized-pill img, .minimized-pill span {
+  font-size: var(--headerbar-height);
+  width: var(--headerbar-height);
+  height: var(--headerbar-height);
 }
 
-.minimized-pill img {
-  transition: transform 200ms ease;
+
+.minimized-pill.active {
+  background: color-mix(in srgb, var(--brand-color) 18%, transparent);
+  border-color: color-mix(in srgb, var(--brand-color) 40%, transparent);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 .minimized-pill:hover {
-  background: var(--theme-hover-bg);
-  border-color: var(--border);
-  box-shadow: var(--glass-shadow);
+  background: color-mix(in srgb, var(--windowbar-highlight) 60%, transparent);
+  border-color: var(--windowbar-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 var(--windowbar-highlight);
+  transform: translateY(-2px) scale(1.06);
+}
+
+.minimized-pill:active {
+  transform: translateY(0px) scale(0.97);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.20);
+  background: color-mix(in srgb, var(--windowbar-surface-strong) 80%, transparent);
 }
 
 .minimized-pill:hover .UIIcon {
   opacity: 1;
 }
 
-.minimized-pill:hover img {
-  transform: scale(1.08);
+.minimized-pill:hover .minimized-pill-image {
+  opacity: 1;
 }
+
 
 .Module {
   border: 1px solid transparent;
@@ -2252,14 +2668,7 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   flex-direction: row;
   height: 100%;
   justify-content: space-between;
-  padding: 0 calc(var(--margin) * 0.65)
-    calc(var(--margin) * 0.65 + var(--addon-navigation-controls-lift, 0px))
-    calc(var(--margin) * 0.65);
   width: 100%;
-}
-
-#addon-navigation-viewport-keyboard.nav-instructions-content {
-  padding: 0;
 }
 
 .addon-navigation-left-stack {
@@ -2289,8 +2698,7 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   flex-direction: column;
   gap: 0;
   justify-content: flex-end;
-  margin-bottom: var(--phi-3);
-  margin-right: var(--state-bar-right);
+  margin-right: var(--sidebar-width);
   pointer-events: none;
 }
 
@@ -2504,6 +2912,27 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 .Outliner::-webkit-scrollbar-track {
   background: transparent;
   margin: 8px 0;
+}
+
+.Outliner.Outliner-search-active {
+  outline: 1px solid var(--brand-color-alpha, rgba(99, 102, 241, 0.2));
+  outline-offset: -1px;
+  border-radius: var(--radius-md);
+}
+
+.SpatialPanel-searchInput {
+  background: var(--theme-background-2, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--theme-text);
+  font-size: 12px;
+  outline: none;
+  padding: 4px 8px;
+  transition: border-color 0.15s ease;
+}
+
+.SpatialPanel-searchInput:focus {
+  border-color: var(--brand-color, #6366f1);
 }
 
 .Overlay {
@@ -2864,6 +3293,7 @@ small {
   display: block;
   position: relative;
   width: 100%;
+  height: 100%;
 }
 
 /* Section headings inside tabbed settings (e.g. Three.js / Scene + Renderer) */
@@ -3023,6 +3453,15 @@ textarea.success {
   border: 1px solid var(--border);
   box-shadow: var(--glass-shadow);
   color: var(--on-brand-color);
+}
+
+.Tooltip--above {
+  left: 50%;
+  margin-left: 0;
+  margin-bottom: 8px;
+  top: auto;
+  bottom: 100%;
+  transform: translateX(-50%);
 }
 
 .Tooltip.visible {
@@ -3839,33 +4278,49 @@ textarea.success {
   color: var(--theme-text);
 }
 
-/* Side workspaces: same flex height chain as bottom so tab content can use
-   min-height: 0 + overflow: auto for internal scrolling (e.g. bim.sequence task tab). */
-.World #SideWorkspaceLeft .LeftWorkspaceTabbedPanel,
-.World #SideWorkspaceRight .RightWorkspaceTabbedPanel {
+.World.workspace-layout .layout-panel > .TabbedPanel {
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
   height: 100%;
   max-width: none;
+  min-height: 0;
   width: 100%;
 }
 
-.World #SideWorkspaceLeft .LeftWorkspaceTabbedPanel .Panels,
-.World #SideWorkspaceRight .RightWorkspaceTabbedPanel .Panels {
+.World.workspace-layout .layout-panel > .TabbedPanel .Panels {
   flex: 1;
   min-height: 0;
   overflow: hidden;
 }
 
-.World #SideWorkspaceLeft .LeftWorkspaceTabbedPanel .Panels > div,
-.World #SideWorkspaceRight .RightWorkspaceTabbedPanel .Panels > div {
+.World.workspace-layout .layout-panel > .TabbedPanel .Panels > div {
   height: 100%;
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
 }
 
-.World #SideWorkspaceLeft .LeftWorkspaceTabbedPanel .Panel,
-.World #SideWorkspaceRight .RightWorkspaceTabbedPanel .Panel {
-  max-width: 100%;
-  width: 100%;
+.World.workspace-layout .layout-panel > .TabbedPanel .Panels > .TabPanel {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.TabPanel > .TabPanelHeader {
+  flex-shrink: 0;
+}
+
+.TabPanel > .PanelContent {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.TabPanel > .TabPanelFooter {
+  flex-shrink: 0;
 }
 
 .TabPanel .PanelContent > .TabbedPanel {
@@ -3909,24 +4364,6 @@ textarea.success {
 
 #objectTab .Panel, #geometryTab .Panel, #materialTab .Panel, #scriptTab .Panel {
   padding: var(--phi-1);
-}
-
-.World #BottomWorkspace .BottomWorkspaceTabbedPanel {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  max-width: none;
-  width: 100%;
-}
-
-.World #BottomWorkspace .BottomWorkspaceTabbedPanel .Panels {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.World #BottomWorkspace .BottomWorkspaceTabbedPanel .Panels > div {
-  height: 100%;
 }
 
 .layout-toggle-btn {
@@ -4007,15 +4444,13 @@ textarea.success {
 }
 
 #ApplicationStateBar {
-  bottom: var(--phi-1);
-  left: auto;
-
-  right: var(--state-bar-right);
-  max-width: calc(100vw - var(--state-bar-right));
+  top: var(--phi-0-5);
+  right: auto;
+  left: calc(var(--sidebar-width) + var(--phi-1));
+  max-width: calc(100% - var(--sidebar-width) - var(--phi-1));
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  top: auto;
 }
 
 #info.Panel {
@@ -4031,9 +4466,9 @@ textarea.success {
 }
 
 #Loader.PlaceHolder {
-  left: calc(var(--phi-1));
-  top: calc(var(--phi-1));
-  z-index: 4;
+  right: calc(var(--phi-1));
+  bottom: calc(var(--phi-1));
+  z-index: 1;
 }
 
 #SceneInformation {
@@ -4165,11 +4600,10 @@ textarea.success {
 }
 
 .World .Information {
-  bottom: var(--phi-1);
   position: absolute;
-  right: calc(var(--phi-1) + var(--sidebar-width));
-  
   z-index: 3;
+  top: var(--phi-1);
+  left: var(--phi-1);
 }
 
 .World .ViewportSnapTools {
@@ -4306,22 +4740,58 @@ textarea.success {
 
   display: flex;
   flex-direction: row;
-  gap: var(--phi-0-5);
+  gap: var(--phi-0-5);  
+}
 
-  overflow-x: scroll;
-  overflow-y: hidden;
-  
+.World .NavigationToolbar .addon-navigation-toolbar-secondary-control {
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--phi-0-5));
+  margin-bottom: 0;
+  align-self: auto;
 }
 
 .World .Windows {
-  bottom: var(--phi-1);
-  display: flex;
-  flex-direction: column-reverse;
-  height: calc(100% - var(--headerbar-height) - var(--phi-1) * 2);
-  left: var(--phi-1);
   position: absolute;
-  width: var(--sidebar-width);
-  z-index: 5;
+  left: 50%;
+  bottom: var(--phi-0-5);
+  transform: translateX(-50%);
+  z-index: 15;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+
+  height: auto;
+  width: auto;
+  max-width: 60%;
+  min-height: calc(var(--headerbar-height) + 8px);
+  min-width: var(--headerbar-height);
+  padding: 6px 10px;
+
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--windowbar-surface) 92%, transparent 8%),
+    var(--windowbar-surface-strong)
+  );
+  -webkit-backdrop-filter: var(--windowbar-blur);
+  backdrop-filter: var(--windowbar-blur);
+  box-shadow: var(--windowbar-shadow);
+  border: 1px solid var(--windowbar-border);
+  border-radius: 14px;
+
+  transition: box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.World .Windows::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 1px solid var(--windowbar-highlight);
+  border-bottom: 1px solid var(--windowbar-border);
 }
 
 .World #Viewport canvas {

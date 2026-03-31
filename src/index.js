@@ -14,6 +14,8 @@ import { Operator } from "./operators/Operator.js";
 
 import { UIHelper } from "./ui/UIHelper.js";
 
+import { getLayoutManagerFromContext } from "./ui/utils/layoutManagerAccess.js";
+
 export default AECO;
 
 export {
@@ -27,4 +29,5 @@ export {
   dataStore,
   AECO_TOOLS as tools,
   UIHelper,
+  getLayoutManagerFromContext,
 };

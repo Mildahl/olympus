@@ -8,15 +8,13 @@ import dataStore from "../../data/index.js";
 
 import AECO_TOOLS from "../../tool/index.js";
 
+import Paths from "../../utils/paths.js";
+
+import { focusDockedWorkspaceTab } from "../../../drawUI/utils/workspacePanelDock.js";
+
 class AttributeUI {
   constructor({ context, operators }) {
     this.parent = document.getElementById("Identity");
-
-    this.parent.style.cursor = "pointer";
-
-    this.parent.addEventListener("click", (e) => {
-      this.toggle(context, operators);
-    });
 
     this.isActive = false;
 
@@ -35,8 +33,10 @@ class AttributeUI {
     context.signals.enableEditingAttributes.add(
       async ({ GlobalId, Attributes, PropertiesData }) => {
         this.drawAttributePanel(context, operators, Attributes, PropertiesData);
-
-        this.showPanel(context);
+        const isPanelMinimized = this.AttributePanel && this.AttributePanel.isMinimized;
+        if (this.isActive || !isPanelMinimized) {
+          this.showPanel(context, operators);
+        }
       },
     );
   }
@@ -46,8 +46,10 @@ class AttributeUI {
       context,
       title: 'Entity Attributes',
       icon: 'info',
+      minimizedImageSrc: Paths.data("/resources/images/properties.svg"),
       workspaceTabId: 'bim.attribute',
       workspaceTabLabel: 'Attributes',
+      startMinimized: true,
     });
 
     panel.setIcon("info");
@@ -67,6 +69,7 @@ class AttributeUI {
     container.add(this._noAttributeDisplay());
 
     const positionPanel = () => {
+      if (!this.parent) return;
       const rect = this.parent.getBoundingClientRect();
 
       panel.setStyles({
@@ -853,19 +856,15 @@ class AttributeUI {
     const attributePanel = this.AttributePanel.dom;
 
     if (!attributePanel.parentNode) context.dom.appendChild(attributePanel);
-
-    const toggleButton = this.parent;
-
-    toggleButton.classList.add("Active");
   }
 
   showPanel(context, operators) {
-    const docked = this.AttributePanel._dockedWorkspace;
-    const lm = context.layoutManager;
-    if (docked && lm && typeof lm.selectTab === "function") {
-      lm.selectTab(docked.position, docked.tabId, { open: true });
+    if (this.AttributePanel && this.AttributePanel.isMinimized) {
+      this.AttributePanel.restore();
+    }
+
+    if (focusDockedWorkspaceTab(context, this.AttributePanel)) {
       this.isActive = true;
-      if (this.parent) this.parent.classList.add("Active");
       return;
     }
 
@@ -878,8 +877,6 @@ class AttributeUI {
     if (this.AttributePanel && this.AttributePanel.dom.parentNode) {
       this.AttributePanel.dom.parentNode.removeChild(this.AttributePanel.dom);
     }
-
-    this.parent.classList.remove("Active");
 
     this.isActive = false;
   }

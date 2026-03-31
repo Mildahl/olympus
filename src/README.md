@@ -144,6 +144,10 @@ The [context/world/utils/CoordinateSystemHelper.js](context/world/utils/Coordina
 | `getAxisDescription(constraint)` | Get human-readable axis description |
 | `transformMatrixToIFC(threeJsMatrix)` | Convert Three.js matrix to IFC format |
 
+### Projection cuts
+
+`ThreeHelpers.getProjectionCutMetadata` defines each projection mode by **constant world axis** (the coordinate fixed by the position slider), the cut **plane**, and preview camera **roll**. Selector `Z` is a horizontal plan (XY), `Y` and `X` are vertical sections (XZ and YZ). The viewport indicator uses `constantAxis` so it matches the same plane as `core/projection.js` intersection math.
+
 ## Data Flow Summary
 
 ```

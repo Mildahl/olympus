@@ -19,6 +19,23 @@ const viewportToolbar = [
 
 const ViewportComponents = [
   {
+    id: "ViewportSnapTools",
+    name: "Snap Tools",
+    icon: "target",
+    type: "IndependentModule",
+    priority: 1,
+    moduleId: "world.snap",
+    children: [],
+  },
+  {
+    id: "Information",
+    name: "Information",
+    icon: "info",
+    children: [],
+    type: "Operator",
+    priority: 1,
+  },
+  {
     id: "ViewportGizmo",
     name: "Viewport Gizmo",
     type: "Gizmo",
@@ -55,14 +72,6 @@ const configMenu = [
 ];
 
 const exampleContext = [
-  {
-    id: "Identity",
-    name: "Identity",
-    type: "ContextModules",
-    priority: 1,
-    moduleId: "bim.attribute",
-    children: [],
-  },
   {
     id: "BIMModeling",
     name: "Objects",
@@ -145,6 +154,14 @@ const addons = [
     priority: 3,
     moduleId: "world.animationPath",
   },
+  {
+    id: "ProjectionModule",
+    name: "Projection",
+    type: "Module",
+    icon: "layers",
+    priority: 4,
+    moduleId: "world.projection",
+  },
 ]
 
 const SideBar = [
@@ -214,42 +231,27 @@ export const WorldComponent = {
       priority: 4,
     },
     {
-      id: "Configurator",
-      name: "Configuration Menu",
-      type: "Modules",
-      priority: 1,
-      children: [],//configMenu
-    },
-    {
-      id: "Information",
-      name: "Information",
-      icon: "info",
-      children: [],
-      type: "Operator",
-      priority: 1,
-    },
-    {
       id: 'BottomWorkspace',
       name: 'Bottom Workspace',
-      type: 'Body',
+      type: 'Workspace',
       priority: 5,
     },
     {
       id: 'SideWorkspaceLeft',
       name: 'Side Workspace Left',
-      type: 'Body',
+      type: 'Workspace',
       priority: 6,
     },
     {
       id: 'SideWorkspaceRight',
       name: 'Side Workspace Right',
-      type: 'Body',
+      type: 'Workspace',
       priority: 7,
     },
     {
       id: "Viewport",
       name: "Viewport",
-      type: "Body",
+      type: "Workspace",
       children: [
         {
           id: "SideBar",
@@ -268,21 +270,13 @@ export const WorldComponent = {
         ...ViewportComponents
       ],
     },
-    {
-      id: "ViewportSnapTools",
-      name: "Snap Tools",
-      icon: "target",
-      type: "IndependentModule",
-      priority: 1,
-      moduleId: "world.snap",
-      children: [],
-    },
+
 
     {
       id: "HeaderBar",
       name: "Header Bar",
       children: HeaderBar,
-      type: "Modules",
+      type: "Workspace",
       priority: 4,
     },
   ],

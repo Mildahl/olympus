@@ -37,6 +37,8 @@ import { OrientationGizmo } from "./context/world/editor/ui/ViewerElements/gizmo
 
 import { updateContextMobileViewportHints } from "./modules/world/mobileViewportDetection.js";
 
+import { Sidebar, Properties } from "./context/world/editor/Sidebar.js";
+
 class AECO {
   constructor(container) {
 
@@ -88,13 +90,15 @@ class AECO {
 
     new UI(container, context, operators, activeIds);
 
-    this._uiDisabledModuleIds = this._collectUiDisabledModuleIds(context.config.ui?.WorldComponent);
+    const sidebar = new Sidebar({ context, operators});
 
-    context.ui.threeDSettingsPanel.ensureBuilt();
+    this._uiDisabledModuleIds = this._collectUiDisabledModuleIds(context.config.ui?.WorldComponent);
 
     this.modulesReady = this._loadModules();
 
     await this.modulesReady;
+
+    const layoutManager = context.ui.model.layoutManager
 
     this._syncMobileViewportHintsOnContext();
 
@@ -105,38 +109,30 @@ class AECO {
     this._addTemplates();
 
     this.ops.execute("world.new_notification", this.context, {message: "The World is yours", type: "info"});
-
+    
   }
-  
+
 
   async enablePython() {
-    const context = this.context;
-
-    const progressSignal =
-      context.signals && context.signals.bimGeometryLoadProgress;
-
-    if (progressSignal) {
-      progressSignal.dispatch({
-        phase: "start",
-        category: "python",
-        message: "Loading Python runtime...",
-        percent: 12,
-      });
-    }
+    this.context.signals.bimGeometryLoadProgress.dispatch({
+      phase: "start",
+      category: "python",
+      message: "Loading Python runtime...",
+      percent: 12,
+    });
+    
 
     try {
-      await this.ops.execute("code.enable_python", context);
+      await this.ops.execute("code.enable_python", this.context);
 
-      this.ops.execute("code.enable_viewer_api", context);
+      this.ops.execute("code.enable_viewer_api", this.context);
 
-      if (progressSignal) {
-        progressSignal.dispatch({
-          phase: "complete",
-          category: "python",
-          message: "Python ready",
-          percent: 100,
-        });
-      }
+      this.context.signals.bimGeometryLoadProgress.dispatch({
+        phase: "complete",
+        category: "python",
+        message: "Python ready",
+        percent: 100,
+      });
 
       this.ops.execute("world.new_notification", context, {
         message: "Python loaded",
@@ -151,15 +147,12 @@ class AECO {
         errorMessage = String(err);
       }
 
-      if (progressSignal) {
-        progressSignal.dispatch({
-          phase: "error",
-          category: "python",
-          message: errorMessage,
-          percent: 0,
-        });
-      }
-
+      this.context.signals.bimGeometryLoadProgress.dispatch({
+        phase: "error",
+        category: "python",
+        message: errorMessage,
+        percent: 0,
+      });
       throw err;
     }
   }
@@ -167,17 +160,12 @@ class AECO {
   async enableBIM() {
     const context = this.context;
 
-    const progressSignal =
-      context.signals && context.signals.bimGeometryLoadProgress;
-
-    if (progressSignal) {
-      progressSignal.dispatch({
-        phase: "start",
-        category: "bim_runtime",
-        message: "Loading BIM (IfcOpenShell)...",
-        percent: 12,
-      });
-    }
+    this.context.signals.bimGeometryLoadProgress.dispatch({
+      phase: "start",
+      category: "bim_runtime",
+      message: "Loading BIM (IfcOpenShell)...",
+      percent: 12,
+    });
 
     try {
       const basePath = context.config.app.Settings.ifcOpenShellBasePath;
@@ -187,14 +175,12 @@ class AECO {
         pythonToolsPath: context.config.app.Settings.pythonToolsPath,
       });
 
-      if (progressSignal) {
-        progressSignal.dispatch({
-          phase: "complete",
-          category: "bim_runtime",
-          message: "BIM runtime ready",
-          percent: 100,
-        });
-      }
+      this.context.signals.bimGeometryLoadProgress.dispatch({
+        phase: "complete",
+        category: "bim_runtime",
+        message: "BIM runtime ready",
+        percent: 100,
+      });
 
       this.ops.execute("world.new_notification", context, {
         message: "BIM loaded",
@@ -209,14 +195,12 @@ class AECO {
         errorMessage = String(err);
       }
 
-      if (progressSignal) {
-        progressSignal.dispatch({
-          phase: "error",
-          category: "bim_runtime",
-          message: errorMessage,
-          percent: 0,
-        });
-      }
+      this.context.signals.bimGeometryLoadProgress.dispatch({
+        phase: "error",
+        category: "bim_runtime",
+        message: errorMessage,
+        percent: 0,
+      });
 
       throw err;
     }
@@ -391,10 +375,12 @@ class AECO {
 
     this._loadAddons();
 
-    const layoutManager = this.context.layoutManager;
-    if (layoutManager && typeof layoutManager.reorderBottomWorkspaceTabsByModuleOrder === 'function') {
-      layoutManager.reorderBottomWorkspaceTabsByModuleOrder(this.context);
-    }
+    const layoutManager = this.context.ui.model.layoutManager;
+
+    layoutManager.reorderBottomWorkspaceTabsByModuleOrder(this.context);
+    
+    layoutManager.reorderLeftWorkspaceTabsByModuleOrder(this.context);
+    
   }
 
   _syncMobileViewportHintsOnContext() {
@@ -590,8 +576,6 @@ class AECO {
 
     if (sceneConfig.fog) {
       const fog = sceneConfig.fog;
-
-      console.log(fog)
 
       const fogType = fog.fogType || 'FogExp2';
 

@@ -22,65 +22,6 @@ class UI {
 
   }
 
-  getModel() {
-    return this.model;
-  }
-
-  _baseUI(dom, context, operators, activeIds) {
-    this.model = new UserInterfaceModel();
-
-    const root = this.model.drawBaseComponents(context, operators, activeIds, dom);
-
-    if (root.dom.parentNode !== dom) {
-      dom.appendChild(root.dom);
-    }
-
-    this.workspaces = this._createWorkspaceTabbedPanels();
-    
-    this.model.layoutManager.registerTabbedWorkspaces(this.workspaces);
-
-    context.ui = this;
-
-    if (context.config.ui.showWelcomeScreen) new WelcomeScreen({ context, operators, container: dom });
-
-    new Sidebar({ context, operators });
-
-    // new Properties({ context, operators });
-
-    return root;
-  }
-
-  _createWorkspaceTabbedPanels() {
-    const bottomEl = document.getElementById('BottomWorkspace');
-
-    const leftEl = document.getElementById('SideWorkspaceLeft');
-
-    const rightEl = document.getElementById('SideWorkspaceRight');
-
-    const mount = (el, tabbedPanel, panelClass) => {
-      if (!el) return;
-
-      el.innerHTML = '';
-
-      tabbedPanel.addClass(panelClass);
-
-      el.appendChild(tabbedPanel.dom);
-    };
-
-    const bottom = UIComponents.tabbedPanel();
-
-    const left = UIComponents.tabbedPanel();
-
-    const right = UIComponents.tabbedPanel();
-
-    mount(bottomEl, bottom, 'BottomWorkspaceTabbedPanel');
-
-    mount(leftEl, left, 'LeftWorkspaceTabbedPanel');
-
-    mount(rightEl, right, 'RightWorkspaceTabbedPanel');
-
-    return { bottom, left, right };
-  }
 
   async loadUIClasses(module, args) {
     if (! args.context || ! args.operators)  {
@@ -96,6 +37,25 @@ class UI {
     }
 
   }
+
+  _baseUI(dom, context, operators, activeIds) {
+
+    this.model = new UserInterfaceModel();
+
+    context.ui = this;
+
+    const root = this.model.drawBaseComponents(context, operators, activeIds, dom);
+
+    if (root.dom.parentNode !== dom) {
+      dom.appendChild(root.dom);
+    }
+
+    if (context.config.ui.showWelcomeScreen) new WelcomeScreen({ context, operators, container: dom });
+
+    return root;
+  }
+
+
 
   async _loadClass(classPath, className, args) {
     return import(/* webpackMode: "lazy" */ classPath).then((module) => {

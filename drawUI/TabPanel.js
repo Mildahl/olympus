@@ -2,9 +2,11 @@ import { DrawUI } from "./index.js";
 
 import { FloatingPanel } from "./FloatingPanel.js";
 
-import { buildWorkspaceDockHandlers } from "./utils/workspacePanelDock.js";
+import { buildWorkspaceDockHandlers, resolveFloatingMountElement } from "./utils/workspacePanelDock.js";
 
 import { createPanelHeaderChrome, createPanelFooterRow } from "./panelChrome.js";
+
+import { getLayoutManagerFromContext } from "../src/ui/utils/layoutManagerAccess.js";
 
 /**
  * @typedef {'left' | 'right' | 'bottom'} LayoutPosition
@@ -13,19 +15,20 @@ import { createPanelHeaderChrome, createPanelFooterRow } from "./panelChrome.js"
 
 /**
  * @typedef {Object} TabPanelOptions
- * @property {Object} context - Application context with layoutManager reference.
+ * @property {Object} context - Application context (`context.ui.model.layoutManager`).
  * @property {Object} [operators] - Integration with operators.
  * @property {LayoutPosition} [position='right'] - Layout position: 'left', 'right', or 'bottom'.
  * @property {string} tabId - Unique identifier for the tab.
  * @property {string} tabLabel - Display label shown in the tab header.
  * @property {string} [icon] - Material icon name for the header.
  * @property {string} [title] - Panel title displayed in the header.
- * @property {Object} [panelStyles={}] - Custom CSS styles for the panel content.
+ * @property {Object} [panelStyles={}] - Inline styles applied to the tab page root when the tab is added (`this.panel`, same element as tab id).
  * @property {boolean} [showHeader=true] - Whether to display the panel header.
  * @property {boolean} [autoShow=false] - Whether to show the tab automatically on creation.
  * @property {string} [moduleId] - If set with layoutManager, registers the tab and binds `bindToggle` using UI config.
  * @property {string} [toggleElementId] - Explicit toolbar/control DOM id (overrides moduleId resolution).
  * @property {boolean} [floatable=false] - Show undock on the workspace tab label (needs layoutManager).
+ * @property {string} [minimizedImageSrc] - Optional image source for minimized floating window pill.
  */
 
 /**
@@ -83,6 +86,7 @@ export class TabPanel {
       moduleId,
       toggleElementId,
       floatable = false,
+      minimizedImageSrc,
     } = options;
 
     if (!tabId) {
@@ -114,6 +118,9 @@ export class TabPanel {
     /** @type {string|undefined} Header title */
     this.title = title || tabLabel;
 
+    /** @type {string|null} Minimized floating pill image source */
+    this.minimizedImageSrc = minimizedImageSrc || null;
+
     /** @type {boolean} Whether panel is currently shown as a tab */
     this._isShown = false;
 
@@ -126,59 +133,42 @@ export class TabPanel {
     /** @type {Function|null} */
     this._floatHandlerCleanup = null;
 
+    /** @type {object|null} */
+    this._detachedFloatingPanel = null;
+
+    /** @type {{ left: string, top: string, width: string, height: string }|null} */
+    this._savedFloatGeometry = null;
+
     /** @type {boolean} */
     this._floatable = floatable;
 
-    // Create panel container with flex layout (similar to BasePanel structure)
+    /** @type {Object} */
+    this.panelStyles = panelStyles;
+
     this.panel = DrawUI.div();
     this.panel.addClass('TabPanel');
-    this.panel.setStyle('display', ['flex']);
-    this.panel.setStyle('flex-direction', ['column']);
-    this.panel.setStyle('height', ['100%']);
-    this.panel.setStyle('overflow', ['hidden']);
 
-    // Create header container (fixed, non-scrolling)
     this.header = DrawUI.div();
     this.header.addClass('TabPanelHeader');
-    this.header.setStyle('flex-shrink', ['0']);
 
     if (showHeader) {
       this._buildHeader();
       this.panel.add(this.header);
     }
 
-    // Create content container (scrollable)
     this.content = DrawUI.div();
     this.content.addClass('PanelContent');
-    this.content.setStyle('flex', ['1']);
-    this.content.setStyle('overflow-y', ['auto']);
-    this.content.setStyle('min-height', ['0']); // Important for flex overflow
     this.panel.add(this.content);
 
-    // Create footer container (fixed, non-scrolling)
     this.footer = DrawUI.row();
     this.footer.addClass('TabPanelFooter');
-    this.footer.setStyle('flex-shrink', ['0']);
     this.panel.add(this.footer);
 
-    // Apply custom styles
-    for (const [key, value] of Object.entries(panelStyles)) {
-      this.panel.setStyle(key, [value]);
-    }
-
-    // Subscribe to layout signals for lifecycle hooks
     this._subscribeToSignals();
 
-    if (moduleId || toggleElementId) {
-      this._attachModuleLayoutBinding(moduleId, toggleElementId);
-    }
-
-    if (
-      floatable &&
-      this.layoutManager &&
-      typeof this.layoutManager.registerTabFloatHandler === "function"
-    ) {
-      this._floatHandlerCleanup = this.layoutManager.registerTabFloatHandler(
+    const layoutManagerForFloat = this.layoutManager;
+    if (floatable && layoutManagerForFloat) {
+      this._floatHandlerCleanup = layoutManagerForFloat.registerTabFloatHandler(
         this.position,
         this.tabId,
         () => this.detachToFloatingWindow(),
@@ -191,42 +181,12 @@ export class TabPanel {
   }
 
   /**
-   * Register tab in layout (closed) and wire sidebar/toolbar toggle from moduleId or explicit id.
-   * @private
-   */
-  _attachModuleLayoutBinding(moduleId, toggleElementId) {
-    const lm = this.layoutManager;
-    if (!lm || typeof lm.ensureTab !== "function") return;
-
-    lm.ensureTab(this.position, this.tabId, this.tabLabel, this.panel, {
-      open: false,
-      replace: false,
-      floatable: this._floatable,
-    });
-    this._isShown = true;
-
-    if (this._unbindToggle) {
-      this._unbindToggle();
-      this._unbindToggle = null;
-    }
-
-    if (typeof lm.bindToggleForModule === "function") {
-      this._unbindToggle = lm.bindToggleForModule(
-        moduleId,
-        this.position,
-        this.tabId,
-        { toggleElementId },
-      );
-    }
-  }
-
-  /**
    * Get the LayoutManager instance from context.
    * @returns {Object|null} The LayoutManager or null if not available.
    * @private
    */
   get layoutManager() {
-    return this.context?.layoutManager || null;
+    return getLayoutManagerFromContext(this.context);
   }
 
   /**
@@ -248,12 +208,12 @@ export class TabPanel {
    * @private
    */
   _subscribeToSignals() {
-    const signals = this.context?.signals;
+    const ctx = this.context;
+    const signals = ctx && ctx.signals;
     if (!signals) return;
 
     const unsubs = [];
 
-    // Handle tab selection changes
     const onTabChanged = (payload) => {
       if (payload.position === this.position && payload.id === this.tabId) {
         this.onTabSelected();
@@ -262,7 +222,6 @@ export class TabPanel {
       }
     };
 
-    // Handle tab removal (in case removed externally)
     const onTabRemoved = (payload) => {
       if (payload.position === this.position && payload.id === this.tabId) {
         this._isShown = false;
@@ -274,7 +233,11 @@ export class TabPanel {
       const sig = signals[name];
       if (sig && typeof sig.add === 'function') {
         sig.add(handler);
-        unsubs.push(() => sig.remove?.(handler));
+        unsubs.push(() => {
+          if (sig && typeof sig.remove === 'function') {
+            sig.remove(handler);
+          }
+        });
       }
     };
 
@@ -310,11 +273,25 @@ export class TabPanel {
       return this;
     }
 
+    if (this._detachedFloatingPanel) {
+      return this;
+    }
+
+    if (lm.hasTab(this.position, this.tabId)) {
+      this._isShown = true;
+      if (select) {
+        lm.selectTab(this.position, this.tabId);
+      }
+      this.onShow();
+      return this;
+    }
+
     const open = select;
     lm.addTab(this.position, this.tabId, this.tabLabel, this.panel, {
       open,
       replace: true,
       floatable: this._floatable,
+      panelStyles: this.panelStyles,
     });
     
     if (select) {
@@ -365,10 +342,17 @@ export class TabPanel {
     const lm = this.layoutManager;
     if (!lm) return null;
 
+    if (this._floatHandlerCleanup) {
+      this._floatHandlerCleanup();
+      this._floatHandlerCleanup = null;
+    }
+
     const fp = new FloatingPanel({
       title: this.title,
       icon: this.icon,
+      minimizedImageSrc: this.minimizedImageSrc,
       closable: true,
+      sourceTabPanel: this,
       dock: buildWorkspaceDockHandlers({
         layoutManager: lm,
         tabId: this.tabId,
@@ -376,23 +360,72 @@ export class TabPanel {
       }),
     });
 
-    while (this.content.dom.firstChild) {
-      fp.content.appendChild(this.content.dom.firstChild);
-    }
-
     lm.removeTab(this.position, this.tabId, { closeIfEmpty: true });
     this._isShown = false;
     this.onHide();
 
-    const win =
-      typeof document !== "undefined"
-        ? document.getElementById("Windows") || document.body
-        : null;
-    if (win) {
-      fp.show(win);
-      fp.prepareAfterRemount();
+    fp.content.appendChild(this.panel.dom);
+
+    const mountEl = resolveFloatingMountElement(lm);
+    if (mountEl) {
+      fp.mountFloating(mountEl);
+      if (this._savedFloatGeometry) {
+        const { left, top, width, height } = this._savedFloatGeometry;
+        if (left) fp.dom.style.left = left;
+        if (top) fp.dom.style.top = top;
+        if (width) fp.dom.style.width = width;
+        if (height) fp.dom.style.height = height;
+      }
     }
+    this._detachedFloatingPanel = fp;
     return fp;
+  }
+
+  restoreContentFromFloatingPanel(floatingPanel, layoutManager, position, tabId, tabLabel) {
+    const lm = layoutManager;
+    if (!lm || !floatingPanel) {
+      return;
+    }
+    const floatContent = floatingPanel.content;
+    if (!floatContent) {
+      return;
+    }
+    this._detachedFloatingPanel = null;
+    this.position = position;
+    if (this._floatHandlerCleanup) {
+      this._floatHandlerCleanup();
+      this._floatHandlerCleanup = null;
+    }
+    if (this.panel.dom && floatContent.contains(this.panel.dom)) {
+      floatContent.removeChild(this.panel.dom);
+    } else {
+      while (floatContent.firstChild) {
+        this.content.dom.appendChild(floatContent.firstChild);
+      }
+    }
+    const label = tabLabel != null && tabLabel !== '' ? tabLabel : this.tabLabel;
+    lm.addTab(position, tabId, label, this.panel, {
+      open: true,
+      replace: true,
+      floatable: this._floatable,
+      panelStyles: this.panelStyles,
+    });
+    lm.selectTab(position, tabId, { open: true });
+    this._isShown = true;
+    this.onShow();
+    this._floatHandlerCleanup = lm.registerTabFloatHandler(
+      position,
+      tabId,
+      () => this.detachToFloatingWindow(),
+    );
+    floatingPanel._sourceTabPanel = null;
+    floatingPanel._cleanupMinimizedIcon();
+    const fpDom = floatingPanel.dom;
+    if (fpDom) {
+      const { left, top, width, height } = fpDom.style;
+      if (left || top) this._savedFloatGeometry = { left, top, width, height };
+      if (fpDom.parentNode) fpDom.parentNode.removeChild(fpDom);
+    }
   }
 
   toggle() {
@@ -480,6 +513,7 @@ export class TabPanel {
       open: false,
       replace: false,
       floatable: this._floatable,
+      panelStyles: this.panelStyles,
     });
     this._isShown = lm.hasTab(this.position, this.tabId);
 

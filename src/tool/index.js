@@ -25,6 +25,8 @@ import MeasureTool from './viewer/MeasureTool.js';
 
 import SectionBoxTool from './viewer/SectionBoxTool.js';
 
+import ProjectionTool from './viewer/ProjectionTool.js';
+
 import NavigationTool from './viewer/NavigationTool.js';
 
 import PythonSandbox from './pyodide/Python.js'
@@ -63,6 +65,7 @@ import SchedulerTool from './scheduler/SchedulerTool.js';
  * @property {Object|null} cursor - Cursor tool
  * @property {Object} measure - Measurement tool
  * @property {Object} sectionBox - Section box tool
+ * @property {Object} projection - Planar section / merged world geometry helper
  * @property {Object} slicer - 2D drawing/slicing tool
  */
 
@@ -113,6 +116,7 @@ class Tools  {
       cursor: null,
       measure: MeasureTool,
       sectionBox: SectionBoxTool,
+      projection: ProjectionTool,
     }
 
     /**

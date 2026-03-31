@@ -50,7 +50,6 @@ export class LoadingBar extends UIRow {
         const updateLoading = (progress, text) => {
             this.update(progress, text);
 
-            console.log(`Loading progress: ${progress * 100}%`);
         };
 
         context.signals.progressLoading.add(updateLoading);

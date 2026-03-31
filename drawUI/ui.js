@@ -1884,18 +1884,19 @@ class UITabbedPanel extends UIDiv {
 
     this.tabsDiv.add(tab);
 
-    const panel = new UIDiv();
-
+    const pageRootIsItems =
+      items instanceof UIElement && !(items instanceof UITabbedPanel);
+    const panel = pageRootIsItems ? items : new UIDiv();
     panel.setId(id);
-
-    styles? panel.setStyles(styles) : null;
-
-    panel.add(items);
-
+    if (styles && typeof styles === "object") {
+      panel.setStyles(styles);
+    }
+    if (!pageRootIsItems) {
+      panel.add(items);
+    }
     panel.setDisplay("none");
 
     this.panels.push(panel);
-
     this.panelsDiv.add(panel);
 
     if (!selectedExists) {
@@ -2006,7 +2007,7 @@ class UITab extends UIDiv {
 
         const pos = parent._layoutWorkspacePosition;
 
-        if (lm && typeof lm.invokeTabFloat === "function" && pos) {
+        if (lm && pos) {
           lm.invokeTabFloat(pos, this.dom.id);
         }
       });

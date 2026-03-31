@@ -58,6 +58,10 @@ export const coreModules = [
         active: true,
     },
     {
+        id: "world.projection",
+        active: true,
+    },
+    {
         id: "world.snap",
         active: true,
     },

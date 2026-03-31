@@ -1,14 +1,50 @@
 import { UIDiv } from "../ui.js";
 
+import { getLayoutManagerFromContext } from "../../src/ui/utils/layoutManagerAccess.js";
+
 /** @type {WeakMap<HTMLElement, { fp: import('../FloatingPanel.js').FloatingPanel, lm: object, position: string, tabId: string, scrollAreaEl: HTMLElement, cleanupFloat?: () => void }>} */
 const workspaceDockMeta = new WeakMap();
+
+/**
+ * @param {object} context
+ * @param {import('../FloatingPanel.js').FloatingPanel} floatingPanel
+ * @returns {boolean}
+ */
+export function focusDockedWorkspaceTab(context, floatingPanel) {
+  if (!floatingPanel || !floatingPanel._dockedWorkspace) {
+    return false;
+  }
+  const layoutManager = getLayoutManagerFromContext(context);
+  if (!layoutManager) {
+    return false;
+  }
+  const docked = floatingPanel._dockedWorkspace;
+  layoutManager.selectTab(docked.position, docked.tabId, { open: true });
+  return true;
+}
+
+/**
+ * Resolve the DOM element that floating panels should be appended to.
+ * @param {object} lm - LayoutManager instance
+ * @returns {HTMLElement|null}
+ */
+export function resolveFloatingMountElement(lm) {
+  if (lm && typeof lm.getFloatingPanelMountElement === 'function') {
+    const mountEl = lm.getFloatingPanelMountElement();
+    if (mountEl instanceof HTMLElement && mountEl.isConnected) return mountEl;
+  }
+  if (typeof document !== 'undefined') {
+    return document.getElementById('World') || document.body;
+  }
+  return null;
+}
 
 /**
  * @param {{ layoutManager: object, tabId: string, tabLabel?: string }} opts
  * @returns {{ left?: Function, bottom?: Function, right?: Function }|undefined}
  */
 export function buildWorkspaceDockHandlers({ layoutManager: lm, tabId, tabLabel }) {
-  if (!lm || typeof lm.addTab !== "function" || !tabId) return undefined;
+  if (!lm || !tabId) return undefined;
   return {
     left: (fp) => dockFloatingPanelToWorkspace(fp, lm, "left", tabId, tabLabel),
     bottom: (fp) => dockFloatingPanelToWorkspace(fp, lm, "bottom", tabId, tabLabel),
@@ -26,10 +62,16 @@ export function buildWorkspaceDockHandlers({ layoutManager: lm, tabId, tabLabel 
  * @param {string} [tabLabel]
  */
 export function dockFloatingPanelToWorkspace(fp, lm, position, tabId, tabLabel) {
-  const label =
-    tabLabel ||
-    (fp.title?.text?.dom?.textContent) ||
-    tabId;
+  const sourceTabPanel = fp._sourceTabPanel;
+  if (sourceTabPanel) return sourceTabPanel.restoreContentFromFloatingPanel(fp, lm, position, tabId, tabLabel);
+
+  let fromTitle = "";
+  const title = fp.title;
+  if (title && title.text && title.text.dom) {
+    const textNode = title.text.dom.textContent;
+    if (textNode) fromTitle = textNode;
+  }
+  const label = tabLabel || fromTitle || tabId;
   const contentEl = fp.content;
   if (!contentEl) return;
 
@@ -47,12 +89,9 @@ export function dockFloatingPanelToWorkspace(fp, lm, position, tabId, tabLabel) 
 
   fp._dockedWorkspace = { position, tabId, hostDom: host.dom };
 
-  let cleanupFloat;
-  if (typeof lm.registerTabFloatHandler === "function") {
-    cleanupFloat = lm.registerTabFloatHandler(position, tabId, () => {
-      undockWorkspacePanelFromDom(host.dom);
-    });
-  }
+  const cleanupFloat = lm.registerTabFloatHandler(position, tabId, () => {
+    undockWorkspacePanelFromDom(host.dom);
+  });
 
   workspaceDockMeta.set(host.dom, {
     fp,
@@ -63,13 +102,10 @@ export function dockFloatingPanelToWorkspace(fp, lm, position, tabId, tabLabel) 
     cleanupFloat,
   });
 
-  const addOpts = { open: true, replace: true, floatable: Boolean(cleanupFloat) };
+  const addOpts = { open: true, replace: true, floatable: true };
   lm.addTab(position, tabId, label, host, addOpts);
-  // UITabbedPanel.addTab does not switch selection if another tab is already selected;
-  // after dock we must show this tab, not a previously active one.
-  if (typeof lm.selectTab === "function") {
-    lm.selectTab(position, tabId, { open: true });
-  }
+  lm.selectTab(position, tabId, { open: true });
+  fp._cleanupMinimizedIcon();
   fp.dom.remove();
 }
 
@@ -84,24 +120,16 @@ export function undockWorkspacePanelFromDom(hostDom) {
   if (typeof cleanupFloat === "function") {
     cleanupFloat();
   }
-  if (typeof lm.removeTab === "function") {
-    lm.removeTab(position, tabId, { closeIfEmpty: true });
-  }
+  lm.removeTab(position, tabId, { closeIfEmpty: true });
   const target = fp.content;
   while (scrollAreaEl.firstChild) {
     target.appendChild(scrollAreaEl.firstChild);
   }
   workspaceDockMeta.delete(hostDom);
   fp._dockedWorkspace = null;
-  fp.isClosed = false;
-  const win =
-    typeof document !== "undefined"
-      ? document.getElementById("Windows") || document.body
-      : null;
-  if (win) {
-    win.appendChild(fp.dom);
-    fp.show(win);
-    fp.prepareAfterRemount();
+  const mountEl = resolveFloatingMountElement(lm);
+  if (mountEl) {
+    fp.mountFloating(mountEl);
   }
   return fp;
 }

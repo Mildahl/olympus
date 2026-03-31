@@ -4,6 +4,8 @@ import Paths from "../../utils/paths.js";
 
 import { formatSchedulingDate } from "../../utils/formatSchedulingDate.js";
 
+import { suspendAmdForUmdScript } from "../../utils/vendorUmdLoaderBypass.js";
+
 /**
  * SpreadsheetUIComponent - A comprehensive ag-Grid wrapper for displaying tabular data
  * 
@@ -130,18 +132,24 @@ class SpreadsheetUIComponent extends UIPanel {
                 document.head.appendChild(link);
             }
 
-            for (const jsLink of this.dependencies.jsLinks) {
-                const xhr = new XMLHttpRequest();
+            const resumeAmdForUmdScript = suspendAmdForUmdScript();
 
-                xhr.open('GET', jsLink, false); 
+            try {
+                for (const jsLink of this.dependencies.jsLinks) {
+                    const xhr = new XMLHttpRequest();
 
-                xhr.send();
+                    xhr.open('GET', jsLink, false);
 
-                if (xhr.status === 200) {
-                    eval(xhr.responseText);
-                } else {
-                    console.error('Failed to load script:', jsLink);
+                    xhr.send();
+
+                    if (xhr.status === 200) {
+                        eval(xhr.responseText);
+                    } else {
+                        console.error('Failed to load script:', jsLink);
+                    }
                 }
+            } finally {
+                resumeAmdForUmdScript();
             }
 
             this.vendorLoaded = true;
@@ -462,6 +470,12 @@ class SpreadsheetUIComponent extends UIPanel {
 
     initializeAgGrid() {
         if (typeof agGrid === 'undefined') this.loadDependencies();
+
+        if (typeof agGrid === 'undefined') {
+            this.showErrorMessage('Spreadsheet library failed to load.');
+
+            return;
+        }
 
         const gridDiv = this.dom;
 

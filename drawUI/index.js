@@ -41,6 +41,8 @@ import { FloatingPanel } from "./FloatingPanel.js";
 
 import { buildWorkspaceDockHandlers } from "./utils/workspacePanelDock.js";
 
+import { getLayoutManagerFromContext } from "../src/ui/utils/layoutManagerAccess.js";
+
 import { CollapsiblePanel } from "./CollapsiblePanel.js";
 
 import { CollapsibleSection } from "./CollapsibleSection.js";
@@ -425,8 +427,7 @@ class NavigableList {
  * @property {boolean} [startMinimized] - Start in minimized state
  * @property {boolean} [closable] - Allow closing
  * @property {boolean} [resizable] - Allow resizing
- * @property {object} [context] - App context (layoutManager)
- * @property {object} [layoutManager] - LayoutManager instance
+ * @property {object} [context] - App context (`context.ui.model.layoutManager` when dock is needed)
  * @property {string} [workspaceTabId] - Dock targets: add as this tab id in workspace
  * @property {string} [workspaceTabLabel] - Tab label when docking
  * @property {{ left?: function, bottom?: function, right?: function }} [dock] - Custom dock handlers
@@ -1150,21 +1151,27 @@ export class DrawUI {
   static floatingPanel(options = {}) {
     const {
       context,
-      layoutManager,
       workspaceTabId,
       workspaceTabLabel,
       dock,
       ...fpOptions
     } = options;
 
-    const lm = layoutManager ?? context?.layoutManager;
+    let layoutManager = null;
+    if (context) {
+      layoutManager = getLayoutManagerFromContext(context);
+    }
+
+    const resolvedTabLabel =
+      workspaceTabLabel != null ? workspaceTabLabel : fpOptions.title;
+
     const mergedDock =
       dock ||
-      (lm && workspaceTabId
+      (layoutManager && workspaceTabId
         ? buildWorkspaceDockHandlers({
-            layoutManager: lm,
+            layoutManager: layoutManager,
             tabId: workspaceTabId,
-            tabLabel: workspaceTabLabel ?? fpOptions.title,
+            tabLabel: resolvedTabLabel,
           })
         : undefined);
 
@@ -1212,14 +1219,14 @@ export class DrawUI {
    * in the left, right, or bottom layout panels.
    * 
    * @param {Object} options - Panel configuration
-   * @param {Object} options.context - Application context with layoutManager reference.
+   * @param {Object} options.context - Application context (`context.ui.model.layoutManager`).
    * @param {Object} [options.operators] - Integration with operators.
    * @param {'left'|'right'|'bottom'} [options.position='right'] - Layout position.
    * @param {string} options.tabId - Unique identifier for the tab.
    * @param {string} options.tabLabel - Display label shown in the tab header.
    * @param {string} [options.icon] - Material icon name for the header.
    * @param {string} [options.title] - Panel title displayed in the header.
-   * @param {Object} [options.panelStyles={}] - Custom CSS styles.
+   * @param {Object} [options.panelStyles={}] - Inline styles on the tab page root when the tab is registered.
    * @param {boolean} [options.showHeader=true] - Whether to display the panel header.
    * @param {boolean} [options.autoShow=false] - Auto-show tab on creation.
    * @param {string} [options.moduleId] - Registers tab (closed) and binds toolbar id from UI WorldComponent.

@@ -39,6 +39,8 @@ import { FloatingPanel } from "./../../../drawUI/FloatingPanel.js";
 
 import { buildWorkspaceDockHandlers } from "./../../../drawUI/utils/workspacePanelDock.js";
 
+import { getLayoutManagerFromContext } from "../utils/layoutManagerAccess.js";
+
 import { CollapsiblePanel } from "./../../../drawUI/CollapsiblePanel.js";
 
 import { CollapsibleSection } from "./../../../drawUI/CollapsibleSection.js";
@@ -325,12 +327,12 @@ class NavigableList {
  * @typedef {Object} FloatingPanelOptions
  * @property {string} [title] - Panel title
  * @property {string} [icon] - Material icon name
+ * @property {string} [minimizedImageSrc] - Optional image source for minimized window pill
  * @property {boolean} [startMinimized] - Start in minimized state
  * @property {boolean} [closable] - Allow closing
  * @property {boolean} [resizable] - Allow resizing
- * @property {object} [context] - App context (layoutManager resolved from context.layoutManager)
- * @property {object} [layoutManager] - LayoutManager instance (overrides context.layoutManager)
- * @property {string} [workspaceTabId] - When set with layoutManager, dock pins add this tab to a workspace
+ * @property {object} [context] - App context (`context.ui.model.layoutManager` when dock is needed)
+ * @property {string} [workspaceTabId] - When set with a resolved layout manager, dock pins add this tab to a workspace
  * @property {string} [workspaceTabLabel] - Tab label when docking (defaults to title or id)
  * @property {{ left?: function, bottom?: function, right?: function }} [dock] - Custom dock handlers (overrides workspace wiring)
  */
@@ -1022,21 +1024,27 @@ export class Components {
   static floatingPanel(options = {}) {
     const {
       context,
-      layoutManager,
       workspaceTabId,
       workspaceTabLabel,
       dock,
       ...fpOptions
     } = options;
 
-    const lm = layoutManager ?? context?.layoutManager;
+    let layoutManager = null;
+    if (context) {
+      layoutManager = getLayoutManagerFromContext(context);
+    }
+
+    const resolvedTabLabel =
+      workspaceTabLabel != null ? workspaceTabLabel : fpOptions.title;
+
     const mergedDock =
       dock ||
-      (lm && workspaceTabId
+      (layoutManager && workspaceTabId
         ? buildWorkspaceDockHandlers({
-            layoutManager: lm,
+            layoutManager: layoutManager,
             tabId: workspaceTabId,
-            tabLabel: workspaceTabLabel ?? fpOptions.title,
+            tabLabel: resolvedTabLabel,
           })
         : undefined);
 

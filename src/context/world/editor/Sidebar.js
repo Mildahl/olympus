@@ -12,17 +12,13 @@ import { TabPanel } from '../../../../drawUI/TabPanel.js';
 
 /**
  * 3D / scene + renderer settings as a BasePanel, toggled from the AppSettings sidebar node
- * (see `moduleId: "settings"` with `id: "AppSettings"` in UI config).
- * Application tabs (General, Navigation, etc.) are registered on `context.ui.sidebarSettingsTabbedPanel`
- * by the settings module.
- *
- * Call `ensureBuilt()` after `new UI(...)` and before module UI loads — see `AECO.createUI`.
  */
 class ThreeDSettingsPanel extends BasePanel {
   constructor({ context, operators }) {
     super({
       context,
       operators,
+      id: 'ThreeDSettingsPanel',
       parentId: 'AppSettings',
       panelStyles: {
         minWidth: '280px',
@@ -35,8 +31,6 @@ class ThreeDSettingsPanel extends BasePanel {
       testing: false,
     });
 
-    this._built = false;
-
     const title =
       context.strings.getKey('sidebar/3d-settings') || '3D Settings';
 
@@ -46,14 +40,11 @@ class ThreeDSettingsPanel extends BasePanel {
 
     makeDraggable(this.panel.dom, headerRow.dom);
 
-    context.ui.threeDSettingsPanel = this;
+    this.draw();
+
   }
 
-  /**
-   * @returns {boolean} true if the inner tab strip (incl. Three.js tab) is ready
-   */
-  ensureBuilt() {
-    if (this._built) return true;
+  draw() {
 
     const editor = this.context.editor;
 
@@ -78,16 +69,10 @@ class ThreeDSettingsPanel extends BasePanel {
     internalTabs.setStyle('overflow', ['hidden']);
 
     this.content.add(internalTabs);
+    
+    this.context.ui.model.registerChild(this.parentId, this.constructor.name, internalTabs);
 
-    this.context.ui.sidebarSettingsTabbedPanel = internalTabs;
-
-    this._built = true;
-
-    return true;
-  }
-
-  onShow() {
-    this.ensureBuilt();
+    return internalTabs;
   }
 }
 
@@ -113,6 +98,7 @@ class ThreeJSProperties extends TabPanel {
   }
 
   draw(context, operators ) {
+
     const properties = new SidebarProperties({ context, operators })
 
     this.content.add(properties);

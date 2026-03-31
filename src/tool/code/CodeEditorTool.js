@@ -120,7 +120,9 @@ class CodeEditorTool {
   }
 
   static disposeModel(guid) {
-    return CodeEditorTool.monacoEditor.disposeModel(guid);
+    const disposed = CodeEditorTool.monacoEditor.disposeModel(guid);
+    if (CodeEditorTool.activeScriptGuid === guid) CodeEditorTool.activeScriptGuid = null;
+    return disposed;
   }
 
   static storeMonacoEditor(globalId, editor) {

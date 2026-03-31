@@ -8,6 +8,7 @@ export const coreModuleManifest = [
   { id: "world.spatial", dependsOn: ["world", "world.layer"], bundle: "world" },
   { id: "world.viewpoints", dependsOn: ["world"], bundle: "world" },
   { id: "world.animationPath", dependsOn: ["world", "world.viewpoints"], bundle: "world" },
+  { id: "world.projection", dependsOn: ["world"], bundle: "world" },
   { id: "world.measure", dependsOn: ["world"], bundle: "world" },
   { id: "world.sectionbox", dependsOn: ["world"], bundle: "world" },
   { id: "world.snap", dependsOn: [], bundle: "world" },

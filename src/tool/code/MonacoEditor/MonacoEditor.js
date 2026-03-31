@@ -240,6 +240,14 @@ export class MonacoEditor {
 
   }
 
+  clearActiveEditor() {
+    if (this._editorInstance) {
+      this.saveCurrentScript();
+      this._editorInstance.setModel(null);
+    }
+    this._activeModelGuid = null;
+  }
+
   getActiveScriptGuid() {
     return this._activeModelGuid;
   }

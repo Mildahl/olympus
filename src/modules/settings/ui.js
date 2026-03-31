@@ -39,24 +39,6 @@ class SettingsUI {
     this.pickers = { day: {}, night: {} };
 
     this.draw();
-
-    this._settingsToggleCleanup = this._attachSettingsModuleToggle();
-  }
-
-  destroy() {
-    if (typeof this._settingsToggleCleanup === "function") {
-      this._settingsToggleCleanup();
-      this._settingsToggleCleanup = null;
-    }
-
-    const tp = this.context?.ui?.sidebarSettingsTabbedPanel;
-    if (tp && typeof tp.removeTab === "function") {
-      for (const { id } of INTERNAL_SETTINGS_TABS) {
-        try {
-          tp.removeTab(id);
-        } catch (_) {}
-      }
-    }
   }
 
   refreshSettings() {
@@ -77,97 +59,21 @@ class SettingsUI {
     return row;
   }
 
-  /** Replace panel body for an existing internal tab, or add the tab if missing. */
-  _replaceOrAddInternalTab(tabbedPanel, id, label, content) {
-    const panel = tabbedPanel.panels?.find((p) => p.dom?.id === id);
-    if (panel && typeof panel.clear === "function") {
-      panel.clear();
-      panel.add(content);
-      return;
-    }
-    tabbedPanel.addTab(id, label, content);
-  }
-
-  _attachSettingsModuleToggle() {
-    if (typeof document === "undefined") return null;
-
-    const el =
-      document.getElementById("AppSettings") ||
-      (() => {
-        const id = resolveModuleToggleId(this.context, "settings");
-        return id ? document.getElementById(id) : null;
-      })();
-
-    if (!el) return null;
-
-    const handler = (e) => {
-      const panel = this.context.ui?.threeDSettingsPanel;
-      if (!panel || typeof panel.toggle !== "function") return;
-
-      e.preventDefault();
-      e.stopPropagation();
-
-      const wasActive = panel.isActive;
-
-      panel.toggle(this.context);
-
-      if (panel.isActive && !wasActive) {
-        const tp = this.context.ui?.sidebarSettingsTabbedPanel;
-        if (tp && typeof tp.select === "function") {
-          tp.select("general");
-        }
-      }
-    };
-
-    el.addEventListener("click", handler, true);
-    return () => el.removeEventListener("click", handler, true);
-  }
-
   draw() {
-    const tabbedPanel = this.context?.ui?.sidebarSettingsTabbedPanel;
-    if (!tabbedPanel) {
-      return;
-    }
 
-    if (typeof tabbedPanel.removeTab === "function") {
-      try {
-        tabbedPanel.removeTab("presets");
-      } catch (_) {}
-    }
+    const settingsTabbedPanel = this.context.ui.model.getComponentByID("ThreeDSettingsPanel");
 
-    const prevSelected =
-      tabbedPanel.selected && typeof tabbedPanel.select === "function"
-        ? tabbedPanel.selected
-        : "";
+    const tabbedPanel = settingsTabbedPanel.UIElement;
 
-    this._replaceOrAddInternalTab(
-      tabbedPanel,
-      "general",
-      "General",
-      this.createGeneralTab(),
-    );
+    tabbedPanel.addTab("general", "General", this.createGeneralTab());
 
-    this._replaceOrAddInternalTab(
-      tabbedPanel,
-      "navigation",
-      "Navigation",
-      this.createNavigationTab(),
-    );
+    tabbedPanel.addTab("navigation", "Navigation", this.createNavigationTab());
 
-    this._replaceOrAddInternalTab(
-      tabbedPanel,
-      "theme",
-      "Theme",
-      this.createThemeTab(),
-    );
+    tabbedPanel.addTab("theme", "Theme", this.createThemeTab());
 
-    const validIds = new Set(["threejs", ...INTERNAL_SETTINGS_TABS.map((t) => t.id)]);
-    if (prevSelected && validIds.has(prevSelected)) {
-      tabbedPanel.select(prevSelected);
-    } else if (prevSelected === "presets" && typeof tabbedPanel.select === "function") {
-      tabbedPanel.select("general");
-    }
+    tabbedPanel.select("general");
   }
+
 
   createGeneralTab() {
     const { context, operators } = this;
@@ -191,26 +97,6 @@ class SettingsUI {
     });
 
     container.add(this.createRow("language", getString("settings/language"), langSelect));
-
-    const persistCheckbox = UIComponents.checkbox(context.config?.app?.Settings?.persistSettings === true);
-
-    persistCheckbox.dom.title = getString("settings/persistSettings/title");
-
-    persistCheckbox.dom.addEventListener("change", () => {
-      if (!context.config.app.Settings) context.config.app.Settings = {};
-
-      context.config.app.Settings.persistSettings = persistCheckbox.getValue();
-
-      if (context.config.app.Settings.persistSettings) {
-        context._saveConfig();
-      } else {
-        try {
-          localStorage.removeItem("aeco-config");
-        } catch (_) {}
-      }
-    });
-
-    container.add(this.createRow("save", getString("settings/persistSettings"), persistCheckbox));
 
     const welcomeCheckbox = UIComponents.checkbox();
 

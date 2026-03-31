@@ -26,13 +26,13 @@ class CreateWorld extends Operator {
 
   execute() {
     
-    const editor = this.context.editor;
+    const world = this.context.editor.sceneLayers.World;
 
-    const world = editor.sceneLayers.World;
     const worldDataCollection = WorldCore.initWorld(world, {
       layerTool: AECO_tools.world.layer,
       signals: this.context.signals
     });
+
     WorldCore.createWorldStructure(WorldStructure.full, {
       layerTool: AECO_tools.world.layer,
       sceneTool: AECO_tools.world.scene,
@@ -49,13 +49,10 @@ class FocusOnSelection extends Operator {
   static operatorLabel = "Focus on Selection";
 
   execute() {
-    const editor = this.context.editor;
 
-    const selectedObject = editor.selector.active_object;
+    const selectedObject = this.context.editor.selector.active_object;
 
-    if (selectedObject) {
-      editor.signals.objectFocused.dispatch(selectedObject);
-    }
+    if (selectedObject) this.context.editor.signals.objectFocused.dispatch(selectedObject);
 
     return { status: "FINISHED" };
   }

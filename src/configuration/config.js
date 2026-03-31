@@ -15,9 +15,7 @@ const ApplicationConfig = {
   Shortcuts: Shortcuts,
   Settings: {
     save: true,
-    /** When true, user opted in via Welcome panel to persist settings to localStorage. Default false = config presets are source of truth. */
-    persistSettings: false,
-    devMode: false, 
+    devMode: false,
     amountTestCubes: 3,
     
     scriptBaseUrl: null,
@@ -61,8 +59,20 @@ const ApplicationConfig = {
   },
 };
 
+const defaultUILayout = {
+  leftWorkspaceTabGroupsByModule: [
+    { moduleId: 'bim.project', tabIds: ['bim-project-ifc-models'] },
+    { moduleId: 'bim.sequence', tabIds: ['sequence-scheduling', 'sequence-schedule-tasks'] },
+  ],
+  bottomWorkspaceTabGroupsByModule: [],
+  workspaceTabIdsByModule: {
+    'code.scripting': 'code-scripts',
+  },
+};
+
 const UIConfig = {
-  showWelcomeScreen: true,
+  showWelcomeScreen: false,
+  layout: defaultUILayout,
   theme: {
     default: "night",
     colors: {

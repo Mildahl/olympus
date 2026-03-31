@@ -29,6 +29,10 @@ class Nodes extends FloatingPanel {
 
         this.onNodeClick = nodeData.onNodeClick || null;
 
+        this.readOnly = nodeData.readOnly === true;
+
+        this.allowConnections = nodeData.allowConnections !== false && this.readOnly === false;
+
         if (this.embedded) {
             return this._renderEmbeddedNodeView(nodeData);
         }
@@ -847,21 +851,23 @@ class Nodes extends FloatingPanel {
 
         const isExpanded = this.hierarchyToggleUtil.isExpanded(node.id);
 
-        const handles = UIComponents.div().addClass('ws-node-handles');
+        if (this.allowConnections) {
+            const handles = UIComponents.div().addClass('ws-node-handles');
 
-        const handleInput = UIComponents.div().addClass('ws-node-handle').addClass('input');
+            const handleInput = UIComponents.div().addClass('ws-node-handle').addClass('input');
 
-        handleInput.dom.setAttribute('data-handle', 'input');
+            handleInput.dom.setAttribute('data-handle', 'input');
 
-        handles.add(handleInput);
+            handles.add(handleInput);
 
-        const handleOutput = UIComponents.div().addClass('ws-node-handle').addClass('output');
+            const handleOutput = UIComponents.div().addClass('ws-node-handle').addClass('output');
 
-        handleOutput.dom.setAttribute('data-handle', 'output');
+            handleOutput.dom.setAttribute('data-handle', 'output');
 
-        handles.add(handleOutput);
+            handles.add(handleOutput);
 
-        nodeElement.add(handles);
+            nodeElement.add(handles);
+        }
 
         const header = UIComponents.div().addClass('ws-node-header');
 
@@ -1770,7 +1776,7 @@ class Nodes extends FloatingPanel {
 
             const node = e.target.closest('.ws-node');
 
-            if (handle && !e.target.closest('button')) {
+            if (this.allowConnections && handle && !e.target.closest('button')) {
                 draggedHandle = {
                     element: handle,
                     nodeId: parseInt(node.getAttribute('data-node-id')),

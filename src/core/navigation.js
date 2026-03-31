@@ -160,5 +160,5 @@ export {
     setNavigationSpeed,
     resetCamera,
     fitCameraToSelection,
-    fitCameraToAll
+    fitCameraToAll,
 };

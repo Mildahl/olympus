@@ -6,6 +6,16 @@ import { WorldComponent as DefaultWorldComponent } from "./UserInterface.config.
 
 import { LayoutManager } from "../utils/LayoutManager.js";
 
+import { Sidebar, Properties } from "../../context/world/editor/Sidebar.js";
+
+const WORKSPACE_REGION_IDS = [
+  "Viewport",
+  "HeaderBar",
+  "BottomWorkspace",
+  "SideWorkspaceLeft",
+  "SideWorkspaceRight",
+];
+
 class UserInterfaceModel {
   constructor() {
     this.root = null;
@@ -13,6 +23,60 @@ class UserInterfaceModel {
     this.isListening = false;
 
     this.layoutManager = null;
+
+    this._buildWorkspaceModel();
+  }
+
+  _buildWorkspaceModel() {
+    this.workspace = {};
+
+    for (let index = 0; index < WORKSPACE_REGION_IDS.length; index++) {
+      const regionId = WORKSPACE_REGION_IDS[index];
+
+      const panel = regionId === "Viewport" ? null : UIComponents.tabbedPanel();
+
+      this.workspace[regionId] = {
+        UIElement: null,
+        panel: panel,
+      };
+    }
+  }
+
+
+  getComponentByID(targetId) {
+    const searchTree = (node) => {
+      if (!node || typeof node !== "object") {
+        return null;
+      }
+      for (const key in node) {
+        if (key === "UIElement" || key === "panel") {
+          continue;
+        }
+
+        if (key === targetId) {
+          return node[key];
+        }
+
+        const found = searchTree(node[key]);
+        if (found) {
+          return found;
+        }
+      }
+      return null;
+    };
+
+    return searchTree(this.workspace);
+  }
+
+  registerChild(parentId, childId, child) {
+    const parent = this.getComponentByID(parentId);
+    if (!parent) {
+      return;
+    }
+    parent[childId] = {
+      UIElement: child,
+      panel: null,
+    };
   }
 
   drawBaseComponents(context, ops, activeIds, container = null) {
@@ -26,7 +90,7 @@ class UserInterfaceModel {
 
     const worldConfig = context.config.ui?.WorldComponent || DefaultWorldComponent;
 
-    this.createWorldStructure(context, worldConfig, 0, [1], null, null, activeIds);
+    this.createWorldStructure(context, worldConfig, 0, [1], null, null, activeIds, null);
 
     const layoutConfig = context.config?.ui?.layout || {};
 
@@ -34,12 +98,40 @@ class UserInterfaceModel {
 
     this.layoutManager.setContext(context).init('World');
 
-    context.layoutManager = this.layoutManager;
+    this.layoutManager.attachWorkspaceTabPanels({
+      left: this.workspace.SideWorkspaceLeft.panel,
+      right: this.workspace.SideWorkspaceRight.panel,
+      bottom: this.workspace.BottomWorkspace.panel,
+    });
+
+    const findNodeInWorkspace = (workspace, id) => {
+      if (workspace.id === id) {
+        return workspace;
+      }
+      return findNodeInWorkspace(workspace.children, id);
+    };
+
+
 
     return this.root;
   }
 
-  createWorldStructure(context, component, depth = 0, hierarchyIds = [], parent, parentId = null, activeIds = []) {
+  _ensureWorkspaceNode(workspaceHost, componentId) {
+    if (!workspaceHost) {
+      return null;
+    }
+
+    if (!workspaceHost[componentId]) {
+      workspaceHost[componentId] = {
+        UIElement: null,
+        panel: null,
+      };
+    }
+
+    return workspaceHost[componentId];
+  }
+
+  createWorldStructure(context, component, depth = 0, hierarchyIds = [], parent, parentId = null, activeIds = [], workspaceHost = null) {
 
     if (component.moduleId && !activeIds.includes(component.moduleId)) {
       return;
@@ -94,6 +186,30 @@ class UserInterfaceModel {
     div.dom.dataset.type = component.type;
 
     div.dom.dataset.priority = component.priority;
+
+    let currentWorkspaceNode = null;
+
+    if (component.type === "Workspace") {
+      const region = this.workspace[component.id];
+
+      if (region) {
+        region.UIElement = div;
+
+        if (region.panel) {
+          div.add(region.panel);
+        }
+
+        currentWorkspaceNode = region;
+      }
+    } else if (workspaceHost) {
+      const slot = this._ensureWorkspaceNode(workspaceHost, component.id);
+
+      if (slot) {
+        slot.UIElement = div;
+
+        currentWorkspaceNode = slot;
+      }
+    }
 
     if (!existing) {
       if (component.type === 'ContextModules') {
@@ -169,11 +285,23 @@ class UserInterfaceModel {
     }
 
     if (component.children && component.children.length > 0) {
+      const childWorkspaceHost = currentWorkspaceNode;
+
       for (let i = 0; i < component.children.length; i++) {
-        this.createWorldStructure(context, component.children[i], depth + 1, [...hierarchyIds, i + 1], parentDiv, component.id, activeIds);
+        this.createWorldStructure(
+          context,
+          component.children[i],
+          depth + 1,
+          [...hierarchyIds, i + 1],
+          parentDiv,
+          component.id,
+          activeIds,
+          childWorkspaceHost,
+        );
       }
     }
   }
+
 }
 
 export { UserInterfaceModel };

@@ -1,5 +1,9 @@
 import { Components as UIComponents } from "../../ui/Components/Components.js";
 
+import { TabPanel } from "../../../drawUI/TabPanel.js";
+
+import { focusDockedWorkspaceTab } from "../../../drawUI/utils/workspacePanelDock.js";
+
 import AECO_tools from "../../tool/index.js";
 
 import { HierarchyToggleUtil } from "../../utils/HierarchyToggleUtil.js";
@@ -10,7 +14,28 @@ import { getTasksForNodeView } from "../../ui/Components/Nodes.js";
 
 import { formatSchedulingDate } from "../../utils/formatSchedulingDate.js";
 
-import { TabPanel } from '../../../drawUI/TabPanel.js';
+import Paths from "../../utils/paths.js";
+
+const TASK_VIEW_TYPES = {
+  list: "List View",
+  gantt: "Gantt Chart View",
+  kanban: "Kanban Board",
+  hierarchy: "Hierarchical View",
+  spreadsheet: "Spreadsheet View",
+  node: "Node View",
+  default: "gantt",
+};
+
+const TASK_VIEW_TAB_LABELS = {
+  hierarchy: "Hierarchy",
+  list: "List",
+  gantt: "Gantt",
+  kanban: "Kanban",
+  spreadsheet: "Sheet",
+  node: "Node",
+};
+
+const TASK_VIEW_ORDER = ["gantt", "spreadsheet", "node", "hierarchy", "list", "kanban"];
 
 async function loadData(context) {
   if (!SequenceData.is_loaded)
@@ -23,21 +48,29 @@ async function refreshSchedules(context) {
     await loadData(context);
 }
 
-class TaskUI extends TabPanel {
+class TaskUI {
   constructor({ context, operators }) {
-    super({
+    this.context = context;
+    this.operators = operators;
+    this.isActive = false;
+    this.panel = UIComponents.floatingPanel({
       context,
-      operators,
-      position: 'right',
-      moduleId: 'bim.sequence',
-      tabId: 'sequence-task-details',
-      tabLabel: 'Task data',
-      icon: 'info',
-      title: 'Task data',
-      showHeader: false,
-      floatable: true,
-      autoShow: false,
+      title: "Task data",
+      icon: "info",
+      minimizedImageSrc: Paths.data("/resources/images/task.svg"),
+      
+      workspaceTabId: "sequence-task-details",
+      workspaceTabLabel: "Task data",
+      startMinimized: true,
     });
+    this.panel
+      .setStyle("width", ["min(48vw, 760px)"])
+      .setStyle("height", ["min(58vh, 520px)"])
+      .setStyle("min-width", ["320px"])
+      .setStyle("max-width", ["70vw"]);
+    this.content = UIComponents.column();
+    this.content.setStyle("height", ["100%"]);
+    this.panel.setContent(this.content);
 
 
     this.taskDetailsBody = UIComponents.row()
@@ -50,6 +83,8 @@ class TaskUI extends TabPanel {
       });
 
     this.content.add(this.taskDetailsBody);
+    this.appendDom(context);
+    this.isActive = true;
 
     this.showEmptyTaskDetails();
 
@@ -60,6 +95,36 @@ class TaskUI extends TabPanel {
         this.refreshTaskDetails({ outputs, inputs, resources });
       });
     }
+  }
+
+  appendDom(context) {
+    const panelDom = this.panel.dom;
+    if (!panelDom.parentNode) {
+      context.dom.appendChild(panelDom);
+    }
+  }
+
+  show() {
+    if (this.panel && this.panel.isMinimized) {
+      this.panel.restore();
+    }
+
+    if (focusDockedWorkspaceTab(this.context, this.panel)) {
+      this.isActive = true;
+      return this;
+    }
+
+    this.appendDom(this.context);
+    this.isActive = true;
+    return this;
+  }
+
+  hide() {
+    if (this.panel && this.panel.dom.parentNode) {
+      this.panel.dom.parentNode.removeChild(this.panel.dom);
+    }
+    this.isActive = false;
+    return this;
   }
 
 
@@ -210,140 +275,37 @@ class TaskUI extends TabPanel {
   }
 }
 
-class SchedulingUI {
+class SchedulingUI extends TabPanel {
   constructor({ context, operators }) {
-    this.context = context;
-    this.operators = operators;
+    super({
+      context,
+      operators,
+      position: "bottom",
+      tabId: "sequence-scheduling",
+      tabLabel: "Construction",
+      icon: "schedule",
+      title: "Work schedules",
+      showHeader: false,
+      floatable: true,
+      moduleId: "bim.sequence",
+      autoShow: true,
+    });
 
-    this.position = "bottom";
-    this.tabId = "sequence-scheduling";
-    this.tabLabel = "Scheduling";
-
-    this.panel = UIComponents.div();
     this.panel.addClass("Panel");
-    this.panel.setStyle("display", ["flex"]);
-    this.panel.setStyle("flex-direction", ["column"]);
-    this.panel.setStyle("height", ["100%"]);
-    this.panel.setStyle("width", ["100%"]);
-    this.panel.setStyle("overflow", ["hidden"]);
-
-    // Scrollable main content area
-    this.content = UIComponents.div();
-    this.content.addClass("PanelContent");
-    this.content.setStyle("flex", ["1"]);
-    this.content.setStyle("overflow-y", ["auto"]);
-    this.content.setStyle("min-height", ["0"]);
-    this.panel.add(this.content);
-
-    // Fixed footer area
-    this.footer = UIComponents.row();
-    this.footer.addClass("PanelFooter");
-    this.footer.setStyle("flex-shrink", ["0"]);
-    this.panel.add(this.footer);
-
-    this._isShown = false;
-
-    this.viewTypes = {
-      list: "List View",
-      gantt: "Gantt Chart View",
-      kanban: "Kanban Board",
-      hierarchy: "Hierarchical View",
-      spreadsheet: "Spreadsheet View",
-      node: "Node View",
-      default: "hierarchy",
-    };
-
-    /** Tab strip labels (short) for the task-view TabbedPanel (bottom workspace). */
-    this.taskViewTabLabels = {
-      hierarchy: "Hierarchy",
-      list: "List",
-      gantt: "Gantt",
-      kanban: "Kanban",
-      spreadsheet: "Sheet",
-      node: "Node",
-    };
-
-    this.taskViewOrder = ["hierarchy", "list", "gantt", "kanban", "spreadsheet", "node"];
-
-    this.taskFieldConfig = [
-      {
-        field: "pName",
-        label: "Name",
-        type: "text",
-        editable: false,
-        display: true,
-      },
-      {
-        field: "pStart",
-        label: "Start Date",
-        type: "date",
-        editable: true,
-        includeTime: true,
-        display: true,
-      },
-      {
-        field: "pEnd",
-        label: "End Date",
-        type: "date",
-        editable: true,
-        includeTime: true,
-        display: true,
-      },
-      {
-        field: "status",
-        label: "Status",
-        type: "select",
-        options: () => ["NOTSTARTED", "STARTED", "FINISHED", "ONHOLD"],
-        editable: true,
-        display: true,
-      },
-      {
-        field: "pComp",
-        label: "Progress (%)",
-        type: "number",
-        editable: true,
-        display: false,
-      },
-      {
-        field: "ifcduration",
-        label: "Duration",
-        type: "text",
-        editable: false,
-        display: false,
-      },
-      {
-        field: "pID",
-        label: "ID",
-        type: "text",
-        editable: false,
-        display: false,
-      },
-      {
-        field: "pRes",
-        label: "Resources",
-        type: "text",
-        editable: true,
-        display: false,
-      },
-      {
-        field: "pCost",
-        label: "Cost",
-        type: "number",
-        editable: true,
-        display: false,
-      },
-    ];
 
     this.hierarchyToggleUtil = new HierarchyToggleUtil();
 
-    /** Bottom workspace tab for editing tasks (list, Gantt, hierarchy, etc.). */
-    this.taskPanelTabId = "sequence-schedule-tasks";
-    this.taskPanelTabLabel = "Schedule tasks";
-    this.taskPanelRoot = null;
-    this.taskPanelContentHost = null;
+    this.scheduleTasksPanelRoot = null;
     this.taskViewWrapper = null;
     this.taskViewsTabbedPanel = null;
     this.taskViewHosts = new Map();
+    this.schedulingRoot = null;
+    this.schedulesSidebar = null;
+    this.scheduleCountLabel = null;
+    this.scheduleEditOperator = null;
+    this.scheduleDeleteOperator = null;
+    this.schedulesSidebarVisible = true;
+    this.schedulesSidebarToggleButton = null;
 
     this.spreadsheetComponent = null;
 
@@ -353,73 +315,158 @@ class SchedulingUI {
 
     this.taskBatchSelectionMode = false;
 
-    this._registerSchedulingWorkspaceTab(context.layoutManager);
-
+    this._initScheduleTasksPanel();
     this.draw(context, operators);
   }
 
-  _registerSchedulingWorkspaceTab(layoutManager) {
-    if (!layoutManager) {
+  _initScheduleTasksPanel() {
+    if (this.taskViewsTabbedPanel) {
       return;
     }
 
-    if (this.position !== "left" && layoutManager.hasTab("left", this.tabId)) {
-      layoutManager.removeTab("left", this.tabId);
+    this.scheduleTasksPanelRoot = UIComponents.div();
+    this.scheduleTasksPanelRoot.addClass("Panel");
+    this.scheduleTasksPanelRoot.setStyle("display", ["flex"]);
+    this.scheduleTasksPanelRoot.setStyle("flex-direction", ["column"]);
+    this.scheduleTasksPanelRoot.setStyle("height", ["100%"]);
+    this.scheduleTasksPanelRoot.setStyle("width", ["100%"]);
+    this.scheduleTasksPanelRoot.setStyle("overflow", ["hidden"]);
+    this.scheduleTasksPanelRoot.setStyle("min-height", ["0"]);
+
+    this.taskViewWrapper = UIComponents.column()
+      .addClass("fill-height")
+      .addClass("task-view-wrapper")
+      .setStyle("flex", ["1"])
+      .setStyle("min-height", ["0"])
+      .setStyle("gap", ["var(--phi-0-5)"]);
+
+    const taskViewSelectorRow = UIComponents.row()
+      .gap("var(--phi-0-5)")
+      .addClass("fill-width")
+      .addClass("space-between")
+      .padding("var(--phi-0-5)")
+
+    taskViewSelectorRow.add(this.drawSchedulesSidebarToggle());
+    taskViewSelectorRow.add(this.drawTaskViewScheduleActions());
+
+
+
+    // TODO: Add selection toggle back in WHEN FEATURES ARE READY
+    // taskViewSelectorRow.add(this.drawSelectionToggle());
+
+    this.taskViewContentStack = UIComponents.column()
+      .addClass("fill-width")
+      .setStyle("flex", ["1"])
+      .setStyle("min-height", ["0"])
+      .setStyle("overflow", ["hidden"]);
+
+    this.taskViewsTabbedPanel = UIComponents.tabbedPanel();
+    this.taskViewsTabbedPanel.addClass("inner-tabbed-panel");
+    this.taskViewsTabbedPanel.addClass("sequence-task-views-panel");
+    this.taskViewsTabbedPanel.setStyle("flex", ["1"]);
+    this.taskViewsTabbedPanel.setStyle("min-height", ["0"]);
+    this.taskViewsTabbedPanel.setStyle("overflow", ["hidden"]);
+    this.taskViewsTabbedPanel.setStyle("width", ["100%"]);
+    this.taskViewsTabbedPanel.setStyle("max-width", ["100%"]);
+
+    this.taskViewHosts.clear();
+
+    for (const id of TASK_VIEW_ORDER) {
+      const host = UIComponents.div();
+      host.addClass("sequence-task-view-host");
+      host.setStyle("display", ["flex"]);
+      host.setStyle("flex-direction", ["column"]);
+      host.setStyle("height", ["100%"]);
+      host.setStyle("min-height", ["0"]);
+      host.setStyle("overflow", ["hidden"]);
+
+      this.taskViewHosts.set(id, host);
+
+      const tabLabel = TASK_VIEW_TAB_LABELS[id] || id;
+
+      this.taskViewsTabbedPanel.addTab(id, tabLabel, host);
     }
 
-    layoutManager.ensureTab(this.position, this.tabId, this.tabLabel, this.panel, {
-      open: false,
-      replace: false,
-    });
+    const nodeTaskHost = this.taskViewHosts.get("node");
 
-    this._bindCleanup = layoutManager.bindToggleForModule(
-      "bim.sequence",
-      this.position,
-      this.tabId,
-    );
-
-    this._isShown = true;
-  }
-
-  /**
-   * Registers the task editor (views + task details) as a tab in the bottom workspace.
-   * Created when the user opens a work schedule for editing.
-   */
-  addTaskPanelTab() {
-    const lm = this.context.layoutManager;
-    const workspace = this.context.ui.workspaces.bottom;
-
-    if (!workspace || !this.taskPanelRoot) return;
-
-    if (lm) {
-      lm.ensureTab("bottom", this.taskPanelTabId, this.taskPanelTabLabel, this.taskPanelRoot, {
-        open: false,
-        replace: false,
-      });
-      if (typeof lm.reorderBottomWorkspaceTabsByModuleOrder === "function") {
-        lm.reorderBottomWorkspaceTabsByModuleOrder(this.context);
+    if (nodeTaskHost && typeof ResizeObserver !== "undefined") {
+      if (this._scheduleNodeViewResizeObserver) {
+        this._scheduleNodeViewResizeObserver.disconnect();
       }
-    } else if (!Array.isArray(workspace.tabs) || !workspace.tabs.some((tab) => tab.dom && tab.dom.id === this.taskPanelTabId)) {
-      workspace.addTab(this.taskPanelTabId, this.taskPanelTabLabel, this.taskPanelRoot);
+
+      const self = this;
+
+      this._scheduleNodeViewResizeObserver = new ResizeObserver(function () {
+        self._syncScheduleNodeViewCanvasHeight(nodeTaskHost);
+      });
+
+      this._scheduleNodeViewResizeObserver.observe(nodeTaskHost.dom);
     }
+
+    this.taskViewsTabbedPanel.select(TASK_VIEW_TYPES.default);
+
+    const tp = this.taskViewsTabbedPanel;
+    const self = this;
+    const origSelect = tp.select.bind(tp);
+    tp.select = function (id) {
+      const ret = origSelect(id);
+      self._refreshVisibleTaskViewLayout(id);
+      return ret;
+    };
+
+    this.taskViewWrapper.add(taskViewSelectorRow);
+    this.taskViewContentStack.add(this.taskViewsTabbedPanel);
+    this.taskViewWrapper.add(this.taskViewContentStack);
+
+    this.scheduleTasksPanelRoot.add(this.taskViewWrapper);
+    this.syncScheduleActionOperatorsState();
   }
 
   draw(context, operators) {
-    this.panelMessage = UIComponents.disclaimer(
-      "No IFC models available. Create a new model first."
-    );
-
     this.content.addClass("Column");
+    this.content.setStyle("height", ["100%"]);
+    this.content.setStyle("min-height", ["0"]);
 
-    this.content.setStyles({ gap: "var(--phi-1)" });
+    this.schedulingRoot = this._createSchedulingLayout(context, operators);
+    this.content.add(this.schedulingRoot);
 
-    this.content.add(this._createSchedulesSection());
-
-    this.footer.add(this._scheduleActions(context, operators));
-
-    this.footer.setStyles({ marginTop: "var(--phi-1)", padding:"var(--phi-1)" });
+    this.footer.clear();
+    this.footer.setStyle("display", ["none"]);
 
     this.listen(context, operators);
+  }
+
+  _createSchedulingLayout(context, operators) {
+    const root = UIComponents.row().addClass("fill-width").addClass("fill-height");
+    this.schedulesSidebar = UIComponents.column()
+      .setStyle("border-right", ["1px solid var(--border)"])
+    const sidebarHeader = UIComponents.row()
+      .addClass("fill-width")
+      .addClass("justify-between")
+      .setStyle("padding", ["var(--phi-0-5) var(--phi-0-75)"]);
+
+    const sidebarTitle = UIComponents.row().gap("var(--phi-0-5)").addClass("centered-vertical");
+    sidebarTitle.add(UIComponents.icon("schedule"));
+    this.scheduleCountLabel = UIComponents.text("Work Schedules: 0");
+    sidebarTitle.add(this.scheduleCountLabel);
+    sidebarHeader.add(sidebarTitle);
+    this.schedulesSidebar.add(sidebarHeader);
+
+    this.schedulesGrid = UIComponents.column();
+    this.schedulesGrid.addClass("ws-schedules-list");
+    this.schedulesSidebar.add(this.schedulesGrid);
+    this.schedulesSidebar.add(this._scheduleActions(context, operators));
+
+    this.scheduleTasksPanelRoot.setStyle("flex", ["1"]);
+    this.scheduleTasksPanelRoot.setStyle("min-width", ["0"]);
+
+    root.add(this.schedulesSidebar);
+    root.add(this.scheduleTasksPanelRoot);
+
+    this.schedulingRoot = root;
+    this._applySchedulesSidebarVisibility();
+
+    return root;
   }
 
   /**
@@ -429,7 +476,11 @@ class SchedulingUI {
   _refreshVisibleTaskViewLayout(activeTabId) {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        if (activeTabId === "spreadsheet" && this.spreadsheetComponent?.notifyLayout) {
+        if (
+          activeTabId === "spreadsheet" &&
+          this.spreadsheetComponent &&
+          this.spreadsheetComponent.notifyLayout
+        ) {
           this.spreadsheetComponent.notifyLayout();
         }
 
@@ -488,153 +539,31 @@ class SchedulingUI {
     canvas.style.minHeight = minCanvasHeight + "px";
   }
 
-  drawTaskWindow(context, tasks) {
-    if (!this.taskPanelRoot) {
-      this.taskPanelRoot = UIComponents.div();
-      this.taskPanelRoot.addClass("Panel");
-      this.taskPanelRoot.setStyle("display", ["flex"]);
-      this.taskPanelRoot.setStyle("flex-direction", ["column"]);
-      this.taskPanelRoot.setStyle("height", ["100%"]);
-      this.taskPanelRoot.setStyle("width", ["100%"]);
-      this.taskPanelRoot.setStyle("overflow", ["hidden"]);
-      this.taskPanelRoot.setStyle("min-height", ["0"]);
-
-      this.taskPanelContentHost = UIComponents.div();
-      this.taskPanelContentHost.addClass("PanelContent");
-      this.taskPanelContentHost.setStyle("flex", ["1"]);
-      this.taskPanelContentHost.setStyle("min-height", ["0"]);
-      this.taskPanelContentHost.setStyle("overflow", ["hidden"]);
-      this.taskPanelContentHost.setStyle("display", ["flex"]);
-      this.taskPanelContentHost.setStyle("flex-direction", ["column"]);
-
-      this.taskPanelRoot.add(this.taskPanelContentHost);
-
-      this.taskViewWrapper = UIComponents.column()
-        .addClass("fill-height")
-        .addClass("task-view-wrapper")
-        .setStyle("flex", ["1"])
-        .setStyle("min-height", ["0"])
-        .setStyle("gap", ["var(--phi-0-5)"]);
-
-      this.taskViewSelectorRow = UIComponents.row()
-        .gap("var(--phi-0-5)")
-        .addClass("fill-width")
-        .setStyle("justify-content", ["flex-end"]);
-
-      this.taskViewSelectorRow.add(this.drawSelectionToggle());
-
-      this.taskViewsTabbedPanel = UIComponents.tabbedPanel();
-      this.taskViewsTabbedPanel.addClass("inner-tabbed-panel");
-      this.taskViewsTabbedPanel.addClass("sequence-task-views-panel");
-      this.taskViewsTabbedPanel.setStyle("flex", ["1"]);
-      this.taskViewsTabbedPanel.setStyle("min-height", ["0"]);
-      this.taskViewsTabbedPanel.setStyle("overflow", ["hidden"]);
-      this.taskViewsTabbedPanel.setStyle("width", ["100%"]);
-      this.taskViewsTabbedPanel.setStyle("max-width", ["100%"]);
-
-      this.taskViewHosts.clear();
-
-      for (const id of this.taskViewOrder) {
-        const host = UIComponents.div();
-        host.addClass("sequence-task-view-host");
-        host.setStyle("display", ["flex"]);
-        host.setStyle("flex-direction", ["column"]);
-        host.setStyle("height", ["100%"]);
-        host.setStyle("min-height", ["0"]);
-        host.setStyle("overflow", ["hidden"]);
-
-        this.taskViewHosts.set(id, host);
-
-        const tabLabel = this.taskViewTabLabels[id] || id;
-
-        this.taskViewsTabbedPanel.addTab(id, tabLabel, host);
-      }
-
-      const nodeTaskHost = this.taskViewHosts.get("node");
-
-      if (nodeTaskHost && typeof ResizeObserver !== "undefined") {
-        if (this._scheduleNodeViewResizeObserver) {
-          this._scheduleNodeViewResizeObserver.disconnect();
-        }
-
-        const self = this;
-
-        this._scheduleNodeViewResizeObserver = new ResizeObserver(function () {
-          self._syncScheduleNodeViewCanvasHeight(nodeTaskHost);
-        });
-
-        this._scheduleNodeViewResizeObserver.observe(nodeTaskHost.dom);
-      }
-
-      this.taskViewsTabbedPanel.select(this.viewTypes.default);
-
-      const tp = this.taskViewsTabbedPanel;
-      const self = this;
-      const origSelect = tp.select.bind(tp);
-      tp.select = function (id) {
-        const ret = origSelect(id);
-        self._refreshVisibleTaskViewLayout(id);
-        return ret;
-      };
-
-      this.taskViewWrapper.add(this.taskViewSelectorRow);
-      this.taskViewWrapper.add(this.taskViewsTabbedPanel);
-
-      this.taskPanelContentHost.add(this.taskViewWrapper);
-
-      this.addTaskPanelTab();
-    }
-  }
-
-  show() {
-    const lm = this.context?.layoutManager;
-    const panelWorkspace = this.context.ui?.workspaces?.[this.position];
-
-    if (lm && panelWorkspace && typeof panelWorkspace.select === "function") {
-      lm.ensureTab(this.position, this.tabId, this.tabLabel, this.panel, {
-        open: false,
-        replace: false,
-      });
-
-      lm.openWorkspace(this.position);
-      panelWorkspace.select(this.tabId);
-      this._isShown = true;
-    }
-
-    return this;
-  }
-
-  hide() {
-    const lm = this.context?.layoutManager;
-    if (lm && lm.isTabSelected(this.position, this.tabId)) {
-      lm.closeWorkspace(this.position);
-    }
-
-    return this;
-  }
-
-  destroy() {
-    if (this._bindCleanup) {
-      this._bindCleanup();
-      this._bindCleanup = null;
-    }
-  }
-
   updateCount(count) {
-    if (this.schedulesSection) this.schedulesSection.setTitle("Available Schedules " + (count ?? 0));
+    if (this.scheduleCountLabel) {
+      this.scheduleCountLabel.setValue(
+        "Work Schedules: " + (count === undefined || count === null ? 0 : count)
+      );
+    }
   }
 
   async refreshScheduleUI(context) {
 
       await refreshSchedules(context);
-      
-      this.updateSchedulesList(
-        SequenceData.data.work_schedules?.work_schedules_enum
-      );
 
-      this.updateCount(
-        SequenceData.data.work_schedules?.work_schedules_enum.length
-      );
+      const sequenceData = SequenceData.data;
+      const workSchedulesData =
+        sequenceData && sequenceData["work_schedules"]
+          ? sequenceData["work_schedules"]
+          : null;
+
+      const workScheduleCollection =
+        workSchedulesData && workSchedulesData["work_schedules_enum"]
+          ? workSchedulesData["work_schedules_enum"]
+          : [];
+
+      this.updateSchedulesList(workScheduleCollection);
+      this.updateCount(workScheduleCollection.length);
 
   }
 
@@ -653,10 +582,52 @@ class SchedulingUI {
 
     signals.activeModelChanged.add(async () => {
       await this.refreshScheduleUI(context);
+
+      this.updateTaskViewContent(context, null, null, null);
     });
 
     signals.workschedulechanged.add(async () => {
+      const previousWorkscheduleGlobalId = this.currentWorkscheduleID;
+
       await this.refreshScheduleUI(context);
+
+      const sequenceData = SequenceData.data;
+      const workSchedulesData =
+        sequenceData && sequenceData["work_schedules"]
+          ? sequenceData["work_schedules"]
+          : null;
+
+      const workSchedulesEnumeration =
+        workSchedulesData && workSchedulesData["work_schedules_enum"];
+
+      let activeWorkscheduleStillExists = false;
+
+      if (
+        previousWorkscheduleGlobalId &&
+        workSchedulesEnumeration &&
+        workSchedulesEnumeration.length
+      ) {
+        for (let index = 0; index < workSchedulesEnumeration.length; index++) {
+          const workScheduleEntry = workSchedulesEnumeration[index];
+
+          if (
+            workScheduleEntry &&
+            workScheduleEntry[0] === previousWorkscheduleGlobalId
+          ) {
+            activeWorkscheduleStillExists = true;
+
+            break;
+          }
+        }
+      }
+
+      if (previousWorkscheduleGlobalId && !activeWorkscheduleStillExists) {
+        AECO_tools.scheduler.setActiveSchedule(null);
+
+        AECO_tools.scheduler.clearTasks();
+
+        this.updateTaskViewContent(context, null, null, null);
+      }
     });
 
     signals.enableEditingWorkScheduleTasks.add(({ model, workscheduleGlobalId, tasks, viewType }) => {
@@ -666,7 +637,7 @@ class SchedulingUI {
 
       this.clearTaskCheckboxes();
 
-      const initialViewType = viewType || this.viewTypes.default;
+      const initialViewType = viewType || TASK_VIEW_TYPES.default;
 
       this.openTaskViewPanel(context, workscheduleGlobalId, initialViewType, tasks);
     });
@@ -678,75 +649,49 @@ class SchedulingUI {
   }
 
   createScheduleRow({ GlobalId, Name, StartTime, FinishTime, PredefinedType }) {
-    const item = UIComponents.div().addClass("SquareOperator").addClass("SchedulingScheduleSquare");
+    const item = UIComponents.listItem().addClass("Clickable");
 
-    const getModel = () => this.context.ifc.activeModel;
+    const mainRow = UIComponents.row().gap("var(--phi-0-5)");
+    mainRow.setStyle("justify-content", ["space-between"]);
+    mainRow.setStyle("align-items", ["center"]);
 
-    const headerRow = UIComponents.row().gap("var(--phi-0-5)").addClass("fill-width").addClass("justify-between");
+    const nameContainer = UIComponents.div();
+    nameContainer.setStyle("flex", ["1"]);
 
-    const name = UIComponents.text(Name || "Unnamed");
+    const scheduleName = UIComponents.text(Name || "Unnamed");
+    scheduleName.addClass("ListboxItem-name");
+    nameContainer.add(scheduleName);
 
-    name.setStyle("font-weight", ["600"]);
+    const info = UIComponents.column().gap("2px");
+    info.setStyle("min-width", ["0"]);
+    info.add(nameContainer);
 
-    const predefinedType = UIComponents.badge(PredefinedType || "N/A");
-
-    predefinedType.setStyle("font-size", ["10px"]);
-
-    predefinedType.setStyle("padding", ["2px 6px"]);
-
-    headerRow.add(name, predefinedType);
-
-    const dateRow = UIComponents.row().gap("var(--phi-0-5)").addClass("fill-width");
-
-    const dateIcon = UIComponents.icon("date_range");
-
-    dateIcon.setStyle("font-size", ["14px"]);
-
-    const dateRange = UIComponents.text(
+    const dateRangeText = UIComponents.text(
       `${formatSchedulingDate(StartTime) || "?"} - ${formatSchedulingDate(FinishTime) || "?"}`
     );
+    dateRangeText.addClass("Tab-meta");
+    info.add(dateRangeText);
 
-    dateRange.setStyle("font-size", ["12px"]);
+    mainRow.add(info);
 
-    dateRow.add(dateIcon, dateRange);
+    const rightSide = UIComponents.row().gap("var(--phi-0-5)");
+    rightSide.addClass("ListboxItem-info");
 
-    const actionsRow = UIComponents.row().gap("var(--phi-0-5)").addClass("fill-width");
+    const predefinedTypeBadge = UIComponents.badge(PredefinedType || "N/A");
+    predefinedTypeBadge.setStyle("font-size", ["10px"]);
+    rightSide.add(predefinedTypeBadge);
 
-    actionsRow.setStyle("flex-wrap", ["wrap"]);
+    mainRow.add(rightSide);
 
-    const editBtn = UIComponents.button("Edit");
+    item.add(mainRow);
 
-    editBtn.setIcon("edit");
-
-    editBtn.addClass("Button-secondary");
-
-    editBtn.onClick(() => {
-      this.operators.execute("bim.enable_editing_attributes", this.context, getModel(), GlobalId);
-    });
-
-    const tasksBtn = UIComponents.button("Tasks");
-
-    tasksBtn.setIcon("task");
-
-    tasksBtn.addClass("Button-primary");
-
-    tasksBtn.onClick(() => {
+    item.dom.addEventListener("click", () => {
       this.operators.execute("bim.enable_editing_work_schedule_tasks", this.context, GlobalId);
     });
 
-    const deleteBtn = UIComponents.button("Delete");
-
-    deleteBtn.setIcon("delete");
-
-    deleteBtn.addClass("Button-danger");
-
-    deleteBtn.onClick(() => {
-      this.operators.execute("bim.remove_work_schedule", this.context, getModel(), GlobalId);
-    });
-
-    actionsRow.add(editBtn, tasksBtn, deleteBtn);
-
-    item.add(headerRow, dateRow, actionsRow);
+    if (this.currentWorkscheduleID === GlobalId) {
+      item.addClass("active");
+    }
 
     this.schedulesGrid.add(item);
   }
@@ -754,9 +699,29 @@ class SchedulingUI {
   updateSchedulesList(schedules) {
     this.schedulesGrid.clear();
 
+    if (!schedules || schedules.length === 0) {
+      const emptyState = UIComponents.text("No schedules yet");
+      emptyState
+        .setStyle("padding", ["1rem"])
+        .setStyle("text-align", ["center"])
+        .setStyle("color", ["var(--theme-text-light)"])
+        .setStyle("font-size", ["0.8rem"]);
+      this.schedulesGrid.add(emptyState);
+      return;
+    }
+
     schedules.forEach((workSchedule) => {
+      const sequenceData = SequenceData.data;
+      const workSchedulesData =
+        sequenceData && sequenceData["work_schedules"]
+          ? sequenceData["work_schedules"]
+          : null;
+      const scheduleDataStore =
+        workSchedulesData && workSchedulesData["work_schedules"]
+          ? workSchedulesData["work_schedules"]
+          : {};
       const workscheduleData =
-        SequenceData.data.work_schedules.work_schedules[workSchedule[0]];
+        scheduleDataStore[workSchedule[0]] || {};
 
       const GlobalId = workSchedule[0];
 
@@ -772,40 +737,26 @@ class SchedulingUI {
     });
   }
 
-  _createSchedulesSection() {
-    this.schedulesSection = UIComponents.collapsibleSection({
-      title: "Available Schedules 0",
-      icon: "schedule",
-      collapsed: false,
-    });
-
-    this.schedulesGrid = UIComponents.div().addClass("SchedulingSchedulesGrid");
-
-    this.schedulesSection.setContent(this.schedulesGrid);
-
-    return this.schedulesSection;
-  }
-
   _scheduleActions(context, operators) {
-    const label = UIComponents.text("Create New Work Schedule:").addClass("hud-label");
+    const label = UIComponents.text("Create New Work Schedule").addClass("hud-label");
 
     const nameInput = UIComponents.input().addClass("hud-input");
 
     nameInput.setValue("Schedule Name");
 
-    this.nameInput = nameInput;
+    const addButton = UIComponents.operator("add");
 
-    this.addButton = UIComponents.operator("add");
-
-    this.addButton.onClick(() => {
+    addButton.onClick(() => {
       const model = this.context.ifc.activeModel;
 
       operators.execute("bim.add_work_schedule", context, model, nameInput.getValue());
     });
 
-    const addRow = UIComponents.row().gap("var(--phi-0-5)").add(nameInput, this.addButton);
+    const addRow = UIComponents.row().gap("var(--phi-0-5)").add(nameInput, addButton);
 
     const addSection = UIComponents.column().gap("var(--phi-0-5)");
+    addSection.setStyle("border-top", ["1px solid var(--border)"]);
+    addSection.setStyle("padding", ["var(--phi-0-5)"]);
 
     addSection.add(label, addRow);
 
@@ -818,12 +769,6 @@ class SchedulingUI {
     const toggle = UIComponents.div();
 
     toggle.addClass("SelectionToggle");
-
-    toggle.setStyles({
-      position: 'absolute',
-      top: 'var(--phi-0-5)',
-      right: 'var(--phi-0-5)',
-    })
 
     const icon = UIComponents.icon("checklist");
 
@@ -838,21 +783,20 @@ class SchedulingUI {
     toggle.onClick(() => {
       this.taskBatchSelectionMode = !this.taskBatchSelectionMode;
 
-      const rootDom = this.taskPanelRoot && this.taskPanelRoot.dom ? this.taskPanelRoot.dom : null;
-
-      const wrapper = rootDom ? rootDom.querySelector(".task-view-wrapper") : null;
+      const wrapperDom =
+        this.taskViewWrapper && this.taskViewWrapper.dom ? this.taskViewWrapper.dom : null;
 
       if (this.taskBatchSelectionMode) {
         toggle.addClass("active");
 
-        if (wrapper) {
-          wrapper.classList.add("selection-enabled");
+        if (wrapperDom) {
+          wrapperDom.classList.add("selection-enabled");
         }
       } else {
         toggle.removeClass("active");
 
-        if (wrapper) {
-          wrapper.classList.remove("selection-enabled");
+        if (wrapperDom) {
+          wrapperDom.classList.remove("selection-enabled");
         }
 
         AECO_tools.scheduler.clearSelectedTasks();
@@ -870,27 +814,140 @@ class SchedulingUI {
     return toggle;
   }
 
+  drawSchedulesSidebarToggle() {
+    const toggle = UIComponents.operator("dock_to_left");
+    toggle.addClass("CodeEditor-toolbar-btn");
+    toggle.dom.title = "Hide schedules";
+    toggle.onClick(() => {
+      this.schedulesSidebarVisible = !this.schedulesSidebarVisible;
+      this._applySchedulesSidebarVisibility();
+    });
+
+    this.schedulesSidebarToggleButton = toggle;
+
+    return toggle;
+  }
+
+  drawTaskViewScheduleActions() {
+    const scheduleActionsRow = UIComponents.row().gap("var(--phi-0-5)");
+
+    const editOperator = UIComponents.operator("settings");
+    editOperator.addClass("CodeEditor-toolbar-btn");
+    editOperator.dom.title = "Edit selected schedule";
+    editOperator.onClick(() => {
+      if (!this.currentWorkscheduleID) {
+        return;
+      }
+
+      const activeModel = this.context.ifc.activeModel;
+
+      if (!activeModel) {
+        return;
+      }
+
+      this.operators.execute(
+        "bim.enable_editing_attributes",
+        this.context,
+        activeModel,
+        this.currentWorkscheduleID
+      );
+    });
+
+    const deleteOperator = UIComponents.operator("delete");
+    deleteOperator.addClass("CodeEditor-toolbar-btn");
+    deleteOperator.setStyle("color", ["var(--red)"]);
+    deleteOperator.dom.title = "Delete selected schedule";
+    deleteOperator.onClick(() => {
+      if (!this.currentWorkscheduleID) {
+        return;
+      }
+
+      const activeModel = this.context.ifc.activeModel;
+
+      if (!activeModel) {
+        return;
+      }
+
+      this.operators.execute(
+        "bim.remove_work_schedule",
+        this.context,
+        activeModel,
+        this.currentWorkscheduleID
+      );
+    });
+
+    this.scheduleEditOperator = editOperator;
+    this.scheduleDeleteOperator = deleteOperator;
+
+    scheduleActionsRow.add(editOperator, deleteOperator);
+
+    return scheduleActionsRow;
+  }
+
+  syncScheduleActionOperatorsState() {
+    const hasSelectedSchedule =
+      this.currentWorkscheduleID !== undefined &&
+      this.currentWorkscheduleID !== null &&
+      this.currentWorkscheduleID !== "";
+
+    const controls = [this.scheduleEditOperator, this.scheduleDeleteOperator];
+
+    controls.forEach((operatorControl) => {
+      if (!operatorControl) {
+        return;
+      }
+
+      operatorControl.dom.style.opacity = hasSelectedSchedule ? "1" : "0.45";
+      operatorControl.dom.style.pointerEvents = hasSelectedSchedule ? "auto" : "none";
+      operatorControl.dom.setAttribute("aria-disabled", hasSelectedSchedule ? "false" : "true");
+    });
+  }
+
+  _applySchedulesSidebarVisibility() {
+    if (!this.schedulingRoot || !this.schedulesSidebar) {
+      return;
+    }
+
+    if (this.schedulesSidebarVisible) {
+      this.schedulingRoot.addClass("SequenceScheduling-sidebar-open");
+      this.schedulesSidebar.setStyle("display", ["flex"]);
+    } else {
+      this.schedulingRoot.removeClass("SequenceScheduling-sidebar-open");
+      this.schedulesSidebar.setStyle("display", ["none"]);
+    }
+
+    if (this.schedulesSidebarToggleButton && this.schedulesSidebarToggleButton.dom) {
+      this.schedulesSidebarToggleButton.dom.title = this.schedulesSidebarVisible
+        ? "Hide schedules"
+        : "Show schedules";
+
+      this.schedulesSidebarVisible
+        ? this.schedulesSidebarToggleButton.addClass("active")
+        : this.schedulesSidebarToggleButton.removeClass("active");
+    }
+
+    const selectedTaskViewTab =
+      this.taskViewsTabbedPanel && this.taskViewsTabbedPanel.selected
+        ? this.taskViewsTabbedPanel.selected
+        : TASK_VIEW_TYPES.default;
+
+    if (this.taskViewsTabbedPanel) {
+      this._refreshVisibleTaskViewLayout(selectedTaskViewTab);
+    }
+  }
+
   openTaskViewPanel(
     context,
     workscheduleID,
-    initialViewType = "hierarchy",
+    initialViewType = "gantt",
     tasks
   ) {
     this.currentWorkscheduleID = workscheduleID;
 
-    this.drawTaskWindow(context, tasks);
-
     this.updateTaskViewContent(context, workscheduleID, initialViewType, tasks);
-
-    const lm = this.context.layoutManager;
-    if (lm && this.taskPanelTabId) {
-      lm.selectTab("bottom", this.taskPanelTabId);
-    }
   }
 
   updateTaskViewContent(context, workscheduleID, viewType, tasks) {
-    this.tasks = tasks || this.tasks;
-
     this.clearTaskCheckboxes();
 
     const ctx = context || this.context;
@@ -899,32 +956,54 @@ class SchedulingUI {
       return;
     }
 
+    const missingWorkschedule =
+      workscheduleID === undefined ||
+      workscheduleID === null ||
+      workscheduleID === "";
+    const resolvedTasks = missingWorkschedule ? [] : tasks || this.tasks || [];
+
+    this.currentWorkscheduleID = missingWorkschedule ? null : workscheduleID;
+    this.tasks = resolvedTasks;
+    this.syncScheduleActionOperatorsState();
+
+    const renderNoScheduleState = () => {
+      const empty = UIComponents.text("Select a schedule in the Construction tab");
+      empty.setStyle("text-align", ["center"]);
+      empty.setStyle("font-style", ["italic"]);
+      empty.setStyle("padding", ["var(--phi-2)"]);
+      return empty;
+    };
+
     const renderViewElement = (id) => {
+      if (missingWorkschedule) {
+        return renderNoScheduleState();
+      }
+
       switch (id) {
         case "list":
-          return this.renderListViewContent(workscheduleID, tasks);
+          return this.renderListViewContent(workscheduleID, resolvedTasks);
 
         case "gantt":
-          return this.renderGanttchart(ctx, workscheduleID, tasks);
+          return this.renderGanttchart(ctx, workscheduleID, resolvedTasks);
 
         case "kanban":
-          return this.renderKanbanViewContent(workscheduleID, tasks);
+          return this.renderKanbanViewContent(workscheduleID, resolvedTasks);
 
         case "hierarchy":
-          return this.renderHierarchyViewContent(workscheduleID, tasks);
+          return this.renderHierarchyViewContent(workscheduleID, resolvedTasks);
 
         case "spreadsheet":
-          return this.renderSpreadsheetViewContent(ctx, workscheduleID, tasks);
+          return this.renderSpreadsheetViewContent(ctx, workscheduleID, resolvedTasks);
 
         case "node":
-          return this.renderNodeViewContent(ctx, workscheduleID, tasks);
+          return this.renderNodeViewContent(ctx, workscheduleID, resolvedTasks);
 
         default:
           return UIComponents.text("Unknown view type");
       }
     };
 
-    for (const id of this.taskViewOrder) {
+    for (const id of TASK_VIEW_ORDER) {
       const host = this.taskViewHosts.get(id);
 
       if (!host) continue;
@@ -941,10 +1020,10 @@ class SchedulingUI {
     let tabId =
       viewType ||
       this.taskViewsTabbedPanel.selected ||
-      this.viewTypes.default;
+      TASK_VIEW_TYPES.default;
 
-    if (!this.taskViewOrder.includes(tabId)) {
-      tabId = this.viewTypes.default;
+    if (!TASK_VIEW_ORDER.includes(tabId)) {
+      tabId = TASK_VIEW_TYPES.default;
     }
 
     this.taskViewsTabbedPanel.select(tabId);
@@ -1234,6 +1313,8 @@ class SchedulingUI {
       nodes,
       connections,
       embedded: true,
+      readOnly: true,
+      allowConnections: false,
       onNodeClick: (node) => {
         const taskId = node.data && node.data.pID !== undefined ? node.data.pID : node.id;
 
@@ -1242,17 +1323,10 @@ class SchedulingUI {
         this.operators.execute("bim.load_task_details", this.context, taskId);
       },
       onEdit: (node) => {
-        const GlobalId = node.data?.GlobalId;
+        const GlobalId = node.data && node.data.GlobalId !== undefined ? node.data.GlobalId : null;
 
         if (GlobalId) {
           this.operators.execute("bim.enable_editing_attributes", this.context, getModel(), GlobalId);
-        }
-      },
-      onDelete: (node) => {
-        const GlobalId = node.data?.GlobalId;
-
-        if (GlobalId) {
-          this.operators.execute("bim.remove_task", this.context, getModel(), GlobalId);
         }
       }
     });
@@ -1818,30 +1892,6 @@ class SchedulingUI {
     this.taskCheckboxes.clear();
 
     this.spreadsheetSyncedSchedulerTaskIds.clear();
-  }
-
-  enableSelection({ taskId, taskItem, addCheckbox = true }) {
-    const isSelected = AECO_tools.scheduler.isTaskSelected(taskId);
-
-    let checkbox = null;
-
-    if (addCheckbox) {
-      checkbox = this.createTaskSelectionCheckbox(taskId);
-
-      if (isSelected) {
-        checkbox.addClass("checked");
-      }
-
-      this.taskCheckboxes.set(taskId, { checkbox, taskItem });
-
-      taskItem.dom.insertBefore(checkbox.dom, taskItem.dom.firstChild);
-    }
-
-    if (isSelected) {
-      taskItem.addClass("selected");
-    }
-
-    return checkbox;
   }
 }
 

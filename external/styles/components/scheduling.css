@@ -330,109 +330,9 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--phi-0-25);
   overflow-y: auto;
-}
-
-.ws-schedules-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.ws-schedules-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.ws-schedules-list::-webkit-scrollbar-thumb {
-  background: var(--glass-border-hover);
-  border-radius: 4px;
-  transition: background var(--transition-fast);
-}
-
-.ws-schedules-list::-webkit-scrollbar-thumb:hover {
-  background: var(--theme-accent);
-}
-
-.ws-schedule-item {
-  align-items: center;
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  background: var(--glass-surface);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  display: flex;
-  gap: var(--spacing-md);
-  justify-content: space-between;
-  padding: var(--spacing-md);
-  transition: all var(--transition-normal);
-}
-
-.ws-schedule-item:hover {
-  background: var(--glass-surface-hover);
-  border-color: var(--glass-border-hover);
-  box-shadow: var(--glass-shadow-sm);
-  transform: translateX(4px);
-}
-
-.ws-schedule-item.selected {
-  background: linear-gradient(135deg, rgba(10, 132, 255, 0.2) 0%, rgba(10, 132, 255, 0.1) 100%);
-  border-color: var(--theme-accent);
-  box-shadow: inset 0 0 0 1px var(--theme-accent);
-}
-
-.ws-schedule-info {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-  min-width: 0;
-}
-
-.ws-schedule-name {
-  color: var(--theme-text);
-  font-size: 13px;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ws-schedule-meta {
-  color: var(--theme-text-secondary);
-  display: flex;
-  font-size: 11px;
-  gap: var(--spacing-md);
-}
-
-.ws-schedule-meta span {
-  align-items: center;
-  display: flex;
-  gap: var(--spacing-xs);
-}
-
-.ws-schedule-meta span::before {
-  color: var(--theme-accent);
-  content: "•";
-}
-
-.ws-schedule-actions {
-  display: flex;
-  flex-shrink: 0;
-  gap: var(--spacing-sm);
-}
-
-.ws-schedule-actions button {
-  font-size: 11px;
-  min-width: auto;
-  padding: 6px 12px;
-}
-
-.ws-no-schedules {
-  color: var(--theme-text-secondary);
-  font-size: 12px;
-  grid-column: 1 / -1;
-  padding: var(--spacing-xl);
-  text-align: center;
+  padding: var(--phi-0-5);
 }
 
 /* ============================================
@@ -980,7 +880,7 @@
   display: grid;
   gap: var(--phi-1);
   grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-  padding: var(--phi-1);
+  padding: var(--phi-0-5);
   width: 100%;
 }
 
