@@ -2,13 +2,11 @@ import { Components as UIComponents } from "./Components.js";
 
 import { HierarchyToggleUtil } from "../../utils/HierarchyToggleUtil.js";
 
-import { FloatingPanel } from "./../../../drawUI/FloatingPanel.js";
-
 import { UIDiv } from "./../../../drawUI/ui.js";
 
-class Nodes extends FloatingPanel {
+class Nodes extends UIDiv {
 
-    constructor( nodeData ) {
+    constructor(nodeData) {
         super();
 
         this.embedded = nodeData.embedded || false;
@@ -33,11 +31,13 @@ class Nodes extends FloatingPanel {
 
         this.allowConnections = nodeData.allowConnections !== false && this.readOnly === false;
 
+        this.addClass("ws-node-view-root");
+
         if (this.embedded) {
-            return this._renderEmbeddedNodeView(nodeData);
+            this.addClass("ws-node-view-embedded");
         }
 
-        return this._renderNodeView( nodeData );
+        this._buildNodeView(nodeData);
     }
 
     addNode (nodeData) {
@@ -201,185 +201,49 @@ class Nodes extends FloatingPanel {
         }
     }
 
-    _renderNodeView( nodeData ) {
-
+    _buildNodeView(nodeData) {
         const canvas = UIComponents.div();
 
-        canvas.setClass('ws-node-canvas');
+        canvas.setClass("ws-node-canvas");
 
-        const canvasInner = UIComponents.div();
-
-        canvasInner.setClass('ws-node-canvas-inner');
-
-        const positions = this._calculateNodePositions(nodeData.nodes);
-
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
-        positions.forEach(pos => {
-            minX = Math.min(minX, pos.x);
-
-            minY = Math.min(minY, pos.y);
-
-            maxX = Math.max(maxX, pos.x + 250);
-
-            maxY = Math.max(maxY, pos.y + 120);
-        });
-
-        const sidePadding = 200;
-
-        const canvasWidth = Math.max(maxX - minX + sidePadding * 2, this.contentWrapper.dom.clientWidth );
-
-        const canvasHeight = Math.max(maxY - minY + sidePadding * 2, this.contentWrapper.dom.clientHeight );
-
-        const offsetX = -minX + sidePadding;
-
-        const offsetY = -minY + sidePadding;
-
-        const adjustedPositions = new Map();
-
-        positions.forEach((p, id) => {
-            adjustedPositions.set(id, { x: p.x + offsetX, y: p.y + offsetY });
-        });
-
-        positions.clear();
-
-        adjustedPositions.forEach((p, id) => positions.set(id, p));
-        
-        const miniMap = this._createMiniMap(nodeData.nodes, positions, canvas);
-
-        canvas.add(miniMap);
-
-        canvasInner.setStyle('width', [`${canvasWidth}px`]);
-
-        canvasInner.setStyle('height', [`${canvasHeight}px`]);
-
-        const connectionsLayer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-
-        connectionsLayer.setAttribute('class', 'ws-connections');
-
-        connectionsLayer.setAttribute('width', canvasWidth);
-
-        connectionsLayer.setAttribute('height', canvasHeight);
-
-        connectionsLayer.style.width = `${canvasWidth}px`;
-
-        connectionsLayer.style.height = `${canvasHeight}px`;
-
-        canvasInner.dom.appendChild(connectionsLayer);
-
-        nodeData.connections.forEach(connection => {
-            const connectionElement = this._createConnectionElement(connection, positions);
-
-            if (connectionElement) {
-                connectionsLayer.appendChild(connectionElement);
-            }
-        });
-
-        nodeData.nodes.forEach(node => {
-            const nodeElement = this._createNodeElement(node, positions.get(node.id));
-
-            canvasInner.add(nodeElement);
-        });
-
-        if (this.highlightByGroup) {
-            this._createGroupBackgrounds(nodeData.nodes, canvasInner);
+        if (this.embedded) {
+            canvas.setStyle("flex", ["1"]);
+            canvas.setStyle("min-height", ["0"]);
+            canvas.setStyle("overflow", ["auto"]);
         }
 
-        canvas.add(canvasInner);
-
-        this._makeNodesDraggable(canvasInner, connectionsLayer);
-
-        this.addContent(canvas);
-
-        const controlsDiv = UIComponents.div().setClass('NodesControls');
-
-        this.addContent(controlsDiv);
-
-        const zoomControls = this._createZoomControls(canvas, canvasInner);
-
-        controlsDiv.add(zoomControls);
-
-        const movePackControl = this._createMovePackControl();
-
-        controlsDiv.add(movePackControl);
-
-        const highlightControl = this._createHighlightControl();
-
-        controlsDiv.add(highlightControl);
-
-        const noOverlapControl = this._createNoOverlapControl();
-
-        controlsDiv.add(noOverlapControl);
-
-        this.currentNodeData = {
-            nodeData: nodeData,
-            connections: nodeData.connections,
-            positions,
-            connectionsLayer,
-            canvasInner,
-            canvas
-        };
-
-        this._updateNodeVisibility();
-
-        this._updateConnectionsVisibility();
-
-        this.updateConnections = () => this._updateConnectionPaths(connectionsLayer, nodeData.connections, positions);
-
-        window.addEventListener('resize', this.updateConnections);
-
-        setTimeout(() => {
-            this._recalculateAllConnections();
-
-            canvas.scrollLeft = (canvasWidth - canvas.clientWidth) / 2;
-
-            canvas.scrollTop = 50;
-        }, 100);
-
-        return this;
-
-    }
-
-    _renderEmbeddedNodeView(nodeData) {
-        const wrapper = new UIDiv();
-
-        wrapper.setClass('ws-node-view-embedded');
-
-        wrapper.dom.style.cssText = 'display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;position:relative;';
-
-        const canvas = UIComponents.div();
-
-        canvas.setClass('ws-node-canvas');
-
-        canvas.setStyle('flex', ['1']);
-
-        canvas.setStyle('min-height', ['0']);
-
-        canvas.setStyle('overflow', ['auto']);
-
         const canvasInner = UIComponents.div();
 
-        canvasInner.setClass('ws-node-canvas-inner');
+        canvasInner.setClass("ws-node-canvas-inner");
 
         const positions = this._calculateNodePositions(nodeData.nodes);
 
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        let minX = Infinity;
+        let minY = Infinity;
+        let maxX = -Infinity;
+        let maxY = -Infinity;
 
-        positions.forEach(pos => {
+        positions.forEach((pos) => {
             minX = Math.min(minX, pos.x);
-
             minY = Math.min(minY, pos.y);
-
             maxX = Math.max(maxX, pos.x + 250);
-
             maxY = Math.max(maxY, pos.y + 120);
         });
 
         const sidePadding = 200;
 
-        const canvasWidth = Math.max(maxX - minX + sidePadding * 2, 800);
+        const rootWidth = this.dom.clientWidth;
+        const rootHeight = this.dom.clientHeight;
 
-        const canvasHeight = Math.max(maxY - minY + sidePadding * 2, 600);
+        const canvasWidth = Math.max(
+            maxX - minX + sidePadding * 2,
+            this.embedded ? 800 : Math.max(rootWidth, 800)
+        );
+
+        const canvasHeight = Math.max(
+            maxY - minY + sidePadding * 2,
+            this.embedded ? 600 : Math.max(rootHeight, 600)
+        );
 
         const offsetX = -minX + sidePadding;
 
@@ -399,17 +263,17 @@ class Nodes extends FloatingPanel {
 
         canvas.add(miniMap);
 
-        canvasInner.setStyle('width', [`${canvasWidth}px`]);
+        canvasInner.setStyle("width", [`${canvasWidth}px`]);
 
-        canvasInner.setStyle('height', [`${canvasHeight}px`]);
+        canvasInner.setStyle("height", [`${canvasHeight}px`]);
 
-        const connectionsLayer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        const connectionsLayer = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-        connectionsLayer.setAttribute('class', 'ws-connections');
+        connectionsLayer.setAttribute("class", "ws-connections");
 
-        connectionsLayer.setAttribute('width', canvasWidth);
+        connectionsLayer.setAttribute("width", String(canvasWidth));
 
-        connectionsLayer.setAttribute('height', canvasHeight);
+        connectionsLayer.setAttribute("height", String(canvasHeight));
 
         connectionsLayer.style.width = `${canvasWidth}px`;
 
@@ -417,7 +281,7 @@ class Nodes extends FloatingPanel {
 
         canvasInner.dom.appendChild(connectionsLayer);
 
-        nodeData.connections.forEach(connection => {
+        nodeData.connections.forEach((connection) => {
             const connectionElement = this._createConnectionElement(connection, positions);
 
             if (connectionElement) {
@@ -425,7 +289,7 @@ class Nodes extends FloatingPanel {
             }
         });
 
-        nodeData.nodes.forEach(node => {
+        nodeData.nodes.forEach((node) => {
             const nodeElement = this._createNodeElement(node, positions.get(node.id));
 
             canvasInner.add(nodeElement);
@@ -439,43 +303,31 @@ class Nodes extends FloatingPanel {
 
         this._makeNodesDraggable(canvasInner, connectionsLayer);
 
-        wrapper.add(canvas);
+        this.add(canvas);
 
-        const controlsDiv = UIComponents.row().gap('var(--phi-0-5)');
+        let controlsDiv;
 
-        controlsDiv.setClass('NodesControls');
+        if (this.embedded) {
+            controlsDiv = UIComponents.row().gap("var(--phi-0-5)");
+            controlsDiv.setClass("NodesControls");
+            controlsDiv.setStyle("position", ["absolute"]);
+            controlsDiv.setStyle("top", ["var(--phi-0-5)"]);
+            controlsDiv.setStyle("left", ["var(--phi-0-5)"]);
+            controlsDiv.setStyle("z-index", ["10"]);
+            controlsDiv.setStyle("background", ["var(--theme-background-0810)"]);
+            controlsDiv.setStyle("padding", ["var(--phi-0-5)"]);
+            controlsDiv.setStyle("border-radius", ["var(--phi-0-5)"]);
+        } else {
+            controlsDiv = UIComponents.div();
+            controlsDiv.setClass("NodesControls");
+        }
 
-        controlsDiv.setStyle('position', ['absolute']);
+        controlsDiv.add(this._createZoomControls(canvas, canvasInner));
+        controlsDiv.add(this._createMovePackControl());
+        controlsDiv.add(this._createHighlightControl());
+        controlsDiv.add(this._createNoOverlapControl());
 
-        controlsDiv.setStyle('top', ['var(--phi-0-5)']);
-
-        controlsDiv.setStyle('left', ['var(--phi-0-5)']);
-
-        controlsDiv.setStyle('z-index', ['10']);
-
-        controlsDiv.setStyle('background', ['var(--theme-background-0810)']);
-
-        controlsDiv.setStyle('padding', ['var(--phi-0-5)']);
-
-        controlsDiv.setStyle('border-radius', ['var(--phi-0-5)']);
-
-        const zoomControls = this._createZoomControls(canvas, canvasInner);
-
-        controlsDiv.add(zoomControls);
-
-        const movePackControl = this._createMovePackControl();
-
-        controlsDiv.add(movePackControl);
-
-        const highlightControl = this._createHighlightControl();
-
-        controlsDiv.add(highlightControl);
-
-        const noOverlapControl = this._createNoOverlapControl();
-
-        controlsDiv.add(noOverlapControl);
-
-        wrapper.add(controlsDiv);
+        this.add(controlsDiv);
 
         this.currentNodeData = {
             nodeData: nodeData,
@@ -483,36 +335,27 @@ class Nodes extends FloatingPanel {
             positions,
             connectionsLayer,
             canvasInner,
-            canvas
+            canvas,
         };
 
         this._updateNodeVisibility();
 
         this._updateConnectionsVisibility();
 
-        this.updateConnections = () => this._updateConnectionPaths(connectionsLayer, nodeData.connections, positions);
+        this.updateConnections = () =>
+            this._updateConnectionPaths(connectionsLayer, nodeData.connections, positions);
 
-        window.addEventListener('resize', this.updateConnections);
+        window.addEventListener("resize", this.updateConnections);
+
+        const canvasElement = canvas.dom;
 
         setTimeout(() => {
             this._recalculateAllConnections();
 
-            canvas.dom.scrollLeft = (canvasWidth - canvas.dom.clientWidth) / 2;
+            canvasElement.scrollLeft = (canvasWidth - canvasElement.clientWidth) / 2;
 
-            canvas.dom.scrollTop = 50;
+            canvasElement.scrollTop = 50;
         }, 100);
-
-        wrapper.currentNodeData = this.currentNodeData;
-
-        wrapper.toggleNodeChildren = (nodeId) => this.toggleNodeChildren(nodeId);
-
-        wrapper.highlightNode = (nodeId, color) => this.highlightNode(nodeId, color);
-
-        wrapper.highlightConnection = (sourceId, targetId, color) => this.highlightConnection(sourceId, targetId, color);
-
-        wrapper.clearHighlights = () => this.clearHighlights();
-
-        return wrapper;
     }
 
     _calculateNodePositions(nodes) {

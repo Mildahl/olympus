@@ -1,12 +1,10 @@
+import context from '../../context/index.js';
+
 class NavigationTool {
-  static findFirstObjectInScene(scene, predicate) {
+  static findFirstObjectInScene(predicate) {
     let resolvedObject = null;
 
-    if (!scene || typeof predicate !== "function") {
-      return resolvedObject;
-    }
-
-    scene.traverse((object) => {
+    context.editor.scene.traverse((object) => {
       if (!resolvedObject && predicate(object)) {
         resolvedObject = object;
       }
@@ -15,8 +13,8 @@ class NavigationTool {
     return resolvedObject;
   }
 
-  static findDefaultVehicleInScene(scene) {
-    return NavigationTool.findFirstObjectInScene(scene, (object) => {
+  static findDefaultVehicleInScene() {
+    return NavigationTool.findFirstObjectInScene((object) => {
       if (object.name === "Truck") {
         return true;
       }
@@ -27,8 +25,8 @@ class NavigationTool {
     });
   }
 
-  static findDefaultFlyingObjectInScene(scene) {
-    return NavigationTool.findFirstObjectInScene(scene, (object) => {
+  static findDefaultFlyingObjectInScene() {
+    return NavigationTool.findFirstObjectInScene((object) => {
       if (object.name === "Drone") {
         return true;
       }

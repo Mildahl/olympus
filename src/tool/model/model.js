@@ -366,7 +366,8 @@ class ModelTool {
     signGroup.add(bracket);
 
     signGroup.add(postMesh);
-    tools.world.placement.setPosition(null, signGroup, position)
+
+    tools.world.placement.setPosition( signGroup, position)
 
     return new InteractiveObject(signGroup, { type: "Signage" });
   }
@@ -375,59 +376,8 @@ class ModelTool {
     editor.addObject(obj, parent);
   }
 
-  static batchAdd(editor, objects) {
-    
-    objects.forEach((obj) => {
-      editor.addObject(obj);
-    });
-  }
-
-  static fakeIfc(object) {
-    return {
-      GlobalId: object.guid,
-      Name: "Fake Element",
-      PredefinedType: "SOLIDAWALL",
-      is_a() {
-        return "IfcWall";
-      },
-      Properties: {
-        Height: 3000,
-        Width: 500,
-        Material: "Concrete",
-      },
-    };
-  }
-
-  static getObject(element) {
-    const globalId = element.GlobalId;
-
-    if (!globalId) {
-      console.warn("ENABLE BIM features:");
-
-      return {};
-    }
-
-    const object = dataStore.getObject(globalId);
-
-    return object;
-  }
-
-  static getElement(object) {
-    const globalId = object.uuid;
-
-    const filename = object.objectSource;
-
-    if (!filename || !globalId) {
-      console.warn("ENABLE BIM features:");
-
-      return {};
-    }
-
-    const model = tools.ifc.get(filename);
-
-    const element = model.by_guid(globalId);
-
-    return { model, element };
+  static batchAdd(objects) {
+    return tools.world.scene.batchAdd(objects);
   }
 
   static createMeshesFromIfcMeshData(meshData, globalId, options = {}) {
@@ -909,7 +859,7 @@ class ModelTool {
     });
     truckGroup.scale.set(scale, scale, scale);
 
-    tools.world.placement.setPosition(null, truckGroup, position);
+    tools.world.placement.setPosition( truckGroup, position);
 
     return new InteractiveObject(truckGroup, { type: 'Truck' });
   }
@@ -1281,7 +1231,7 @@ class ModelTool {
     });
     craneGroup.scale.set(scale, scale, scale);
 
-    tools.world.placement.setPosition(null, craneGroup, position)
+    tools.world.placement.setPosition( craneGroup, position)
 
     return new InteractiveObject(craneGroup, { type: 'MobileCrane' });
   }
@@ -1775,7 +1725,7 @@ class ModelTool {
     craneGroup.add(slewingGroup);
     craneGroup.scale.set(scale, scale, scale);
 
-    tools.world.placement.setPosition(null, craneGroup, position)
+    tools.world.placement.setPosition( craneGroup, position)
 
     return new InteractiveObject(craneGroup, { type: 'TowerCrane' });
 
@@ -1888,12 +1838,13 @@ class ModelTool {
 
     group.add(driverPOV);
 
-    tools.world.placement.setPosition(null, group, position);
+    tools.world.placement.setPosition( group, position);
 
     group.scale.set(scale, scale, scale);
 
     return new InteractiveObject(group, { type: 'Forklift' });
   }
+
   /**
    * Creates a lifting hoist (chain hoist / block and tackle)
    * @param {Object} options - Hoist configuration options
@@ -2020,7 +1971,7 @@ class ModelTool {
 
     group.add(hookGroup);
 
-    tools.world.placement.setPosition(null, group, position);
+    tools.world.placement.setPosition( group, position);
 
     group.scale.set(scale, scale, scale);
 
@@ -2220,7 +2171,7 @@ class ModelTool {
     bucket.rotation.z = -Math.PI / 2; 
     
     bucketPivot.add(bucket);
-    tools.world.placement.setPosition(null, group, position);
+    tools.world.placement.setPosition( group, position);
 
     group.scale.set(scale, scale, scale);
 
@@ -2321,7 +2272,7 @@ class ModelTool {
 
     group.scale.set(scale, scale, scale);
 
-    tools.world.placement.setPosition(null, group, position);
+    tools.world.placement.setPosition( group, position);
 
     return new InteractiveObject(group, { type: 'Robot' });
   }
@@ -2553,7 +2504,7 @@ class ModelTool {
     droneGroup.add(bodyGroup);
     droneGroup.scale.set(scale, scale, scale);
 
-    tools.world.placement.setPosition(null, droneGroup, position)
+    tools.world.placement.setPosition( droneGroup, position)
 
     return new InteractiveObject(droneGroup, { type: 'Drone' });
   }
@@ -2706,7 +2657,7 @@ class ModelTool {
 
     group.add(cap);
 
-    tools.world.placement.setPosition(null, group, position);
+    tools.world.placement.setPosition( group, position);
 
     group.scale.set(scale, scale, scale);
 
@@ -2832,7 +2783,7 @@ class ModelTool {
 
     group.add(tip);
 
-    tools.world.placement.setPosition(null, group, position);
+    tools.world.placement.setPosition( group, position);
 
     group.scale.set(scale, scale, scale);
 
@@ -3099,7 +3050,7 @@ class ModelTool {
       group.add(rightFootBack);
     }
 
-    tools.world.placement.setPosition(null, group, position);
+    tools.world.placement.setPosition( group, position);
 
     group.scale.set(scale, scale, scale);
 

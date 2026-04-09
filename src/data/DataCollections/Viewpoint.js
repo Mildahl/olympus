@@ -205,7 +205,7 @@ class ViewpointsCollection extends Collection {
       { name: 'Top View', cameraPosition: { x: 0, y: 0, z: 30 }, cameraTarget: { x: 0, y: 0, z: 0 } },
       { name: 'Right View', cameraPosition: { x: 20, y: 0, z: 5 }, cameraTarget: { x: 0, y: 0, z: 0 } },
       { name: 'Perspective', cameraPosition: { x: 15, y: -15, z: 10 }, cameraTarget: { x: 0, y: 0, z: 0 } },
-      { name: 'Bird\'s Eye', cameraPosition: { x: 25, y: -25, z: 25 }, cameraTarget: { x: 0, y: 0, z: 0 } }
+      { name: 'Crane Cabins', cameraPosition: { x: -19.11, y: 19.7, z: 21 }, cameraTarget: { x: 17, y: 18, z: 5 } }
     ];
 
     presets.forEach(preset => this.add(preset));

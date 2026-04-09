@@ -2,6 +2,14 @@ import { Components as UIComponents } from "../../ui/Components/Components.js";
 
 import { directorChartBackgrounds, directorChartBorders } from "./DirectorAnalyticsChartTheme.js";
 
+import {
+  analyticsChartCaptionStyles,
+  analyticsCostChartHostStyles,
+  analyticsDenseListRowItemStyles,
+  analyticsSectionTitleStyles,
+  analyticsSubtitleStyles,
+} from "./bimAnalyticsPanelStyles.js";
+
 function directorTruncateLabel(text, maxLength) {
   const stringText = String(text);
 
@@ -18,11 +26,11 @@ class DirectorCostPresenceSection {
 
     this.title = UIComponents.text("Cost analytics");
 
-    this.title.addClass("director-analytics-section-title");
+    this.title.setStyles(analyticsSectionTitleStyles);
 
     this.summaryHost = UIComponents.div();
 
-    this.chartHost = UIComponents.div().addClass("director-analytics-chart-host").addClass("director-analytics-cost-chart");
+    this.chartHost = UIComponents.div().setStyles(analyticsCostChartHostStyles);
 
     this.listHost = UIComponents.div();
 
@@ -70,7 +78,7 @@ class DirectorCostPresenceSection {
         String(totalItems),
     );
 
-    summaryLine.addClass("director-analytics-subtitle");
+    summaryLine.setStyles(analyticsSubtitleStyles);
 
     this.summaryHost.add(summaryLine);
 
@@ -144,7 +152,7 @@ class DirectorCostPresenceSection {
 
       const cap = UIComponents.text("Cost items linked per schedule");
 
-      cap.addClass("director-analytics-chart-caption");
+      cap.setStyles(analyticsChartCaptionStyles);
 
       this.chartHost.add(cap);
 
@@ -158,12 +166,12 @@ class DirectorCostPresenceSection {
       collapsed: true,
     });
 
-    const costList = UIComponents.list().addClass("director-analytics-dense-list");
+    const costList = UIComponents.list();
 
     for (let index = 0; index < chartRows.length; index++) {
       const cost = chartRows[index];
 
-      const item = UIComponents.listItem().addClass("director-analytics-dense-row");
+      const item = UIComponents.listItem().setStyles(analyticsDenseListRowItemStyles);
 
       item.add(UIComponents.text(cost.Name || "Unnamed"));
 

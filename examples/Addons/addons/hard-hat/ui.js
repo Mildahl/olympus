@@ -1,7 +1,7 @@
-import { UIComponents, moduleRegistry, getLayoutManagerFromContext } from "aeco";
+import { UIComponents } from "aeco";
 import { tools } from "aeco";
 
-import * as Core from "./core.js";
+import * as hardHatStore from "./hardHatStore.js";
 
 import {
   enrichLiftsWithEstimates,
@@ -39,7 +39,7 @@ class AppointedPersonUI {
 
     this.ops = operators;
 
-    this.store = Core.loadStore();
+    this.store = hardHatStore.loadStore();
 
     this.liftingSpreadsheet = null;
 
@@ -57,7 +57,7 @@ class AppointedPersonUI {
     this.panel = UIComponents.floatingPanel({
       context,
       title: "Lifting schedule",
-      icon: "precision_manufacturing",
+      icon: "engineering",
       workspaceTabId: "addon.hardhat.schedule",
       workspaceTabLabel: "Lifting schedule",
       startMinimized: true,
@@ -81,7 +81,7 @@ class AppointedPersonUI {
 
     this.panel.setContent(this.contentArea);
 
-    this.drawDevUI(context);
+    // this.drawDevUI(context);
 
     this.appendDom(context);
 
@@ -114,7 +114,7 @@ class AppointedPersonUI {
   }
 
   listen(context) {
-    // Signals are registered in app.js before createUI
+    // Signals are registered in app.js before initWorld
     // No need to call addListeners here - they must be available
 
     context.signals.hardHatStoreChanged.add(({ store }) => {
@@ -130,7 +130,7 @@ class AppointedPersonUI {
 
     context.signals.weatherChanged.add(({ weather }) => {
       if (weather) {
-        Core.updateWeather(this.store, weather);
+        hardHatStore.updateWeather(this.store, weather);
       }
 
       this._redraw();
@@ -170,12 +170,12 @@ class AppointedPersonUI {
 
   _prepareDrawData() {
     // Sync UI state from store
-    this.selectedEquipmentId = Core.getActiveEquipment(this.store);
+    this.selectedEquipmentId = hardHatStore.getActiveEquipment(this.store);
 
-    this.selectedDateStr = Core.getActiveDateFilter(this.store);
+    this.selectedDateStr = hardHatStore.getActiveDateFilter(this.store);
 
     // Get filtered lifts based on active equipment and date
-    const activeLifts = Core.getActiveLifts(this.store);
+    const activeLifts = hardHatStore.getActiveLifts(this.store);
 
     const allLifts = [...this.store.lifts];
 
@@ -207,7 +207,7 @@ class AppointedPersonUI {
 
     const liftingSection = UIComponents.collapsibleSection({
       title: "Lifting schedule",
-      icon: "precision_manufacturing",
+      icon: "engineering",
       collapsed: false,
     });
 
@@ -241,7 +241,7 @@ class AppointedPersonUI {
       this.ops.execute("hardhat.add_lift", this.context, {
         name: "New Lift",
         weight: 1.0,
-        subcontractor: Core.DEFAULT_SUBCONTRACTORS[0],
+        subcontractor: hardHatStore.DEFAULT_SUBCONTRACTORS[0],
       });
     });
 
@@ -766,9 +766,9 @@ class AppointedPersonUI {
     // Get unique dates from all lifts
     const allLifts = this.store.lifts;
 
-    const uniqueDates = Core.getUniqueLiftDates(allLifts);
+    const uniqueDates = hardHatStore.getUniqueLiftDates(allLifts);
 
-    const todayStr = Core.getTodayDateStr();
+    const todayStr = hardHatStore.getTodayDateStr();
 
     // Build options with formatted display
     const dateOptions = { ALL: "All Dates" };
@@ -776,7 +776,7 @@ class AppointedPersonUI {
     uniqueDates.forEach((dateStr) => {
       const isToday = dateStr === todayStr;
 
-      dateOptions[dateStr] = Core.formatDateForDisplay(dateStr) + (isToday ? " (Today)" : "");
+      dateOptions[dateStr] = hardHatStore.formatDateForDisplay(dateStr) + (isToday ? " (Today)" : "");
     });
 
     // Date select dropdown
@@ -821,7 +821,7 @@ class AppointedPersonUI {
     });
 
     // Count display based on current filter
-    const activeLifts = Core.getActiveLifts(this.store);
+    const activeLifts = hardHatStore.getActiveLifts(this.store);
 
     const countLabel = UIComponents.span(`${activeLifts.length} shown`)
       .addClass("hud-input")
@@ -848,11 +848,11 @@ class AppointedPersonUI {
     tabbedPanel.setStyles({ width: "100%", flex: "1", minHeight: "0" });
 
     // Get equipment list
-    const equipmentList = Core.LIFTING_EQUIPMENT_LIST;
+    const equipmentList = hardHatStore.LIFTING_EQUIPMENT_LIST;
 
     const allLifts = this.store.lifts;
 
-    const filteredAllLifts = Core.filterLiftsByDate(allLifts, this.selectedDateStr);
+    const filteredAllLifts = hardHatStore.filterLiftsByDate(allLifts, this.selectedDateStr);
 
     // Add "All Equipment" tab first
     const allContent = this._createEquipmentTabContent("ALL", filteredAllLifts, data);
@@ -863,7 +863,7 @@ class AppointedPersonUI {
 
     // Add tab for each equipment type
     equipmentList.forEach((equipment) => {
-      const equipmentLifts = Core.filterLifts(allLifts, equipment.id, this.selectedDateStr);
+      const equipmentLifts = hardHatStore.filterLifts(allLifts, equipment.id, this.selectedDateStr);
 
       const tabContent = this._createEquipmentTabContent(equipment.id, equipmentLifts, data);
 
@@ -924,7 +924,7 @@ class AppointedPersonUI {
 
     // Equipment info header (for specific equipment tabs)
     if (equipmentId !== "ALL") {
-      const equipmentInfo = Core.LIFTING_EQUIPMENT[equipmentId];
+      const equipmentInfo = hardHatStore.LIFTING_EQUIPMENT[equipmentId];
 
       if (equipmentInfo) {
         const header = UIComponents.row()
@@ -1334,7 +1334,13 @@ class AppointedPersonUI {
   }
 
   drawDevUI(context) {
-    const toolbar = UIComponents.column().setId("Dev").addClass("dev-toolbar");
+    const toolbar = UIComponents.column().setId("DevelopperTesting")
+    .setStyles({
+      position: "absolute",
+      zIndex: "2",
+      top: "calc( 3 * var(--phi-1))",
+      left: "var(--phi-1)",
+    })
 
     const button = UIComponents.operator("home");
 
@@ -1348,7 +1354,7 @@ class AppointedPersonUI {
 
     capturePosition.onClick(() => console.log(tools.world.viewpoint.capturePosition(context.editor)));
 
-    context.dom.appendChild(toolbar.dom);
+    context.viewport.dom.appendChild(toolbar.dom);
   }
 }
 
@@ -1356,7 +1362,7 @@ class HardHatEnvironmentUI {
   constructor({ context, operators }) {
     this.context = context;
     this.ops = operators;
-    this.store = Core.loadStore();
+    this.store = hardHatStore.loadStore();
 
     const panelStyles = {
       boxSizing: "border-box",
@@ -1375,31 +1381,27 @@ class HardHatEnvironmentUI {
     panel.add(content);
     this.content = { panel, content };
 
-    const layoutManager = getLayoutManagerFromContext(context);
-    if (layoutManager) {
-      layoutManager.ensureTab("bottom", "addon.hardhat.environment", "Environment", panel, {
-        open: false,
-        replace: false,
-      });
-      const unbind = layoutManager.bindToggle("AddonHardHatEnvironment", "bottom", "addon.hardhat.environment");
-      this._unbindToggle = unbind || null;
-    } else {
-      this._unbindToggle = null;
-    }
+    const window = UIComponents.floatingPanel({
+      context,
+      title: "Weather",
+      icon: "weather_snowy",
+      workspaceTabId: "addon.hardhat.schedule",
+      workspaceTabLabel: "Weather",
+      startMinimized: true,
+    });
+    
+    window.setContent(panel);
 
-    this.listen(context);
+    this.draw(context)
+
+  }
+
+  draw(context) {
+    this._listen(context);
     this._redraw();
   }
 
-  destroy() {
-    if (this._unbindToggle) this._unbindToggle();
-    const layoutManager = getLayoutManagerFromContext(this.context);
-    if (layoutManager) {
-      layoutManager.removeTab("bottom", "addon.hardhat.environment");
-    }
-  }
-
-  listen(context) {
+  _listen(context) {
     context.signals.hardHatStoreChanged.add(({ store }) => {
       this.store = store;
       this._redraw();
@@ -1407,7 +1409,7 @@ class HardHatEnvironmentUI {
 
     context.signals.weatherChanged.add(({ weather }) => {
       if (weather) {
-        Core.updateWeather(this.store, weather);
+        hardHatStore.updateWeather(this.store, weather);
       }
       this._redraw();
     });

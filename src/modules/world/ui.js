@@ -1,10 +1,14 @@
 import { Components as UIComponents } from "../../ui/Components/Components.js";
 
+import { PieMenu } from "../../ui/Components/Components.js";
+
 import {
   installViewportLayoutListener,
   shouldShowRotateToLandscapePrompt,
   updateContextMobileViewportHints,
 } from "./mobileViewportDetection.js";
+
+import { SetValueCommand } from "../../context/world/editor/commands/SetValueCommand.js";
 
 class StatusBar {
   constructor({ context, operators }) {
@@ -19,6 +23,8 @@ class StatusBar {
     this.drawStatusBar(context, operators);
 
     this.bindToggleButton();
+   
+    this.show();
   }
 
   bindToggleButton() {
@@ -52,16 +58,13 @@ class StatusBar {
 
     const signals = editor.signals;
 
-    const panel = UIComponents.row();
+    const panel = UIComponents.column().gap('var(--phi-1)');
 
     this.panel = panel;
-
-    panel.addClass('IntroductionHUD');
 
     panel.setId('ApplicationStateBar');
 
     panel.setStyles({
-
       display: 'none'
     });
 
@@ -75,7 +78,7 @@ class StatusBar {
 
     objectInput.setId('object-selector-input');
 
-    objectInput.setValue('Global Id Here');
+    objectInput.setValue('Select By Global Id Here');
 
     objectInput.addClass('hud-input');
 
@@ -88,10 +91,91 @@ class StatusBar {
     });
 
     activeSection.add(activeLabel, objectInput);
+    
+    const objectVisibleSection = UIComponents.column().gap('0.25rem');
 
-    const divider1 = UIComponents.div();
+    const objectVisible = UIComponents.checkbox().onChange( update );
 
-    divider1.addClass('hud-divider');
+    objectVisibleSection.add( UIComponents.span( 'Visible: ' ).addClass( 'hud-label' ) , objectVisible);
+  
+
+    function update() {
+
+      const object = context.editor.selected;
+
+      if ( object.visible !== objectVisible.getValue() ) {
+
+        context.editor.execute( new SetValueCommand( context.editor, object, 'visible', objectVisible.getValue() ) );
+  
+      }
+    };
+
+    
+    function listen() {
+
+      context.editor.signals.selectionChanged.add((count) => {
+
+        selectionValue.setValue( count );
+
+        
+      });
+
+      context.editor.signals.objectSelected.add((object) => {
+
+
+        if ( !object ) return IfcQuickInfoRow.clear();
+
+          objectInput.setValue(object.GlobalId || object.uuid || '');
+          
+          objectVisible.setValue( object.visible );
+
+      });
+
+      context.signals.enableEditingAttributes.add( async ({ GlobalId, Attributes, PropertiesData }) => {
+        
+        if ( !GlobalId && GlobalId != context.editor.selected.guid ) return IfcQuickInfoRow.clear();
+        
+        listenIfcQuickInfo(Attributes.attributes, PropertiesData);
+        
+      },
+    );
+
+    }
+
+    
+    function listenIfcQuickInfo(Attributes, PropertiesData) {
+
+      IfcQuickInfoRow.clear();
+
+      Attributes.forEach((attribute) => {
+
+        if (attribute.name === 'GlobalId') return;
+
+        if (attribute.isNull ) return 
+  
+        if (attribute.dataType === 'entity') return;
+  
+        const displayValue = attribute.getDisplayValue != null
+          ? attribute.getDisplayValue()
+          : (attribute.getValue != null ? attribute.getValue() : '');
+  
+        const displayText = displayValue != null && typeof displayValue === 'object'
+          ? JSON.stringify(displayValue)
+          : String(displayValue);
+  
+        const rootInfo = UIComponents.column().gap('0.25rem');
+
+        const rootAttributeName = UIComponents.span( attribute.displayName ).addClass( 'hud-label' );
+
+        const rootValue = UIComponents.text(displayText);
+    
+        rootInfo.add( rootAttributeName, rootValue );
+  
+        
+        IfcQuickInfoRow.add(rootInfo);
+      });
+
+    }
 
     const sourceSection = UIComponents.column().gap('0.25rem');
 
@@ -107,24 +191,17 @@ class StatusBar {
 
     sourceSection.add(sourceLabel, sourceValue);
 
-    const divider2 = UIComponents.div();
-
-    divider2.addClass('hud-divider');
-
     const selectionSection = UIComponents.column().gap('0.25rem');
 
     const selectionLabel = UIComponents.span('SELECTED');
 
     selectionLabel.addClass('hud-label');
 
-    const selectionValue = UIComponents.span('0');
+    const selectionValue = UIComponents.text('0');
 
     selectionValue.addClass('hud-coins');
 
     selectionSection.add(selectionLabel, selectionValue);
-
-    const divider3 = UIComponents.div();
-    divider3.addClass('hud-divider');
 
     const objectsSection = UIComponents.column().gap('0.25rem');
     const objectsLabel = UIComponents.span('OBJECTS');
@@ -133,18 +210,12 @@ class StatusBar {
     objectsValue.addClass('hud-input');
     objectsSection.add(objectsLabel, objectsValue);
 
-    const divider4 = UIComponents.div();
-    divider4.addClass('hud-divider');
-
     const verticesSection = UIComponents.column().gap('0.25rem');
     const verticesLabel = UIComponents.span('VERTICES');
     verticesLabel.addClass('hud-label');
     const verticesValue = UIComponents.span('0');
     verticesValue.addClass('hud-input');
     verticesSection.add(verticesLabel, verticesValue);
-
-    const divider5 = UIComponents.div();
-    divider5.addClass('hud-divider');
 
     const trianglesSection = UIComponents.column().gap('0.25rem');
     const trianglesLabel = UIComponents.span('TRIANGLES');
@@ -153,23 +224,53 @@ class StatusBar {
     trianglesValue.addClass('hud-input');
     trianglesSection.add(trianglesLabel, trianglesValue);
 
-    panel.add(
-      activeSection, divider1, sourceSection, divider2, selectionSection,
-      divider3, objectsSection, divider4, verticesSection, divider5, trianglesSection
+    const IfcQuickInfoRow = UIComponents.column().gap('0.25rem');
+
+    const row = UIComponents.row().gap('var(--phi-1)');
+    
+    row.add(
+      activeSection, UIComponents.div().addClass('hud-divider'), 
+      objectVisibleSection, UIComponents.div().addClass('hud-divider'), 
+      sourceSection, UIComponents.div().addClass('hud-divider'), 
+      selectionSection, UIComponents.div().addClass('hud-divider'), 
+      objectsSection, UIComponents.div().addClass('hud-divider'), 
+      verticesSection, UIComponents.div().addClass('hud-divider'), 
+      trianglesSection
     );
+
+    panel.add(row, IfcQuickInfoRow);
 
     document.getElementById('Viewport').appendChild(panel.dom);
 
-    this.listenSelection(signals, selectionValue);
+    listen()
 
     this.listenActiveObject(signals, objectInput, sourceValue);
 
     this.listenSceneInfo(editor, objectsValue, verticesValue, trianglesValue);
   }
 
-  listenSelection(signals, selectionCountComponent) {
-    signals.selectionChanged.add((count) => {
-      selectionCountComponent.dom.textContent = count;
+  _addAttributesList(content, AttributeCollection) {
+    AttributeCollection.attributes.forEach((attribute) => {
+
+      if (attribute.isNull ) return 
+
+      if (attribute.dataType === 'entity') return;
+
+      const displayValue = attribute.getDisplayValue != null
+        ? attribute.getDisplayValue()
+        : (attribute.getValue != null ? attribute.getValue() : '');
+
+      const displayText = displayValue != null && typeof displayValue === 'object'
+        ? JSON.stringify(displayValue)
+        : String(displayValue);
+
+      const row = UIComponents.createPropertyRow(
+        attribute.displayName,
+        displayText,
+        attribute.description,
+      );
+
+      content.add(row);
     });
   }
 
@@ -310,11 +411,6 @@ class ToolbarUI {
 
       div.add(op);
 
-      const tooltip = UIComponents.tooltip(tool.name, { 
-        position: 'right', 
-      });
-
-      tooltip.attachTo(div.dom, { followMouse: true });
 
       this.toolbar.appendChild(div.dom);
       if (tool.operator === 'viewer.isolate_elements') {
@@ -386,14 +482,6 @@ class LoadingBarUI {
   constructor({ context, operators }) {
 
     const viewportContainer = context.dom;
-  
-    context.signals.bimGeometryLoadProgress.add((payload) => {
-      const phase = payload.phase;
-  
-      if (phase === "start") {
-        showBar(payload.message, payload.percent);
-      }
-    });
   
     const strip = UIComponents.div().addClass("ViewportLoadStatusStrip");
   
@@ -609,10 +697,66 @@ class MobileLandscapeGuidance {
   }
 }
 
+
+const DEFAULT_PIE_MENU_ITEMS = [
+  {
+    id: "pie-focus-selection",
+    name: "Focus on Selection",
+    icon: "center_focus_strong",
+    operator: "viewer.focus_on_selection",
+  },
+  {
+    id: "pie-isolate-elements",
+    name: "Isolate Elements",
+    icon: "layers_clear",
+    operator: "viewer.isolate_elements",
+    isActive: ({ context }) => Boolean(context?.editor?.isIsolated?.()),
+  },
+  {
+    id: "pie-dim-elements",
+    name: "Dim Elements",
+    icon: "highlight_off",
+    operator: "viewer.highlight_elements",
+  },
+];
+
+
+class SelectionPieMenu extends PieMenu {
+  constructor({ context, operators }) {
+    const configuredItems = context.config.ui?.pieMenu?.items;
+
+    const sourceItems = configuredItems? configuredItems : DEFAULT_PIE_MENU_ITEMS;
+
+    const shortcut = context.config.ui?.pieMenu?.shortcut || "P";
+
+
+    super({
+      context,
+      operators,
+      items: sourceItems.map((item) => {
+        if (item?.operator === "viewer.isolate_elements" && typeof item.isActive !== "function") {
+          return {
+            ...item,
+            isActive: ({ context: itemContext }) => Boolean(itemContext?.editor?.isIsolated?.()),
+          };
+        }
+
+        return item;
+      }),
+      refreshSignals: ["isolationChanged"],
+      shortcut,
+    });
+
+
+  }
+
+}
+
 export default [
   StatusBar,
   LoadingBarUI,
   ToolbarUI,
   LoadingUI,
   MobileLandscapeGuidance,
+  SelectionPieMenu
 ];

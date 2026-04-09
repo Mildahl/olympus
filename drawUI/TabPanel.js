@@ -6,8 +6,6 @@ import { buildWorkspaceDockHandlers, resolveFloatingMountElement } from "./utils
 
 import { createPanelHeaderChrome, createPanelFooterRow } from "./panelChrome.js";
 
-import { getLayoutManagerFromContext } from "../src/ui/utils/layoutManagerAccess.js";
-
 /**
  * @typedef {'left' | 'right' | 'bottom'} LayoutPosition
  * Position of the tab panel in the layout.
@@ -186,7 +184,7 @@ export class TabPanel {
    * @private
    */
   get layoutManager() {
-    return getLayoutManagerFromContext(this.context);
+    return this.context.ui.model.layoutManager || null;
   }
 
   /**

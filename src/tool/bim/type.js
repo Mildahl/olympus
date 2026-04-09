@@ -4,8 +4,6 @@ import tools from "../index.js";
 
 import { Collection } from "../../data/index.js";
 
-import { IfcRoot, IfcModel } from "../../data/index.js";
-
 import context from '../../context/index.js'
 
 class BIMTypeProperties extends Collection {
@@ -49,7 +47,7 @@ list_types
   }
 
   static async hasElementTypes(modelName) {
-    return await tools.ifc.get(modelName, "IfcElementType").then((types) => {
+    return await tools.bim.ifc.get(modelName, "IfcElementType").then((types) => {
       return types && types.length > 0;
     });
   }
@@ -64,7 +62,7 @@ list_types
 
     const activeModel = context.ifc.activeModel;
 
-    const check =  await tools.ifc.isA(activeModel, GlobalId, "IfcProduct");
+    const check =  await tools.bim.ifc.isA(activeModel, GlobalId, "IfcProduct");
 
     return check;
   }
@@ -130,7 +128,7 @@ data
         "IfcCoveringType",
     ]
 
-    const typeClass = await tools.ifc.getClass(modelName, activeType)
+    const typeClass = await tools.bim.ifc.getClass(modelName, activeType)
 
     return layered_classes.includes(typeClass);
   }
@@ -148,7 +146,7 @@ data
         "IfcColumnType",
     ]
 
-    const typeClass = await tools.ifc.getClass(modelName, activeType)
+    const typeClass = await tools.bim.ifc.getClass(modelName, activeType)
 
     return profiled_classes.includes(typeClass);
   }

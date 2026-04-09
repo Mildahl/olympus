@@ -1,5 +1,5 @@
 function create(name = 'New Viewpoint', { viewpointTool, context }) {
-  const viewpoint = viewpointTool.create(context.editor, name);
+  const viewpoint = viewpointTool.create(name);
 
   context.signals.viewpointCreated.dispatch(viewpoint);
 
@@ -23,7 +23,7 @@ function remove(GlobalId, { viewpointTool, context }) {
 }
 
 function rename(GlobalId, newName, { viewpointTool, context }) {
-  const result = viewpointTool.rename(GlobalId, newName);
+  const result = viewpointTool.rename(GlobalId, newName); 
 
   context.signals.viewpointRenamed.dispatch({ GlobalId, newName });
 
@@ -33,7 +33,7 @@ function rename(GlobalId, newName, { viewpointTool, context }) {
 }
 
 function updatePosition(GlobalId, x, y, z, { viewpointTool, context }) {
-  const result = viewpointTool.updatePosition(context.editor, GlobalId, x, y, z);
+  const result = viewpointTool.updatePosition(GlobalId, x, y, z);
 
   context.signals.viewpointUpdated.dispatch({ GlobalId, position: { x, y, z } });
 
@@ -45,7 +45,7 @@ function updatePosition(GlobalId, x, y, z, { viewpointTool, context }) {
 }
 
 function updateTarget(GlobalId, x, y, z, { viewpointTool, context }) {
-  const result = viewpointTool.updateTarget(context.editor, GlobalId, x, y, z);
+  const result = viewpointTool.updateTarget(GlobalId, x, y, z);
 
   context.signals.viewpointUpdated.dispatch({ GlobalId, target: { x, y, z } });
 
@@ -57,7 +57,7 @@ function updateTarget(GlobalId, x, y, z, { viewpointTool, context }) {
 }
 
 function activate(GlobalId, animate = true, { viewpointTool, context }) {
-  const result = viewpointTool.activate(context.editor, GlobalId, animate);
+  const result = viewpointTool.activate(GlobalId, animate);
 
   context.signals.viewpointActivated.dispatch(result);
 
@@ -67,7 +67,7 @@ function activate(GlobalId, animate = true, { viewpointTool, context }) {
 }
 
 function updateFromEditor(GlobalId, { viewpointTool, context }) {
-  const result = viewpointTool.updateFromEditor(context.editor, GlobalId);
+  const result = viewpointTool.updateFromEditor(GlobalId);
 
   context.signals.viewpointUpdated.dispatch({ GlobalId });
 

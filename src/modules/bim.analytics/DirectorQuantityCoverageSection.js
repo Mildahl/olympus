@@ -2,6 +2,18 @@ import { Components as UIComponents } from "../../ui/Components/Components.js";
 
 import { directorChartBackgrounds, directorChartBorders } from "./DirectorAnalyticsChartTheme.js";
 
+import {
+  analyticsChartCaptionStyles,
+  analyticsDenseListRowItemStyles,
+  analyticsQuantityDoughnutHostStyles,
+  analyticsQuantityRowStyles,
+  analyticsQuantityStatsColumnStyles,
+  analyticsQtoBarHostStyles,
+  analyticsScrollListStyles,
+  analyticsSectionTitleStyles,
+  analyticsStatBlockStyles,
+} from "./bimAnalyticsPanelStyles.js";
+
 const QTO_BAR_MAX = 8;
 
 function directorTruncateLabel(text, maxLength) {
@@ -20,15 +32,15 @@ class DirectorQuantityCoverageSection {
 
     this.title = UIComponents.text("Quantity coverage");
 
-    this.title.addClass("director-analytics-section-title");
+    this.title.setStyles(analyticsSectionTitleStyles);
 
-    this.bodyRow = UIComponents.row().gap("var(--phi-0-75)").addClass("director-analytics-quantity-row");
+    this.bodyRow = UIComponents.row().gap("var(--phi-0-75)").setStyles(analyticsQuantityRowStyles);
 
-    this.statsColumn = UIComponents.column().gap("var(--phi-0-5)").addClass("director-analytics-quantity-stats");
+    this.statsColumn = UIComponents.column().gap("var(--phi-0-5)").setStyles(analyticsQuantityStatsColumnStyles);
 
-    this.chartHost = UIComponents.div().addClass("director-analytics-chart-host").addClass("director-analytics-quantity-doughnut");
+    this.chartHost = UIComponents.div().setStyles(analyticsQuantityDoughnutHostStyles);
 
-    this.qtoBarHost = UIComponents.div().addClass("director-analytics-chart-host").addClass("director-analytics-qto-bar");
+    this.qtoBarHost = UIComponents.div().setStyles(analyticsQtoBarHostStyles);
 
     this.chartPanel = null;
 
@@ -178,7 +190,7 @@ class DirectorQuantityCoverageSection {
 
       const caption = UIComponents.text("Top quantity sets");
 
-      caption.addClass("director-analytics-chart-caption");
+      caption.setStyles(analyticsChartCaptionStyles);
 
       this.qtoBarHost.add(caption);
 
@@ -201,14 +213,14 @@ class DirectorQuantityCoverageSection {
         collapsed: true,
       });
 
-      const scrollWrap = UIComponents.div().addClass("director-analytics-scroll-list");
+      const scrollWrap = UIComponents.div().setStyles(analyticsScrollListStyles);
 
-      const denseList = UIComponents.list().addClass("director-analytics-dense-list");
+      const denseList = UIComponents.list();
 
       for (let index = 0; index < topNames.length; index++) {
         const row = topNames[index];
 
-        const item = UIComponents.listItem().addClass("director-analytics-dense-row");
+        const item = UIComponents.listItem().setStyles(analyticsDenseListRowItemStyles);
 
         item.add(UIComponents.text(String(row.name)));
 
@@ -226,7 +238,7 @@ class DirectorQuantityCoverageSection {
   }
 
   _statBlock(label, value) {
-    const block = UIComponents.div().addClass("director-analytics-stat-block");
+    const block = UIComponents.div().setStyles(analyticsStatBlockStyles);
 
     block.add(UIComponents.text(label));
 

@@ -500,7 +500,7 @@ class GanttComponent {
                 return;
             }
 
-            this.operators.execute("bim.load_task_details", this.context, taskId);
+            this.operators.execute("bim.enable_editing_task", this.context, taskId);
         };
 
         if (typeof this.ganttChart.Draw === "function") {

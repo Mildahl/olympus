@@ -1,8 +1,8 @@
 const defaults = {
-  vendorBaseUrl: "/external/vendor",
-  dataBaseUrl: "/external/data",
-  pythonToolsBaseUrl: "/external/pytools",
-  ifcSamplesBaseUrl: "/external/ifc",
+  vendorBaseUrl: "/vendor",
+  dataBaseUrl: "/data",
+  ifcSamplesBaseUrl: "/data/ifc",
+  pythonToolsBaseUrl: "/dist/pytools",
 };
 
 let _settings = null;
@@ -25,14 +25,16 @@ function data(subPath = "") {
   return subPath ? `${base}/${subPath}` : base;
 }
 
-function pythonTools(subPath = "") {
-  const base = get("pythonToolsBaseUrl");
-  return subPath ? `${base}/${subPath}` : base;
-}
-
 function ifcSamples(subPath = "") {
   const base = get("ifcSamplesBaseUrl");
   return subPath ? `${base}/${subPath}` : base;
+}
+
+function pythonTools(subPath = "") {
+  const raw = get("pythonToolsBaseUrl");
+  const trimmed = String(raw || defaults.pythonToolsBaseUrl).replace(/\/+$/, "");
+  const base = `${trimmed}/`;
+  return subPath ? `${base}${String(subPath).replace(/^\//, "")}` : base;
 }
 
 const Paths = {
@@ -40,8 +42,8 @@ const Paths = {
   get,
   vendor,
   data,
-  pythonTools,
   ifcSamples,
+  pythonTools,
 };
 
 export default Paths;

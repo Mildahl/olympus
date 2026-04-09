@@ -41,7 +41,7 @@ Defines **`SceneConfig`** for the 3D viewport, e.g.:
 - **enableFog**, **fog** (fogType, fogColor, fogNear, fogFar, fogDensity).
 - **axesVisible**, **axesSize**.
 
-These are applied in `aeco.js` in **`_applySceneConfig()`**.
+These are applied in `src/index.js` in **`_applySceneConfig()`**.
 
 ## `config.shortcuts.js`
 

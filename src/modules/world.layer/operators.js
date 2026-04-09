@@ -1,6 +1,6 @@
 import { Operator } from "../../operators/Operator.js";
 
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 import * as LayerCore from "../../core/layer.js";
 
@@ -27,7 +27,7 @@ class ActivateLayer extends Operator {
   execute() {
 
     const result = LayerCore.activateLayer(this.layerGuid, {
-      layerTool: AECO_tools.world.layer,
+      layerTool: AECO_TOOLS.world.layer,
       signals: this.context.signals,
       context: this.context,
       editor: this.context.editor
@@ -74,7 +74,7 @@ class GetLayerByName extends Operator {
 
   execute() {
     const layer = LayerCore.getLayerByName(this.layerName, {
-      layerTool: AECO_tools.world.layer
+      layerTool: AECO_TOOLS.world.layer
     });
 
     return { status: "FINISHED", layer };
@@ -97,15 +97,15 @@ class CreateWorldLayer extends Operator {
   }
 
   poll() {
-    return AECO_tools.world.layer.World;
+    return AECO_TOOLS.world.layer.World;
   }
 
   execute() {
 
-    const world = AECO_tools.world.layer.World;
+    const world = AECO_TOOLS.world.layer.World;
 
     const layer = LayerCore.createLayer(world, this.layerName, {
-      layerTool: AECO_tools.world.layer,
+      layerTool: AECO_TOOLS.world.layer,
       signals: this.context.signals
     });
 

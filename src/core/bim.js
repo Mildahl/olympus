@@ -8,6 +8,22 @@ import * as THREE from "three";
 
 import * as WorldCore from "./world.js";
 
+import * as AttributeCore from "./bim.attribute.js";
+
+import * as SequenceCore from "./bim.sequence.js";
+
+import * as CostCore from "./bim.cost.js";
+
+import AttributeTool from "../tool/bim/attribute.js";
+
+import PsetTool from "../tool/bim/pset.js";
+
+import SceneTool from "../tool/viewer/SceneTool.js";
+
+import SequenceTool from "../tool/bim/sequence.js";
+
+import CostTool from "../tool/bim/cost.js";
+
 function normalizeGeometryLoadProgressPercentage(percentage) {
   const parsed = Number(percentage);
 
@@ -42,6 +58,7 @@ function scheduleApproximateBimGeometryLoadProgress(
   label,
   pulseStartPercent,
   pulseMaxPercent,
+  category = "geometry",
 ) {
   let pulseTimerId = null;
 
@@ -52,6 +69,7 @@ function scheduleApproximateBimGeometryLoadProgress(
   const dispatchProgressUpdate = () => {
     dispatchBimGeometryLoadProgressSignal(context, {
       phase: "update",
+      category,
       modelName,
       geometryBackend,
       message: label,
@@ -83,6 +101,7 @@ function scheduleApproximateBimGeometryLoadProgress(
     if (typeof finalProgress === "number") {
       dispatchBimGeometryLoadProgressSignal(context, {
         phase: "update",
+        category,
         modelName,
         geometryBackend,
         message: finalMessage || label,
@@ -103,7 +122,9 @@ async function setActiveBIMModel(
 
   context.signals.refreshBIMLayers.dispatch({ FileName: file_name});
 
-  isNewModel? context.signals.newIFCModel.dispatch({ FileName: file_name}) : null;
+  if (isNewModel) {
+    context.signals.newIFCModel.dispatch({ FileName: file_name });
+  }
 
   if (!isAlreadyActive) {
     context.signals.activeModelChanged.dispatch({ FileName: file_name });
@@ -120,6 +141,8 @@ async function setActiveBIMModel(
 async function loadBIMModelFromPath(path, { context, bimTools }) {
   const file_name = path.split("/").pop();
 
+  let finalizeApproximateModelLoadProgress = null;
+
   dispatchBimGeometryLoadProgressSignal(context, {
     phase: "start",
     category: "ifc_model",
@@ -128,7 +151,21 @@ async function loadBIMModelFromPath(path, { context, bimTools }) {
   });
 
   try {
+    finalizeApproximateModelLoadProgress = scheduleApproximateBimGeometryLoadProgress(
+      context,
+      file_name,
+      null,
+      `Reading IFC model ${file_name}...`,
+      12,
+      90,
+      "ifc_model",
+    );
+
     const result = await bimTools.project.loadModelFromPath(path);
+
+    if (typeof finalizeApproximateModelLoadProgress === "function") {
+      finalizeApproximateModelLoadProgress(96, `Finalizing IFC model ${file_name}...`);
+    }
 
     bimTools.project.storeProject(context, {
       GlobalId: result.GlobalId,
@@ -157,6 +194,10 @@ async function loadBIMModelFromPath(path, { context, bimTools }) {
       errorMessage = String(err);
     }
 
+    if (typeof finalizeApproximateModelLoadProgress === "function") {
+      finalizeApproximateModelLoadProgress(0, errorMessage);
+    }
+
     dispatchBimGeometryLoadProgressSignal(context, {
       phase: "error",
       category: "ifc_model",
@@ -168,7 +209,10 @@ async function loadBIMModelFromPath(path, { context, bimTools }) {
   }
 }
 
+
 async function loadBIMModelFromBlob(fileName, arrayBuffer, { context, bimTools, signals }) {
+  let finalizeApproximateModelLoadProgress = null;
+
   dispatchBimGeometryLoadProgressSignal(context, {
     phase: "start",
     category: "ifc_model",
@@ -177,7 +221,21 @@ async function loadBIMModelFromBlob(fileName, arrayBuffer, { context, bimTools, 
   });
 
   try {
+    finalizeApproximateModelLoadProgress = scheduleApproximateBimGeometryLoadProgress(
+      context,
+      fileName,
+      null,
+      `Reading IFC model ${fileName}...`,
+      12,
+      90,
+      "ifc_model",
+    );
+
     const result = await bimTools.project.loadModelFromBlob(fileName, arrayBuffer);
+
+    if (typeof finalizeApproximateModelLoadProgress === "function") {
+      finalizeApproximateModelLoadProgress(96, `Finalizing IFC model ${fileName}...`);
+    }
 
     bimTools.project.storeProject(context, {
       GlobalId: result.GlobalId,
@@ -205,6 +263,10 @@ async function loadBIMModelFromBlob(fileName, arrayBuffer, { context, bimTools, 
       errorMessage = String(err);
     }
 
+    if (typeof finalizeApproximateModelLoadProgress === "function") {
+      finalizeApproximateModelLoadProgress(0, errorMessage);
+    }
+
     dispatchBimGeometryLoadProgressSignal(context, {
       phase: "error",
       category: "ifc_model",
@@ -215,6 +277,7 @@ async function loadBIMModelFromBlob(fileName, arrayBuffer, { context, bimTools, 
     throw err;
   }
 }
+
 
 /**
  * Create a new BIM model
@@ -245,6 +308,7 @@ async function newBIMModel(
   return result;
 }
 
+
 /**
  * Delete a BIM model
  * @param {string} GlobalId - Model GlobalId
@@ -268,7 +332,7 @@ async function deleteBIMModel(GlobalId, { bimTools, signals }) {
  * Save a BIM model to file (File System Access API or download fallback).
  * @param {string} modelName - Loaded model name
  * @param {string} format - "ifc" | "ifcxml" | "ifczip"
- * @param {FileSystemFileHandle|null} [fileHandle] - Optional handle from showSaveFilePicker
+ * @param {FileSystemFileHandle|null} fileHandle - Optional handle from showSaveFilePicker
  * @param {Object} options
  * @param {Object} options.bimTools - BIM tools (project)
  * @returns {Promise<{ status: string, path?: string }>}
@@ -311,11 +375,14 @@ async function saveBIMModelToFile(modelName, format, fileHandle, { bimTools }) {
  * Load geometry data for a model
  * @param {string} modelName - Model name
  * @param {string} schema - Schema type (e.g., 'IFC4')
- * @param {string} [targetLayerPath] - Optional path to parent layer (e.g., "Buildings" or "Buildings/IFC Architecture"). Does NOT include "World/" prefix.
+ * @param {string} targetLayerPath - Optional path to parent layer (e.g., "Buildings" or "Buildings/IFC Architecture"). Does NOT include "World/" prefix.
  * @param {Object} options
  * @param {Object} options.sceneTool - Scene tool
  * @param {Object} options.projectTool - Loader tool
  * @param {Object} options.layerTool - Layer tool
+ * @param {Object} options.placementTool - Placement tool
+ * @param {string} options.geometryBackend - Geometry backend
+ * @param {boolean} [options.pythonBimReady] - When false, ifcopenshell requests use ifc-lite
  * @param {Object} options.context - Context object
  * @returns {Promise<THREE.Group>} Root group of loaded geometry
  */
@@ -323,7 +390,15 @@ async function loadGeometryData(
   modelName,
   schema = "IFC4",
   targetLayerPath,
-  { sceneTool, projectTool, layerTool, placementTool, geometryBackend = "ifcopenshell", context }
+  {
+    sceneTool,
+    projectTool,
+    layerTool,
+    placementTool,
+    geometryBackend = "ifcopenshell",
+    context,
+    pythonBimReady,
+  }
 ) {
   if (context.ifc.geometryLoadInProgress) {
     throw new Error("A geometry load is already in progress.");
@@ -333,20 +408,20 @@ async function loadGeometryData(
 
   let finalizeApproximateGeometryLoadProgress = null;
 
+  let effectiveGeometryBackend =
+    geometryBackend ?? context.ifc.geometryBackend ?? "ifcopenshell";
+
+  if (pythonBimReady === false && effectiveGeometryBackend === "ifcopenshell") {
+    effectiveGeometryBackend = "ifc-lite";
+  }
+
   const place = (element, { position, rotation }) => {
 
 
     if (Array.isArray(rotation)) {
       rotation.forEach((r) => {
-        console.log("[BIM.loadGeometryData] place:rotate", {
-          modelName,
-          geometryBackend,
-          axis: r.axis,
-          angle: r.angle,
-        });
 
         placementTool.rotate(
-          null,
           element,
           r.axis,
           r.angle,
@@ -356,7 +431,6 @@ async function loadGeometryData(
     } else {
       rotation
         ? placementTool.setRotation(
-            null,
             element,
             rotation.axis,
             rotation.angle,
@@ -364,14 +438,14 @@ async function loadGeometryData(
         : null;
     }
 
-    position ? placementTool.setPosition(null, element, position) : null;
+    position ? placementTool.setPosition( element, position) : null;
 
     element.updateMatrixWorld(true);
 
   };
 
   const progressLabel =
-    geometryBackend === "ifc-lite"
+    effectiveGeometryBackend === "ifc-lite"
       ? `Loading ${modelName} geometry with ifc-lite...`
       : `Loading ${modelName} geometry...`;
 
@@ -379,7 +453,7 @@ async function loadGeometryData(
     dispatchBimGeometryLoadProgressSignal(context, {
       phase: "start",
       modelName,
-      geometryBackend,
+      geometryBackend: effectiveGeometryBackend,
       message: progressLabel,
       percent: 8,
     });
@@ -387,7 +461,7 @@ async function loadGeometryData(
     finalizeApproximateGeometryLoadProgress = scheduleApproximateBimGeometryLoadProgress(
       context,
       modelName,
-      geometryBackend,
+      effectiveGeometryBackend,
       progressLabel,
       12,
       92,
@@ -395,7 +469,7 @@ async function loadGeometryData(
 
     let geometrySource = schema;
 
-    if (geometryBackend === "ifc-lite") {
+    if (effectiveGeometryBackend === "ifc-lite") {
       geometrySource = "IFC_LITE";
     }
 
@@ -464,7 +538,7 @@ async function loadGeometryData(
 
     createdNode.scene.add(projectRootGroup);
 
-    if (geometryBackend === "ifc-lite") {
+    if (effectiveGeometryBackend === "ifc-lite") {
       projectRootGroup.updateMatrixWorld(true);
 
       const firstMesh = projectRootGroup.getObjectByProperty("isMesh", true);
@@ -484,17 +558,6 @@ async function loadGeometryData(
 
         const transformedMax = bbox?.max.clone().applyMatrix4(firstMesh.matrixWorld);
 
-        console.log("[BIM.loadGeometryData] firstMesh:debug", {
-          modelName,
-          geometryBackend,
-          localBboxMin: bbox ? { x: bbox.min.x, y: bbox.min.y, z: bbox.min.z } : null,
-          localBboxMax: bbox ? { x: bbox.max.x, y: bbox.max.y, z: bbox.max.z } : null,
-          worldBboxMin: transformedMin ? { x: transformedMin.x, y: transformedMin.y, z: transformedMin.z } : null,
-          worldBboxMax: transformedMax ? { x: transformedMax.x, y: transformedMax.y, z: transformedMax.z } : null,
-          matrixAutoUpdate: firstMesh.matrixAutoUpdate,
-          visible: firstMesh.visible,
-          parentVisible: firstMesh.parent?.visible,
-        });
       }
     }
 
@@ -512,7 +575,7 @@ async function loadGeometryData(
     dispatchBimGeometryLoadProgressSignal(context, {
       phase: "complete",
       modelName,
-      geometryBackend,
+      geometryBackend: effectiveGeometryBackend,
       message: `Geometry loaded for ${modelName}`,
       percent: 100,
     });
@@ -534,7 +597,7 @@ async function loadGeometryData(
     dispatchBimGeometryLoadProgressSignal(context, {
       phase: "error",
       modelName,
-      geometryBackend,
+      geometryBackend: effectiveGeometryBackend,
       message: errorMessage,
     });
 
@@ -769,7 +832,7 @@ function addIfcElementToScene(
     group.add(mesh);
   });
 
-  worldTools.placement.setRotation(null,group,"x","-90",)
+  worldTools.placement.setRotation(group,"x","-90",)
 
   context.editor.scene.add(group);
 
@@ -818,6 +881,56 @@ function removeIfcElementFromScene(GlobalId, { worldTools, context }) {
   }
 }
 
+
+
+
+
+
+/** * Load attributes and properties for a selected entity and dispatch a signal to update the UI.
+ * @param {Object} params
+ * @param {SceneTool} params.sceneTool - The tool for interacting with the 3D scene.
+ * @param {AttributeTool} params.attributeTool - The tool for fetching and storing BIM attributes.
+ * @param {PsetTool} params.psetTool - The tool for fetching and storing BIM properties.
+ * @param {SequenceTool} params.sequenceTool - The tool for fetching and storing BIM sequence data.
+ * @param {CostTool} params.costTool - The tool for fetching and storing BIM cost data.
+ * @param {Object} params.context - The application context containing signals and state.
+ */
+
+async function displayOnSelection({context, sceneTool, attributeTool, psetTool, sequenceTool, costTool}) {
+
+  if (context.ifc.isAttributeSelectionCallbackEnabled) {
+    return;
+  }
+
+  context.ifc.isAttributeSelectionCallbackEnabled = true;
+
+    sceneTool.onSelection(async (object) => {
+
+        if (!context.ifc.activeModel) return;
+
+        if (!object)
+            return
+
+        if (!sceneTool.isIfcObject(object)) return;
+
+        const entityGlobalId = sceneTool.getEntityGlobalId(object);
+
+        if (!entityGlobalId) return;
+
+        const isSameActiveElement = context.ifc.activeElement === entityGlobalId;
+
+        context.ifc.activeElement = entityGlobalId;
+
+        if (!isSameActiveElement) {
+          await AttributeCore.enableEditingAttributes(context.ifc.activeModel, entityGlobalId, {context, attributeTool, psetTool});
+          await SequenceCore.enableEditingElementTasks(context.ifc.activeModel, entityGlobalId, {context, sequenceTool});
+          await CostCore.enableEditingElementCosts(context.ifc.activeModel, entityGlobalId, {context, costTool});
+        }
+      });
+
+}
+
+
 export {
   newBIMModel,
   setActiveBIMModel,
@@ -833,4 +946,5 @@ export {
   deleteElement,
   addIfcElementToScene,
   removeIfcElementFromScene,
+  displayOnSelection,
 };

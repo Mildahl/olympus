@@ -5,7 +5,7 @@
  */
 import { Operator } from "../../operators/Operator.js";
 
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 import * as TerminalCore from "../../core/terminal.js";
 class TERMINAL_New extends Operator {
@@ -23,7 +23,7 @@ class TERMINAL_New extends Operator {
 
   async execute() {
     const terminal = await TerminalCore.newTerminal(this.language, {
-      codeTool: AECO_tools.code.editor,
+      codeTool: AECO_TOOLS.code.editor,
       signals: this.context.signals,
     });
 
@@ -46,7 +46,7 @@ class TERMINAL_Open extends Operator {
 
   async execute() {
     await TerminalCore.openTerminal(this.terminalGuid, {
-      codeTool: AECO_tools.code.editor,
+      codeTool: AECO_TOOLS.code.editor,
       signals: this.context.signals,
     });
 
@@ -72,9 +72,9 @@ class TERMINAL_Execute extends Operator {
   async execute() {
     const result = await TerminalCore.executeTerminalCommand(this.command, this.terminalGuid, {
       signals: this.context.signals,
-      pythonTool: AECO_tools.code.pyWorker,
-      jsTool: AECO_tools.code.js,
-      codeTool: AECO_tools.code.editor,
+      pythonTool: AECO_TOOLS.code.pyWorker,
+      jsTool: AECO_TOOLS.code.js,
+      codeTool: AECO_TOOLS.code.editor,
     });
 
     return { status: "FINISHED", ...result };
@@ -96,7 +96,7 @@ class TERMINAL_Clear extends Operator {
 
   execute() {
     TerminalCore.clearTerminal(this.terminalGuid, {
-      codeTool: AECO_tools.code.editor,
+      codeTool: AECO_TOOLS.code.editor,
       signals: this.context.signals,
     });
 
@@ -121,7 +121,7 @@ class TERMINAL_SetLanguage extends Operator {
 
   execute() {
     TerminalCore.setTerminalLanguage(this.terminalGuid, this.language, {
-      codeTool: AECO_tools.code.editor,
+      codeTool: AECO_TOOLS.code.editor,
       signals: this.context.signals,
     });
 
@@ -146,7 +146,7 @@ class TERMINAL_Rename extends Operator {
 
   async execute() {
     TerminalCore.renameTerminal(this.terminalGuid, this.newName, {
-      codeTool: AECO_tools.code.editor,
+      codeTool: AECO_TOOLS.code.editor,
       signals: this.context.signals,
     });
 

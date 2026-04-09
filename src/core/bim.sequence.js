@@ -1,5 +1,3 @@
-import { IfcRoot, IfcModel } from "../data/index.js";
-
 import  IfcTool from '../tool/bim/ifc.js';
 
 import SequenceTool from "../tool/bim/sequence.js";
@@ -9,12 +7,13 @@ import { refreshData } from "../modules/bim.sequence/data.js";
 /**
  * Adds a work schedule to the specified IFC model.
  * 
- * @param {IfcModel} model - The IFC model to which the work schedule will be added.
+ * @param {string} model - The IFC model name.
  * @param {string} scheduleName - The name of the work schedule.
  * @param {string} predefinedType - The predefined type of the work schedule.
  * @param {string} objectType - The object type of the work schedule.
  * @param {Object} options - Additional options.
- * @param {IfcTool} options.ifc - The IFC tool to use for operations.
+ * @param {typeof IfcTool} options.ifc - The IFC tool to use for operations.
+ * @param {typeof SequenceTool} options.sequence - The sequence tool.
  * @param {Object} options.signals - The signals object for dispatching events.
  */
 async function add_work_schedule(model, scheduleName, predefinedType, objectType, { ifc=IfcTool, sequence=SequenceTool, signals }) {
@@ -34,9 +33,11 @@ async function add_work_schedule(model, scheduleName, predefinedType, objectType
 async function enable_editing_workschedule_tasks( activeModel, GlobalId,  { ifc=IfcTool, sequence=SequenceTool, signals, context, viewType = "gantt" }) {
     if (!GlobalId) return false;
 
-    const tasks =  await sequence.create_tasks_json( activeModel, GlobalId );
+    if (context.activeWorkSchedule == GlobalId) return false;
 
     context.activeWorkSchedule = GlobalId;
+
+    const tasks =  await sequence.create_tasks_json( activeModel, GlobalId );
 
     context.signals.enableEditingWorkScheduleTasks.dispatch({
         model: activeModel,
@@ -65,8 +66,8 @@ async function remove_work_schedule(model, scheduleId, { ifc, signals }) {
     }
 
     const result = await ifc.runAPI(model, 'sequence.remove_work_schedule', {
-        work_schedule: new IfcRoot(scheduleId)
-    });
+        work_schedule: scheduleId
+    }, ["work_schedule"]);
 
     refreshData();
 
@@ -84,7 +85,7 @@ async function add_work_plan(workPlanName = 'default', { ifc, signals }) {
 
 async function remove_work_plan(GlobalId, { ifc, signals }) {
 
-    const result = await ifc.runAPI('sequence.remove_work_plan', {work_plan: new IfcRoot(GlobalId)});
+    const result = await ifc.runAPI('sequence.remove_work_plan', {work_plan: GlobalId}, ["work_plan"]);
 }
 async function enable_editing_work_plan( GlobalId, { sequence , signals }) {
 
@@ -105,6 +106,40 @@ function enable_editing_work_schedules( model, { sequence , signals }) {
     signals.workschedulechanged.dispatch();
 
 }
+
+/** * Load attributes and properties for a selected entity and dispatch a signal to update the UI.
+ * 
+ * @param {string} entityGlobalId - Selected IFC element GlobalId.
+ * @param {Object} options
+ * @param {Object} options.sequenceTool - The tool for fetching and storing BIM sequence data.
+ * @param {Object} options.context - The application context containing signals and state.
+ */
+
+async function enableEditingElementTasks(modelName, entityGlobalId, { sequenceTool, context}) {
+    if (!entityGlobalId || !modelName) return false;
+
+    const { inputs, outputs } = await sequenceTool.getTasksForProduct(modelName, entityGlobalId);
+
+    const outputIds = outputs.map(o => o.entityId);
+
+    const inputIds = inputs.map(i => i.entityId);
+
+    const firstOutputTaskId = outputs.length > 0 ? outputs[0].entityId : null;
+
+    firstOutputTaskId ? context.signals.taskClicked.dispatch({ taskId: firstOutputTaskId }) : null;
+
+    context.signals.displayConstructionHudTask.dispatch({
+        GlobalId: entityGlobalId,
+        model: modelName,
+        inputTasks: inputIds,
+        outputTasks: outputIds
+    });
+
+    return true;
+}
+
+
+
 export {
     add_work_plan,
     remove_work_plan,
@@ -115,6 +150,7 @@ export {
     enable_editing_workschedule_tasks,
     enable_editing_work_schedules,
     computeScheduleFrame,
+    enableEditingElementTasks
 };
 
 /**

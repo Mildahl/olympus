@@ -1,6 +1,4 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-
-import { BasePanel } from "../../../drawUI/BasePanel.js";
+import { Components as UIComponents, BasePanel } from "../../ui/Components/Components.js";
 
 class HistoryHeaderUI {
   constructor({ context, operators }) {

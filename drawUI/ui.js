@@ -2095,9 +2095,9 @@ class UIListbox extends UIDiv {
       const element = this.listitems[i];
 
       if (element.getId() === value) {
-        element.addClass("active");
+        element.addClass('Active');
       } else {
-        element.removeClass("active");
+        element.removeClass('Active');
       }
     }
 

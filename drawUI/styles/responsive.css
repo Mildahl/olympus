@@ -1,0 +1,148 @@
+/* ===========================================
+   ORIENTATION GATE — mobile portrait blocker
+   =========================================== */
+#OrientationGate {
+  align-items: center;
+  background: #0d0d0d;
+  bottom: 0;
+  color: #e0e0e0;
+  display: none;
+  flex-direction: column;
+  font-family: inherit;
+  gap: 1.5rem;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 10000;
+}
+
+#OrientationGate.active {
+  display: flex;
+}
+
+#OrientationGate .orientation-gate-icon {
+  animation: orientationRock 1.8s ease-in-out infinite;
+  height: 64px;
+  opacity: 0.7;
+  width: 64px;
+}
+
+#OrientationGate .orientation-gate-text {
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  max-width: 260px;
+  opacity: 0.8;
+  text-align: center;
+}
+
+#OrientationGate .orientation-gate-subtext {
+  font-size: 0.75rem;
+  opacity: 0.4;
+}
+
+@keyframes orientationRock {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(90deg);
+  }
+  50%,
+  75% {
+    transform: rotate(90deg);
+  }
+  90% {
+    transform: rotate(0deg);
+  }
+}
+
+@media screen and (min-width: 769px) {
+  #OrientationGate {
+    display: none !important;
+  }
+}
+
+/* ===========================================
+     DESKTOP  (>= 1024px)
+     =========================================== */
+@media screen and (min-width: 1024px) {
+  .NotificationsPanel {
+    max-width: 50vw;
+  }
+
+  .project-monitoring-panel {
+    width: var(--panel-width-desktop);
+  }
+
+  .World .HeaderBar .ContextMenu {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-left: 0 !important;
+    padding-inline: var(--phi-1);
+    scroll-padding-inline-end: var(--phi-0-5);
+    scroll-padding-inline-start: calc(var(--config-width) + var(--phi-0-5));
+    width: 100% !important;
+    z-index: 1;
+  }
+}
+
+/* ===========================================
+     TABLET  (768 – 1023px)
+     =========================================== */
+@media screen and (max-width: 1023px) {
+  :root {
+    --sidebar-width: 44px;
+    --margin: var(--phi-1);
+  }
+
+  .World .HeaderBar {
+    height: 44px;
+    width: calc(100% - var(--sidebar-width));
+  }
+
+  .World .HeaderBar .ContextMenu {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: var(--phi-0-5);
+    padding-inline: var(--phi-0-5);
+  }
+
+  .World .HeaderBar .ContextMenu::-webkit-scrollbar {
+    display: none;
+  }
+
+  .World .HeaderBar .ContextMenu .ContextModules {
+    flex-shrink: 0;
+    padding-inline: var(--phi-0-5);
+    font-size: 11px;
+  }
+
+  .FloatingPanel {
+    min-width: 280px;
+    max-width: calc(100vw - var(--sidebar-width) - var(--phi-1));
+  }
+
+  .CollapsiblePanel.SpatialManager {
+    min-width: 240px;
+  }
+
+  .TabbedPanel {
+    min-width: 280px;
+    max-width: calc(100vw - var(--sidebar-width) - var(--phi-1));
+  }
+
+  .NotificationsPanel {
+    max-width: 60vw;
+  }
+
+  .project-monitoring-panel {
+    width: var(--panel-width-phone);
+    max-width: 50vw;
+  }
+}

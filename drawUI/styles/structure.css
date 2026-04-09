@@ -1,0 +1,1950 @@
+.World {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.Active {
+  background: var(--brand-color-alpha) !important;
+  border-color: var(--brand-color) !important;
+}
+
+
+.World:has(GameHUD) .HeaderBar {
+  display: none;
+}
+
+.World .HeaderBar .BrandSpace {
+  order: -1;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  padding-inline: var(--phi-0-5);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+}
+
+/* Workspace grid tracks are set inline by LayoutManager (gridTemplateColumns / gridTemplateRows). */
+.World.workspace-layout .HeaderBar {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 100%;
+  height: 100%;
+}
+
+.World.workspace-layout #SideWorkspaceLeft {
+  grid-column: 1;
+  grid-row: 2 / -1;
+  min-height: 0;
+}
+
+.World.workspace-layout #SideWorkspaceRight {
+  grid-column: 5;
+  grid-row: 2 / -1;
+  min-height: 0;
+}
+
+.World.workspace-layout #BottomWorkspace {
+  grid-column: 3;
+  grid-row: 4;
+}
+
+.World.workspace-layout #Viewport {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.World.workspace-layout .layout-resizer-left {
+  grid-column: 2;
+  grid-row: 2 / -1;
+}
+
+.World.workspace-layout .layout-resizer-right {
+  grid-column: 4;
+  grid-row: 2 / -1;
+}
+
+.World.workspace-layout .layout-resizer-bottom {
+  grid-column: 3;
+  grid-row: 3;
+}
+
+.World #SideWorkspaceLeft,
+.World #SideWorkspaceRight,
+.World #BottomWorkspace {
+  border: 1px solid var(--border);
+}
+
+.World #SideWorkspaceLeft .panel-header,
+.World #SideWorkspaceRight .panel-header,
+.World #BottomWorkspace .panel-header {
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--phi-0-5);
+  height: 32px;
+  justify-content: space-between;
+  padding: 0 var(--phi-0-5);
+}
+
+.World #SideWorkspaceLeft .panel-content,
+.World #SideWorkspaceRight .panel-content,
+.World #BottomWorkspace .panel-content {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+.World #SideWorkspaceLeft .panel-title,
+.World #SideWorkspaceRight .panel-title,
+.World #BottomWorkspace .panel-title {
+  color: var(--theme-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.World #SideWorkspaceLeft .panel-actions,
+.World #SideWorkspaceRight .panel-actions,
+.World #BottomWorkspace .panel-actions {
+  align-items: center;
+  display: flex;
+  gap: var(--phi-0-2-5);
+}
+
+.World #SideWorkspaceLeft .panel-action-btn,
+.World #SideWorkspaceRight .panel-action-btn,
+.World #BottomWorkspace .panel-action-btn {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--theme-text-light);
+  cursor: pointer;
+  display: flex;
+  font-size: 16px;
+  height: 24px;
+  justify-content: center;
+  transition: all 0.15s ease;
+  width: 24px;
+}
+
+.World #SideWorkspaceLeft .panel-action-btn:hover,
+.World #SideWorkspaceRight .panel-action-btn:hover,
+.World #BottomWorkspace .panel-action-btn:hover {
+  color: var(--theme-text);
+}
+
+.World.workspace-layout .layout-panel > .TabbedPanel {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  height: 100%;
+  max-width: none;
+  min-height: 0;
+  width: 100%;
+}
+
+.World.workspace-layout .layout-panel > .TabbedPanel .Panels {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.World.workspace-layout .layout-panel > .TabbedPanel .Panels > div {
+  height: 100%;
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+}
+
+.World.workspace-layout .layout-panel > .TabbedPanel .Panels > .TabPanel {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.TabPanel > .TabPanelHeader {
+  flex-shrink: 0;
+}
+
+.TabPanel > .PanelContent {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.TabPanel > .TabPanelFooter {
+  flex-shrink: 0;
+}
+
+.TabPanel .PanelContent > .TabbedPanel {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  max-width: 100%;
+  min-height: 0;
+  min-width: 0;
+}
+
+.TabPanel .PanelContent > .TabbedPanel .Tabs {
+  flex-shrink: 0;
+}
+
+.TabPanel .PanelContent > .TabbedPanel .Panels {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  top: auto;
+}
+
+.TabPanel .PanelContent > .TabbedPanel .Tabs .Tab {
+  color: var(--theme-text-light);
+}
+
+.TabPanel .PanelContent > .TabbedPanel .Tabs .Tab:hover {
+  color: var(--theme-text);
+}
+
+.TabPanel .PanelContent > .TabbedPanel .Tabs .Tab.selected,
+.TabPanel .PanelContent > .TabbedPanel .Tabs .Tab.active {
+  background: transparent;
+  border-bottom: 2px solid var(--brand-color);
+  box-shadow: none;
+  color: var(--brand-color);
+  transform: none;
+}
+
+#objectTab .Panel,
+#geometryTab .Panel,
+#materialTab .Panel,
+#scriptTab .Panel {
+  padding: var(--phi-0-5);
+}
+
+#ApplicationStateBar {
+  position: absolute;
+  z-index: 3;
+  top: var(--phi-0-5);
+  right: auto;
+  left: calc(var(--sidebar-width) + var(--phi-1));
+  max-width: calc(100% - var(--sidebar-width) - var(--phi-1));
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: var(--phi-0-5);
+}
+
+#info.Panel {
+  width: var(--viewport-information-width);
+}
+
+#JobConfiguration {
+  bottom: 100%;
+}
+
+#JobConfiguration.Modules {
+  background-color: var(--blue);
+}
+
+#Loader.PlaceHolder {
+  right: calc(var(--phi-1));
+  bottom: calc(var(--phi-1));
+  z-index: 1;
+}
+
+#SceneInformation {
+  bottom: 100%;
+  position: absolute;
+  right: calc(-1 * var(--state-bar-right) + var(--sidebar-width));
+  text-transform: lowercase;
+}
+
+.World .ComponentLabel {
+  font-size: var(--phi-0);
+
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  transition: opacity var(--transition-fast);
+
+  white-space: nowrap;
+}
+
+.World .Configurator {
+  align-items: center;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--phi-0-5);
+  height: 100%;
+  justify-content: flex-start;
+  position: absolute;
+  right: calc(var(--phi-0-5) + var(--sidebar-width));
+  top: var(--phi-1);
+  width: var(--sidebar-width);
+  z-index: 3;
+}
+
+.World .HeaderBar {
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  height: var(--headerbar-height);
+  justify-content: space-between;
+  left: 0;
+  padding: 0 12px;
+  position: relative;
+  top: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.World .HeaderBar .ContextMenu {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  z-index: 1;
+}
+
+.World .HeaderBar .ContextMenu::-webkit-scrollbar {
+  display: none;
+}
+
+.World .HeaderBar .ContextMenu .ContextModules {
+  border-right: 1px solid var(--border);
+  flex: 0 0 auto;
+  font-size: var(--phi-0-5);
+  min-width: 0;
+  overflow: hidden;
+  padding-inline: var(--phi-1);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.World .HeaderBar .ContextMenu .ContextModules:last-child {
+  border-right: none;
+}
+
+.World .HeaderBar .ContextMenu .ContextModules.Active .ModuleName {
+  font-size: var(--phi-1);
+
+  text-decoration: underline;
+  text-decoration-color: var(--blue);
+  text-underline-offset: 7px;
+}
+
+.World .HeaderBar .ContextMenu::before,
+.World .HeaderBar .ContextMenu::after {
+  content: "";
+  flex: 0 0 var(--phi-0-5);
+  min-width: var(--phi-0-5);
+}
+
+.World .HeaderBar .Controls {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  height: 100%;
+  order: -1;
+  padding-inline: var(--phi-0-5);
+  position: relative;
+}
+
+.World .HeaderBar .HistoryHeaderControls {
+  align-items: center;
+  display: flex;
+  gap: 0.25rem;
+  height: 100%;
+}
+
+.World .HeaderBar .HistoryHeaderButton {
+  cursor: pointer;
+}
+
+.World .HeaderBar .HistoryHeaderButton:hover {
+  background: var(--glass-surface);
+}
+
+.World .HeaderBar .HistoryHeaderButton.Active {
+  background: var(--brand-color-alpha);
+}
+
+.World .Information {
+  position: absolute;
+  z-index: 3;
+  top: var(--information-operator-top);
+  left: var(--information-operator-left);
+}
+
+.World .ViewportSnapTools {
+  display: none;
+  position: absolute;
+  bottom: var(--phi-1);
+  left: var(--phi-1);
+  z-index: 10;
+}
+
+.World .JobConfiguration {
+  align-items: center;
+
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+
+  display: flex;
+  flex-direction: column-reverse;
+  height: var(--phi-3);
+  justify-content: center;
+  left: var(--job-configuration-left);
+  position: absolute;
+  text-align: center;
+  top: var(--job-configuration-top);
+  width: var(--phi-3);
+}
+
+.World .SideBar {
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: absolute;
+  text-align: center;
+  top: var(--sidebar-top);
+  right: 0;
+  width: var(--sidebar-width);
+  z-index: 4;
+}
+
+.World .SideBar .AddonsMenu {
+  width: 100%;
+  height: 50%;
+  overflow: auto;
+}
+
+.World .SideBar .ModulesMenu {
+  align-items: center;
+
+  display: flex;
+  flex-direction: column-reverse;
+  height: calc(var(--modules-menu-height) - var(--headerbar-height));
+  left: 0;
+  position: absolute;
+  top: var(--modules-menu-top);
+  width: var(--modules-menu-width);
+}
+
+.World .SideBar .UserMenu,
+.World .SideBar .AppMenu {
+  align-items: center;
+
+  display: flex;
+  flex-direction: column;
+  height: var(--user-menu-height);
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: var(--user-menu-width);
+}
+
+.World .viewport-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--phi-0-5);
+  position: absolute;
+  right: var(--margin);
+  top: var(--margin);
+  z-index: 10;
+}
+
+.World .Viewport,
+#Viewport {
+  height: 100%;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  z-index: 1;
+}
+
+.World.workspace-layout .Viewport,
+.World.workspace-layout #Viewport {
+  height: auto;
+  left: auto;
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+  top: auto;
+  width: auto;
+}
+
+.ViewportGizmo {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  right: var(--viewport-gizmo-left);
+  top: calc(var(--phi-1));
+  z-index: 3;
+}
+
+.World .ViewportGizmo,
+#Loader.PlaceHolder {
+  height: var(--viewport-gizmo-size);
+  position: absolute;
+  width: var(--viewport-gizmo-size);
+}
+
+.World .ViewportToolBar {
+  display: grid;
+  gap: var(--phi-0-5);
+  grid-template-columns: 1fr;
+  right: calc(var(--phi-1) + var(--sidebar-width));
+  overflow: visible;
+  position: absolute;
+
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 7;
+}
+
+.World .NavigationToolbar {
+  position: absolute;
+  transform: translateY(-50%);
+  z-index: 7;
+
+  width: fit-content;
+
+  top: calc(
+    var(--viewport-gizmo-top) + var(--viewport-gizmo-size) + var(--phi-0-5)
+  );
+  right: calc(var(--viewport-gizmo-left) + var(--phi-0-5));
+
+  display: flex;
+  flex-direction: row;
+  gap: var(--phi-0-5);
+}
+
+.World .NavigationToolbar .addon-navigation-toolbar-secondary-control {
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--phi-0-5));
+  margin-bottom: 0;
+  align-self: auto;
+}
+
+.World .Windows {
+  position: absolute;
+  left: 50%;
+  bottom: var(--phi-0-5);
+  transform: translateX(-50%);
+  z-index: 7;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+
+  height: auto;
+  width: auto;
+  max-width: 60%;
+  min-height: calc(var(--headerbar-height) + 8px);
+  min-width: var(--headerbar-height);
+
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--windowbar-surface) 92%, transparent 8%),
+    var(--windowbar-surface-strong)
+  );
+  -webkit-backdrop-filter: var(--windowbar-blur);
+  backdrop-filter: var(--windowbar-blur);
+  box-shadow: var(--windowbar-shadow);
+  border: 1px solid var(--windowbar-border);
+  border-radius: 14px;
+
+  overflow: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  transition:
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+  
+}
+
+.World .Windows::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 1px solid var(--windowbar-highlight);
+  border-bottom: 1px solid var(--windowbar-border);
+}
+
+.World #Viewport canvas {
+  position: absolute;
+  z-index: 1;
+}
+
+.World div:hover div:hover .ComponentLabel {
+  opacity: 1;
+}
+
+#outliner .Scene {
+  color: #8888dd;
+}
+
+#outliner .Script:after {
+  content: "◎";
+}
+
+.ContextMenu .ComponentLabel {
+  color: var(--brand-color);
+}
+
+.ContextMenu div {
+  position: relative;
+}
+
+.ContextModules .ModuleCount {
+  backdrop-filter: var(--glass-blur);
+  background: var(--red);
+  border-radius: var(--border-radius);
+  padding: 1px 3px;
+  position: absolute;
+  right: 0;
+  top: 80%;
+}
+
+.CollapsibleSection-body:has(.ag-theme-quartz) {
+  display: flex;
+  flex-direction: column;
+}
+
+.CollapsibleSection-body:has(.ag-theme-quartz) .ag-theme-quartz {
+  flex: 0 0 auto;
+}
+
+#outliner .Camera {
+  color: #dd8888;
+}
+
+#outliner .Light {
+  color: #dddd88;
+}
+
+#outliner .Line {
+  color: #88ee88;
+}
+
+#outliner .LineSegments {
+  color: #88ee88;
+}
+
+#outliner .Material {
+  color: #eeaaee;
+}
+
+#outliner .Mesh {
+  color: #8888ee;
+}
+
+#outliner .opener:hover {
+  opacity: 1;
+}
+
+#outliner .opener.closed:after {
+  content: "▶";
+  font-size: 10px;
+}
+
+#outliner .opener.open:after {
+  content: "▼";
+  font-size: 10px;
+}
+
+#outliner .option {
+  border: 1px solid transparent;
+}
+
+#outliner .option.drag {
+  border: 1px dashed #999;
+}
+
+#outliner .option.dragBottom {
+  border-bottom: 1px dashed #999;
+}
+
+#outliner .option.dragTop {
+  border-top: 1px dashed #999;
+}
+
+#outliner .Points {
+  color: #ee8888;
+}
+
+#outliner .type {
+  color: #ddd;
+  display: inline-block;
+  height: 14px;
+  text-align: center;
+  width: 14px;
+}
+
+#outliner .type:after {
+  content: "●";
+}
+
+.ag-theme-quartz {
+  --ag-background-color: #ffffff;
+  --ag-foreground-color: #000000;
+  --ag-border-color: #e0e0e0;
+  --ag-data-color: #000000;
+  --ag-text-color: #000000;
+  --ag-header-background-color: #f5f5f5;
+  --ag-header-foreground-color: #333333;
+  --ag-odd-row-background-color: #fafafa;
+  --ag-row-hover-color: #e8f4fd;
+  --ag-selected-row-background-color: #d0e8f8;
+  --ag-input-focus-border-color: #2196f3;
+  --ag-range-selection-border-color: #2196f3;
+  --ag-checkbox-checked-color: #2196f3;
+  --ag-chrome-background-color: #f5f5f5;
+  --ag-control-panel-background-color: #fafafa;
+  --ag-grid-size: 4px;
+  --ag-row-height: 32px;
+  --ag-header-height: 36px;
+  --ag-font-size: 12px;
+}
+
+#outliner .Geometry {
+  color: #aaeeaa;
+}
+
+#outliner .Object3D {
+  color: #aaaaee;
+}
+
+.Module {
+  border: 1px solid transparent;
+  height: var(--sidebar-width);
+  padding: var(--phi-0);
+  transition: background-color 0.3s ease;
+  width: var(--sidebar-width);
+}
+
+.Module .ModuleCount.has-count,
+.Operator.has-count {
+  display: inline;
+}
+
+.Module .ModuleCount.no-count,
+.Operator.no-count {
+  display: none;
+}
+
+.Module,
+.clickable,
+.IndependentModule {
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.Module:hover,
+.IndependentModule:hover {
+  color: var(--brand-color);
+}
+
+.Module.Active,
+.IndependentModule.Active {
+  background-color: var(--brand-color-alpha);
+  color: var(--brand-color);
+}
+
+.ModuleName {
+  text-transform: uppercase;
+}
+
+.Link {
+  color: var(--brand-color);
+  display: inline-block;
+  font-size: 13px;
+  margin-top: var(--phi-0-5);
+  text-decoration: underline;
+}
+
+.ListBoxItem .Link {
+  color: var(--theme-text-light);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  margin: 0;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.ListBoxItem:hover .Link {
+  color: var(--theme-text);
+}
+
+.Clickable:hover {
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.Row {
+  display: flex;
+
+  flex-direction: row;
+}
+
+.FloatingPanel .Panels .Panel {
+  padding: var(--phi-0-5);
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.FloatingPanel .Panel .Row,
+.workspace-layout .Panel .Row {
+  gap: var(--spacing-md);
+  padding: var(--phi-0-5);
+}
+
+#sidebar .Row .Label,
+#properties .Row .Label,
+.SideBar .Row .Label {
+  color: var(--theme-text-secondary);
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  width: 100px;
+}
+
+.properties-panel .Panel {
+  height: 100%;
+  margin: 0;
+  overflow: auto;
+  width: 100%;
+}
+
+#viewport {
+  border-radius: 0;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+#viewport .Text {
+  pointer-events: none;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+#sidebar .PanelContent,
+.World .SideBar .PanelContent {
+  padding: var(--phi-0-5);
+}
+
+.Row.centered-horizontal {
+  justify-content: center;
+}
+
+.Row.centered-vertical {
+  align-items: center;
+}
+
+#Types.PanelContent {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+.Item-actions {
+  opacity: 0.2;
+  transition: opacity 0.2s ease;
+}
+
+.ListBoxItem {
+  align-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  margin: 4px 0;
+  overflow: hidden;
+  padding: 10px 14px;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.Outliner .option .Badge {
+  align-items: center;
+  background: rgba(127, 127, 127, 0.2);
+  border: 1px solid rgba(127, 127, 127, 0.3);
+  border-radius: 4px;
+  box-shadow: none;
+  color: var(--theme-text-dim);
+  display: inline-flex;
+  flex-direction: row;
+  font-size: 10px;
+  font-weight: normal;
+  height: auto;
+  justify-content: center;
+  line-height: 1;
+  margin: 0 !important;
+  padding: 2px 6px;
+  width: auto;
+}
+
+.Panel {
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  min-width: min(fit-content, 240px);
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  z-index: 7;
+}
+
+input.Color {
+  align-items: center;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  margin: var(--spacing-xs);
+  position: relative;
+}
+
+.Click {
+  background: var(--glass-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  box-shadow: var(--glass-shadow);
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.Outliner::-webkit-scrollbar,
+.panel-scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.panel-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.panel-scrollable::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.panel-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.layer-nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--border);
+}
+
+.FloatingPanel f-node {
+  z-index: 5;
+}
+
+.FloatingPanel flow,
+.FloatingPanel-content flow {
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.ws-node-group-background {
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  box-shadow: var(--glass-shadow-sm);
+  pointer-events: none;
+  position: absolute;
+  transition: all var(--transition-fast);
+}
+
+header {
+  align-items: center;
+}
+
+.kbd {
+  align-items: center;
+  background: var(--glass-surface);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  color: var(--theme-text-light);
+  display: inline-flex;
+  font-family: "SF Mono", "Consolas", "Monaco", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  height: 24px;
+  justify-content: center;
+  min-width: 24px;
+  padding: 0 8px;
+}
+
+.NotificationsPanel {
+  max-height: 30vh;
+  overflow: auto;
+  position: absolute;
+}
+
+button,
+.Button {
+  align-items: center;
+  background-color: var(--glass-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--theme-text);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  gap: 6px;
+  justify-content: center;
+  letter-spacing: 0.02em;
+  padding: 6px 12px;
+  transition: all var(--transition-fast);
+}
+
+/* Icon buttons - preserve Material Symbols font */
+.Button.Icon,
+.Button.material-symbols-outlined,
+button.Icon,
+button.material-symbols-outlined {
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-size: 18px;
+  padding: 4px;
+}
+
+.Listbox {
+  border-radius: 8px;
+  cursor: default;
+  font-size: 12px;
+  min-height: fit-content;
+  overflow: visible;
+  width: 100%;
+}
+
+.FloatingPanel f-canvas f-content {
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+.CollapsibleSection {
+  overflow: visible;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.Tab .Operator {
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 14px;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.FloatingPanel f-canvas {
+  height: 100% !important;
+  left: 0 !important;
+  position: absolute !important;
+  top: 0 !important;
+  width: 100% !important;
+}
+
+.Outliner .option .visibility-toggle {
+  display: flex;
+  height: 24px;
+  width: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+}
+
+.Outliner .option:hover .visibility-toggle {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.Outliner .option.object-hidden .object-name {
+  text-decoration: line-through;
+}
+
+.ActionButton {
+  background: var(--glass-surface);
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.ActionButton:hover {
+  background: var(--glass-surface-light);
+  border-color: var(--border);
+}
+
+.Item-actions:hover {
+  opacity: 1 !important;
+}
+
+.Badge,
+.XP {
+  align-items: center;
+  background-color: var(--glass-surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  display: inline-flex;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+  position: relative;
+}
+
+.BIMTool {
+  align-items: center;
+  background: var(--glass-surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: var(--headerbar-height);
+  justify-content: center;
+  max-height: var(--headerbar-height);
+  max-width: var(--sidebar-width);
+  min-height: var(--headerbar-height);
+  min-width: var(--sidebar-width);
+  transition:
+    box-shadow 0.12s,
+    transform 0.08s;
+  width: var(--sidebar-width);
+}
+
+.BIMTool img {
+  max-height: 60%;
+  max-width: 60%;
+  pointer-events: none;
+}
+
+.BIMTool.selected {
+  border-color: var(--brand-color);
+  box-shadow: var(--glass-shadow-sm);
+  transform: translateY(-2px);
+}
+
+.BIMToolsContainer {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+}
+
+button img,
+.icon {
+  opacity: 0.75;
+  transition: all var(--transition-fast);
+  width: 1rem;
+}
+
+.Button--active {
+  background: var(--brand-color-alpha);
+  border-color: var(--brand-color);
+  color: var(--brand-color);
+}
+
+button:hover,
+.Button:hover {
+  background: var(--glass-surface-hover);
+  border-color: var(--brand-color);
+  color: var(--brand-color);
+}
+
+.circle {
+  align-items: center;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-flex;
+  padding: 3px 3px;
+}
+
+.Click:hover {
+  transform: scale(1.05);
+}
+
+.CollapsiblePanel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.CollapsiblePanel-header {
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: row;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 8px 12px;
+  text-transform: uppercase;
+}
+
+.CollapsibleSection-body {
+  max-height: 50vh;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.CollapsibleSection-header {
+  align-items: center;
+  background: var(--glass-surface);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  transition: all var(--transition-fast);
+}
+
+.CollapsibleSection-header:hover {
+  background: var(--glass-surface-hover);
+}
+
+.CollapsibleSection-header:hover .CollapsibleSection-leftIcon {
+  color: var(--brand-color);
+  opacity: 1;
+}
+
+.CollapsibleSection-leftIcon {
+  color: var(--theme-text-light);
+  margin-right: 8px;
+  opacity: 0.7;
+  transition: all var(--transition-fast);
+}
+
+.CollapsibleSection-title {
+  color: var(--theme-text);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.CollapsibleSection-toggle {
+  color: var(--theme-text-light);
+  opacity: 0.6;
+  transition: all var(--transition-fast);
+}
+
+.CollapsibleSection:hover .CollapsibleSection-toggle {
+  opacity: 1;
+}
+
+.CollapsibleSection.collapsed .CollapsibleSection-body {
+  display: none;
+}
+
+.CollapsibleSection.collapsed .CollapsibleSection-toggle {
+  transform: rotate(-90deg);
+}
+
+.Disabled {
+  display: none !important;
+}
+
+.FloatingPanel {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--windowbar-surface) 88%, transparent 12%),
+    var(--windowbar-surface-strong)
+  );
+  -webkit-backdrop-filter: var(--windowbar-blur);
+  backdrop-filter: var(--windowbar-blur);
+  border: 1px solid var(--windowbar-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--windowbar-shadow);
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: calc(100% - var(--sidebar-width) - var(--phi-0-5));
+  max-height: calc(100vh - var(--headerbar-height) - var(--phi-1));
+  min-height: 0;
+  min-width: min(20vw, 280px);
+  overflow: hidden;
+  position: absolute;
+  transition: all var(--transition-medium);
+  z-index: 12;
+}
+
+.FloatingPanel::before {
+  border-radius: inherit;
+  border-top: 1px solid var(--windowbar-highlight);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.FloatingPanel-header {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--windowbar-surface-strong) 55%, transparent 45%),
+    transparent
+  );
+  border-bottom: 1px solid var(--windowbar-border);
+}
+
+.FloatingPanel-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: 0;
+  min-height: 0;
+  overflow: auto;
+  position: relative;
+}
+
+.FloatingPanel-content:has(> .TabPanel) {
+  overflow: hidden;
+}
+
+.FloatingPanel-content > .TabPanel {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  max-width: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+#ExerciseNotes {
+  z-index: 14;
+}
+
+.FloatingPanel.maximized {
+  height: 100% !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+}
+
+.FloatingPanel.minimized {
+  height: 30px !important;
+}
+
+.FloatingPanel.minimized .card__content {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.GameNumber {
+  color: #ffd700;
+  font-family: "Orbitron", monospace;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.Header {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  padding: 1rem;
+}
+
+#startPython,
+#startIM,
+#startBIM {
+  color: var(--brand-color);
+  padding: 1rem 2rem;
+  transition: background-color 0.3s ease;
+}
+
+#toolbar,
+.ToolbarGroup {
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  background: var(--glass-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  padding: var(--spacing-sm) 0;
+  position: relative;
+  text-align: center;
+}
+
+#world-container,
+#world-container canvas {
+  height: 100%;
+  width: 100%;
+}
+
+.Image,
+.SVG {
+  min-height: 1rem;
+  min-width: 1rem;
+  object-fit: contain;
+}
+
+.ListboxItem {
+  align-items: center;
+  display: flex;
+  gap: var(--phi-0-5);
+  padding: var(--phi-0-5);
+  transition: background 0.2s ease;
+}
+
+.ListBoxItem .Image,
+.ListBoxItem .SVG {
+  filter: grayscale(100%) brightness(1.2);
+  height: 20px;
+  opacity: 0.5;
+  transition: opacity 0.25s ease;
+  width: 20px;
+}
+
+.ListBoxItem .material-symbols-outlined {
+  font-size: 20px;
+  opacity: 0.5;
+  transition: all 0.25s ease;
+}
+
+.ListBoxItem:active,
+.ListBoxItem.Active {
+  border-color: var(--brand-color);
+  box-shadow: var(--glass-shadow-sm);
+}
+
+.ListboxItem:hover {
+  color: var(--brand-color);
+  opacity: 0.9;
+}
+
+.ListBoxItem:hover .Image,
+.ListBoxItem:hover .SVG {
+  filter: grayscale(0%);
+  opacity: 0.85;
+}
+
+.ListBoxItem:hover .material-symbols-outlined {
+  color: var(--brand-color);
+  opacity: 0.9;
+}
+
+
+.Panel .PanelContent {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    width: 100%;
+  }
+  
+  .Panel .PanelFooter {
+    flex-shrink: 0;
+  }
+  
+  .Panel .PanelHeader {
+    border-bottom: 1px solid var(--theme-background-1618);
+    flex-shrink: 0;
+  }
+  
+  .PanelHeader {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  
+.Network {
+  max-width: 100% !important;
+  min-width: 100% !important;
+}
+
+.NodesControls {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: var(--phi-0-5);
+  left: var(--phi-0-5);
+  position: absolute;
+  top: var(--phi-0-5);
+  z-index: 2;
+
+}
+
+.Outliner .option {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  font-size: 12px;
+  gap: 6px;
+  height: 28px;
+  margin: 1px 0;
+  padding: 4px 8px;
+  position: relative;
+  white-space: nowrap;
+}
+
+.Outliner .option .object-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.Outliner .option:hover {
+  background-color: var(--hover-bg, rgba(255, 255, 255, 0.05));
+}
+
+.Outliner::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.Outliner::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+.Outliner::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+
+.Outliner.Outliner-search-active {
+  outline: 1px solid var(--brand-color-alpha, rgba(99, 102, 241, 0.2));
+  outline-offset: -1px;
+  border-radius: var(--radius-md);
+}
+
+.SpatialPanel-searchInput {
+  background: var(--theme-background-2, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--theme-text);
+  font-size: 12px;
+  outline: none;
+  padding: 4px 8px;
+  transition: border-color 0.15s ease;
+}
+
+.SpatialPanel-searchInput:focus {
+  border-color: var(--brand-color, #6366f1);
+}
+
+.Column {
+  display: flex;
+  flex-direction: column;
+}
+
+.Module {
+  align-items: center;
+
+  box-shadow: none;
+
+  display: flex;
+  flex-direction: column;
+  font-size: var(--phi-1);
+  justify-content: center;
+  margin: 0 !important;
+}
+
+.IndependentModule {
+  width: "fit-content";
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: var(--phi-0-5);
+  border-radius: var(--border-radius);
+  background: var(--glass-surface);
+  backdrop-filter: var(--glass-blur);
+  padding: var(--phi-0-5);
+  border: 1px solid var(--border);
+  align-items: center;
+}
+
+
+.Module .ModuleCount,
+.Operator .ModuleCount {
+  font-size: var(--phi-0);
+}
+
+
+.MinimizedIcon {
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  display: inline-flex;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  padding: var(--phi-0-5);
+  background: transparent;
+  position: relative;
+  transition:
+    transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+
+.SquareOperator {
+  align-items: center;
+  background: var(--glass-surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--phi-0-2-5);
+  padding: var(--phi-0-5);
+  transition: all var(--transition-slow);
+}
+
+.SquareOperator:hover {
+  scale: 1.05;
+}
+
+
+.Tab .Image {
+  flex-shrink: 0;
+  height: 14px;
+  width: 14px;
+}
+
+.Tab-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Tab-meta {
+  color: var(--on-brand-color);
+  font-size: 11px;
+}
+
+.Tab:hover .Operator {
+  border-color: var(--border-on-brand-color);
+  color: var(--on-brand-color);
+  opacity: 1;
+}
+
+.Tab.active .Operator,
+.Tab.selected .Operator {
+  border-color: var(--border-on-brand-color);
+  color: var(--on-brand-color);
+  opacity: 1;
+}
+
+.Tabs .Tab > .Operator.Tab-float {
+  flex-shrink: 0;
+  opacity: 0.45;
+  padding: 1px;
+}
+
+.Tabs .Tab:hover > .Operator.Tab-float,
+.Tabs .Tab.selected > .Operator.Tab-float {
+  opacity: 1;
+}
+
+.TabbedPanel {
+  max-width: calc(100vw - var(--sidebar-width) - var(--margin));
+  overflow: hidden;
+  transition:
+    0.3s ease,
+    left 0.3s ease;
+}
+
+.TabbedPanel .Panels {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Section headings inside tabbed settings (e.g. Three.js / Scene + Renderer) */
+.TabbedPanel .Panels .ws-section-title {
+  box-sizing: border-box;
+  color: var(--theme-text-light);
+  display: block;
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 0.5rem 0 0.25rem;
+  padding: 8px 14px 4px;
+  text-transform: uppercase;
+}
+
+/* Editor sidebar rows use ListBoxItem layout but are not list navigation */
+.TabbedPanel .Panels .ListBoxItem {
+  cursor: default;
+}
+
+.Tabs .Tab {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  gap: 6px;
+  letter-spacing: 0.03em;
+  max-width: 200px;
+  padding: 8px 14px;
+  text-transform: uppercase;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.Tabs .Tab:hover {
+  background-color: var(--glass-surface-hover);
+  color: var(--theme-text);
+}
+
+.Tabs,
+.TabbedPanel .Tabs {
+  background: var(--glass-surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  gap: 0;
+  max-height: 32px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+}
+
+.Tabs::-webkit-scrollbar {
+  display: none;
+}
+
+
+.Tool,
+.Operator {
+  align-items: center;
+  background-color: var(--glass-surface);
+  border: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--theme-text);
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: space-between;
+  justify-content: center;
+  padding: var(--phi-0-5);
+  position: relative;
+  transition: var(--transition-fast);
+}
+
+.Tool:hover,
+.Tool.Active,
+.Module:hover,
+.Module.Active,
+.Operator:hover,
+.Operator.Active,
+.Information:hover,
+.Information.Active,
+.SquareOperator.Active,
+.Row.Active {
+  background: var(--brand-color-alpha);
+  border-color: var(--brand-color);
+  color: var(--brand-color);
+}
+
+.Tabs .Tab.active,
+.Tabs .Tab.selected {
+  background: transparent;
+  border-bottom: 2px solid var(--brand-color);
+  color: var(--brand-color);
+}
+
+.Tooltip {
+  background: var(--glass-surface-light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--theme-text);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  left: 100%;
+  margin-left: 8px;
+  opacity: 0;
+  padding: 6px 10px;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: opacity var(--transition-fast);
+  white-space: nowrap;
+  z-index: 10000;
+}
+
+.Tooltip--dark {
+  background: var(--glass-surface-light);
+  border: 1px solid var(--border);
+}
+
+.Tooltip--light {
+  background: var(--theme-text);
+  border: 1px solid var(--border);
+  box-shadow: var(--glass-shadow);
+  color: var(--on-brand-color);
+}
+
+.Tooltip--above {
+  left: 50%;
+  margin-left: 0;
+  margin-bottom: 8px;
+  top: auto;
+  bottom: 100%;
+  transform: translateX(-50%);
+}
+
+.Tooltip.visible {
+  opacity: 1;
+}
+
+
+
+.MobileLandscapeGuidance {
+  align-items: center;
+  background: var(--glass-surface);
+  backdrop-filter: blur(8px);
+  box-sizing: border-box;
+  display: none;
+  flex-direction: column;
+  inset: 0;
+  justify-content: center;
+  padding: var(--phi-2);
+  pointer-events: auto;
+  position: fixed;
+  z-index: 10050;
+}
+
+.MobileLandscapeGuidance-panel {
+  background: var(--theme-background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-shadow);
+  gap: var(--phi-1);
+  max-width: 22rem;
+  padding: var(--phi-2);
+  text-align: center;
+}
+
+.MobileLandscapeGuidance-title {
+  color: var(--theme-text);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin: 0 0 var(--phi-0-5) 0;
+}
+
+.MobileLandscapeGuidance-body {
+  color: var(--theme-subtext);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.ViewpointAttributePanel {
+  animation: fadeSlideIn 0.2s ease;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--border-radius);
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+}
+
+.ViewpointAttributePanel button {
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.ViewpointAttributePanel button:hover {
+  filter: brightness(1.1);
+}
+
+.ViewpointAttributePanel input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  color: var(--theme-text);
+  font-size: 0.8rem;
+  padding: 0.4rem 0.5rem;
+}
+
+.ViewpointAttributePanel input:focus {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: var(--brand-color);
+  outline: none;
+}

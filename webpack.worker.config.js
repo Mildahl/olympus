@@ -19,6 +19,7 @@ export default {
     chunkFormat: 'module',
   },
   mode: 'production',
+  devtool: false,
   experiments: {
     outputModule: true,
   },

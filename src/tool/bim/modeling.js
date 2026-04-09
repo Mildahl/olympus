@@ -1,7 +1,5 @@
 import tools from '../index.js';
 
-import { IfcRoot, IfcModel } from '../../data/index.js';
-
 import PythonSandbox from '../pyodide/Python.js';
 
 class BIMModelingTool {
@@ -36,9 +34,9 @@ class BIMModelingTool {
         context.editor.removeObject(obj);
     }
 
-    return  await tools.ifc.runAPI(modelName, 'root.remove_product', {
-        product: new IfcRoot(GlobalId)
-    });
+    return  await tools.bim.ifc.runAPI(modelName, 'root.remove_product', {
+        product: GlobalId
+    }, ["product"]);
   }
   /**
    * Get the container (storey) for an element

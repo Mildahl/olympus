@@ -1,14 +1,10 @@
 import { SidebarSettings } from './Sidebar.Settings.js';
 
-import { BasePanel } from '../../../../drawUI/BasePanel.js';
-
-import { Components as UIComponents } from '../../../ui/Components/Components.js';
-
-import { makeDraggable } from '../../../../drawUI/utils/panelResizer.js';
+import { Components as UIComponents, BasePanel, TabPanel, makeDraggable } from '../../../ui/Components/Components.js';
 
 import { SidebarProperties } from './Sidebar.Properties.js';
 
-import { TabPanel } from '../../../../drawUI/TabPanel.js';
+import Paths from '../../../utils/paths.js';
 
 /**
  * 3D / scene + renderer settings as a BasePanel, toggled from the AppSettings sidebar node
@@ -76,32 +72,26 @@ class ThreeDSettingsPanel extends BasePanel {
   }
 }
 
-class ThreeJSProperties extends TabPanel {
+class ThreeJSProperties {
   constructor({ context, operators }) {
-    super({
-      context,
-      operators,
-      position: 'right',
-      tabId: 'properties',
-      tabLabel: 'Properties',
-      icon: 'properties',
-      title: 'Properties',
-      showHeader: false,
-      floatable: true,
-      panelStyles: {
-        minWidth: '240px',
-      },
-      autoShow: true,
-    });
+    
 
     this.draw(context, operators);
   }
 
   draw(context, operators ) {
 
-    const properties = new SidebarProperties({ context, operators })
+    const window = UIComponents.floatingPanel({
+      context,
+      title: "Three.JS Meta",
+      icon: "info",
+      minimizedImageSrc: Paths.data("resources/images/three.png"),
+      workspaceTabId: "properties",
+      workspaceTabLabel: "Properties",
+      startMinimized: true,
+    });
 
-    this.content.add(properties);
+    window.setContent(new SidebarProperties({ context, operators }));
 
   }
 }

@@ -426,8 +426,13 @@ class FloatingPanel extends UIPanel {
     this.add(header);
 
     // Title row
-    const titleRow = new UIRow().addClass("fill-width").addClass("justify-center");
-
+    const titleRow = new UIRow().addClass("fill-width").setStyles({
+      "justify-content": "center",
+      "text-align": "center",
+      "align-items": "center",
+      "gap": "var(--phi-1)"
+    });
+    
     this.title.icon = new UIIcon();
 
     this.title.text = new UISpan();
@@ -575,7 +580,7 @@ class FloatingPanel extends UIPanel {
 
   _updatePillActiveState(isActive) {
     if (this._minimizedIcon && this._minimizedIcon.dom) {
-      this._minimizedIcon.dom.classList.toggle('active', isActive);
+      this._minimizedIcon.dom.classList.toggle('Active', isActive);
     }
   }
 
@@ -753,7 +758,7 @@ class FloatingPanel extends UIPanel {
     const icon = new UIDiv();
     /** @type {any} */ const dockItem = icon;
 
-    icon.dom.classList.add('minimized-pill');
+    icon.dom.classList.add('MinimizedIcon');
 
     icon.dom.style.zIndex = '1';
 
@@ -765,7 +770,7 @@ class FloatingPanel extends UIPanel {
 
     if (this.minimizedImageSrc) {
       const panelImageElement = document.createElement('img');
-      panelImageElement.className = 'minimized-pill-image';
+      panelImageElement.className = 'MinimizedIcon-image';
       panelImageElement.src = this.minimizedImageSrc;
       panelImageElement.alt = titleText || 'Floating panel';
       icon.dom.appendChild(panelImageElement);
@@ -797,9 +802,7 @@ class FloatingPanel extends UIPanel {
     });
 
     icon.dom.onclick = () => {
-      if (this.isMinimized) {
-        this._restoreFromMinimized();
-      }
+      this._toggleMinimize();
     };
 
     this._minimizedIcon = icon;

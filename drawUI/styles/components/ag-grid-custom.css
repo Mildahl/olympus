@@ -1,0 +1,64 @@
+.ag-theme-quartz .ag-cell,
+.ag-theme-quartz .ag-cell-value,
+.ag-theme-quartz .ag-row {
+  color: #000000 !important;
+}
+
+.ag-theme-quartz .ag-header-cell-text {
+  color: #333333;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.ag-theme-quartz .ag-text-field-input,
+.ag-theme-quartz .ag-select .ag-picker-field-wrapper {
+  background-color: #ffffff;
+  border-color: #e0e0e0;
+  color: #000000;
+}
+
+#outliner .opener {
+    align-items: center;
+    cursor: pointer;
+	display: inline-flex;
+	height: 16px;
+    justify-content: center;
+	margin-right: 4px;
+    opacity: 0.7;
+	width: 16px;
+}
+
+.ag-theme-quartz .ag-popup-child,
+.ag-theme-quartz .ag-menu {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.ag-theme-quartz .ag-row:hover {
+  background-color: #e8f4fd !important;
+}
+
+.ag-theme-quartz .ag-list-item {
+  color: #000000;
+}
+
+.ag-theme-quartz .ag-list-item:hover {
+  background-color: #e8f4fd;
+}
+
+.ag-theme-quartz .ag-list-item.ag-active-item {
+  background-color: #2196f3;
+  color: #ffffff;
+}
+
+.ag-theme-quartz .ag-text-field-input:focus,
+.ag-theme-quartz .ag-select .ag-picker-field-wrapper:focus {
+  border-color: #2196f3;
+}
+
+.ag-theme-quartz .calculated-column-header .ag-header-cell-text {
+  color: #2196f3 !important;
+}

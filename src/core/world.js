@@ -1,9 +1,60 @@
-import LayerTool from "../tool/layer/LayerTool.js";
+import LayerTool from "../tool/viewer/LayerTool.js";
 
+/** @typedef {typeof import("../tool/viewer/LayerTool.js").default} LayerToolType */
+/** @typedef {typeof import("../tool/viewer/SceneTool.js").default} SceneToolType */
+/** @typedef {import("../context/index.js").default} AppContext */
+
+/**
+ * @typedef {Object} WorldNodeReferenceMap
+ * @property {string} [ifc]
+ * @property {string} [usd]
+ */
+
+/**
+ * @typedef {Object} WorldNode
+ * @property {string} type
+ * @property {string} [name]
+ * @property {WorldNodeReferenceMap} [references]
+ * @property {Array<WorldNode>} [children]
+ */
+
+/**
+ * @typedef {Object} WorldInitOptions
+ * @property {LayerToolType} [layerTool]
+ * @property {AppContext["signals"]} [signals]
+ */
+
+/**
+ * @typedef {Object} WorldBuildOptions
+ * @property {AppContext} context
+ * @property {LayerToolType} [layerTool]
+ * @property {SceneToolType} sceneTool
+ */
+
+/**
+ * @typedef {Object} WorldLookupOptions
+ * @property {LayerToolType} [layerTool]
+ */
+
+/**
+ * @typedef {Object} SceneActionOptions
+ * @property {AppContext} context
+ * @property {SceneToolType} sceneTool
+ * @property {Array<Object>|null} [objects]
+ */
+
+/**
+ * @param {Object} worldLayers
+ * @param {WorldInitOptions} options
+ */
 function initWorld(worldLayers, { layerTool = LayerTool, signals }) {
   return layerTool.initWorld(worldLayers);
 }
 
+/**
+ * @param {WorldNode} config
+ * @param {WorldBuildOptions} options
+ */
 function createWorldStructure(
   config,
   { context, layerTool = LayerTool, sceneTool },
@@ -25,6 +76,12 @@ function createWorldStructure(
   return worldDataCollection;
 }
 
+/**
+ * @param {WorldNode} node
+ * @param {Object} parentCollection
+ * @param {Object|null} sceneParent
+ * @param {WorldBuildOptions} options
+ */
 function createNode(
   node,
   parentCollection,
@@ -55,7 +112,7 @@ function createNode(
         dataCollection.USDReference = node.references.usd;
     }
 
-    sceneObject = sceneTool.createLayerGroup(context, node.name);
+    sceneObject = sceneTool.createLayerGroup(node.name);
 
     sceneObject.userData.collectionId = dataCollection.GlobalId;
 
@@ -77,10 +134,17 @@ function createNode(
   return dataCollection;
 }
 
+/**
+ * @param {WorldLookupOptions} options
+ */
 function getWorldStructure({ layerTool = LayerTool }) {
   return layerTool.World;
 }
 
+/**
+ * @param {AppContext} context
+ * @param {string} layerPath
+ */
 function getLayerGroup(context, layerPath) {
   const parts = layerPath.split("/");
 
@@ -97,6 +161,11 @@ function getLayerGroup(context, layerPath) {
   return null;
 }
 
+/**
+ * @param {AppContext} context
+ * @param {string} layerPath
+ * @param {WorldLookupOptions} [options]
+ */
 function getLayerCollection(
   context,
   layerPath,
@@ -118,16 +187,63 @@ function getLayerCollection(
   return null;
 }
 
+/**
+ * @param {AppContext} context
+ * @param {string} layerName
+ */
 function getLayer(context, layerName) {
   const layerEntry = context.editor.sceneLayers.World.layers[layerName];
 
   return layerEntry ? layerEntry.group : null;
 }
 
+/**
+ * @param {WorldInitOptions} options
+ */
 function resetWorld({ layerTool = LayerTool, signals }) {
   layerTool.reset();
 
   if (signals?.worldReset) signals.worldReset.dispatch();
+}
+
+/**
+ * @param {"on"|"off"} mode
+ * @param {SceneActionOptions} options
+ */
+function dimScene(
+  mode,
+  { context, sceneTool, objects = null },
+) {
+  const selectedObjects = context.editor.selector.selected_objects;
+
+  const targetObjects = objects ?? (selectedObjects?.length ? selectedObjects : null);
+
+  return sceneTool.dim(mode, targetObjects);
+}
+
+/**
+ * @param {"on"|"off"} mode
+ * @param {SceneActionOptions} options
+ */
+function highlightScene(
+  mode,
+  { context, sceneTool, objects = null },
+) {
+  if (mode === "off") {
+    return sceneTool.highlight(mode);
+  }
+
+  const selectedObjects = context.editor.selector.selected_objects;
+
+  const targetObjects = objects ?? (selectedObjects?.length ? selectedObjects : null);
+
+  if (!targetObjects || targetObjects.length === 0) {
+    console.warn("No objects selected to highlight");
+
+    return null;
+  }
+
+  return sceneTool.highlight(mode, targetObjects);
 }
 
 export {
@@ -139,4 +255,6 @@ export {
   getLayer,
   resetWorld,
   createNode,
+  dimScene,
+  highlightScene,
 };

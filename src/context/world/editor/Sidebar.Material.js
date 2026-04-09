@@ -36,7 +36,6 @@ function SidebarMaterial( editor ) {
 
 	container.setDisplay( 'none' );
 
-	container.setPaddingTop( '20px' );
 	const materialSlotRow = new UIRow();
 
 	materialSlotRow.add( new UIText( strings.getKey( 'sidebar/material/slot' ) ).setClass( 'Label' ) );

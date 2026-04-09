@@ -1,0 +1,156 @@
+/* Markdown Component Styles */
+
+/* Lists */
+.Markdown ul,
+.Markdown ol {
+  padding-left: 2em;
+}
+
+
+.Markdown ul ul,
+.Markdown ul ol,
+.Markdown ol ol,
+.Markdown ol ul {
+  margin-bottom: 0;
+  margin-top: 0;
+  height:fit-content;
+}
+
+/* Task Lists (checkboxes) */
+.Markdown input[type="checkbox"] {
+  margin-right: 0.5em;
+  vertical-align: middle;
+}
+
+/* Blockquotes */
+.Markdown blockquote {
+  backdrop-filter: var(--glass-blur);
+  border-left: 4px solid var(--brand-color, #58a6ff);
+  border-radius: 0 4px 4px 0;
+  margin: 0 0 1em 0;
+  padding: 0.5em 1em;
+}
+
+/* Code - Inline */
+.Markdown code {
+  background: var(--code-bg, rgba(110, 118, 129, 0.3));
+  border-radius: 4px;
+  color: var(--code-color, #e6e6e6);
+  font-family: 'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+/* Code - Block */
+.Markdown pre {
+  background: var(--code-block-bg, #1e1e1e);
+  border: 1px solid var(--border, #333);
+  border-radius: 8px;
+  margin: 1em 0;
+  overflow: auto;
+  padding: 1em;
+}
+
+.Markdown pre code {
+  background: transparent;
+  border-radius: 0;
+  font-size: 0.875em;
+  line-height: 1.5;
+  padding: 0;
+  word-wrap: normal;
+}
+
+/* Tables */
+.Markdown table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  overflow: auto;
+  width: 100%;
+}
+
+.Markdown table th,
+.Markdown table td {
+  border: 1px solid var(--border, #333);
+  padding: 0.5em 1em;
+  text-align: left;
+}
+
+.Markdown table th {
+  background: var(--surface-color, rgba(255, 255, 255, 0.05));
+  font-weight: 600;
+}
+
+.Markdown table tr:nth-child(even) {
+  background: var(--surface-color, rgba(255, 255, 255, 0.02));
+}
+
+/* Horizontal Rule */
+.Markdown hr {
+  background-color: var(--border, #333);
+  border: 0;
+  height: 2px;
+  margin: 1.5em 0;
+  padding: 0;
+}
+
+/* Images */
+.Markdown img {
+  border-radius: 4px;
+  height: auto;
+  max-width: 100%;
+}
+
+/* Strong / Bold */
+.Markdown strong {
+  color: var(--heading-color, #ffffff);
+  font-weight: 600;
+}
+
+/* Paragraphs */
+
+/* Emphasis / Italic */
+.Markdown em {
+  font-style: italic;
+}
+
+/* Strikethrough */
+.Markdown del {
+  color: var(--secondary-text-color, #888);
+  text-decoration: line-through;
+}
+
+/* Underline (showdown extension) */
+.Markdown u {
+  text-decoration: underline;
+}
+
+/* Definition Lists */
+.Markdown dl {
+  margin: 1em 0;
+}
+
+.Markdown dt {
+  font-weight: 600;
+  margin-top: 1em;
+}
+
+.Markdown dd {
+  margin-bottom: 0.5em;
+  margin-left: 2em;
+}
+
+
+
+/* Abbreviations */
+.Markdown abbr {
+  cursor: help;
+  text-decoration: underline dotted;
+}
+
+
+
+.callout {
+  background-color: var(--surface-color, rgba(255, 255, 255, 0.05));
+  border-radius: 0 4px 4px 0;
+  margin: 1em 0;
+  padding: 0.5em 1em;
+}

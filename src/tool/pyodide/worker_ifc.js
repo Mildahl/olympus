@@ -86,8 +86,6 @@ export function editAttributes(modelName, GlobalId, attributes) {
 
   const model = getIfc(modelName);
 
-  const context = ifc["context"]; 
-
   const entity =  model.by_guid(GlobalId);
 
   if (!entity) {

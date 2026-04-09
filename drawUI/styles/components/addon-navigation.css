@@ -1,0 +1,496 @@
+
+.navigation-crosshair {
+  background: transparent;
+  border: 2px solid rgba(0, 255, 200, 0.9);
+  box-shadow: 0 0 12px rgba(0, 255, 200, 0.5);
+  box-sizing: border-box;
+  height: 48px;
+  left: 50%;
+  pointer-events: none;
+  position: fixed;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  z-index: 1;
+}
+
+.navigation-crosshair-dot,
+.navigation-crosshair-vline,
+.navigation-crosshair-hline {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.navigation-crosshair-dot {
+  background-color: rgba(0, 255, 200, 0.15);
+  border: 1px solid rgba(0, 255, 200, 0.95);
+  height: 8px;
+  width: 8px;
+}
+
+.navigation-crosshair-vline {
+  background: rgba(0, 255, 200, 0.8);
+  height: 14px;
+  width: 2px;
+}
+
+.navigation-crosshair-hline {
+  background: rgba(0, 255, 200, 0.8);
+  height: 2px;
+  width: 14px;
+}
+
+
+.nav-instructions-content {
+  padding: 0.75rem;
+}
+
+.nav-kbd {
+  background: var(--theme-background-1618);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.75rem;
+  min-width: 2rem;
+  padding: 0.25rem 0.5rem;
+  text-align: center;
+}
+
+.nav-kbd-small {
+  font-size: 11px;
+  height: 28px;
+  min-width: auto;
+  padding: 0 10px;
+}
+
+.nav-kbd,
+.kbd-like {
+  align-items: center;
+  background: var(--glass-surface);
+  border: 1px solid var(--border);
+  border-bottom-width: 3px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow-sm);
+  color: var(--theme-text-light);
+  display: inline-flex;
+  font-family: "SF Mono", "Consolas", "Monaco", monospace;
+  font-size: 13px;
+  font-weight: 600;
+  height: 36px;
+  justify-content: center;
+  min-width: 36px;
+  padding: 0 12px;
+  text-transform: uppercase;
+  transition:
+    background 0.08s ease,
+    border-color 0.08s ease,
+    border-bottom-width 0.08s ease,
+    box-shadow 0.08s ease,
+    transform 0.08s ease;
+}
+
+.kbd-like.key--on,
+.nav-kbd.key--on {
+  background: var(--theme-background-1618);
+  border-bottom-width: 2px;
+  box-shadow: none;
+  transform: translateY(2px);
+}
+
+.nav-key-row .nav-key-group {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-key-label {
+  color: var(--theme-text-light);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.nav-key-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.nav-key-separator {
+  background: var(--border);
+  height: 24px;
+  margin: 0 4px;
+  width: 1px;
+}
+
+.nav-tip-desc {
+  color: var(--theme-text-light);
+  font-size: 13px;
+}
+
+.nav-tip-row {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.nav-tip-controls {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+}
+
+.nav-tip-plus {
+  color: var(--theme-text-light);
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.nav-mouse-control {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-mouse-move-indicator {
+  color: var(--brand-color);
+  font-size: 11px;
+  line-height: 1;
+  text-align: center;
+}
+
+.nav-mouse-body {
+  background: var(--glass-surface);
+  border: 1px solid var(--border);
+  border-bottom-width: 3px;
+  border-radius: 6px 6px 8px 8px;
+  box-shadow: var(--glass-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 28px;
+}
+
+.nav-mouse-buttons-row {
+  display: flex;
+  height: 14px;
+}
+
+.nav-mouse-btn {
+  background: transparent;
+  flex: 1;
+}
+
+.nav-mouse-btn--left {
+  border-right: 1px solid var(--border);
+  border-radius: 4px 0 0 0;
+}
+
+.nav-mouse-btn--middle {
+  align-items: center;
+  border-right: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  width: 8px;
+  flex: none;
+}
+
+.nav-mouse-btn--right {
+  border-radius: 0 4px 0 0;
+}
+
+.nav-mouse-btn--active {
+  background: var(--brand-color);
+  opacity: 0.85;
+}
+
+.nav-mouse-btn--scroll {
+  background: transparent;
+  border-left: 2px solid var(--brand-color);
+  border-right: 2px solid var(--brand-color);
+  border-radius: 2px;
+  height: 8px;
+  margin: auto;
+  opacity: 0.85;
+  width: 3px;
+}
+
+.nav-mouse-stem {
+  background: var(--border);
+  border-radius: 0 0 4px 4px;
+  height: 10px;
+  margin: 0 4px 2px;
+}
+
+.addon-navigation-kbd-cluster {
+  --addon-nav-kbd-gap: 4px;
+  --addon-nav-kbd-key: 2.2rem;
+  align-items: flex-end;
+  box-sizing: border-box;
+  display: flex;
+  gap: var(--addon-nav-kbd-gap);
+  width: 100%;
+}
+
+.addon-navigation-kbd-grid {
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--addon-nav-kbd-gap);
+  grid-auto-rows: auto;
+  grid-template-columns: repeat(3, minmax(var(--addon-nav-kbd-key), 1fr));
+  justify-content: center;
+  max-width: 100%;
+  width: min(
+    100%,
+    calc(3 * var(--addon-nav-kbd-key) + 2 * var(--addon-nav-kbd-gap))
+  );
+}
+
+.addon-navigation-key-cell {
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  width: 100%;
+}
+
+.addon-navigation-kbd-row {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.addon-navigation-kbd-row--sprint {
+  align-self: flex-end;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: auto;
+}
+
+.addon-navigation-kbd-row--sprint .addon-nav-sprint-toggle {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  max-width: none;
+  width: auto;
+}
+
+.addon-navigation-viewport-overlay {
+  box-sizing: border-box;
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  touch-action: none;
+  width: 100%;
+  z-index: 6;
+}
+
+#addon-navigation-viewport-keyboard.addon-navigation-viewport-overlay {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.addon-navigation-left-stack {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  justify-content: flex-end;
+  margin-bottom: var(--addon-navigation-bottom-inset);
+  margin-left: var(--addon-navigation-horizontal-inset);
+  max-width: var(--addon-navigation-left-stack-max-width);
+  pointer-events: none;
+}
+
+.addon-navigation-left-column-content {
+  align-items: flex-start;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 4px;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.addon-navigation-right-stack {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  justify-content: flex-end;
+  margin-bottom: var(--addon-navigation-bottom-inset);
+  margin-right: calc(var(--addon-navigation-right-stack-offset) + var(--addon-navigation-horizontal-inset));
+  pointer-events: none;
+}
+
+.addon-navigation-left-options-column {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  width: 100%;
+}
+
+.addon-navigation-left-options-column .addon-navigation-keys-move-checkbox-row {
+  align-self: flex-start;
+  margin-bottom: 0;
+}
+
+.addon-navigation-keys-move-checkbox-row {
+  align-items: center;
+  align-self: flex-end;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  gap: 6px;
+  margin-bottom: 2px;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+}
+
+.addon-navigation-keys-move-checkbox {
+  accent-color: rgba(0, 200, 180, 0.9);
+  cursor: pointer;
+  flex-shrink: 0;
+  height: 1rem;
+  margin: 0;
+  width: 1rem;
+}
+
+.addon-navigation-keys-move-checkbox-label {
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+
+.addon-navigation-left-keys-host {
+  max-width: min(88vw, 260px);
+  pointer-events: auto;
+  touch-action: none;
+  width: 100%;
+}
+
+.addon-navigation-move-stick-host,
+.addon-navigation-look-stick-host {
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.addon-navigation-joystick {
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  touch-action: none;
+}
+
+.addon-navigation-joystick-knob {
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+  pointer-events: none;
+  transition: transform 0.05s ease-out;
+}
+
+.addon-navigation-joystick-label {
+  bottom: -18px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.addon-navigation-move-aux-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.addon-navigation-move-aux-button {
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  font-size: 15px;
+  height: 40px;
+  justify-content: center;
+  padding: 0;
+  touch-action: none;
+  user-select: none;
+  width: 40px;
+}
+
+#addon-navigation-viewport-keyboard {
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+#addon-navigation-viewport-keyboard .addon-navigation-kbd-grid {
+  gap: var(--addon-nav-kbd-gap);
+}
+
+#addon-navigation-viewport-keyboard .addon-navigation-kbd-sprint-key {
+  cursor: pointer;
+  font-size: 0.65rem;
+  min-width: 2.75rem;
+  padding-inline: 0.2rem;
+}
+
+.addon-nav-sprint-toggle {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}

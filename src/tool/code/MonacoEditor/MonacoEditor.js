@@ -26,7 +26,7 @@ export class MonacoEditor {
 
   /**
    * Set base URL for Monaco (loader and require baseUrl). Call before load() when config is available.
-   * @param {string|null} url - e.g. "/external/vendor/monaco-editor/0.52.2" or "vendor/monaco-editor/0.52.2". null = use default relative path.
+   * @param {string|null} url - e.g. "/vendor/monaco-editor/0.52.2" or "vendor/monaco-editor/0.52.2". null = use default relative path.
    */
   setBaseUrl(url) {
     this._baseUrl = url;

@@ -1,6 +1,5 @@
 import { UIDiv } from "../ui.js";
 
-import { getLayoutManagerFromContext } from "../../src/ui/utils/layoutManagerAccess.js";
 
 /** @type {WeakMap<HTMLElement, { fp: import('../FloatingPanel.js').FloatingPanel, lm: object, position: string, tabId: string, scrollAreaEl: HTMLElement, cleanupFloat?: () => void }>} */
 const workspaceDockMeta = new WeakMap();
@@ -14,7 +13,7 @@ export function focusDockedWorkspaceTab(context, floatingPanel) {
   if (!floatingPanel || !floatingPanel._dockedWorkspace) {
     return false;
   }
-  const layoutManager = getLayoutManagerFromContext(context);
+  const layoutManager = context.ui?.model?.layoutManager || null;
   if (!layoutManager) {
     return false;
   }

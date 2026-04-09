@@ -1,7 +1,5 @@
 import { Components as UIComponents } from "./Components.js";
 
-import { getPresetOptions, applyPresetToContext } from "../../configuration/config.presets.js";
-
 import { UI_LANGUAGE_SELECT_OPTIONS } from "../language/uiLanguageSelectOptions.js";
 
 class WelcomeScreen {
@@ -13,8 +11,6 @@ class WelcomeScreen {
     this.container = container || document.body;
 
     this.overlay = null;
-
-    this.presetChangedThisSession = false;
 
     this.render();
   }
@@ -55,11 +51,7 @@ class WelcomeScreen {
       background: '#1c1c1e',
     });
 
-    let olympusRoot = '';
-    if (typeof window !== 'undefined' && window.__OLYMPUS_ROOT__) {
-      olympusRoot = window.__OLYMPUS_ROOT__;
-    }
-    const splashImageSource = olympusRoot + '/external/ifc/splash.png';
+    const splashImageSource = '/data/resources/images/splash.png';
     const splashImage = document.createElement('img');
     splashImage.alt = '';
     splashImage.src = splashImageSource;
@@ -100,7 +92,6 @@ class WelcomeScreen {
     });
     body.appendChild(title);
 
-    body.appendChild(this._buildPresetRow());
     body.appendChild(this._buildShowWelcomeScreenRow());
     body.appendChild(this._buildThemeRow());
     body.appendChild(this._buildLanguageRow());
@@ -111,27 +102,6 @@ class WelcomeScreen {
 
     this.overlay.appendChild(card);
     this.container.appendChild(this.overlay);
-  }
-
-  _buildPresetRow() {
-    const currentPresetId = this.context.config?.app?.currentPresetId || 'full';
-
-    const select = UIComponents.select();
-
-    select.setOptions(getPresetOptions());
-
-    select.setValue(currentPresetId);
-
-    select.dom.addEventListener('change', () => {
-      const value = select.getValue();
-      if (applyPresetToContext(this.context, value, { savePresetId: true })) {
-        this.context._saveConfig();
-        this.presetChangedThisSession = true;
-      }
-    });
-
-    const label = (this.context.strings && this.context.strings.getKey('welcome/preset')) || 'Module preset';
-    return this._buildSettingRow(label, select);
   }
 
   _buildShowWelcomeScreenRow() {
@@ -248,10 +218,6 @@ class WelcomeScreen {
     }
 
     this.overlay = null;
-
-    if (this.presetChangedThisSession && typeof window !== 'undefined' && window.location?.reload) {
-      window.location.reload();
-    }
   }
 }
 

@@ -1,5 +1,15 @@
 import { Components as UIComponents } from "../../ui/Components/Components.js";
 
+import {
+  analyticsChipStyles,
+  analyticsFilterChipsRowStyles,
+  analyticsFilterHintStyles,
+  analyticsInsightNarrativeStyles,
+  analyticsKpiCellStyles,
+  analyticsKpiMetaRowStyles,
+  analyticsProjectTitleStyles,
+} from "./bimAnalyticsPanelStyles.js";
+
 class DirectorKpiStripSection {
   constructor({ filterState, onClearFilters }) {
     this.filterState = filterState;
@@ -8,15 +18,21 @@ class DirectorKpiStripSection {
 
     this.root = UIComponents.column().gap("var(--phi-0-5)");
 
-    this.metaRow = UIComponents.row().gap("var(--phi-1)").addClass("director-analytics-kpi-meta");
+    this.metaRow = UIComponents.row().gap("var(--phi-1)").setStyles(analyticsKpiMetaRowStyles);
 
-    this.chipsRow = UIComponents.row().gap("var(--phi-0-5)").addClass("director-analytics-filter-chips");
+    this.chipsRow = UIComponents.row().gap("var(--phi-0-5)").setStyles(analyticsFilterChipsRowStyles);
 
     this.insightLine = UIComponents.text("");
 
-    this.insightLine.addClass("director-analytics-insight-narrative");
+    this.insightLine.setStyles(analyticsInsightNarrativeStyles);
 
-    this.grid = UIComponents.div().addClass("director-analytics-kpi-grid");
+    this.grid = UIComponents.div()
+      .addClass("OlympusGrid")
+      .setStyles({
+        gridTemplateColumns: "repeat(auto-fill, minmax(7rem, 1fr))",
+        gap: "var(--phi-0-5)",
+        width: "100%",
+      });
   }
 
   getDom() {
@@ -34,7 +50,7 @@ class DirectorKpiStripSection {
 
     const title = UIComponents.text(titleText);
 
-    title.addClass("director-analytics-project-title");
+    title.setStyles(analyticsProjectTitleStyles);
 
     const schemaBadge = UIComponents.badge(overview.schema || "IFC");
 
@@ -99,7 +115,7 @@ class DirectorKpiStripSection {
   }
 
   _addKpiCell(label, value) {
-    const cell = UIComponents.div().addClass("SquareOperator").addClass("director-analytics-kpi-cell");
+    const cell = UIComponents.div().addClass("SquareOperator").setStyles(analyticsKpiCellStyles);
 
     cell.add(UIComponents.text(label));
 
@@ -121,7 +137,7 @@ class DirectorKpiStripSection {
     ) {
       const placeholder = UIComponents.text("Use the filter bar or click a chart segment to isolate elements.");
 
-      placeholder.addClass("director-analytics-filter-hint");
+      placeholder.setStyles(analyticsFilterHintStyles);
 
       this.chipsRow.add(placeholder);
 
@@ -160,7 +176,7 @@ class DirectorKpiStripSection {
   _chip(textContent) {
     const wrap = UIComponents.span(textContent);
 
-    wrap.addClass("director-analytics-chip");
+    wrap.setStyles(analyticsChipStyles);
 
     return wrap;
   }

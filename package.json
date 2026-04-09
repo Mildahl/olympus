@@ -1,11 +1,19 @@
 {
-  "name": "aeco",
-  "version": "1.0.1",
-  "description": "AECO library for BIM",
+  "name": "olympus",
+  "version": "20260409",
+  "description": "AECO 3D Viewer and Toolkit for BIM Analysis and Authoring",
   "main": "src/index.js",
   "module": "src/index.js",
   "types": "src/index.d.ts",
   "sideEffects": false,
+    "files": [
+    "src",
+    "dist",
+    "drawUI",
+    "scripts/sync-examples-vendor.js",
+    "scripts/install_python_dependencies.py",
+    "scripts/ifcopenshell-wheels-requirements.txt"
+  ],
   "exports": {
     ".": {
       "types": "./src/index.d.ts",
@@ -16,38 +24,64 @@
   },
   "scripts": {
     "start": "npm run serve",
-    "build": "webpack --config webpack.worker.config.js && webpack --mode production",
-    "build:deploy": "npm run build && node scripts/copy-dist-to-upload.js",
-    "setup": "npm install && npm run build",
-    "dev": "webpack --mode development --watch",
+    "build": "node scripts/copy-pytools.js && webpack --config webpack.worker.config.js && webpack --mode production",
+    "setup": "npm install && npm run vendor:sync && npm run build",
+    "dev": "node scripts/copy-pytools.js && webpack --mode development --watch",
     "dev:worker": "webpack --config webpack.worker.config.js --watch",
-    "lint:css": "stylelint \"src/**/*.css\"",
-    "lint:css:fix": "stylelint \"src/**/*.css\" --fix",
-    "strip:css:comments": "node scripts/strip-css-comments.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/unit",
-    "test:integration": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/integration",
-    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
-    "docs:olympus": "node scripts/docs-olympus.js",
-    "docs:olympus:serve": "npm run docs:olympus && npx serve docs/olympus",
-    "serve": "node scripts/serve-static-mjs.js 3000",
-    "serve:5502": "node scripts/serve-static-mjs.js 5502",
-    "analyze:bundle": "node scripts/bundle-module-sizes.js",
-    "sync:ifc-lite": "node scripts/sync-ifc-lite-vendor.js",
-    "postinstall": "node scripts/sync-ifc-lite-vendor.js"
+    "lint:css": "stylelint \"drawUI/**/*.css\"",
+    "lint:css:fix": "stylelint \"drawUI/**/*.css\" --fix",
+    "serve": "npx --yes serve@14 . -l 3000",
+    "serve:5502": "npx --yes serve@14 . -l 5502",
+    "vendor:sync": "node scripts/sync-examples-vendor.js",
+    "vendor:ifcopenshell-wheels": "node scripts/sync-examples-vendor.js --ifcopenshell-wheels-only",
+    "postinstall": "node scripts/sync-examples-vendor.js && node scripts/copy-pytools.js"
   },
   "dependencies": {
-    "@ifc-lite/geometry": "^1.14.3",
-    "@ifc-lite/parser": "^2.1.2"
+    "@highlightjs/cdn-assets": "11.11.1",
+    "@ifc-lite/geometry": "1.14.3",
+    "@ifc-lite/parser": "2.1.2",
+    "3d-tiles-renderer": "0.4.23",
+    "ag-grid-community": "35.2.1",
+    "chart.js": "4.4.7",
+    "jsgantt-improved": "2.8.10",
+    "monaco-editor": "0.52.2",
+    "pyodide": "0.29.0",
+    "showdown": "2.1.0",
+    "signals": "1.0.0",
+    "three": "0.183.2",
+    "three-gpu-pathtracer": "0.0.24",
+    "three-mesh-bvh": "0.9.9",
+    "web-ifc": "0.0.69"
+  },
+  "peerDependencies": {
+    "3d-tiles-renderer": ">=0.4.0",
+    "three": ">=0.183.0",
+    "three-gpu-pathtracer": ">=0.0.24",
+    "three-mesh-bvh": ">=0.9.0"
+  },
+  "peerDependenciesMeta": {
+    "3d-tiles-renderer": {
+      "optional": false
+    },
+    "three": {
+      "optional": false
+    },
+    "three-gpu-pathtracer": {
+      "optional": false
+    },
+    "three-mesh-bvh": {
+      "optional": false
+    }
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^8.0.0",
     "eslint": "^9.39.2",
     "globals": "^16.5.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "mini-css-extract-plugin": "^2.10.2",
     "style-loader": "^4.0.0",
     "stylelint": "^16.26.1",
     "stylelint-order": "^6.0.4",
@@ -59,7 +93,7 @@
     "ifc",
     "aeco"
   ],
-  "author": "",
-  "license": "MIT",
+  "author": "Yassine Oualid",
+  "license": "GPL-3.0",
   "type": "module"
 }

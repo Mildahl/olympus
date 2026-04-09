@@ -58,7 +58,7 @@ simulation.createUI({
 });
 ```
 
-3. **What the app does** (in `src/aeco.js`):
+3. **What the app does** (in `src/index.js`):
    - For each addon with `active !== false`, it calls **`moduleRegistry.register(addon.module)`**.
    - It registers each addon’s operators with **`this.ops.add(op)`**.
    - It calls **`moduleRegistry.activate(moduleDef.id, { context, operators: this.ops })`**, which instantiates the module’s UI classes with `{ context, operators }`.

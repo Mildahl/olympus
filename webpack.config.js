@@ -1,34 +1,42 @@
 import path from 'path';
 
 import { fileURLToPath } from 'url';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 
-export default {
-  entry: './src/index.js',
-  devtool: 'source-map',
+export default (environment, argv) => {
+  const development = argv.mode === 'development';
+
+  return {
+  entry: {
+    index: './src/index.js',
+    'olympus-styles': './src/olympus-styles.js',
+  },
+  mode: argv.mode || 'production',
+  devtool: development ? 'source-map' : false,
   output: {
-    filename: 'index.js',
+    filename: (pathData) => {
+      if (pathData.chunk.name === 'olympus-styles') return 'olympus-styles.js';
+      return 'index.js';
+    },
     path: path.resolve(__dirname, 'dist'),
     chunkFilename: '[name].js',
     library: {
       type: 'module',
     },
     clean: {
-      keep: /pyodide\.worker\.js$|\.d\.ts$/,
+      keep: /^pytools(\/|$)|pyodide\.worker\.js$|\.d\.ts$/,
     },
   },
-  mode: 'production',
   experiments: {
     outputModule: true,
   },
   resolve: {
     extensions: ['.js', '.css'],
-    alias: {
-      '@tauri-apps/api/event': path.resolve(__dirname, 'scripts/webpack-tauri-event-stub.js'),
-    },
   },
   module: {
     parser: {
@@ -50,7 +58,17 @@ export default {
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              url: true,
+              sourceMap: development,
+            },
+          },
+        ],
+        sideEffects: true,
       },
     ],
   },
@@ -96,5 +114,23 @@ export default {
   optimization: {
     splitChunks: false,
     runtimeChunk: false,
+    minimizer: [
+      '...',
+      new CssMinimizerPlugin(),
+    ],
   },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'olympus.css',
+    }),
+    {
+      apply(compiler) {
+        compiler.hooks.afterEmit.tap('RemoveCssEntryStub', () => {
+          const stub = path.resolve(compiler.options.output.path, 'olympus-styles.js');
+          import('fs').then(fs => { try { fs.unlinkSync(stub); } catch {} });
+        });
+      },
+    },
+  ],
+  };
 };

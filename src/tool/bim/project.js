@@ -12,13 +12,21 @@ import IfcLiteGeometryTool from "./ifcLiteGeometry.js";
 
 import GeometryTool from "./geometry.js";
 
-class ProjectTool {
+import { extractLiteModelIdentityFromBuffer } from "./ifcLiteModelMetadata.js";
 
-    static projectName = "default";
+class ProjectTool {
 
     static modelBuffers = new Map();
 
     static modelPaths = new Map();
+
+    static isPythonBimReady() {
+        return Boolean(tools.code.pyWorker.isReady && tools.code.pyWorker.initialized.bim);
+    }
+
+    static modelHasCachedSource(modelName) {
+        return ProjectTool.modelBuffers.has(modelName) || ProjectTool.modelPaths.has(modelName);
+    }
 
     static storeProject( context, identity ) {
 
@@ -71,64 +79,96 @@ class ProjectTool {
     }
 
     static async loadModelFromPath(path = null) {
-        const result = await tools.code.pyWorker.run_api("loadModelFromPath", { path });
-
         const fileName = path.split("/").pop();
+
+        if (ProjectTool.isPythonBimReady()) {
+            const result = await tools.code.pyWorker.run_api("loadModelFromPath", { path });
+
+            if (fileName) {
+                ProjectTool.modelPaths.set(fileName, path);
+
+                try {
+                    const response = await fetch(path);
+
+                    if (response.ok) {
+                        const buffer = await response.arrayBuffer();
+
+                        ProjectTool.modelBuffers.set(fileName, buffer);
+                    }
+                } catch (error) {
+                    console.warn("[ProjectTool.loadModelFromPath] IFC buffer cache failed", error);
+                }
+            }
+
+            return result;
+        }
+
+        const response = await fetch(path);
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch IFC model from ${path}`);
+        }
+
+        const buffer = await response.arrayBuffer();
 
         if (fileName) {
             ProjectTool.modelPaths.set(fileName, path);
 
-            try {
-                const response = await fetch(path);
-
-                if (response.ok) {
-                    const buffer = await response.arrayBuffer();
-
-                    ProjectTool.modelBuffers.set(fileName, buffer);
-                }
-            } catch (error) {
-                console.warn("[ProjectTool.loadModelFromPath] IFC buffer cache failed", error);
-            }
+            ProjectTool.modelBuffers.set(fileName, buffer);
         }
 
-        return result;
+        const identity = await extractLiteModelIdentityFromBuffer(fileName || "model.ifc", buffer);
 
+        return {
+            GlobalId: identity.GlobalId,
+            Name: identity.Name,
+            totalElements: identity.totalElements,
+        };
     }
 
     static async loadModelFromBlob(fileName, arrayBuffer) {
-        const decoder = new TextDecoder("utf-8");
+        ProjectTool.modelBuffers.set(fileName, arrayBuffer.slice(0));
 
-        const blobContent = decoder.decode(arrayBuffer);
+        if (ProjectTool.isPythonBimReady()) {
+            const decoder = new TextDecoder("utf-8");
 
-                ProjectTool.modelBuffers.set(fileName, arrayBuffer.slice(0));
+            const blobContent = decoder.decode(arrayBuffer);
 
-        return await tools.code.pyWorker.run_api("loadModelFromBlob", { fileName, blobContent });
+            return await tools.code.pyWorker.run_api("loadModelFromBlob", { fileName, blobContent });
+        }
 
+        const identity = await extractLiteModelIdentityFromBuffer(fileName, arrayBuffer);
+
+        return {
+            GlobalId: identity.GlobalId,
+            Name: identity.Name,
+            totalElements: identity.totalElements,
+        };
     }
 
-        static async getModelBuffer(modelName) {
-            if (ProjectTool.modelBuffers.has(modelName)) {
-                return ProjectTool.modelBuffers.get(modelName);
-            }
-
-            const modelPath = ProjectTool.modelPaths.get(modelName);
-
-            if (modelPath) {
-                const response = await fetch(modelPath);
-
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch IFC model from ${modelPath}`);
-                }
-
-                const buffer = await response.arrayBuffer();
-
-                ProjectTool.modelBuffers.set(modelName, buffer);
-
-                return buffer;
-            }
-
-            throw new Error(`No IFC source buffer found for ${modelName}`);
+    static async getModelBuffer(modelName) {
+        if (ProjectTool.modelBuffers.has(modelName)) {
+            return ProjectTool.modelBuffers.get(modelName);
         }
+
+        const modelPath = ProjectTool.modelPaths.get(modelName);
+
+        if (modelPath) {
+            const response = await fetch(modelPath);
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch IFC model from ${modelPath}`);
+            }
+
+            const buffer = await response.arrayBuffer();
+
+            ProjectTool.modelBuffers.set(modelName, buffer);
+
+            return buffer;
+        }
+
+        throw new Error(`No IFC source buffer found for ${modelName}`);
+    }
 
     /**
      * Export model to content for saving (ifc, ifcxml, or ifczip).
@@ -142,27 +182,27 @@ class ProjectTool {
 
     static async getModelElementTypes(modelName) {
 
-        return await tools.ifc.get(modelName, "IfcElementType");
+        return await tools.bim.ifc.get(modelName, "IfcElementType");
     }
 
     static async getModelElements(modelName) {
 
-        return await tools.ifc.get(modelName, "IfcElement");
+        return await tools.bim.ifc.get(modelName, "IfcElement");
     }
 
     static async getModelWorkSchedules(modelName) {
 
-        return await tools.ifc.get(modelName, "IfcWorkSchedule");
+        return await tools.bim.ifc.get(modelName, "IfcWorkSchedule");
     }
 
     static async getModelWorkPlan(modelName) {
 
-        return await tools.ifc.get(modelName, "IfcWorkPlan");
+        return await tools.bim.ifc.get(modelName, "IfcWorkPlan");
     }
 
     static async getModelCostSchedules(modelName) {
 
-        return await tools.ifc.get(modelName, "IfcCostSchedule");
+        return await tools.bim.ifc.get(modelName, "IfcCostSchedule");
     }
 
     static async getModelOverview(modelName) {
@@ -181,7 +221,7 @@ class ProjectTool {
     }
 
     static async getModelElementClasses(modelName) {
-        const elements = await tools.ifc.get(modelName, "IfcElement");
+        const elements = await tools.bim.ifc.get(modelName, "IfcElement");
 
         const classesSet = new Set();
 

@@ -1,8 +1,4 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-
-import { CollapsibleSection } from "../../../drawUI/CollapsibleSection.js";
-
-import { SimpleFloatingWindow } from "../../../drawUI/BasePanel.js";
+import { Components as UIComponents, CollapsibleSection, SimpleFloatingWindow } from "../../ui/Components/Components.js";
 
 import dataStore from "../../data/index.js";
 
@@ -10,7 +6,7 @@ import AECO_TOOLS from "../../tool/index.js";
 
 import Paths from "../../utils/paths.js";
 
-import { focusDockedWorkspaceTab } from "../../../drawUI/utils/workspacePanelDock.js";
+import { focusDockedWorkspaceTab } from "../../ui/Components/Components.js";
 
 class AttributeUI {
   constructor({ context, operators }) {
@@ -46,7 +42,7 @@ class AttributeUI {
       context,
       title: 'Entity Attributes',
       icon: 'info',
-      minimizedImageSrc: Paths.data("/resources/images/properties.svg"),
+      minimizedImageSrc: Paths.data("resources/images/properties.svg"),
       workspaceTabId: 'bim.attribute',
       workspaceTabLabel: 'Attributes',
       startMinimized: true,
@@ -1111,7 +1107,7 @@ class RightClickAttributesUI {
         ? JSON.stringify(displayValue)
         : String(displayValue);
 
-      const row = this._createPropertyRow(
+      const row = UIComponents.createPropertyRow(
         attribute.displayName,
         displayText,
         attribute.description,
@@ -1171,7 +1167,7 @@ class RightClickAttributesUI {
     this._addSectionHeader(content, "Position");
 
     content.add(
-      this._createPropertyRow(
+      UIComponents.createPropertyRow(
         "X",
         mesh.position.x.toFixed(3),
         "Position X coordinate",
@@ -1179,7 +1175,7 @@ class RightClickAttributesUI {
     );
 
     content.add(
-      this._createPropertyRow(
+      UIComponents.createPropertyRow(
         "Y",
         mesh.position.y.toFixed(3),
         "Position Y coordinate",
@@ -1187,7 +1183,7 @@ class RightClickAttributesUI {
     );
 
     content.add(
-      this._createPropertyRow(
+      UIComponents.createPropertyRow(
         "Z",
         mesh.position.z.toFixed(3),
         "Position Z coordinate",
@@ -1201,7 +1197,7 @@ class RightClickAttributesUI {
     const radToDeg = (rad) => ((rad * 180) / Math.PI).toFixed(2) + "°";
 
     content.add(
-      this._createPropertyRow(
+      UIComponents.createPropertyRow(
         "X",
         radToDeg(mesh.rotation.x),
         "Rotation around X axis",
@@ -1209,7 +1205,7 @@ class RightClickAttributesUI {
     );
 
     content.add(
-      this._createPropertyRow(
+      UIComponents.createPropertyRow(
         "Y",
         radToDeg(mesh.rotation.y),
         "Rotation around Y axis",
@@ -1217,7 +1213,7 @@ class RightClickAttributesUI {
     );
 
     content.add(
-      this._createPropertyRow(
+      UIComponents.createPropertyRow(
         "Z",
         radToDeg(mesh.rotation.z),
         "Rotation around Z axis",
@@ -1233,15 +1229,15 @@ class RightClickAttributesUI {
       this._addSectionHeader(content, "Scale");
 
       content.add(
-        this._createPropertyRow("X", mesh.scale.x.toFixed(3), "Scale X"),
+        UIComponents.createPropertyRow("X", mesh.scale.x.toFixed(3), "Scale X"),
       );
 
       content.add(
-        this._createPropertyRow("Y", mesh.scale.y.toFixed(3), "Scale Y"),
+        UIComponents.createPropertyRow("Y", mesh.scale.y.toFixed(3), "Scale Y"),
       );
 
       content.add(
-        this._createPropertyRow("Z", mesh.scale.z.toFixed(3), "Scale Z"),
+        UIComponents.createPropertyRow("Z", mesh.scale.z.toFixed(3), "Scale Z"),
       );
     }
   }
@@ -1261,32 +1257,7 @@ class RightClickAttributesUI {
 
     content.add(header);
   }
-
-  _createPropertyRow(label, value, tooltip = "") {
-    const item = UIComponents.listItem();
-
-    tooltip? item.dom.title = tooltip : null;
-
-    const noOverFlowStyle = {
-      flex: "1",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      minWidth: "0",
-    }
-
-    const labelEl = UIComponents.text(label).setStyles(noOverFlowStyle);
-
-    labelEl.setTooltip(label);
-
-    const valueEl = UIComponents.text(String(value)).setStyles(noOverFlowStyle);
-
-    valueEl.setTooltip(String(value));
-
-    item.add(labelEl, valueEl);
-
-    return item;
-  }
 }
+
 
 export default [AttributeUI, RightClickAttributesUI];

@@ -16,9 +16,9 @@ Full clone layout, vendor assets, build, serve, and optional files. For a short 
 
 ## Dependency categories
 
-1. **Vendor assets** — pre-built third-party libraries under `external/vendor/`. These are **not installed by npm** and are **git-ignored**, so they must be present before you can build or run the project.
+1. **Example vendor assets** — third-party browser bundles under **`examples/vendor/`**. This directory is **git-ignored**. After **`npm install`**, the **`postinstall`** script runs **`scripts/sync-examples-vendor.js`**, which copies the required trees from **`node_modules`** into **`examples/vendor/`** (see the vendor table). Run **`npm run vendor:sync`** manually after changing versions in `package.json` or if you need to refresh the folder.
 
-2. **npm packages** — installed by `npm install` into `node_modules/`.
+2. **npm packages** — declared in `package.json` and installed into `node_modules/`.
 
 ## Step 1 — Repository layout at the project root
 
@@ -30,45 +30,49 @@ Olympus/
 ├── src/                      # Core library source (required)
 ├── drawUI/                   # UI utilities (required)
 ├── examples/                 # Runnable example apps
+│   └── vendor/               # Third-party assets for examples (git-ignored; filled by postinstall)
 ├── external/
 │   ├── data/                 # Sample data files
 │   ├── ifc/                  # Sample IFC files
-│   ├── styles/               # CSS stylesheets (required)
-│   └── vendor/               # Third-party libraries (required — see below)
-├── scripts/                  # Build and serve scripts (required)
+│   └── styles/               # CSS stylesheets (required)
+├── scripts/                  # sync-examples-vendor.js for examples/vendor
 ├── package.json              # (required)
 ├── package-lock.json         # (recommended)
 ├── webpack.config.js         # (required)
 └── webpack.worker.config.js  # (required)
 ```
 
-## Vendor libraries under `external/vendor/`
+## Vendor libraries under `examples/vendor/`
+
+Populated by **`scripts/sync-examples-vendor.js`**, which reads installed **`monaco-editor`** and **`pyodide`** versions from their **`package.json`** files, copies every package under **`node_modules/@ifc-lite/`**, and mirrors the other dependencies listed below. If **`external/vendor/ifcopenshell/`** exists, it is copied into **`examples/vendor/ifcopenshell/`** during sync. After upgrading Monaco or Pyodide in **`package.json`**, align **`monacoBaseUrl`** and **`pyodideBaseUrl`** in your app config with the new paths (the sync script logs the resolved segments).
 
 | Folder | Purpose | Needed for build? | Needed at runtime? |
 |--------|---------|-------------------|-------------------|
-| `ifc-lite/` | `@ifc-lite/*` packages (geometry, parser, wasm, data, encoding, ifcx, mutations) copied from `node_modules` | **Yes** (after `npm install`) | Yes |
+| `ifc-lite/` | `@ifc-lite/*` packages (geometry, parser, wasm, data, encoding, ifcx, mutations) | No | **Yes** (examples / import maps) |
 | `three/` | Three.js 3D engine | No | **Yes** |
 | `three-mesh-bvh/` | BVH acceleration for Three.js | No | **Yes** |
 | `three-gpu-pathtracer/` | Path tracing renderer | No | **Yes** |
 | `3d-tiles-renderer/` | 3D Tiles support | No | **Yes** |
-| `editor_deps/` | Signals library | No | **Yes** |
-| `highlightjs/` | Syntax highlighting | No | **Yes** |
-| `monaco-editor/` | Code editor (Monaco v0.52.2) | No | Yes (if using code editor) |
-| `pyodide/` | Python in the browser | No | Yes (if using Python/BIM) |
+| `xatlas-web/` | Dependency for path tracer (if present in `node_modules`) | No | As needed |
+| `editor_deps/` | Signals library (`signals` npm package, `dist/signals.min.js`) | No | **Yes** |
+| `highlightjs/` | Syntax highlighting (`@highlightjs/cdn-assets`) | No | **Yes** |
+| `showdown/` | Markdown (Showdown) | No | Optional |
+| `chart/` | Chart.js UMD bundle | No | Optional |
+| `ag-grid/` | Spreadsheet component | No | Optional |
+| `jsgantt/` | Gantt chart component | No | Optional |
+| `monaco-editor/` | Code editor (Monaco v0.52.2, `min` → `monaco-editor/0.52.2`) | No | Yes (if using code editor) |
+| `pyodide/` | Python in the browser (`pyodide` npm package → `pyodide/v0.29.0/full`) | No | Yes (if using Python/BIM) |
 | `ifcopenshell/` | IfcOpenShell Python wheels | No | Yes (if using Python IFC) |
-| `engine_web-ifc/` | web-ifc WASM engine | No | Yes (if using web-ifc) |
-| `ag-grid/` | Spreadsheet component | No | Yes (optional) |
-| `jsgantt/` | Gantt chart component | No | Yes (optional) |
-| `fonts/` | Custom fonts | No | Yes (optional) |
+| `engine_web-ifc/` | web-ifc WASM engine (`web-ifc` npm package) | No | Yes (if using web-ifc) |
 
 ## Running the examples
 
 - **HelloWorld:** Minimal navigation and a simple cube.
 - **Addons:** Construction-style demo with multiple addons and richer UI.
 
-Examples resolve `aeco` to `dist/index.js` at the repository root and load scripts from `external/vendor/`. If those paths exist in your tree, you can serve the repo root with any static server (for example `python -m http.server`) and open `/examples/HelloWorld/` or `/examples/Addons/` without running `npm install` or `npm run build`.
+Examples resolve `aeco` to `dist/index.js` at the repository root and load ES module specifiers from **`examples/vendor/`** via import maps in each example’s `index.html`. Use **`npm run build`** if `dist/` is missing or out of date.
 
-Use `npm run serve` from the repository root when you want the project’s static server (correct `.mjs` MIME type for Pyodide and the same port conventions as the docs).
+Use **`npm run serve`** from the repository root to start a static server (via **`npx serve`**). If Pyodide or `.mjs` loading fails with your server, try another static host that sets correct JavaScript MIME types.
 
 ## Install, build, and serve
 
@@ -78,9 +82,9 @@ Use `npm run serve` from the repository root when you want the project’s stati
 npm install
 ```
 
-This installs webpack, style-loader, css-loader, `@ifc-lite/geometry` / `@ifc-lite/parser` (used only to populate vendor — the built `dist/index.js` does not bundle them), and other build and dev tools into `node_modules/`.
+This installs build tools, runtime dependencies (Three.js stack, Monaco, IFC Lite packages, ag-grid, Chart.js, and others), and dev tools into `node_modules/`.
 
-The **`postinstall`** script runs **`npm run sync:ifc-lite`**, which copies `node_modules/@ifc-lite/*` into **`external/vendor/ifc-lite/`**. Examples resolve those packages via **import maps** (same idea as `three`). Run **`npm run sync:ifc-lite`** manually if you add or upgrade `@ifc-lite` packages and need vendor files refreshed.
+The **`postinstall`** script runs **`node scripts/sync-examples-vendor.js`**, which fills **`examples/vendor/`** from **`node_modules`** (including Pyodide under **`examples/vendor/pyodide/v0.29.0/full/`**). To skip Pyodide only (for example in a constrained CI job), run **`node scripts/sync-examples-vendor.js --skip-pyodide`** manually instead of relying on the default **`postinstall`**.
 
 ### Build
 
@@ -107,7 +111,7 @@ npm run setup
 npm run serve
 ```
 
-This starts a static server at `http://localhost:3000` from the project root. The custom server (`scripts/serve-static-mjs.js`) serves `.mjs` files with the `application/javascript` MIME type, which Pyodide needs.
+This starts a static server at `http://localhost:3000` from the project root using **`npx serve@14`**.
 
 ### Open an example locally
 
@@ -119,8 +123,7 @@ This starts a static server at `http://localhost:3000` from the project root. Th
 ```
 Olympus/
 ├── src/                    # Core library
-│   ├── index.js            # Library entry point
-│   ├── aeco.js             # Main AECO class
+│   ├── index.js            # Library entry (AECO class and public exports)
 │   ├── core/               # Core features (navigation, layers, viewpoints, etc.)
 │   ├── modules/            # Pluggable UI modules
 │   ├── operators/          # Data operators
@@ -130,21 +133,22 @@ Olympus/
 │   ├── data/               # Data layer (Store, collections)
 │   ├── context/            # Application context
 │   ├── configuration/      # Default configuration
-│   └── types/              # Type definitions
+│   ├── types/              # Type definitions
+│   └── third-party/        # Small vendored sources shipped with the library
 ├── drawUI/                 # UI panel utilities
 ├── dist/                   # Built output (generated by npm run build)
 │   ├── index.js            # Main library bundle (import map name: aeco)
 │   └── pyodide.worker.js
 ├── examples/
 │   ├── HelloWorld/         # Minimal example
-│   └── Addons/             # Addons / construction-style example
+│   ├── Addons/             # Addons / construction-style example
+│   └── vendor/             # Browser vendor tree (postinstall sync)
 ├── external/
 │   ├── styles/             # CSS stylesheets
 │   ├── data/               # Sample data
-│   ├── ifc/                # Sample IFC files
-│   └── vendor/             # Third-party libraries (see vendor table)
-├── scripts/                # Build and serve scripts
+│   └── ifc/                # Sample IFC files
 ├── docs/                   # Documentation
+├── scripts/                # examples/vendor sync (postinstall)
 ├── package.json
 ├── webpack.config.js       # Main webpack config
 └── webpack.worker.config.js # Pyodide worker webpack config
@@ -159,9 +163,9 @@ Olympus/
 | File / Folder | Required? | Notes |
 |---------------|-----------|-------|
 | `src/` | **Yes** | Core library source |
-| `external/vendor/` | **Yes** | Must be manually placed (see vendor table) |
+| `examples/vendor/` | **Yes** (for examples) | Generated by **`postinstall`** / **`npm run vendor:sync`**; not published on npm |
 | `external/styles/` | **Yes** | CSS for the application |
-| `scripts/` | **Yes** | Contains build and serve scripts |
+| `scripts/` | **Yes** | **`sync-examples-vendor.js`** (used by **`postinstall`**) |
 | `package.json` | **Yes** | Dependencies and npm scripts |
 | `package-lock.json` | Recommended | Reproducible installs |
 | `webpack.config.js` | **Yes** | Builds `dist/index.js` |
@@ -181,14 +185,17 @@ Olympus/
 
 | Script | Description |
 |--------|-------------|
-| `npm run setup` | `npm install` + `npm run build` (one command). |
+| `npm run setup` | `npm install` + **`npm run vendor:sync`** + `npm run build`. |
+| `npm run vendor:sync` | Refresh **`examples/vendor/`** from **`node_modules`** (same as default **`postinstall`**). |
 | `npm run build` | Build `dist/index.js` and `dist/pyodide.worker.js`. |
-| `npm run serve` | Serve the project at port 3000. |
+| `npm run serve` | Serve the project at port 3000 (`npx serve@14`). |
 | `npm run serve:5502` | Serve the project at port 5502. |
 | `npm run dev` | Rebuild `dist/index.js` in watch mode (development). |
-| `npm run docs:olympus` | Generate Olympus reference docs. |
-| `npm run docs:olympus:serve` | Generate docs and serve the doc site. |
 | `npm test` | Run the test suite. |
+
+## npm package consumers
+
+The published **`aeco`** package **`files`** field includes **`src`**, **`dist`**, **`drawUI`**, and **`scripts/sync-examples-vendor.js`** for consumers who want the same **`examples/vendor/`** workflow. Host applications should depend on **`three`**, **`three-mesh-bvh`**, **`three-gpu-pathtracer`**, and **`3d-tiles-renderer`** (see **`peerDependencies`** in `package.json`) and serve static assets (Monaco, Pyodide, wheels, ag-grid, and so on) from their own URLs, configured via **`Settings`** as in [Configure and deploy](configure-and-deploy.md).
 
 ## Related
 

@@ -1,12 +1,12 @@
 import { Operator } from "../../operators/Operator.js";
 
-import operators from "../../operators/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
-import AECO_tools from "../../tool/index.js";
+import * as Core from "../../core/scripting.js";
 
-import * as ScriptingCore from "../../core/scripting.js";
+import * as BIMCore from "../../core/bim.js";
 
-import { testCode as templateScripts } from "../../tool/code/code.js";
+import { testCode as templateScripts } from "../../tool/code/CodeTemplates.js";
 
 class CODE_EnablePython extends Operator {
   static operatorName = "code.enable_python";
@@ -26,58 +26,27 @@ class CODE_EnablePython extends Operator {
   }
 
   async execute() {
-    this.wasEnabled = AECO_tools.initialized.python;
+    this.wasEnabled = AECO_TOOLS.initialized.python;
 
     const onMessage = (msg) => console.log('[PYTHON]:', msg);
 
     const pyodideVersion = this.pyodideVersion || 'v0.29.0';
     
-    await ScriptingCore.enablePython(pyodideVersion, onMessage, {
-      signals: this.context.signals,
+    await Core.enablePython(pyodideVersion, onMessage, {
       context: this.context,
-      pythonTool: AECO_tools.code.pyWorker,
-      codeTool: AECO_tools.code.editor,
+      context: this.context,
+      pythonTool: AECO_TOOLS.code.pyWorker,
+      codeTool: AECO_TOOLS.code.editor,
     });
 
-    AECO_tools.initialized.python = true;
+    AECO_TOOLS.initialized.python = true;
 
     return { status: "FINISHED" };
   }
 
   undo() {
-    AECO_tools.initialized.python = this.wasEnabled;
+    AECO_TOOLS.initialized.python = this.wasEnabled;
 
-    return { status: "CANCELLED" };
-  }
-}
-
-class CODE_EnableJavaScript extends Operator {
-  static operatorName = "code.enable_javascript";
-
-  static operatorLabel = "Enable JavaScript";
-
-  static operatorOptions = ["REGISTER"];
-
-  constructor(context) {
-    super(context);
-
-    this.context = context;
-
-    this.wasEnabled = false;
-  }
-
-  async execute() {
-    this.wasEnabled = AECO_tools.code.js?.isReady || false;
-
-    await ScriptingCore.enableJavaScript({
-      signals: this.context.signals,
-      jsTool: AECO_tools.code.js,
-    });
-
-    return { status: "FINISHED" };
-  }
-
-  undo() {
     return { status: "CANCELLED" };
   }
 }
@@ -89,41 +58,42 @@ class CODE_EnableBIM extends Operator {
 
   static operatorOptions = ["REGISTER"];
 
-  constructor(context, { wheelsPath = null, pythonToolsPath = null }) {
+  constructor(context) {
     super(context);
 
     this.context = context;
-
-    this.wheelsPath = wheelsPath;
-
-    this.pythonToolsPath = pythonToolsPath;
 
     this.wasEnabled = false;
   }
 
   poll() {
-    return AECO_tools.code.pyWorker.isReady;
+    return AECO_TOOLS.code.pyWorker.isReady;
   }
 
   async execute() {
-    this.wasEnabled = AECO_tools.initialized.bim;
+    this.wasEnabled = AECO_TOOLS.code.pyWorker.initialized.bim;
 
-    await ScriptingCore.enableBIM({
-      signals: this.context.signals,
-      pythonTool: AECO_tools.code.pyWorker,
-      wheelsPath: this.wheelsPath,
-      pythonToolsPath: this.pythonToolsPath,
+    await Core.enableBIM({
+      context: this.context,
+      pythonTool: AECO_TOOLS.code.pyWorker,
     });
 
-    AECO_tools.initialized.bim = true;
+    AECO_TOOLS.code.pyWorker.initialized.bim = true;
 
-    operators.execute("bim.enable_bim_selection", this.context);
+    BIMCore.displayOnSelection({
+      sceneTool: AECO_TOOLS.world.scene,
+      attributeTool: AECO_TOOLS.bim.attribute,
+      psetTool: AECO_TOOLS.bim.pset,
+      sequenceTool: AECO_TOOLS.bim.sequence,
+      costTool: AECO_TOOLS.bim.cost,
+      context: this.context,
+    });
 
     return { status: "FINISHED" };
   }
 
   undo() {
-    AECO_tools.initialized.bim = this.wasEnabled;
+    AECO_TOOLS.code.pyWorker.initialized.bim = this.wasEnabled;
 
     return { status: "CANCELLED" };
   }
@@ -145,15 +115,14 @@ class CODE_EnableViewerAPI extends Operator {
   }
 
   poll() {
-    return AECO_tools.code.pyWorker.isReady;
+    return AECO_TOOLS.code.pyWorker.isReady;
   }
 
   async execute() {
-    await ScriptingCore.enableViewerAPI({
+    await Core.enableViewerAPI({
       context: this.context,
-      signals: this.context.signals,
-      pythonTool: AECO_tools.code.pyWorker,
-      codeTool: AECO_tools.code.editor,
+      pythonTool: AECO_TOOLS.code.pyWorker,
+      codeTool: AECO_TOOLS.code.editor,
     });
 
     return { status: "FINISHED" };
@@ -178,40 +147,13 @@ class CODE_RunPython extends Operator {
   }
 
   poll() {
-    return AECO_tools.code.pyWorker.isReady;
+    return AECO_TOOLS.code.pyWorker.isReady;
   }
 
   async execute() {
-    await ScriptingCore.runPythonCode(this.code, null, {
-      signals: this.context.signals,
-      pythonTool: AECO_tools.code.pyWorker,
-    });
-
-    return { status: "FINISHED" };
-  }
-
-  undo() {
-    return { status: "CANCELLED" };
-  }
-}
-
-class CODE_RunJavaScript extends Operator {
-  static operatorName = "code.run_javascript";
-
-  static operatorLabel = "Run JavaScript";
-
-  static operatorOptions = ["REGISTER"];
-
-  constructor(context, code) {
-    super(context);
-
-    this.code = code;
-  }
-
-  async execute() {
-    const result = await ScriptingCore.runJavaScriptCode(this.code, null, {
-      signals: this.context.signals,
-      jsTool: AECO_tools.code.js,
+    await Core.runPythonCode(this.code, null, {
+      context: this.context,
+      pythonTool: AECO_TOOLS.code.pyWorker,
     });
 
     return { status: "FINISHED" };
@@ -238,10 +180,9 @@ class CODE_RunCode extends Operator {
   }
 
   async execute() {
-    await ScriptingCore.runCode(this.code, this.language, {
-      signals: this.context.signals,
-      pythonTool: AECO_tools.code.pyWorker,
-      jsTool: AECO_tools.code.js,
+    await Core.runCode(this.code, {
+      context: this.context,
+      pythonTool: AECO_TOOLS.code.pyWorker,
     });
 
     return { status: "FINISHED" };
@@ -272,8 +213,8 @@ class CODE_NewScript extends Operator {
   }
 
   async execute() {
-    const codeCollection = await ScriptingCore.newScript(this.name, this.code, this.language, {
-      codeTool: AECO_tools.code.editor,
+    const codeCollection = await Core.newScript(this.name, this.code, this.language, {
+      codeTool: AECO_TOOLS.code.editor,
       context: this.context,
     });
 
@@ -284,9 +225,9 @@ class CODE_NewScript extends Operator {
 
   undo() {
     if (this.createdCollection) {
-      AECO_tools.code.editor.deleteScript(this.createdCollection);
+      AECO_TOOLS.code.editor.deleteScript(this.createdCollection);
 
-      AECO_tools.code.editor.disposeModel(this.createdCollection.guid);
+      AECO_TOOLS.code.editor.disposeModel(this.createdCollection.guid);
 
       this.context.signals.scriptTabClosed.dispatch({ guid: this.createdCollection.guid });
     }
@@ -353,7 +294,7 @@ class CODE_OpenScript extends Operator {
       return { status: "CANCELLED" };
     }
 
-    const codeCollection = AECO_tools.code.editor.getScript(this.scriptGuid);
+    const codeCollection = AECO_TOOLS.code.editor.getScript(this.scriptGuid);
 
     if (!codeCollection) {
       console.error('[CODE_OpenScript] Script not found:', this.scriptGuid);
@@ -361,16 +302,16 @@ class CODE_OpenScript extends Operator {
       return { status: "CANCELLED" };
     }
 
-    this.previousActiveGuid = AECO_tools.code.editor.activeScriptGuid;
+    this.previousActiveGuid = AECO_TOOLS.code.editor.activeScriptGuid;
 
     this.context.signals.showCodeEditor.dispatch({ visible: true });
 
-    await ScriptingCore.enableMonacoEditor({ codeTool: AECO_tools.code.editor, context: this.context });
+    await Core.enableMonacoEditor({ codeTool: AECO_TOOLS.code.editor, context: this.context });
 
     const editorContainer = this.context._scriptEditorContainer;
 
-    await ScriptingCore.openScript(this.scriptGuid, {
-      codeTool: AECO_tools.code.editor,
+    await Core.openScript(this.scriptGuid, {
+      codeTool: AECO_TOOLS.code.editor,
       context: this.context,
       editorContainer,
     });
@@ -380,11 +321,11 @@ class CODE_OpenScript extends Operator {
 
   undo() {
     if (this.previousActiveGuid) {
-      ScriptingCore.activateScript(this.previousActiveGuid, {
-        codeTool: AECO_tools.code.editor,
+      Core.activateScript(this.previousActiveGuid, {
+        codeTool: AECO_TOOLS.code.editor,
       });
 
-      const codeCollection = AECO_tools.code.editor.getScript(this.previousActiveGuid);
+      const codeCollection = AECO_TOOLS.code.editor.getScript(this.previousActiveGuid);
 
       if (codeCollection) {
         this.context.signals.openScript.dispatch({ codeCollection });
@@ -411,15 +352,15 @@ class CODE_SaveScript extends Operator {
   }
 
   async execute() {
-    const codeCollection = AECO_tools.code.editor.getScript(this.GlobalId);
+    const codeCollection = AECO_TOOLS.code.editor.getScript(this.GlobalId);
 
     if (codeCollection) {
       this.previousCode = codeCollection.code;
     }
 
-    ScriptingCore.saveScript(this.GlobalId, null, {
-      signals: this.context.signals,
-      codeTool: AECO_tools.code.editor,
+    Core.saveScript(this.GlobalId, null, {
+      context: this.context,
+      codeTool: AECO_TOOLS.code.editor,
     });
 
     return { status: "FINISHED" };
@@ -427,12 +368,12 @@ class CODE_SaveScript extends Operator {
 
   undo() {
     if (this.previousCode !== null) {
-      const codeCollection = AECO_tools.code.editor.getScript(this.GlobalId);
+      const codeCollection = AECO_TOOLS.code.editor.getScript(this.GlobalId);
 
       if (codeCollection) {
         codeCollection.saveCode(this.previousCode);
 
-        AECO_tools.code.editor.setCode(this.GlobalId, this.previousCode);
+        AECO_TOOLS.code.editor.setCode(this.GlobalId, this.previousCode);
       }
     }
 
@@ -458,15 +399,15 @@ class CODE_UpdateScript extends Operator {
   }
 
   async execute() {
-    const codeCollection = AECO_tools.code.editor.getScript(this.GlobalId);
+    const codeCollection = AECO_TOOLS.code.editor.getScript(this.GlobalId);
 
     if (codeCollection) {
       this.previousCode = codeCollection.code;
     }
 
-    ScriptingCore.refreshScript(this.GlobalId, this.newCode, {
-      signals: this.context.signals,
-      codeTool: AECO_tools.code.editor,
+    Core.refreshScript(this.GlobalId, this.newCode, {
+      context: this.context,
+      codeTool: AECO_TOOLS.code.editor,
       context: this.context,
     });
 
@@ -475,9 +416,9 @@ class CODE_UpdateScript extends Operator {
 
   undo() {
     if (this.previousCode !== null) {
-      ScriptingCore.refreshScript(this.GlobalId, this.previousCode, {
-        signals: this.context.signals,
-        codeTool: AECO_tools.code.editor,
+      Core.refreshScript(this.GlobalId, this.previousCode, {
+        context: this.context,
+        codeTool: AECO_TOOLS.code.editor,
         context: this.context,
       });
     }
@@ -500,16 +441,15 @@ class CODE_RunScript extends Operator {
   }
 
   async execute() {
-    ScriptingCore.saveScript(this.GlobalId, null, {
-      signals: this.context.signals,
-      codeTool: AECO_tools.code.editor,
+    Core.saveScript(this.GlobalId, null, {
+      context: this.context,
+      codeTool: AECO_TOOLS.code.editor,
     });
 
-    await ScriptingCore.runScript(this.GlobalId, {
-      signals: this.context.signals,
-      codeTool: AECO_tools.code.editor,
-      pythonTool: AECO_tools.code.pyWorker,
-      jsTool: AECO_tools.code.js,
+    await Core.runScript(this.GlobalId, {
+      context: this.context,
+      codeTool: AECO_TOOLS.code.editor,
+      pythonTool: AECO_TOOLS.code.pyWorker,
     });
 
     return { status: "FINISHED" };
@@ -538,15 +478,15 @@ class CODE_RenameScript extends Operator {
   }
 
   async execute() {
-    const script = AECO_tools.code.editor.getScript(this.scriptGuid);
+    const script = AECO_TOOLS.code.editor.getScript(this.scriptGuid);
 
     if (script) {
       this.previousName = script.name;
     }
 
-    ScriptingCore.renameScript(this.scriptGuid, this.newName, {
-      codeTool: AECO_tools.code.editor,
-      signals: this.context.signals,
+    Core.renameScript(this.scriptGuid, this.newName, {
+      codeTool: AECO_TOOLS.code.editor,
+      context: this.context,
     });
 
     return { status: "FINISHED" };
@@ -554,9 +494,9 @@ class CODE_RenameScript extends Operator {
 
   undo() {
     if (this.previousName !== null) {
-      ScriptingCore.renameScript(this.scriptGuid, this.previousName, {
-        codeTool: AECO_tools.code.editor,
-        signals: this.context.signals,
+      Core.renameScript(this.scriptGuid, this.previousName, {
+        codeTool: AECO_TOOLS.code.editor,
+        context: this.context,
       });
     }
 
@@ -589,7 +529,7 @@ class CODE_SwitchScript extends Operator {
       return { status: "CANCELLED" };
     }
 
-    const codeCollection = AECO_tools.code.editor.getScript(this.scriptGuid);
+    const codeCollection = AECO_TOOLS.code.editor.getScript(this.scriptGuid);
 
     if (!codeCollection) {
       console.error('[CODE_SwitchScript] Script not found:', this.scriptGuid);
@@ -597,10 +537,10 @@ class CODE_SwitchScript extends Operator {
       return { status: "CANCELLED" };
     }
 
-    this.previousActiveGuid = AECO_tools.code.editor.activeScriptGuid;
+    this.previousActiveGuid = AECO_TOOLS.code.editor.activeScriptGuid;
 
-    const switched = ScriptingCore.activateScript(this.scriptGuid, {
-      codeTool: AECO_tools.code.editor,
+    const switched = Core.activateScript(this.scriptGuid, {
+      codeTool: AECO_TOOLS.code.editor,
     });
 
     if (switched) {
@@ -613,12 +553,12 @@ class CODE_SwitchScript extends Operator {
 
   undo() {
     if (this.previousActiveGuid) {
-      const switched = ScriptingCore.activateScript(this.previousActiveGuid, {
-        codeTool: AECO_tools.code.editor,
+      const switched = Core.activateScript(this.previousActiveGuid, {
+        codeTool: AECO_TOOLS.code.editor,
       });
 
       if (switched) {
-        const codeCollection = AECO_tools.code.editor.getScript(this.previousActiveGuid);
+        const codeCollection = AECO_TOOLS.code.editor.getScript(this.previousActiveGuid);
 
         if (codeCollection) {
           this.context.signals.openScript.dispatch({ codeCollection });
@@ -655,7 +595,7 @@ class CODE_CloseScriptTab extends Operator {
       return { status: "CANCELLED" };
     }
 
-    const codeCollection = AECO_tools.code.editor.getScript(this.scriptGuid);
+    const codeCollection = AECO_TOOLS.code.editor.getScript(this.scriptGuid);
 
     if (codeCollection) {
       this.closedScript = {
@@ -673,11 +613,11 @@ class CODE_CloseScriptTab extends Operator {
 
   async undo() {
     if (this.closedScript) {
-      const codeCollection = AECO_tools.code.editor.getScript(this.closedScript.guid);
+      const codeCollection = AECO_TOOLS.code.editor.getScript(this.closedScript.guid);
 
       if (codeCollection) {
-        await ScriptingCore.openScript(this.closedScript.guid, {
-          codeTool: AECO_tools.code.editor,
+        await Core.openScript(this.closedScript.guid, {
+          codeTool: AECO_TOOLS.code.editor,
           context: this.context,
           editorContainer: this.context._scriptEditorContainer,
         });
@@ -706,7 +646,7 @@ class CODE_CreateTemplateScripts extends Operator {
   }
 
   async execute() {
-    const codeTool = AECO_tools.code.editor;
+    const codeTool = AECO_TOOLS.code.editor;
 
     const existingScripts = codeTool.getScriptNames();
 
@@ -718,7 +658,7 @@ class CODE_CreateTemplateScripts extends Operator {
 
       const language = template.language || "python";
 
-      const codeCollection = await ScriptingCore.newScript(template.name, template.code, language, {
+      const codeCollection = await Core.newScript(template.name, template.code, language, {
         codeTool,
         context: this.context,
       });
@@ -730,7 +670,7 @@ class CODE_CreateTemplateScripts extends Operator {
   }
 
   undo() {
-    const codeTool = AECO_tools.code.editor;
+    const codeTool = AECO_TOOLS.code.editor;
 
     for (const collection of this.createdScripts) {
       codeTool.deleteScript(collection);
@@ -749,14 +689,11 @@ class CODE_CreateTemplateScripts extends Operator {
 export default [
   
   CODE_EnablePython,
-  CODE_EnableJavaScript,
+  CODE_RunPython,
+  CODE_RunCode,
   CODE_EnableBIM,
   CODE_EnableViewerAPI,
-  
-  CODE_RunPython,
-  CODE_RunJavaScript,
-  CODE_RunCode,
-  
+
   CODE_NewScript,
   CODE_UpdateScript,
   CODE_ShowEditor,

@@ -4,7 +4,10 @@ import SnapTool from '../viewer/SnapTool.js';
 
 import { SnapState } from '../../modules/world.snap/operators.js';
 
+import context from '../../context/index.js';
+
 const raycaster = new THREE.Raycaster();
+
 const DRAWING_MODES = {
   IDLE: null,
   TWO_POINT_EXTRUSION: 'two_point_extrusion',
@@ -132,8 +135,6 @@ class DrawingTool {
 
   static onOptionsChanged = null;
 
-  static _context = null; 
-
   static _lastSnapObject = null; 
 
   static _lastSnapFace = null; 
@@ -153,7 +154,7 @@ class DrawingTool {
   /**
    * Initialize the tool (call once per context)
    */
-  static init(context) {
+  static init() {
 
     if(DrawingTool.ready)  return;
 
@@ -176,25 +177,25 @@ class DrawingTool {
       side: THREE.DoubleSide
     });
 
-    DrawingTool._onMouseMove = DrawingTool._handleMouseMove.bind(null, context);
+    DrawingTool._onMouseMove = DrawingTool._handleMouseMove.bind(null);
 
-    DrawingTool._onMouseClick = DrawingTool._handleMouseClick.bind(null, context);
+    DrawingTool._onMouseClick = DrawingTool._handleMouseClick.bind(null);
 
-    DrawingTool._onKeyDown = DrawingTool._handleKeyDown.bind(null, context);
+    DrawingTool._onKeyDown = DrawingTool._handleKeyDown.bind(null);
 
     DrawingTool.ready = true;
   }
 
   /**
    * Handle mouse move
-   * @param {Object} context - Application context
+
    * @param {Event} event - Mouse event
    */
-  static _handleMouseMove(context, event) {
+  static _handleMouseMove(event) {
 
     if (DrawingTool.mode === DrawingTool.DRAWING_MODES.IDLE) return;
 
-    const snapResult = DrawingTool._getSnapPoint(context, event);
+    const snapResult = DrawingTool._getSnapPoint(event);
 
     if (!snapResult) {
 
@@ -205,7 +206,7 @@ class DrawingTool {
         null
       );
 
-      DrawingTool._clearPreview(context);
+      DrawingTool._clearPreview();
 
       return;
     }
@@ -232,7 +233,7 @@ class DrawingTool {
 
         if (DrawingTool.state === STATES.PICKING_END && DrawingTool.startPoint) {
 
-          DrawingTool._updateExtrustionPreview(context, DrawingTool.startPoint, constrainedPoint);
+          DrawingTool._updateExtrustionPreview(DrawingTool.startPoint, constrainedPoint);
           
         }
 
@@ -244,13 +245,13 @@ class DrawingTool {
         if (needsWall) {
           
           if (snapResult.object?.isIfc && DrawingTool._isWall(snapResult.object)) {
-            DrawingTool._updatePlacementPreview(context, snapResult);
+            DrawingTool._updatePlacementPreview(snapResult);
           } else {
-            DrawingTool._clearPreview(context);
+            DrawingTool._clearPreview();
           }
         } else {
           
-          DrawingTool._updatePlacementPreview(context, snapResult);
+          DrawingTool._updatePlacementPreview(snapResult);
         }
 
         break;
@@ -258,7 +259,7 @@ class DrawingTool {
 
       case DrawingTool.DRAWING_MODES.POLYLINE: {
         
-        DrawingTool._updatePolylinePreview(context, constrainedPoint);
+        DrawingTool._updatePolylinePreview(constrainedPoint);
         break;
       }
 
@@ -266,19 +267,19 @@ class DrawingTool {
         break;
     }
 
-    DrawingTool._requestRender(context);
+    DrawingTool._requestRender();
   }
 
   /**
    * Handle mouse click
-   * @param {Object} context - Application context
+
    * @param {Event} event - Mouse event
    */
-  static _handleMouseClick(context, event) {
+  static _handleMouseClick(event) {
 
     if (DrawingTool.mode === DrawingTool.DRAWING_MODES.IDLE) return;
 
-    const snapResult = DrawingTool._getSnapPoint(context, event);
+    const snapResult = DrawingTool._getSnapPoint(event);
 
     if (!snapResult) return;
 
@@ -286,17 +287,17 @@ class DrawingTool {
 
     switch (DrawingTool.mode) {
       case DrawingTool.DRAWING_MODES.TWO_POINT_EXTRUSION:
-        DrawingTool._handleTwoPointExtrusion(context, point);
+        DrawingTool._handleTwoPointExtrusion(point);
 
         break;
 
       case DrawingTool.DRAWING_MODES.PLACEMENT:
-        DrawingTool._handlePlacementClick(context, snapResult);
+        DrawingTool._handlePlacementClick(snapResult);
 
         break;
 
       case DrawingTool.DRAWING_MODES.POLYLINE:
-        DrawingTool._handlePolylineClick(context, point);
+        DrawingTool._handlePolylineClick(point);
 
         break;
     }
@@ -304,18 +305,18 @@ class DrawingTool {
 
   /**
    * Handle key down
-   * @param {Object} context - Application context
+
    * @param {Event} event - Key event
    */
-  static _handleKeyDown(context, event) {
+  static _handleKeyDown(event) {
     switch (event.key) {
       case 'Escape':
         if (DrawingTool.mode === DrawingTool.DRAWING_MODES.POLYLINE && DrawingTool.polylinePoints.length > 0) {
           
           DrawingTool.polylinePoints = [];
-          DrawingTool._clearPreview(context);
+          DrawingTool._clearPreview();
         } else {
-          DrawingTool.cancel(context);
+          DrawingTool.cancel();
         }
 
         break;
@@ -339,7 +340,7 @@ class DrawingTool {
       case 'Enter':
         
         if (DrawingTool.mode === DrawingTool.DRAWING_MODES.POLYLINE && DrawingTool.polylinePoints.length >= 3) {
-          DrawingTool._finishPolyline(context);
+          DrawingTool._finishPolyline();
           break;
         }
 
@@ -349,32 +350,32 @@ class DrawingTool {
 
           DrawingTool.state = STATES.PICKING_START;
 
-          DrawingTool._clearPreview(context);
+          DrawingTool._clearPreview();
         }
 
         break;
     }
   }
+
   /**
    * Set the drawing mode
-   * @param {Object} context - Application context
+
    * @param {string} mode - 'two_point_extrusion', 'placement', or null
    * @param {string} ifcClass - The IFC class being drawn (e.g., 'IfcWallType', 'IfcColumnType')
    */
-  static setMode(context, mode, ifcClass = null) {
+  static setMode(mode, ifcClass = null) {
     const previousMode = DrawingTool.mode;
     const previousTool = DrawingTool.activeTool;
     if (mode === previousMode && ifcClass === previousTool) {
-      DrawingTool.cancel(context);
+      DrawingTool.cancel();
       return;
     }
     if (previousMode) {
-      DrawingTool._detachEventListeners(context);
+      DrawingTool._detachEventListeners();
     }
 
     DrawingTool.mode = mode;
     DrawingTool.activeTool = ifcClass;
-    DrawingTool._context = context; 
 
     if (mode) {
       
@@ -389,7 +390,7 @@ class DrawingTool {
         DrawingTool.state = STATES.IDLE;
       }
 
-      DrawingTool._attachEventListeners(context);
+      DrawingTool._attachEventListeners();
 
       context.editor.selector.disabled = true;
     } else {
@@ -402,7 +403,7 @@ class DrawingTool {
       context.editor.selector.disabled = false;
     }
 
-    DrawingTool._clearPreview(context);
+    DrawingTool._clearPreview();
     if (DrawingTool.onStateChanged) {
       DrawingTool.onStateChanged(DrawingTool.state);
     }
@@ -414,9 +415,9 @@ class DrawingTool {
 
   /**
    * Cancel current drawing operation
-   * @param {Object} context - Application context
+
    */
-  static cancel(context) {
+  static cancel() {
     const previousMode = DrawingTool.mode;
     const previousTool = DrawingTool.activeTool;
 
@@ -436,9 +437,9 @@ class DrawingTool {
 
     DrawingTool.clearLockedParams();
 
-    DrawingTool._clearPreview(context);
+    DrawingTool._clearPreview();
 
-    DrawingTool._detachEventListeners(context);
+    DrawingTool._detachEventListeners();
 
     context.editor.selector.disabled = false;
     if (context.ifc) {
@@ -468,9 +469,8 @@ class DrawingTool {
    * Refresh the preview with current options (call after changing options programmatically)
    * @param {Object} context - Optional context, uses stored context if not provided
    */
-  static refreshPreview(context = null) {
-    const ctx = context || DrawingTool._context;
-    if (!ctx || !DrawingTool.mode || !DrawingTool.currentPoint) return;
+  static refreshPreview() {
+      if ( !DrawingTool.mode || !DrawingTool.currentPoint) return;
 
     const snapResult = { 
       point: DrawingTool.currentPoint, 
@@ -481,15 +481,15 @@ class DrawingTool {
     switch (DrawingTool.mode) {
       case DrawingTool.DRAWING_MODES.TWO_POINT_EXTRUSION:
         if (DrawingTool.startPoint) {
-          DrawingTool._updateExtrustionPreview(ctx, DrawingTool.startPoint, DrawingTool.currentPoint);
+          DrawingTool._updateExtrustionPreview(DrawingTool.startPoint, DrawingTool.currentPoint);
         }
         break;
       case DrawingTool.DRAWING_MODES.PLACEMENT:
-        DrawingTool._updatePlacementPreview(ctx, snapResult);
+        DrawingTool._updatePlacementPreview(snapResult);
         break;
     }
 
-    DrawingTool._requestRender(ctx);
+    DrawingTool._requestRender();
   }
 
   /**
@@ -574,12 +574,12 @@ class DrawingTool {
     return constrained;
   }
 
-  static _getSnapPoint(context, event) {
+  static _getSnapPoint(event) {
     const editor = context.editor;
 
     if (!editor) return null;
 
-    const mouse = DrawingTool._getNormalizedMouse(context, event);
+    const mouse = DrawingTool._getNormalizedMouse(event);
     let snapOptions = { ...SnapState.snapOptions };
 
     if (DrawingTool.mode === DrawingTool.DRAWING_MODES.TWO_POINT_EXTRUSION) {
@@ -608,10 +608,10 @@ class DrawingTool {
 
   /**
    * Get normalized mouse coordinates
-   * @param {Object} context - Application context
+
    * @param {Event} event - Mouse event
    */
-  static _getNormalizedMouse(context, event) {
+  static _getNormalizedMouse(event) {
     const editor = context.editor;
 
     if (!editor || !editor.renderer) return new THREE.Vector2();
@@ -625,10 +625,10 @@ class DrawingTool {
   }
   /**
    * Handle two point  drawing click
-   * @param {Object} context - Application context
+
    * @param {THREE.Vector3} point - Click point
    */
-  static _handleTwoPointExtrusion(context, point) {
+  static _handleTwoPointExtrusion(point) {
     let constrainedPoint = point;
 
     if (DrawingTool.state === STATES.PICKING_START) {
@@ -663,7 +663,7 @@ class DrawingTool {
 
       DrawingTool.startPoint = end.clone();
 
-      DrawingTool._clearPreview(context);
+      DrawingTool._clearPreview();
 
       return 
     }
@@ -671,10 +671,10 @@ class DrawingTool {
 
   /**
    * Handle placement click for various element types
-   * @param {Object} context - Application context
+
    * @param {Object} snapResult - Snap result
    */
-  static _handlePlacementClick(context, snapResult) {
+  static _handlePlacementClick(snapResult) {
     const needsWall = DrawingTool.requiresWallHost();
     const hostObject = snapResult.object;
     const point = snapResult.point;
@@ -694,7 +694,7 @@ class DrawingTool {
       }
       const position = DrawingTool._calculateLocalPosition(hostObject, point);
       const type = DrawingTool.activeTool === 'IfcWindowType' ? 'window' : 'door';
-      DrawingTool._createOpening(context, type, hostGuid, position);
+      DrawingTool._createOpening(type, hostGuid, position);
 
     } else {
       
@@ -721,12 +721,12 @@ class DrawingTool {
 
   /**
    * Create window/door through operator
-   * @param {Object} context - Application context
+
    * @param {string} type - 'window' or 'door'
    * @param {string} hostGuid - Host wall GUID
    * @param {Object} position - Local position
    */
-  static async _createOpening(context, type, hostGuid, position) {
+  static async _createOpening(type, hostGuid, position) {
     const params = {
       hostGuid,
       position,
@@ -746,22 +746,22 @@ class DrawingTool {
 
   /**
    * Handle polyline click - adds point to polyline
-   * @param {Object} context - Application context
+
    * @param {THREE.Vector3} point - Click point
    */
-  static _handlePolylineClick(context, point) {
+  static _handlePolylineClick(point) {
     
     if (DrawingTool.polylinePoints.length >= 3) {
       const firstPoint = DrawingTool.polylinePoints[0];
       const distance = point.distanceTo(firstPoint);
       
       if (distance < 0.3) {  
-        DrawingTool._finishPolyline(context);
+        DrawingTool._finishPolyline();
         return;
       }
     }
     DrawingTool.polylinePoints.push(point.clone());
-    DrawingTool._updatePolylinePreview(context, point);
+    DrawingTool._updatePolylinePreview(point);
 
     if (DrawingTool.onStateChanged) {
       DrawingTool.onStateChanged(STATES.PICKING_POLYLINE);
@@ -770,9 +770,9 @@ class DrawingTool {
 
   /**
    * Finish polyline drawing and create the element
-   * @param {Object} context - Application context
+
    */
-  static _finishPolyline(context) {
+  static _finishPolyline() {
     if (DrawingTool.polylinePoints.length < 3) {
       console.warn('Need at least 3 points to create a polyline element');
       return;
@@ -798,16 +798,16 @@ class DrawingTool {
       DrawingTool.onPlacementFinished({ params });
     }
     DrawingTool.polylinePoints = [];
-    DrawingTool._clearPreview(context);
+    DrawingTool._clearPreview();
   }
 
   /**
    * Update polyline preview
-   * @param {Object} context - Application context
+
    * @param {THREE.Vector3} currentPoint - Current mouse point
    */
-  static _updatePolylinePreview(context, currentPoint) {
-    DrawingTool._clearPreview(context);
+  static _updatePolylinePreview(currentPoint) {
+    DrawingTool._clearPreview();
 
     const points = [...DrawingTool.polylinePoints];
     
@@ -1011,15 +1011,15 @@ class DrawingTool {
 
   /**
    * Update extrusion preview geometry (walls, beams, coverings)
-   * @param {Object} context - Application context
+
    * @param {THREE.Vector3} start - Start point (in Y-up scene coords)
    * @param {THREE.Vector3} end - End point (in Y-up scene coords)
    * 
    * Note: Preview is built to match IFC geometry which uses Z-up.
    * The preview is rotated -90 degrees around X to display correctly in Y-up scene.
    */
-  static _updateExtrustionPreview(context, start, end) {
-    DrawingTool._clearPreview(context);
+  static _updateExtrustionPreview(start, end) {
+    DrawingTool._clearPreview();
 
     const length = start.distanceTo(end);
 
@@ -1109,15 +1109,15 @@ class DrawingTool {
 
   /**
    * Update placement preview geometry
-   * @param {Object} context - Application context
+
    * @param {Object} snapResult - Snap result
    * 
    * Note: IFC uses Z-up coordinate system, but Three.js uses Y-up.
    * The preview is built in IFC coordinates then rotated -90 degrees around X
    * to match how IFC geometry is displayed in the scene.
    */
-  static _updatePlacementPreview(context, snapResult) {
-    DrawingTool._clearPreview(context);
+  static _updatePlacementPreview(snapResult) {
+    DrawingTool._clearPreview();
 
     const needsWall = DrawingTool.requiresWallHost();
     const options = DrawingTool.options;
@@ -1172,15 +1172,15 @@ class DrawingTool {
 
     if (context.editor?.scene) {
       context.editor.scene.add(preview);
-      DrawingTool._requestRender(context);
+      DrawingTool._requestRender();
     }
   }
 
   /**
    * Clear preview geometry
-   * @param {Object} context - Application context
+
    */
-  static _clearPreview(context) {
+  static _clearPreview() {
     if (DrawingTool.previewObject) {
       if (DrawingTool.previewObject.parent) {
         DrawingTool.previewObject.parent.remove(DrawingTool.previewObject);
@@ -1206,14 +1206,14 @@ class DrawingTool {
 
       DrawingTool.previewText = null;
     }
-    DrawingTool._requestRender(context);
+    DrawingTool._requestRender();
   }
 
   /**
    * Request a render frame (debounced to avoid excessive renders during mouse move)
-   * @param {Object} context - Application context
+
    */
-  static _requestRender(context) {
+  static _requestRender() {
       
     context.editor.signals.cameraChanged.dispatch();
       
@@ -1286,9 +1286,9 @@ class DrawingTool {
 
   /**
    * Attach event listeners
-   * @param {Object} context - Application context
+
    */
-  static _attachEventListeners(context) {
+  static _attachEventListeners() {
     const canvas = context.editor?.renderer?.domElement;
 
     if (!canvas) return;
@@ -1302,9 +1302,9 @@ class DrawingTool {
 
   /**
    * Detach event listeners
-   * @param {Object} context - Application context
+
    */
-  static _detachEventListeners(context) {
+  static _detachEventListeners() {
     const canvas = context.editor?.renderer?.domElement;
 
     if (!canvas) return;
@@ -1318,10 +1318,10 @@ class DrawingTool {
 
   /**
    * Dispose resources
-   * @param {Object} context - Application context
+
    */
-  static dispose(context) {
-    DrawingTool.cancel(context);
+  static dispose() {
+    DrawingTool.cancel();
 
     if (DrawingTool.snapIndicator?.parent) {
       DrawingTool.snapIndicator.parent.remove(DrawingTool.snapIndicator);

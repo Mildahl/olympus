@@ -1,14 +1,12 @@
-
-import AECO_TOOLS from "../tool/index.js";
-
-import { newScript } from "../core/scripting.js";
-
 import {Strings} from "../ui/language/Strings.js";
  
 const { Signal } = signals;
 
+/** @typedef {InstanceType<typeof import("./world/Editor.js").Editor>} EditorInstance */
+
 /**
  * @typedef {Object} IFCState
+ * @property {boolean} isAttributeSelectionCallbackEnabled - Whether BIM selection mode is active
  * @property {Object|null} activeModel - Currently active IFC model
  * @property {Object|null} activeType - Currently active IFC type
  * @property {Array} availableModels - List of available models
@@ -88,7 +86,7 @@ class Context {
 
         /**
          * Three.js editor instance
-         * @type {Object|null}
+         * @type {EditorInstance|null}
          */
         this.editor = null;
 
@@ -97,14 +95,15 @@ class Context {
          * @type {IFCState}
          */
         this.ifc = {
-            activeModel: null,
-            activeType: null,
-            availableModels: [],
-            activeWorkSchedule: null,
-            activeElement: null,
             geometryBackend: "ifcopenshell",
             ifcGeometryAssembly: "merged",
             geometryLoadInProgress: false,
+            isAttributeSelectionCallbackEnabled: false,
+            availableModels: [],
+            activeModel: null,
+            activeElement: null,
+            activeType: null,
+            activeWorkSchedule: null,
         }
 
         this._baseListeners();
@@ -163,79 +162,61 @@ class Context {
     _baseListeners() {
         this.signals = {
 
+            // APPLICATION LOADING 
+            showSpinner: new Signal(),
+
+            // STATE DEPENDCIES ( IFC EDIT MODE )
+            pythonReady: new Signal(),
+            bimEnabled: new Signal(),
+
+            // AGENTIC AI & CHAT
+            llmAPIConnected: new Signal(),
+            llmChatToolEvent: new Signal(),
+
+
+            // // // WORLD // // // 
+            // WORLD.NOTIFICATION
+            notificationAdded: new Signal(),
+            notificationRead: new Signal(),
+
+            // CONFIGURATION
             configurationUpdated: new Signal(),
             configurationSaved: new Signal(),
             configurationReset: new Signal(),
 
-            showSpinner: new Signal(),
-            locationChanged: new Signal(),
-
-            activeLayerUpdate: new Signal(),
+            // THEME
             themeChanged: new Signal(),
             themeColorsChanged: new Signal(),
+
+            // WORLD.3D NAVIGATION MODES
             navigationModeChanged: new Signal(),
             navigationCameraRigChanged: new Signal(),
             flyModeEnabled: new Signal(),
             driveModeEnabled: new Signal(),
-            newScript: new Signal(),
-            scriptNameChanged: new Signal(),
-            monacoEnabled: new Signal(),
-            showCodeEditor: new Signal(), 
-            openScript: new Signal(), 
-            openOutput: new Signal(),
-            openNodeEditor: new Signal(),
-            codeCollectionsChanged: new Signal(),
-            nodesCollectionsChanged: new Signal(),
-            minimizeAllEditorPanels: new Signal(),
-            maximizeEditorPanel: new Signal(),
-            scriptExecutionCompleted: new Signal(), 
-            scriptTabOpened: new Signal(), 
-            scriptTabClosed: new Signal(), 
-            scriptTabsRefresh: new Signal(), 
-            newTerminal: new Signal(),
-            terminalNameChanged: new Signal(),
-            openTerminal: new Signal(),
-            terminalOutput: new Signal(),
-            terminalCleared: new Signal(),
-            terminalClosed: new Signal(),
-            terminalLanguageChanged: new Signal(),
-            terminalExecuting: new Signal(),
-            enableSpatialManager: new Signal(),
-            openSpatialManager: new Signal(),
-            enableEditingSpatialStructure: new Signal(),
-            spatialCollapseAll: new Signal(),
-            spatialExpandAll: new Signal(),
-            spatialRefresh: new Signal(),
-            spatialSelectObject: new Signal(),
-            projectChanged: new Signal(), 
-            bimEnabled: new Signal(),
+
+            // WORLD.LAYERS
+            activeLayerUpdate: new Signal(),
             refreshBIMLayers: new Signal(),
-            newIFCModel: new Signal(),
-            activeModelChanged: new Signal(),
-            directorAnalyticsContextChanged: new Signal(),
 
-            activeTypeChanged: new Signal,
-            newIFCGeometry: new Signal(),
-            bimGeometryLoadProgress: new Signal(),
-            enableEditingAttributes: new Signal(),
+            // WORLD.CURSOR SNAP
+            toggleSnapMenu: new Signal(),
+            snapOptionChanged: new Signal(),
 
-            elementCreated: new Signal(),
-            elementDeleted: new Signal(),
-            elementGeometryRefreshed: new Signal(),
-            workschedulechanged: new Signal(),
-            enableEditingWorkScheduleTasks: new Signal(),
-            changeViewType: new Signal(),
-            taskSelected: new Signal(),
-            taskSelectionChanged: new Signal(),
-            taskDetailsLoaded: new Signal(),
-            nodePathExpanded: new Signal(),
-            notificationAdded: new Signal(),
-            notificationRead: new Signal(),
+            // WORLD MEASUREMENT TOOL
+            measureToolToggled: new Signal(),
+            measureModeChanged: new Signal(),
+            measurementCreated: new Signal(),
+            measurementsCleared: new Signal(),
+            measureSnapToggled: new Signal(),
+
+            // WORLD.VIEWPOINTS 
             viewpointsChanged: new Signal(),
             viewpointCreated: new Signal(),
             viewpointRemoved: new Signal(),
             viewpointUpdated: new Signal(),
             viewpointActivated: new Signal(),
+
+            // WORLD.ANIMATION PATHS
             animationPathsChanged: new Signal(),
             animationPathCreated: new Signal(),
             animationPathRemoved: new Signal(),
@@ -245,17 +226,91 @@ class Context {
             animationPathPlaybackEnded: new Signal(),
             animationPathPlaybackProgress: new Signal(),
             animationPathPlaybackPaused: new Signal(),
-            measureToolToggled: new Signal(),
-            measureModeChanged: new Signal(),
-            measurementCreated: new Signal(),
-            measurementsCleared: new Signal(),
-            measureSnapToggled: new Signal(),
-            toggleSnapMenu: new Signal(),
-            snapOptionChanged: new Signal(),
-            sectionBoxToggled: new Signal(),
-            sectionBoxChanged: new Signal(),
+
+            // WORLD.SPATIAL MANAGER
+            enableSpatialManager: new Signal(),
+            openSpatialManager: new Signal(),
+            enableEditingSpatialStructure: new Signal(),
+            spatialCollapseAll: new Signal(),
+            spatialExpandAll: new Signal(),
+            spatialRefresh: new Signal(),
+            spatialSelectObject: new Signal(),
+
+            // WORLD.SECTIONING
             projectionCutPlaneChanged: new Signal(),
             projectionSectionRegenerated: new Signal(),
+
+            // WORLD.SECTION BOX
+            sectionBoxToggled: new Signal(),
+            sectionBoxChanged: new Signal(),
+
+
+            // // //  CODE // // // 
+            // CODE EDITOR 
+            newScript: new Signal(),
+            scriptNameChanged: new Signal(),
+            monacoEnabled: new Signal(),
+            showCodeEditor: new Signal(), 
+            openScript: new Signal(), 
+            openOutput: new Signal(),
+            minimizeAllEditorPanels: new Signal(),
+            maximizeEditorPanel: new Signal(),
+            scriptExecutionCompleted: new Signal(), 
+            scriptTabOpened: new Signal(), 
+            scriptTabClosed: new Signal(), 
+            scriptTabsRefresh: new Signal(), 
+
+
+            // TERMINAL MODULE
+            newTerminal: new Signal(),
+            terminalNameChanged: new Signal(),
+            openTerminal: new Signal(),
+            terminalOutput: new Signal(),
+            terminalCleared: new Signal(),
+            terminalClosed: new Signal(),
+            terminalLanguageChanged: new Signal(),
+            terminalExecuting: new Signal(),
+            codeCollectionsChanged: new Signal(),
+
+
+
+            // // // NATIVE IFC // // // 
+            // FILE LOADING, PARSING & GEOMETRY CREATION
+            newIFCModel: new Signal(),
+            projectChanged: new Signal(), 
+            newIFCGeometry: new Signal(),
+            bimGeometryLoadProgress: new Signal(),
+            activeModelChanged: new Signal(),
+
+
+            // BIM.Analytics
+            directorAnalyticsContextChanged: new Signal(),
+
+            // SELECTION CALLACKS
+            displayConstructionHudTask: new Signal(),
+            displayConstructionHudCost: new Signal(),
+
+
+            // IFC/TYPES AND CREATION
+            activeTypeChanged: new Signal,
+            elementCreated: new Signal(),
+            elementDeleted: new Signal(),
+            elementGeometryRefreshed: new Signal(),
+
+            // IFC/ATTRIBUTES
+            enableEditingAttributes: new Signal(),
+
+            // IFC/WORK SCHEDULES
+            workschedulechanged: new Signal(),
+            enableEditingWorkScheduleTasks: new Signal(),
+            changeViewType: new Signal(),
+            taskSelected: new Signal(),
+            taskSelectionChanged: new Signal(),
+            taskClicked: new Signal(),
+            nodePathExpanded: new Signal(),
+
+            // IFC/COST
+            costItemClicked: new Signal(),
         };
     }
 
@@ -296,20 +351,6 @@ class Context {
         this.strings = new Strings({ language: resolved });
     }
 
-    _printWorldStructure() {
-
-        const world = AECO_TOOLS.world.layer.World;
-
-        const traverseWorld = (collection, depth = 0) => {
-
-            for (const child of collection.children) {
-                traverseWorld(child, depth + 1);
-            }
-        }
-
-        traverseWorld(world);
-
-    }
 
     fetchResources() {
         navigator.serviceWorker?.register("sw.js");

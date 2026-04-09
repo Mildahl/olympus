@@ -4,7 +4,7 @@ import { FullScreenQuad } from 'three/addons/postprocessing/Pass.js';
 
 import { UISpan, UIDiv, UIRow, UIButton, UICheckbox, UIText, UINumber } from '../../drawUI/ui.js';
 
-import { MoveObjectCommand } from '../context/world/editor/operators/MoveObjectCommand.js';
+import { MoveObjectCommand } from '../context/world/editor/commands/MoveObjectCommand.js';
 
 const cache = new Map();
 
@@ -586,7 +586,7 @@ class UIOutliner extends UIDiv {
 
 			if ( element.value === value ) {
 
-				element.classList.add( 'active' );
+				element.classList.add( 'Active' );
 
 				// scroll into view
 
@@ -610,7 +610,7 @@ class UIOutliner extends UIDiv {
 
 			} else {
 
-				element.classList.remove( 'active' );
+				element.classList.remove( 'Active' );
 
 			}
 

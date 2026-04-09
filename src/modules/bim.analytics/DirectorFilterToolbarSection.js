@@ -1,5 +1,13 @@
 import { Components as UIComponents } from "../../ui/Components/Components.js";
 
+import {
+  analyticsFilterActionsRowStyles,
+  analyticsFilterLabelStyles,
+  analyticsFilterToolbarStyles,
+  analyticsSectionTitleStyles,
+  analyticsSelectFullWidthStyles,
+} from "./bimAnalyticsPanelStyles.js";
+
 class DirectorFilterToolbarSection {
   constructor({ filterState, onFiltersCommit }) {
     this.filterState = filterState;
@@ -10,13 +18,19 @@ class DirectorFilterToolbarSection {
 
     this._debounceTimer = null;
 
-    this.root = UIComponents.column().gap("var(--phi-0-75)").addClass("director-analytics-filter-toolbar");
+    this.root = UIComponents.column().gap("var(--phi-0-75)").setStyles(analyticsFilterToolbarStyles);
 
     this.title = UIComponents.text("Model filter");
 
-    this.title.addClass("director-analytics-section-title");
+    this.title.setStyles(analyticsSectionTitleStyles);
 
-    this.grid = UIComponents.div().addClass("director-analytics-filter-grid");
+    this.grid = UIComponents.div()
+      .addClass("OlympusGrid")
+      .setStyles({
+        gridTemplateColumns: "repeat(auto-fill, minmax(11rem, 1fr))",
+        gap: "var(--phi-0-75)",
+        width: "100%",
+      });
 
     this.classSelect = UIComponents.select();
 
@@ -26,6 +40,14 @@ class DirectorFilterToolbarSection {
 
     this.materialSelect = UIComponents.select();
 
+    this.classSelect.setStyles(analyticsSelectFullWidthStyles);
+
+    this.spatialSelect.setStyles(analyticsSelectFullWidthStyles);
+
+    this.psetSelect.setStyles(analyticsSelectFullWidthStyles);
+
+    this.materialSelect.setStyles(analyticsSelectFullWidthStyles);
+
     this._wireSelect(this.classSelect);
 
     this._wireSelect(this.spatialSelect);
@@ -34,7 +56,7 @@ class DirectorFilterToolbarSection {
 
     this._wireSelect(this.materialSelect);
 
-    this.actionsRow = UIComponents.row().gap("var(--phi-0-5)").addClass("director-analytics-filter-actions");
+    this.actionsRow = UIComponents.row().gap("var(--phi-0-5)").setStyles(analyticsFilterActionsRowStyles);
 
     this.applyButton = UIComponents.button("Apply filter");
 
@@ -163,11 +185,11 @@ class DirectorFilterToolbarSection {
   }
 
   _addFilterRow(labelText, selectControl) {
-    const row = UIComponents.column().gap("2px").addClass("director-analytics-filter-field");
+    const row = UIComponents.column().gap("2px");
 
     const label = UIComponents.text(labelText);
 
-    label.addClass("director-analytics-filter-label");
+    label.setStyles(analyticsFilterLabelStyles);
 
     row.add(label);
 

@@ -1,6 +1,4 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-
-import { BasePanel } from "../../../drawUI/BasePanel.js";
+import { Components as UIComponents, BasePanel } from "../../ui/Components/Components.js";
 
 import { MeasureState } from "./operators.js";
 
@@ -14,14 +12,13 @@ class MeasureUI extends BasePanel {
       parentId: "ViewportMeasureTools",
       panelStyles: {
         height: "fit-content",
-        maxHeight: "calc(100vh - 2 * var(--phi-0-5))",
-        maxWidth: "80vw",
-        width: "fit-content",
+        maxHeight: "60vh",
+        minWidth: "280px",
       },
-      resizeHandles: ['e', 's', 'se'],
-      position: 'right',
-      testing:false,
-      draggable:true,
+      resizeHandles: ['w', 's', 'sw'],
+      draggable: true,
+      position: 'below-left',
+      testing: false,
     });
 
     this.measurementsList = null;
@@ -179,14 +176,20 @@ class MeasureUI extends BasePanel {
       { key: "C", desc: "Clear all" },
     ];
 
-    const instructionContent = UIComponents.div().addClass("instruction-content");
+    const instructionContent = UIComponents.column().gap("var(--phi-0-5)").padding("var(--phi-0-5)");
 
     instructions.forEach((inst) => {
-      const line = UIComponents.row().addClass("instruction-line");
+      const line = UIComponents.row();
+
+      line.setStyle("alignItems", ["center"]);
+
+      line.setStyle("display", ["flex"]);
+
+      line.setStyle("gap", ["var(--phi-0-5)"]);
 
       line.add(UIComponents.span(inst.key).addClass("kbd"));
 
-      line.add(UIComponents.text(inst.desc).addClass("instruction-desc"));
+      line.add(UIComponents.text(inst.desc));
 
       instructionContent.add(line);
     });
@@ -276,8 +279,6 @@ class MeasureUI extends BasePanel {
     };
 
     const value = UIComponents.span(`${measurement.value.toFixed(3)} ${measurement.unit}`);
-
-    value.addClass("measurement-value");
 
     const deleteBtn = UIComponents.icon("close").addClass("Button");
 

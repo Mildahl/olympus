@@ -1,18 +1,15 @@
-import dataStore from "../../data/index.js";
+import { MathUtils, Object3D } from 'three'; 
 
-import * as THREE from "three";
-
-import InteractiveObject, { makeInteractive } from "./animate/InteractiveObject.js";
+import context from '../../context/index.js';
 
 class PlacementTool {
 
   /**
    * Smoothly move camera to position (delegates to editor for proper render integration)
-   * @param {Object} context - The AECO context
    * @param {Object} position - Target position {x, y, z}
    * @param {Object} options - Animation options (duration, lookAt, offset, onComplete)
    */
-  static moveCameraToPosition(context, position, options = {}) {
+  static moveCameraToPosition(position, options = {}) {
     
     const transformedPosition = {
       x: position.x,
@@ -25,18 +22,15 @@ class PlacementTool {
 
   /**
    * Rotates an object around a specified axis by a given angle in degrees
-   * @param {Object} context - The AECO context (not used, for consistency)
-   * @param {THREE.Object3D} object - The object to rotate
+   * @param {Object3D} object - The object to rotate
    * @param {string} axis - The axis to rotate around ('x', 'y', or 'z')
    * @param {number} degrees - The rotation angle in degrees
-   * @returns {THREE.Object3D} The rotated object (for chaining)
+   * @returns {Object3D} The rotated object (for chaining)
    */
-  static rotate(context, object, axis, degrees) {
+  static rotate(object, axis, degrees) {
      if ( ! object ) return;
 
-    object.isInteractiveObject? object = object.object : null;
-
-    const radians = THREE.MathUtils.degToRad(degrees);
+    const radians = MathUtils.degToRad(degrees);
     
     switch (axis.toLowerCase()) {
       case 'x':
@@ -61,10 +55,15 @@ class PlacementTool {
     return object;
   }
 
-  static setPosition(context, object, position) {
-    if ( ! object ) return;
+  /**
+   * Sets the absolute position of an object, converting from (x, y, z) to (x, -y, z)
+   * @param {Object3D} object - The object to position
+   * @param {Object} position - The target position {x, y, z}
+   * @returns {Object3D} The positioned object (for chaining)
+   */
 
-    object.isInteractiveObject? object = object.object : null;
+  static setPosition(object, position) {
+    if ( ! object ) return;
 
     object.position.set(position.x, position.z, -position.y);
 
@@ -73,14 +72,13 @@ class PlacementTool {
 
   /**
    * Sets the absolute rotation of an object on a specified axis in degrees
-   * @param {Object} context - The AECO context (not used, for consistency)
-   * @param {THREE.Object3D} object - The object to rotate
+   * @param {Object3D} object - The object to rotate
    * @param {string} axis - The axis to set rotation for ('x', 'y', or 'z')
    * @param {number} degrees - The rotation angle in degrees
-   * @returns {THREE.Object3D} The rotated object (for chaining)
+   * @returns {Object3D} The rotated object (for chaining)
    */
-  static setRotation(context, object, axis, degrees) {
-    const radians = THREE.MathUtils.degToRad(degrees);
+  static setRotation(object, axis, degrees) {
+    const radians = MathUtils.degToRad(degrees);
     
     switch (axis.toLowerCase()) {
       case 'x':

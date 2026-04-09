@@ -1,6 +1,5 @@
 import Paths from "../../utils/paths.js";
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-import { focusDockedWorkspaceTab } from "../../../drawUI/utils/workspacePanelDock.js";
+import { Components as UIComponents, focusDockedWorkspaceTab } from "../../ui/Components/Components.js";
 
 class SpatialManagerUI {
   constructor({ context, operators }) {
@@ -12,7 +11,7 @@ class SpatialManagerUI {
       context,
       title: "World structure",
       icon: "account_tree",
-      minimizedImageSrc: Paths.data("/resources/images/spatial_structure.svg"),
+      minimizedImageSrc: Paths.data("resources/images/spatial_structure.svg"),
       workspaceTabId: "world-spatial-structure",
       workspaceTabLabel: "World structure",
       startMinimized: true,
@@ -307,7 +306,7 @@ class SpatialManagerUI {
     const optionElements = this.container.dom.querySelectorAll(".option");
 
     for (let index = 0; index < optionElements.length; index++) {
-      optionElements[index].classList.remove("active");
+      optionElements[index].classList.remove('Active');
     }
 
     if (objectId !== null && objectId !== undefined) {
@@ -316,7 +315,7 @@ class SpatialManagerUI {
       );
 
       if (selectedOption) {
-        selectedOption.classList.add("active");
+        selectedOption.classList.add('Active');
       }
     }
   }

@@ -1,18 +1,8 @@
-import dataStore from "../../data/index.js";
-
 import * as THREE from "three";
-
-import tools from "../index.js";
 
 import context from '../../context/index.js';
 
-import InteractiveObject, { makeInteractive } from "../model/animate/InteractiveObject.js";
-
-import { IfcRoot, IfcModel } from "../../data/index.js";
-
-import PythonSandbox from "../pyodide/Python.js";
-
-import NavigationTool from "./NavigationTool.js";
+import LayerTool from "./LayerTool.js";
 
 class SceneTool {
 
@@ -27,21 +17,6 @@ class SceneTool {
         }
       }
     };
-
-  static _baseLayers(context) {
-    const scene = context.editor.scene;
-
-    const layers = SceneTool.LAYERS;
-
-    for (const layerKey in layers.World.Layers) {
-      const layerGroup = layers.World.Layers[layerKey];
-
-      layerGroup.name = layerKey;
-
-      scene.add(layerGroup);
-    } 
-
-  }
 
   /**
    * Extract the entity GlobalId from a Three.js object
@@ -86,7 +61,7 @@ class SceneTool {
     return id || null;
   }
 
-  static createLayerGroup(context, layerName) { 
+  static createLayerGroup(layerName) { 
 
     const newLayer = new THREE.Group();
 
@@ -97,16 +72,15 @@ class SceneTool {
 
   /**
    * Get a layer group by path (supports nested layers)
-   * @param {Object} context - Application context
    * @param {string} layerPath - Path to layer (e.g., "Buildings" or "Buildings/IFC Architecture")
    * @returns {THREE.Group|null} The layer group or null if not found
    */
-  static getLayerByPath(context, layerPath) {
+  static getLayerByPath(layerPath) {
     if (!layerPath) return null;
 
     const fullPath = "World/"+ layerPath
 
-    const dataCollection =  tools.world.layer.getLayerByPath(fullPath)
+    const dataCollection =  LayerTool.getLayerByPath(fullPath)
     
     const SceneObj = dataCollection.scene
 
@@ -119,27 +93,26 @@ class SceneTool {
    * @param {Object} context - Application context
    * @returns {THREE.Group} The buildings layer group
    */
-  static getBuildingsLayer(context) {
-    return SceneTool.getLayerByPath(context, "Buildings");
+  static getBuildingsLayer() {
+    return SceneTool.getLayerByPath("Buildings");
   }
 
   /**
    * Add a Three.js group to a specific layer by path
    * Falls back to Buildings layer if path not found
-   * @param {Object} context - Application context
    * @param {THREE.Group} group - The group to add
    * @param {string} [layerPath] - Optional path to target layer
-   * @returns {THREE.Group} The parent layer group the object was added to
+   * @returns {THREE.Group|false} The parent layer group the object was added to
    */
-  static addToLayer(context, group, layerPath = null) {
+  static addToLayer(group, layerPath = null) {
     let targetLayer = null;
     
     if (layerPath) {
-      targetLayer = SceneTool.getLayerByPath(context, layerPath);
+      targetLayer = SceneTool.getLayerByPath(layerPath);
     }
 
     if (!targetLayer) {
-      targetLayer = SceneTool.getBuildingsLayer(context);
+      targetLayer = SceneTool.getBuildingsLayer();
     }
     
     if (!targetLayer) {
@@ -147,19 +120,12 @@ class SceneTool {
 
       context.editor.scene.add(group);
 
-      return context.editor.scene;
+      return false;
     }
     
     targetLayer.add(group);
     
     return targetLayer;
-  }
-
-  static findVehicle(context) {
-    if (!context || !context.editor || !context.editor.scene) {
-      return null;
-    }
-    return NavigationTool.findDefaultVehicleInScene(context.editor.scene);
   }
 
   static onSelection(callback) {
@@ -168,110 +134,22 @@ class SceneTool {
     });
   }
 
-  static add(context, obj, parent = undefined) {
-    
-    if (obj && obj.__ifcProxy__) {
-      
-      return PythonSandbox._createGeometryForIfcEntity(obj).then(threeJsObject => {
-        if (threeJsObject) {
-          context.editor.addObject(threeJsObject, parent);
-
-          return { success: true };
-        } else {
-          throw new Error(`Failed to create geometry for IFC entity ${obj.GlobalId}`);
-        }
-      });
-    }
-
-    context.editor.addObject(obj, parent);
-
-    return { success: true };
-  }
-
-  static batchAdd(context, objects) {
-    
+  static batchAdd(objects) {
     objects.forEach((obj) => {
       context.editor.addObject(obj);
     });
   }
 
-  static fakeIfc(context, object) {
-    return {
-      GlobalId: object.guid,
-      Name: "Fake Element",
-      PredefinedType: "SOLIDAWALL",
-      is_a() {
-        return "IfcWall";
-      },
-      Properties: {
-        Height: 3000,
-        Width: 500,
-        Material: "Concrete",
-      },
-    };
+  static isIfcObject(object) {
+    return object.isIfc || (object.isMesh && object.parent?.isIfc);
   }
 
-  static getSelectedObjects(context) {
+
+  static getSelectedObjects() {
     return context.editor.selector.selected_objects;
   }
 
-  /**
-   * Get the currently selected element as an IFC entity
-   * When called from Python via the viewer API, this automatically resolves
-   * the GlobalId to an actual IfcOpenShell entity
-   * @returns {Object} Object with __ifcEntityRef__ marker for automatic resolution
-   */
-  static get_selected_element() {
-    const ifcProxy = tools.ifc.getSelectedEntity(context);
-
-    if (!ifcProxy || !ifcProxy.GlobalId) {
-      return null;
-    }
-
-    const activeModel = context.ifc?.activeModel || null;
-
-    return {
-      __ifcEntityRef__: true,
-      globalId: ifcProxy.GlobalId,
-      modelName: activeModel,
-      
-      _debug: {
-        name: ifcProxy.Name,
-        type: ifcProxy.type
-      }
-    };
-  }
-
-  /**
-   * Get all currently selected elements as IFC entities
-   * When called from Python via the viewer API, this automatically resolves
-   * GlobalIds to actual IfcOpenShell entities
-   * @param {Object} context - Application context
-   * @returns {Object} Object with __ifcEntityRefsArray__ marker for automatic resolution
-   */
-  static get_selected_elements(context) {
-    const entities = tools.ifc.getSelectedEntities(context);
-
-    if (!entities || entities.length === 0) {
-      return [];
-    }
-
-    const activeModel = context.ifc?.activeModel || null;
-
-    return {
-      __ifcEntityRefsArray__: true,
-      globalIds: entities.map(e => e.GlobalId),
-      modelName: activeModel,
-      
-      _debug: entities.map(e => ({
-        globalId: e.GlobalId,
-        name: e.Name,
-        type: e.type
-      }))
-    };
-  }
-
-  static selectObjectsByGuid(context, guids) {
+  static selectObjectsByGuid(guids) {
 
     const objects = [];
 
@@ -286,37 +164,53 @@ class SceneTool {
     context.editor.selector.selectObjects(objects);
   }
 
-  static focus(context) {
+  static focus() {
 
     const selected = context.editor.selected;
 
     selected? context.editor.focus(selected) : null;
   }
 
-  static select(context, objects) {
+  static select(objects) {
     context.editor.selector.selectObjects(objects);
   }
 
-  static deselect(context) {
+  static deselect() {
     context.editor.deselect();
   }
 
-  static hide(context, object) {
+  static hide(object) {
     context.editor.hideObject(object);
   }
 
-  static show(context, object) {
+  static show(object) {
     context.editor.showObject(object);
   }
 
-  static setFog(context, {fogType, hex, near, far, density}) {
+  static dim(mode = 'on', objects = null) {
+    if (mode === 'off') {
+      return context.editor.undimObjects(objects);
+    }
+
+    return context.editor.dimObjects(objects);
+  }
+
+  static highlight(mode = 'on', objects = null) {
+    if (mode === 'off') {
+      return context.editor.unhighlightObjects();
+    }
+
+    return context.editor.highlightObjects(objects);
+  }
+
+  static setFog({fogType, hex, near, far, density}) {
 
     context.editor.signals.sceneFogChanged.dispatch(fogType, hex, near, far, density);
 
-    SceneTool._saveFogConfig(context, fogType, hex, near, far, density);
+    SceneTool._saveFogConfig(fogType, hex, near, far, density);
   }
 
-  static _saveFogConfig(context, fogType, fogColor, fogNear, fogFar, fogDensity) {
+  static _saveFogConfig(fogType, fogColor, fogNear, fogFar, fogDensity) {
 
     if (fogType === 'None') {
 
@@ -338,8 +232,10 @@ class SceneTool {
     }
   }
 
-  static addCube(context, size = 1, color = 0x00ff00) {
+  static addCube(size = 1, color = "#00ff00") {
     const geometry = new THREE.BoxGeometry(size, size, size);
+
+    // const hexColor = color.replace('#', '0X')
 
     const material = new THREE.MeshBasicMaterial({ color: color });
 
@@ -352,7 +248,7 @@ class SceneTool {
     return cube;
   }
 
-  static addArrow(context, options = {}) {
+  static addArrow(options = {}) {
     let opts = options;
 
     if (typeof options === 'object' && options !== null && typeof options.get === 'function') {
@@ -430,7 +326,7 @@ class SceneTool {
     arrowGroup.add(head);
 
     if (text) {
-      const textSprite = SceneTool.createTextLabel(context, text, end.toArray(), color, size * 0.1);
+      const textSprite = SceneTool.createTextLabel(text, end.toArray(), color, size * 0.1);
 
       arrowGroup.add(textSprite);
     }
@@ -440,7 +336,79 @@ class SceneTool {
     return arrowGroup;
   }
 
-  static addPlane(context, options = {}) {
+  static createLaserPointer(fromPosition = { x: 0, y: 0, z: 0 }, toPosition = { x: 0, y: 0, z: 0 }, options = {}) {
+    const color = options.color !== undefined ? options.color : '#ff1744';
+
+    const opacity = options.opacity !== undefined ? options.opacity : 0.9;
+
+    const beamSize = options.beamSize !== undefined ? options.beamSize : 0.12;
+
+    const targetSize = options.targetSize !== undefined ? options.targetSize : Math.max(beamSize * 1.8, 0.18);
+
+    const start = new THREE.Vector3(
+      fromPosition?.x ?? 0,
+      -(fromPosition?.z ?? 0),
+      fromPosition?.y ?? 0,
+    );
+
+    const end = new THREE.Vector3(
+      toPosition?.x ?? 0,
+      -(toPosition?.z ?? 0),
+      toPosition?.y ?? 0,
+    );
+
+    const direction = end.clone().sub(start);
+
+    const length = direction.length();
+
+    const laserGroup = new THREE.Group();
+
+    if (length === 0) {
+      laserGroup.position.copy(start);
+
+      context.editor.scene.add(laserGroup);
+
+      return laserGroup;
+    }
+
+    const beamGeometry = new THREE.CylinderGeometry(beamSize, beamSize, length, 16);
+
+    const beamMaterial = new THREE.MeshBasicMaterial({
+      color,
+      transparent: true,
+      opacity,
+      depthWrite: false,
+    });
+
+    const beam = new THREE.Mesh(beamGeometry, beamMaterial);
+
+    beam.position.copy(start.clone().add(end).multiplyScalar(0.5));
+
+    beam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.clone().normalize());
+
+    const targetGeometry = new THREE.SphereGeometry(targetSize, 16, 16);
+
+    const targetMaterial = new THREE.MeshBasicMaterial({
+      color,
+      transparent: true,
+      opacity: Math.min(opacity + 0.1, 1),
+      depthWrite: false,
+    });
+
+    const target = new THREE.Mesh(targetGeometry, targetMaterial);
+
+    target.position.copy(end);
+
+    laserGroup.add(beam);
+
+    laserGroup.add(target);
+
+    context.editor.scene.add(laserGroup);
+
+    return laserGroup;
+  }
+
+  static addPlane(options = {}) {
     let opts = options;
 
     if (typeof options === 'object' && options !== null && typeof options.get === 'function') {
@@ -478,7 +446,7 @@ class SceneTool {
     return mesh;
   }
 
-  static addMesh(context, verts, edges, faces) {
+  static addMesh(verts, edges, faces) {
     const mesh = new THREE.Mesh();
 
     const geom = new THREE.BufferGeometry();
@@ -500,7 +468,7 @@ class SceneTool {
     return mesh;
   }
 
-  static addPrimitive(context, primitive = 'Cube', position = [0, 0, 0]) {
+  static addPrimitive(primitive = 'Cube', position = [0, 0, 0]) {
     let geometry;
 
     switch (primitive.toLowerCase()) {
@@ -539,7 +507,7 @@ class SceneTool {
     return mesh;
   }
 
-  static addLineMesh(context, verts, edges, faces) {
+  static addLineMesh(verts, edges, faces) {
     if (faces && faces.length) {
       const geom = new THREE.BufferGeometry();
 
@@ -579,7 +547,7 @@ class SceneTool {
     }
   }
 
-  static addBIMAxes(context, total_x = 5, x_spacing = 5, total_y = 5, y_spacing = 7, size = 50) {
+  static addBIMAxes(total_x = 5, x_spacing = 5, total_y = 5, y_spacing = 7, size = 50) {
     const labelRadius = size * 0.18;
 
     const labelFontSize = 48;
@@ -604,7 +572,7 @@ class SceneTool {
       axesGroup.add(line);
 
       if (i > 0) {
-        const label = SceneTool.createTextLabel(context, i.toString(), [x, -labelRadius, 0], '#000000', labelFontSize);
+        const label = SceneTool.createTextLabel(i.toString(), [x, -labelRadius, 0], '#000000', labelFontSize);
 
         axesGroup.add(label);
       }
@@ -626,7 +594,7 @@ class SceneTool {
       axesGroup.add(line);
 
       if (j > 0) {
-        const label = SceneTool.createTextLabel(context, String.fromCharCode(65 + j - 1), [-labelRadius, y, 0], '#000000', labelFontSize);
+        const label = SceneTool.createTextLabel( String.fromCharCode(65 + j - 1), [-labelRadius, y, 0], '#000000', labelFontSize);
 
         axesGroup.add(label);
       }
@@ -637,7 +605,7 @@ class SceneTool {
     return axesGroup;
   }
 
-  static addAxis(context, start, end, name, ifc_axis, labelRadius = 5, labelFontSize = 2.25) {
+  static addAxis(start, end, name, labelFontSize = 2.25) {
     const startVec = new THREE.Vector3(...start);
 
     const endVec = new THREE.Vector3(...end);
@@ -655,7 +623,7 @@ class SceneTool {
     if (name) {
       const midPoint = startVec.clone().add(endVec).multiplyScalar(0.5);
 
-      const label = SceneTool.createTextLabel(context, name, midPoint.toArray(), '#ff0000', labelFontSize);
+      const label = SceneTool.createTextLabel(name, midPoint.toArray(), '#ff0000', labelFontSize);
 
       axisGroup.add(label);
     }
@@ -665,7 +633,7 @@ class SceneTool {
     return axisGroup;
   }
 
-  static createTextLabel(context, text, position, color, size = 2) {
+  static createTextLabel(text, position, color, size = 2) {
     const canvas = document.createElement('canvas');
 
     canvas.width = 256;
@@ -715,25 +683,9 @@ class SceneTool {
     return sprite;
   }
 
-  static addIfcElement(context, element, replace = false) {
-    if (replace) {
-      context.editor.removeObject(element);
-    }
-
-    context.editor.addObject(element);
-
-    return element;
-  }
-
-  static updateHost(context, hostGuid) {
-    console.log('Update host:', hostGuid);
-  }
-
   /**
    * Creates an interactive info panel sprite attached to a 3D object.
    * The panel can toggle between collapsed (icon-only) and expanded states on click.
-   * 
-   * @param {Object} context - Application context with editor
    * @param {Object} options - Configuration options
    * @param {THREE.Object3D} options.target - The 3D object to attach the panel to
    * @param {Object} options.offset - Position offset from target {x, y, z}
@@ -746,7 +698,7 @@ class SceneTool {
    * @param {number} options.size - Base size for the sprite (default: 3)
    * @returns {Object} Info panel object with sprite, update methods, and state
    */
-  static createInfoPanel(context, options = {}) {
+  static createInfoPanel(options = {}) {
     const {
       target = null,
       offset = { x: 0, y: 5, z: 0 },
@@ -1167,15 +1119,13 @@ class SceneTool {
   /**
    * Creates a weather info panel specifically designed for attachment to construction equipment
    * like tower cranes. Shows weather icon when collapsed, full weather details when expanded.
-   * 
-   * @param {Object} context - Application context
    * @param {Object} options - Configuration
    * @param {THREE.Object3D} options.target - Target object to attach to (e.g., crane)
    * @param {Object} options.weatherData - Weather data object with current, location properties
    * @param {Object} options.offset - Position offset from target
    * @returns {Object} Weather panel control object
    */
-  static createWeatherPanel(context, options = {}) {
+  static createWeatherPanel(options = {}) {
     const {
       target = null,
       weatherData = null,
@@ -1204,7 +1154,7 @@ class SceneTool {
       { label: 'UV Index', value: `${current.uv}` },
     ];
 
-    const panel = SceneTool.createInfoPanel(context, {
+    const panel = SceneTool.createInfoPanel({
       target,
       offset,
       icon: '🌤️',
@@ -1264,10 +1214,9 @@ class SceneTool {
 
   /**
    * Find and return the tower crane object in the scene
-   * @param {Object} context - Application context
    * @returns {THREE.Object3D|null} Tower crane object or null
    */
-  static findTowerCrane(context) {
+  static findTowerCrane() {
     let crane = null;
     
     context.editor.scene.traverse((obj) => {
@@ -1281,19 +1230,18 @@ class SceneTool {
 
   /**
    * Attach a weather panel to the tower crane in the scene
-   * @param {Object} context - Application context  
    * @param {Object} weatherData - Weather data
    * @param {Object} craneRef - Optional direct reference to crane (e.g., demo.towerCrane)
    * @returns {Object|null} Weather panel or null if no crane found
    */
-  static attachWeatherToCrane(context, weatherData, craneRef = null) {
+  static attachWeatherToCrane(weatherData, craneRef = null) {
     let craneObject = null;
 
     if (craneRef && craneRef.object) {
       craneObject = craneRef.object;
     } else {
       
-      craneObject = SceneTool.findTowerCrane(context);
+      craneObject = SceneTool.findTowerCrane();
     }
 
     if (!craneObject) {
@@ -1312,7 +1260,7 @@ class SceneTool {
       z: 0,
     };
 
-    return SceneTool.createWeatherPanel(context, {
+    return SceneTool.createWeatherPanel({
       target: craneObject,
       weatherData,
       offset,

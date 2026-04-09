@@ -1,16 +1,29 @@
 import { Components as UIComponents } from "../../ui/Components/Components.js";
 
+import {
+  analyticsBottomFooterStyles,
+  analyticsBottomKpiCellStyles,
+  analyticsSectionTitleStyles,
+  analyticsSubtitleStyles,
+} from "./bimAnalyticsPanelStyles.js";
+
 class DirectorMaterialClassificationSection {
   constructor() {
     this.root = UIComponents.column().gap("var(--phi-0-5)");
 
     this.title = UIComponents.text("Materials and classifications");
 
-    this.title.addClass("director-analytics-section-title");
+    this.title.setStyles(analyticsSectionTitleStyles);
 
-    this.grid = UIComponents.div().addClass("director-analytics-bottom-kpi-grid");
+    this.grid = UIComponents.div()
+      .addClass("OlympusGrid")
+      .setStyles({
+        gridTemplateColumns: "repeat(auto-fill, minmax(6.5rem, 1fr))",
+        gap: "var(--phi-0-5)",
+        width: "100%",
+      });
 
-    this.footer = UIComponents.div().addClass("director-analytics-bottom-footer");
+    this.footer = UIComponents.div().setStyles(analyticsBottomFooterStyles);
   }
 
   getDom() {
@@ -62,7 +75,7 @@ class DirectorMaterialClassificationSection {
       "Assignment coverage on elements: material " + String(matPct) + "% · property data " + String(psetPct) + "%",
     );
 
-    foot.addClass("director-analytics-subtitle");
+    foot.setStyles(analyticsSubtitleStyles);
 
     this.footer.add(foot);
 
@@ -72,7 +85,7 @@ class DirectorMaterialClassificationSection {
   }
 
   _kpiCell(label, value) {
-    const cell = UIComponents.div().addClass("SquareOperator").addClass("director-analytics-bottom-kpi-cell");
+    const cell = UIComponents.div().addClass("SquareOperator").setStyles(analyticsBottomKpiCellStyles);
 
     cell.add(UIComponents.text(label));
 

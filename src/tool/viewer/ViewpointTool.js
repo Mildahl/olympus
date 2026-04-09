@@ -1,5 +1,7 @@
 import dataStore from "../../data/index.js";
 
+import context from '../../context/index.js';
+
 import * as THREE from "three";
 
 import {
@@ -40,10 +42,11 @@ class ViewpointTool {
     return ViewpointTool.collection.children.length;
   }
 
-  static create(editor, name = 'New Viewpoint') {
+  static create(name = 'New Viewpoint') {
     const viewpoint = new ViewpointCollection({ name });
 
-    viewpoint.captureFromEditor(editor);
+    
+    viewpoint.captureFromEditor(context.editor);
 
     ViewpointTool.collection.add(viewpoint);
 
@@ -62,7 +65,7 @@ class ViewpointTool {
     return ViewpointTool.collection.rename(GlobalId, newName);
   }
 
-  static updatePosition(editor, GlobalId, x, y, z) {
+  static updatePosition(GlobalId, x, y, z) {
     const viewpoint = ViewpointTool.collection.get(GlobalId);
 
     if (!viewpoint) return false;
@@ -70,9 +73,9 @@ class ViewpointTool {
     viewpoint.setCameraPosition(x, y, z);
 
     if (viewpoint.active) {
-      editor.camera.position.set(x, y, z);
+      context.editor.camera.position.set(x, y, z);
 
-      editor.controls?.update();
+      context.editor.controls?.update();
     }
 
     return true;
@@ -92,51 +95,49 @@ class ViewpointTool {
     return true;
   }
 
-  static updateFromEditor(editor, GlobalId) {
+  static updateFromEditor(GlobalId) {
     const viewpoint = ViewpointTool.collection.get(GlobalId);
 
     if (!viewpoint) return false;
     
-    viewpoint.captureFromEditor(editor);
+    viewpoint.captureFromEditor(context.editor);
 
     return true;
   }
 
-  static activate(editor, GlobalId, animate = true) {
+  static activate(GlobalId, animate = true) {
     const viewpoint = ViewpointTool.collection.get(GlobalId);
 
     if (!viewpoint) return null;
     
-    ViewpointTool.collection.activate(viewpoint, editor, animate);
+    ViewpointTool.collection.activate(viewpoint, context.editor, animate);
 
-    ViewpointTool.goToViewPoint(editor, viewpoint, animate);
+    ViewpointTool.goToViewPoint(viewpoint, animate);
 
     return viewpoint;
   }
 
-  static goToViewPoint(editor, viewpoint, animate = true) {
+  static goToViewPoint(viewpoint, animate = true) {
     
     ViewpointTool.changeViewpoint(
-      editor,
       viewpoint.cameraPosition.toVector3(),
       viewpoint.cameraTarget.toVector3(),
       animate
     );
   }
 
-  static capturePosition(editor) {
+  static capturePosition() {
     return {
-      position: editor.camera.position.clone(),
-      target: editor.controls.center.clone()
+      position: context.editor.camera.position.clone(),
+      target: context.editor.controls.center.clone()
     };
   }
 
-  static changeViewpoint(context, position, target, animate = true, onComplete = null) {
-    const editor = context.editor || context;
+  static changeViewpoint(position, target, animate = true, onComplete = null) {
 
     if (animate) {
 
-        tools.world.animationPath.animateToPositionAndTarget({ editor }, {
+        tools.world.animationPath.animateToPositionAndTarget({
           position,
           target,
           duration: 1000,
@@ -145,27 +146,27 @@ class ViewpointTool {
         });
 
     } else {
-      editor.navigationController.pauseInput();
+      context.editor.navigationController.pauseInput();
 
-      editor.setView({ position, target });
+      context.editor.setView({ position, target });
 
-      editor.navigationController.resumeInput();
+      context.editor.navigationController.resumeInput();
 
       onComplete?.();
     }
   }
 
-  static navigateBack(editor) {
+  static navigateBack() {
 
-  const viewpoint = ViewpointTool.collection.navigateBack(editor);
+  const viewpoint = ViewpointTool.collection.navigateBack(context.editor);
 
-  ViewpointTool.goToViewPoint(editor, viewpoint);
+  ViewpointTool.goToViewPoint(viewpoint);
   }
 
-  static navigateForward(editor) {
-    const viewpoint = ViewpointTool.collection.navigateForward(editor);
+  static navigateForward() {
+    const viewpoint = ViewpointTool.collection.navigateForward(context.editor);
 
-    ViewpointTool.goToViewPoint(editor, viewpoint);
+    ViewpointTool.goToViewPoint(viewpoint);
   }
 
   static canNavigateBack() {

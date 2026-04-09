@@ -12,13 +12,9 @@
  * dependsOn array defined in its module.js file.
  */
 
-export const coreModules = [
+const AECO_Vanilla = [
     {
         id: "configurator",
-        active: true,
-    },
-    {
-        id: "theme",
         active: true,
     },
     {
@@ -26,19 +22,15 @@ export const coreModules = [
         active: true,
     },
     {
+        id: "theme",
+        active: true,
+    },
+    {
+        id: "settings",
+        active: true,
+    },
+    {
         id: "world.notification",
-        active: true,
-    },
-    {
-        id: "bim.project",
-        active: true,
-    },
-    {
-        id: "bim.analytics",
-        active: true,
-    },
-    {
-        id: "bim.sequence",
         active: true,
     },
     {
@@ -70,10 +62,6 @@ export const coreModules = [
         active: true,
     },
     {
-        id: "world.sectionbox",
-        active: false,
-    },
-    {
         id: "world.history",
         active: true,
     },
@@ -82,36 +70,60 @@ export const coreModules = [
         active: true,
     },
     {
-        id: "settings",
-        active: true,
+        id: "world.sectionbox",
+        active: false,
     },
     {
         id: "tiles",
-        active: true, 
-    },
-    
-    {
-        id: "code.scripting",
-        active: true,
+        active: false, 
     },
     {
-        id: "code.terminal",
-        active: true,
+        id: "bim.project",
+        active: false,
     },
     {
         id: "bim.attribute",
-        active: true,
+        active: false,
+    },
+    {
+        id: "bim.analytics",
+        active: false,
+    },
+];
+
+export const AECO_Power = [
+    ...AECO_Vanilla,
+    {
+        id: "code.scripting",
+        active: false,
+    },
+    {
+        id: "code.terminal",
+        active: false,
     },
     {
         id: "bim.pset",
-        active: true,
+        active: false,
     },
+
     {
-        id: "bim.model",
+        id: "bim.sequence",
         active: false,
     },
     {
         id: "bim.cost",
         active: false,
+    },
+];
+
+export const coreModules = [
+    ...AECO_Power,
+    {
+        id: "bim.model",
+        active: false,
+    },
+    {
+    id: "llm.chat",
+    active: false,
     },
 ];

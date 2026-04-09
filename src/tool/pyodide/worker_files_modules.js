@@ -1,4 +1,4 @@
-import { getPyodide, getMicropip, ifc } from './worker_state.js';
+import { getPyodide, getMicropip, ifc, bootstrapMetrics, markBootstrapMetric, measureBootstrapDuration, markLocalModuleLoaded } from './worker_state.js';
 import { loadPackageManager } from './worker_packages.js';
 
 async function fileExists(filename) {
@@ -71,6 +71,9 @@ export async function loadLocalModule(moduleName, path) {
   const ModulePath = path + moduleName + ".py";
 
   const startTime = performance.now();
+  if (typeof bootstrapMetrics.marks.local_modules_start !== "number") {
+    markBootstrapMetric("local_modules_start");
+  }
 
   await fetchFile(moduleName, ModulePath);
 
@@ -100,10 +103,15 @@ export async function loadLocalModule(moduleName, path) {
 
   }
 
+  const elapsedMilliseconds = performance.now() - startTime;
+  markLocalModuleLoaded(moduleName, elapsedMilliseconds);
+  markBootstrapMetric("local_modules_end");
+  measureBootstrapDuration("local_modules_total_ms", "local_modules_start", "local_modules_end");
+
   return {
     name: moduleName,
     loaded: true,
-    time: performance.now() - startTime
+    time: elapsedMilliseconds
   };
 }
 

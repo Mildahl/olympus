@@ -4,10 +4,6 @@ import { Components as UIComponents } from "./Components/Components.js";
 
 import { WelcomeScreen } from "./Components/WelcomeScreen.js";
 
-import { Sidebar } from "./../context/world/editor/Sidebar.js";
-
-import { Properties } from "./../context/world/editor/Sidebar.js";
-
 class UI {
 
   constructor(container, context, operators, activeIds) {

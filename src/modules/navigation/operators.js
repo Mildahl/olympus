@@ -2,6 +2,8 @@ import { Operator } from "../../operators/Operator.js";
 
 import * as NavigationCore from "../../core/navigation.js";
 
+import tools from "../../tool/index.js";
+
 class ToggleFlyMode extends Operator {
   static operatorName = "navigation.toggle_fly_mode";
 
@@ -257,12 +259,8 @@ class DisableMobileJoystick extends Operator {
       navigationController.touchSticks.disable();
     }
     const navigationUI = this.context.navigationUI;
-    if (
-      navigationUI &&
-      navigationUI.viewportKeyboardRoot &&
-      navigationUI.viewportKeyboardRoot.dom
-    ) {
-      navigationUI.viewportKeyboardRoot.dom.style.display = "none";
+    if (navigationUI && navigationUI.viewportKeyboardRoot) {
+      navigationUI.viewportKeyboardRoot.setStyles({ display: "none" });
     }
 
     return { status: "FINISHED" };

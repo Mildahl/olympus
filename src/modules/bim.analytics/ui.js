@@ -1,7 +1,6 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-import { focusDockedWorkspaceTab } from "../../../drawUI/utils/workspacePanelDock.js";
+import { Components as UIComponents, TabPanel, focusDockedWorkspaceTab } from "../../ui/Components/Components.js";
 
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 import Paths from "../../utils/paths.js";
 
@@ -25,28 +24,24 @@ import { DirectorCostPresenceSection } from "./DirectorCostPresenceSection.js";
 
 import { DirectorMaterialClassificationSection } from "./DirectorMaterialClassificationSection.js";
 
-class BIMAnalyticsUI {
+import { analyticsContentRootStyles } from "./bimAnalyticsPanelStyles.js";
+
+class BIMAnalyticsUI extends TabPanel  {
   constructor({ context, operators }) {
-    this.context = context;
-    this.operators = operators;
-    this.isActive = false;
-    this.panel = UIComponents.floatingPanel({
+    super({
       context,
-      title: "Model data",
-      icon: "analytics",
-      minimizedImageSrc: Paths.data("/resources/images/dashboard.svg"),
-      workspaceTabId: "bim-project-model-analytics",
-      workspaceTabLabel: "Model data",
-      startMinimized: true,
+      operators,
+      position: 'right',
+      tabId: 'bim-project-model-analytics',
+      tabLabel: 'Model data',
+      icon: 'analytics',
+      title: 'Model data',
+      showHeader: false,
+      floatable: true,
+      autoShow: false,
     });
-    this.panel
-      .setStyle("width", ["min(60vw, 1100px)"])
-      .setStyle("height", ["min(80vh, 900px)"])
-      .setStyle("min-width", ["35vw"])
-      .setStyle("max-width", ["90vw"]);
-    this.content = UIComponents.column();
-    this.content.setStyle("height", ["100%"]);
-    this.panel.setContent(this.content);
+
+
 
     this.analyticsRoot = null;
 
@@ -97,53 +92,25 @@ class BIMAnalyticsUI {
     this.filterState.addChangeListener(this._onFilterStateChanged);
 
     this.draw(context);
-    this.appendDom(context);
-    this.isActive = true;
 
     this.listen(context);
 
     this.applyAnalyticsForFileName(null);
+
+    this.show({ select: false });
+
   }
 
   draw(context) {
     this.content.addClass("Column");
 
-    this.content.addClass("director-analytics-root");
+    this.content.setStyles(analyticsContentRootStyles);
 
     this.analyticsRoot = UIComponents.column().gap("var(--phi-1)");
 
     this.content.add(this.analyticsRoot);
   }
 
-  appendDom(context) {
-    const panelDom = this.panel.dom;
-    if (!panelDom.parentNode) {
-      context.dom.appendChild(panelDom);
-    }
-  }
-
-  show() {
-    if (this.panel && this.panel.isMinimized) {
-      this.panel.restore();
-    }
-
-    if (focusDockedWorkspaceTab(this.context, this.panel)) {
-      this.isActive = true;
-      return this;
-    }
-
-    this.appendDom(this.context);
-    this.isActive = true;
-    return this;
-  }
-
-  hide() {
-    if (this.panel && this.panel.dom.parentNode) {
-      this.panel.dom.parentNode.removeChild(this.panel.dom);
-    }
-    this.isActive = false;
-    return this;
-  }
 
   listen(context) {
     const reload = (payload) => {
@@ -188,13 +155,13 @@ class BIMAnalyticsUI {
       return;
     }
 
-    if (!AECO_tools.code || !AECO_tools.code.pyWorker || !AECO_tools.code.pyWorker.initialized) {
+    if (!AECO_TOOLS.code || !AECO_TOOLS.code.pyWorker || !AECO_TOOLS.code.pyWorker.initialized) {
       this.renderEmptyState("Enable Python and BIM to load model analytics");
 
       return;
     }
 
-    if (!AECO_tools.code.pyWorker.initialized.bim) {
+    if (!AECO_TOOLS.code.pyWorker.initialized.bim) {
       this.renderEmptyState("Enable Python and BIM to load model analytics");
 
       return;
@@ -231,7 +198,7 @@ class BIMAnalyticsUI {
     const requestModel = modelFileName;
 
     try {
-      const overview = await AECO_tools.bim.project.getModelOverview(requestModel);
+      const overview = await AECO_TOOLS.bim.project.getModelOverview(requestModel);
 
       const activeNow = this.context.ifc.activeModel;
 
@@ -335,7 +302,7 @@ class BIMAnalyticsUI {
     }
 
     try {
-      const slice = await AECO_tools.bim.project.getDirectorFilteredSlice(
+      const slice = await AECO_TOOLS.bim.project.getDirectorFilteredSlice(
         modelName,
         this.filterState.buildFilterSpec(),
       );
@@ -353,7 +320,7 @@ class BIMAnalyticsUI {
       const editor = this.context.editor;
 
       if (editor && slice && Array.isArray(slice.globalIds) && slice.globalIds.length > 0) {
-        AECO_tools.world.scene.selectObjectsByGuid(this.context, slice.globalIds);
+        AECO_TOOLS.world.scene.selectObjectsByGuid(slice.globalIds);
       }
     } catch (err) {
       this.filterState.setSliceResult(null);

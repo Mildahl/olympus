@@ -15,6 +15,7 @@ The HelloWorld example is a minimal starter application demonstrating core AECO 
 
 ```bash
 # From project root
+npm install
 npm run build
 npm run serve
 # Open http://localhost:3000/examples/HelloWorld/
@@ -48,8 +49,8 @@ Sets up module imports and loads the application:
 {
     "imports": {
         "aeco": "./../../dist/index.js",
-        "three": "./../../external/vendor/three/build/three.module.js",
-        "three/addons/": "./../../external/vendor/three/examples/jsm/"
+        "three": "./../vendor/three/build/three.module.js",
+        "three/addons/": "./../vendor/three/examples/jsm/"
     }
 }
 </script>
@@ -94,9 +95,9 @@ const ApplicationConfig = {
     Scene: SceneConfig,
     Shortcuts: Shortcuts,
     Settings: {
-        pyodideBaseUrl: "/external/vendor/pyodide/v0.29.0/full",
-        monacoBaseUrl: "/external/vendor/monaco-editor/0.52.2",
-        vendorBaseUrl: "/external/vendor",
+        pyodideBaseUrl: "/examples/vendor/pyodide/v0.29.0/full",
+        monacoBaseUrl: "/examples/vendor/monaco-editor/0.52.2",
+        vendorBaseUrl: "/examples/vendor",
         dataBaseUrl: "/external/data",
     },
     Navigation: NavigationConfig,

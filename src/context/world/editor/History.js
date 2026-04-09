@@ -1,4 +1,4 @@
-import * as Commands from './operators/Commands.js';
+import * as Commands from './commands/Commands.js';
 
 class History {
 

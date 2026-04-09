@@ -1,4 +1,4 @@
-import { BasePanel } from "../../../drawUI/BasePanel.js";
+import { BasePanel } from "../../ui/Components/Components.js";
 
 /**
  * NotificationsUI - UI for managing notifications using BasePanel

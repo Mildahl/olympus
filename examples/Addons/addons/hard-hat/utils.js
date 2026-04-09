@@ -2,10 +2,10 @@
  * Hard-Hat Addon Utility Functions
  * 
  * Calculation and display formatting utilities.
- * All data schema and storage operations are in core.js
+ * All data schema and storage operations are in hardHatStore.js
  */
 
-import { DEFAULT_SUBCONTRACTORS, OBJECT_SHAPES, LIFT_STATUS_LIST } from "./core.js";
+import { DEFAULT_SUBCONTRACTORS, OBJECT_SHAPES, LIFT_STATUS_LIST } from "./hardHatStore.js";
 
 // ─────────────────────────────────────────────────────────────
 // CONSTANTS

@@ -50,20 +50,17 @@ function workspaceTabId(tab) {
  * @property {number} [topWorkspaceHeight=36] - Height of the top bar row in pixels (grid row 1).
  * @property {number} [minPanelSize=100] - Minimum workspace size in pixels.
  * @property {number} [resizerSize=4] - Size of the resizer handle in pixels.
- * @property {WorkspaceTabGroupByModule[]} [leftWorkspaceTabGroupsByModule=[]] - Tab order groups for `reorderLeftWorkspaceTabsByModuleOrder` (from `config.ui.layout`).
- * @property {WorkspaceTabGroupByModule[]} [bottomWorkspaceTabGroupsByModule=[]] - Tab order groups for `reorderBottomWorkspaceTabsByModuleOrder` (from `config.ui.layout`).
  */
 
 /** @type {LayoutManagerConfig} */
+
 const DEFAULT_CONFIG = {
-  leftWorkspaceWidth: 300,
-  rightWorkspaceWidth: 300,
+  leftWorkspaceWidth: 375,
+  rightWorkspaceWidth: 375,
   bottomWorkspaceHeight: 200,
   topWorkspaceHeight: 36,
   minPanelSize: 100,
   resizerSize: 4,
-  leftWorkspaceTabGroupsByModule: [],
-  bottomWorkspaceTabGroupsByModule: [],
 };
 
 /**
@@ -101,6 +98,10 @@ function normalizeWorkspaceTabGroupsByModule(raw) {
 class LayoutManager {
   constructor(options = {}) {
     this.config = { ...DEFAULT_CONFIG, ...options };
+
+    this._hasExplicitLeftWorkspaceWidth = Number.isFinite(options.leftWorkspaceWidth);
+
+    this._hasExplicitRightWorkspaceWidth = Number.isFinite(options.rightWorkspaceWidth);
 
     this.container = null;
 
@@ -143,6 +144,29 @@ class LayoutManager {
     this._boundMouseUp = this._onMouseUp.bind(this);
   }
 
+  _resolveInitialWorkspaceWidth(position) {
+    const hasExplicit = position === 'left'
+      ? this._hasExplicitLeftWorkspaceWidth
+      : this._hasExplicitRightWorkspaceWidth;
+    const configWidth = position === 'left'
+      ? this.config.leftWorkspaceWidth
+      : this.config.rightWorkspaceWidth;
+
+    if (hasExplicit) {
+      return Math.max(this.config.minPanelSize, configWidth);
+    }
+
+    const containerWidth = this.container && Number.isFinite(this.container.clientWidth)
+      ? this.container.clientWidth
+      : 0;
+
+    if (containerWidth > 0) {
+      return Math.max(this.config.minPanelSize, Math.round(containerWidth * 0.25));
+    }
+
+    return Math.max(this.config.minPanelSize, configWidth);
+  }
+
   init(containerId = 'World') {
     this.container = document.getElementById(containerId);
 
@@ -159,6 +183,10 @@ class LayoutManager {
     this.workspaces.bottom = document.getElementById('BottomWorkspace');
 
     this.workspaces.viewport = document.getElementById('Viewport');
+
+    this.state.leftWidth = this._resolveInitialWorkspaceWidth('left');
+
+    this.state.rightWidth = this._resolveInitialWorkspaceWidth('right');
 
     this._setupLayout();
 
@@ -231,85 +259,6 @@ class LayoutManager {
         'layoutWorkspaceChanged',
       ]);
     }
-    return this;
-  }
-
-
-
-  reorderBottomWorkspaceTabsByModuleOrder(appContext) {
-    const groups = normalizeWorkspaceTabGroupsByModule(this.config.bottomWorkspaceTabGroupsByModule);
-    return this._reorderWorkspaceTabsByModuleOrder('bottom', appContext, groups);
-  }
-
-  reorderLeftWorkspaceTabsByModuleOrder(appContext) {
-    const groups = normalizeWorkspaceTabGroupsByModule(this.config.leftWorkspaceTabGroupsByModule);
-    return this._reorderWorkspaceTabsByModuleOrder('left', appContext, groups);
-  }
-
-  /**
-   * @param {'left' | 'bottom'} position
-   * @param {Object|null|undefined} appContext
-   * @param {WorkspaceTabGroupByModule[]} tabGroups
-   * @returns {LayoutManager}
-   */
-  _reorderWorkspaceTabsByModuleOrder(position, appContext, tabGroups) {
-    const workspace = this._workspaceTabPanel(position);
-    if (!workspace) {
-      return this;
-    }
-
-    const orderIds = appContext && appContext.appModuleOrderIds;
-    if (!orderIds || orderIds.length === 0) {
-      return this;
-    }
-
-    const moduleRank = new Map();
-    for (let index = 0; index < orderIds.length; index++) {
-      const moduleId = orderIds[index];
-      if (moduleId && !moduleRank.has(moduleId)) {
-        moduleRank.set(moduleId, index);
-      }
-    }
-
-    const sortedGroups = tabGroups.slice().sort(function (a, b) {
-      const rankA = moduleRank.has(a.moduleId) ? moduleRank.get(a.moduleId) : 1000000;
-      const rankB = moduleRank.has(b.moduleId) ? moduleRank.get(b.moduleId) : 1000000;
-      return rankA - rankB;
-    });
-
-    const existingIds = [];
-    const tabs = workspace.tabs;
-    if (Array.isArray(tabs)) {
-      for (let i = 0; i < tabs.length; i++) {
-        const tab = tabs[i];
-        const id = workspaceTabId(tab);
-        if (id) {
-          existingIds.push(id);
-        }
-      }
-    }
-
-    const assigned = new Set();
-    const desired = [];
-    for (let g = 0; g < sortedGroups.length; g++) {
-      const group = sortedGroups[g];
-      const tabIds = group.tabIds;
-      for (let t = 0; t < tabIds.length; t++) {
-        const tabId = tabIds[t];
-        if (existingIds.indexOf(tabId) !== -1) {
-          desired.push(tabId);
-          assigned.add(tabId);
-        }
-      }
-    }
-    for (let i = 0; i < existingIds.length; i++) {
-      const id = existingIds[i];
-      if (!assigned.has(id)) {
-        desired.push(id);
-      }
-    }
-
-    workspace.reorderTabs(desired);
     return this;
   }
 
@@ -875,7 +824,7 @@ class LayoutManager {
     Object.entries(this.toggleButtons).forEach(([position, button]) => {
       const isOpen = this.state[`${position}Open`];
 
-      button.classList.toggle('active', isOpen);
+      button.classList.toggle('Active', isOpen);
     });
   }
 
@@ -1219,8 +1168,8 @@ class LayoutManager {
       leftOpen: false,
       rightOpen: false,
       bottomOpen: false,
-      leftWidth: this.config.leftWorkspaceWidth,
-      rightWidth: this.config.rightWorkspaceWidth,
+      leftWidth: this._resolveInitialWorkspaceWidth('left'),
+      rightWidth: this._resolveInitialWorkspaceWidth('right'),
       bottomHeight: this.config.bottomWorkspaceHeight,
       workspaceSelected: { left: null, right: null, bottom: null },
     };

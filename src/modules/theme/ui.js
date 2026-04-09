@@ -1,8 +1,4 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-
-import { UIPanel } from "../../../drawUI/ui.js";
-
-import { makeResizable } from "../../../drawUI/utils/panelResizer.js";
+import { Components as UIComponents, UIPanel, makeResizable } from "../../ui/Components/Components.js";
 const OPERATORS = {
   changeThemeColors: 'theme.change_to_colors',
 }

@@ -35,6 +35,12 @@ export interface SceneToolStatic {
   addCube(context: AECOContext, size?: number, color?: number): unknown;
   addPlane(context: AECOContext, options?: Record<string, unknown>): unknown;
   addArrow(context: AECOContext, options?: Record<string, unknown>): unknown;
+  createLaserPointer(
+    context: AECOContext,
+    fromPosition: { x: number; y: number; z: number },
+    toPosition: { x: number; y: number; z: number },
+    options?: Record<string, unknown>
+  ): unknown;
   addMesh(context: AECOContext, verts: unknown, edges: unknown, faces: unknown): unknown;
   addPrimitive(context: AECOContext, primitive?: string, position?: [number, number, number]): unknown;
 }
@@ -92,7 +98,7 @@ export interface AECOInstance {
   ops: Operators;
   data: unknown;
   core: unknown;
-  createUI(options: { config: unknown; container: HTMLElement; addons?: unknown }): void;
+  initWorld(options: { config: unknown; container: HTMLElement; addons?: unknown }): void;
   clearStorage(): void;
 }
 
@@ -103,7 +109,7 @@ export class AECO {
   ops: Operators;
   data: unknown;
   core: unknown;
-  createUI(options: { config: unknown; container: HTMLElement; addons?: unknown }): void;
+  initWorld(options: { config: unknown; container: HTMLElement; addons?: unknown }): void;
   clearStorage(): void;
   static clearStorage(): void;
 }

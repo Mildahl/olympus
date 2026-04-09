@@ -23,7 +23,7 @@ async function newNotification(message, type = 'info', { signals, notificationTo
  * @param {Object} options.signals - Signal dispatcher
  */
 function markNotificationRead(id, { signals }) {
-    NotificationTool.collection?.markAsRead(id);
+    NotificationTool.markAsRead(id);
 
     signals.notificationRead.dispatch(id);
 }
@@ -34,15 +34,10 @@ function markNotificationRead(id, { signals }) {
  * @param {Object} options.signals - Signal dispatcher
  */
 function markAllNotificationsRead({ signals }) {
-    const notifications = NotificationTool.getAllNotifications();
-
-    for (const notif of notifications) {
-        if (!notif.read) {
-            notif.read = true;
-        }
-    }
+    NotificationTool.markAllAsRead();
 
     signals.notificationRead.dispatch();
+    
 }
 
 /**
@@ -52,15 +47,11 @@ function markAllNotificationsRead({ signals }) {
  * @param {Object} options.signals - Signal dispatcher
  */
 function removeNotification(id, { signals }) {
-    if (NotificationTool.collection) {
-        const index = NotificationTool.collection.notifications.findIndex(n => n.id === id);
+    
+    NotificationTool.removeNotification(id);
 
-        if (index !== -1) {
-            NotificationTool.collection.notifications.splice(index, 1);
+    signals.notificationRead.dispatch(id);
 
-            signals.notificationRead.dispatch(id);
-        }
-    }
 }
 
 /**
@@ -69,11 +60,9 @@ function removeNotification(id, { signals }) {
  * @param {Object} options.signals - Signal dispatcher
  */
 function clearAllNotifications({ signals }) {
-    if (NotificationTool.collection) {
-        NotificationTool.collection.notifications = [];
+    NotificationTool.clearAll();
 
-        signals.notificationRead.dispatch();
-    }
+    signals.notificationRead.dispatch();
 }
 
 export {

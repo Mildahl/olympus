@@ -213,12 +213,18 @@ class Spatial_Select extends Operator {
 
   static operatorOptions = ["REGISTER"];
 
-  constructor(context, args = {}) {
+  static operatorDescription =
+    "Spatial manager: select a scene object by IFC GlobalId; use additive true to append to the current selection.";
+
+  constructor(
+    context,
+    { GlobalId, additive = false } = /** @type {{ GlobalId?: string, additive?: boolean }} */ ({}),
+  ) {
     super(context);
 
     this.context = context;
 
-    this.args = args;
+    this.args = { GlobalId, additive };
   }
 
   execute() {

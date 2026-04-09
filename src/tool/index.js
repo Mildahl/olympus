@@ -1,7 +1,7 @@
 
 import NotificationTool from './viewer/NotificationTool.js';
 
-import LayerTool from './layer/LayerTool.js';
+import LayerTool from './viewer/LayerTool.js';
 
 import ConfiguratorTool from './configurator/ConfiguratorTool.js';
 
@@ -12,8 +12,6 @@ import ModelTool from './model/model.js';
 import PlacementTool from './model/placement.js'; 
 
 import DrawingTool from './model/drawing.js';
-
-import SliceTool from './viewer/SliceTool.js';
 
 import MarkupTool from './viewer/MarkupTool.js';
 
@@ -31,11 +29,7 @@ import NavigationTool from './viewer/NavigationTool.js';
 
 import PythonSandbox from './pyodide/Python.js'
 
-import JSSandboxTool from './js/JsSandbox.js';
-
 import CodeEditorTool from './code/CodeEditorTool.js';
-
-import NodeEditorTool from './code/NodeEditorTool.js';
 
 import IfcTool from './bim/ifc.js';
 
@@ -44,49 +38,71 @@ import GeometryTool from './bim/geometry.js';
 import AttributeTool from './bim/attribute.js';
 import PsetTool from './bim/pset.js';
 import SequenceTool from './bim/sequence.js';
+import CostTool from './bim/cost.js';
 import TypeTool from './bim/type.js';
 import BIMModelingTool from './bim/modeling.js';
 
-import SchedulerTool from './scheduler/SchedulerTool.js';
+/** @typedef {typeof import('./viewer/NotificationTool.js').default} NotificationToolType */
+/** @typedef {typeof import('./viewer/LayerTool.js').default} LayerToolType */
+/** @typedef {typeof import('./configurator/ConfiguratorTool.js').default} ConfiguratorToolType */
+/** @typedef {typeof import('./viewer/SceneTool.js').default} SceneToolType */
+/** @typedef {typeof import('./model/model.js').default} ModelToolType */
+/** @typedef {typeof import('./model/placement.js').default} PlacementToolType */
+/** @typedef {typeof import('./model/drawing.js').default} DrawingToolType */
+/** @typedef {typeof import('./viewer/MarkupTool.js').default} MarkupToolType */
+/** @typedef {typeof import('./viewer/ViewpointTool.js').default} ViewpointToolType */
+/** @typedef {typeof import('./viewer/AnimationPathTool.js').default} AnimationPathToolType */
+/** @typedef {typeof import('./viewer/MeasureTool.js').default} MeasureToolType */
+/** @typedef {typeof import('./viewer/SectionBoxTool.js').default} SectionBoxToolType */
+/** @typedef {typeof import('./viewer/ProjectionTool.js').default} ProjectionToolType */
+/** @typedef {typeof import('./viewer/NavigationTool.js').default} NavigationToolType */
+/** @typedef {typeof import('./pyodide/Python.js').default} PythonSandboxToolType */
+/** @typedef {typeof import('./code/CodeEditorTool.js').default} CodeEditorToolType */
+/** @typedef {typeof import('./bim/ifc.js').default} IfcToolType */
+/** @typedef {typeof import('./bim/project.js').default} ProjectToolType */
+/** @typedef {typeof import('./bim/geometry.js').default} GeometryToolType */
+/** @typedef {typeof import('./bim/attribute.js').default} AttributeToolType */
+/** @typedef {typeof import('./bim/pset.js').default} PsetToolType */
+/** @typedef {typeof import('./bim/sequence.js').default} SequenceToolType */
+/** @typedef {typeof import('./bim/cost.js').default} CostToolType */
+/** @typedef {typeof import('./bim/type.js').default} TypeToolType */
+/** @typedef {typeof import('./bim/modeling.js').default} BIMModelingToolType */
 
 /**
  * @typedef {Object} WorldTools
- * @property {Object} configurator - Configuration management tool
- * @property {Object} layer - Layer/World management tool
- * @property {Object} scene - Three.js scene tool
- * @property {Object} model - Model management tool
- * @property {Object} drawing - Drawing/annotation tool
- * @property {Object} placement - Transform and rotation tool
- * @property {Object} notification - Notification system
- * @property {Object} viewpoint - Camera viewpoint capture/restore
- * @property {Object} animationPath - Animation path management
- * @property {Object} navigate - Navigation scene helpers and defaults
- * @property {Object|null} gizmo - Transform gizmo
- * @property {Object|null} cursor - Cursor tool
- * @property {Object} measure - Measurement tool
- * @property {Object} sectionBox - Section box tool
- * @property {Object} projection - Planar section / merged world geometry helper
- * @property {Object} slicer - 2D drawing/slicing tool
+ * @property {ConfiguratorToolType} configurator - Configuration management tool
+ * @property {LayerToolType} layer - Layer/World management tool
+ * @property {SceneToolType} scene - Three.js scene tool
+ * @property {ModelToolType} model - Model management tool
+ * @property {DrawingToolType} drawing - Drawing/annotation tool
+ * @property {MarkupToolType} markup - Markup helpers
+ * @property {PlacementToolType} placement - Transform and rotation tool
+ * @property {NotificationToolType} notification - Notification system
+ * @property {ViewpointToolType} viewpoint - Camera viewpoint capture/restore
+ * @property {AnimationPathToolType} animationPath - Animation path management
+ * @property {NavigationToolType} navigate - Navigation scene helpers and defaults
+ * @property {MeasureToolType} measure - Measurement tool
+ * @property {SectionBoxToolType} sectionBox - Section box tool
+ * @property {ProjectionToolType} projection - Planar section / merged world geometry helper
  */
 
 /**
  * @typedef {Object} CodeTools
- * @property {Object} pyWorker - Python execution sandbox (Pyodide)
- * @property {Object} js - JavaScript sandbox
- * @property {Object} editor - Code editor tool
- * @property {Object} nodes - Node editor tool
+ * @property {PythonSandboxToolType} pyWorker - Python execution sandbox (Pyodide)
+ * @property {CodeEditorToolType} editor - Code editor tool
  */
 
 /**
  * @typedef {Object} BIMTools
- * @property {Object} project - Project management
- * @property {Object} loader - IFC model loader
- * @property {Object} geometry - Geometry processing
- * @property {Object} attribute - Attribute editing
- * @property {Object} pset - Property sets and quantity sets
- * @property {Object} sequence - Construction sequence
- * @property {Object} modeling - BIM element creation
- * @property {Object} types - BIM type management
+ * @property {IfcToolType} ifc - IFC root
+ * @property {ProjectToolType} project - Project management
+ * @property {GeometryToolType} geometry - Geometry processing
+ * @property {AttributeToolType} attribute - Attribute editing
+ * @property {PsetToolType} pset - Property sets and quantity sets
+ * @property {SequenceToolType} sequence - Construction sequence
+ * @property {CostToolType} cost - Cost schedule management
+ * @property {BIMModelingToolType} modeling - BIM element creation
+ * @property {TypeToolType} types - BIM type management
  */
 
 /**
@@ -105,15 +121,12 @@ class Tools  {
       scene: SceneTool,
       model: ModelTool,
       drawing: DrawingTool,
-      slicer: SliceTool,
       markup: MarkupTool,
       placement: PlacementTool, 
       notification: NotificationTool,
       viewpoint: ViewpointTool,
       animationPath: AnimationPathTool,
       navigate: NavigationTool,
-      gizmo: null,
-      cursor: null,
       measure: MeasureTool,
       sectionBox: SectionBoxTool,
       projection: ProjectionTool,
@@ -125,9 +138,7 @@ class Tools  {
      */
     this.code = {
       pyWorker: PythonSandbox,
-      js: JSSandboxTool,
       editor: CodeEditorTool,
-      nodes: NodeEditorTool,
 
     }
 
@@ -136,27 +147,16 @@ class Tools  {
      * @type {BIMTools}
      */
     this.bim = {
+      ifc: IfcTool,
       project: ProjectTool,
-      loader: null,
       geometry: GeometryTool,
       attribute: AttributeTool,
       pset: PsetTool,
       sequence: SequenceTool,
+      cost: CostTool,
       types: TypeTool,
       modeling: BIMModelingTool,
     };
-
-    /**
-     * IFC-specific tool (requires Python sandbox)
-     * @type {Object}
-     */
-    this.ifc = IfcTool;
-
-    /**
-     * Scheduler tool for task selection and management
-     * @type {Object}
-     */
-    this.scheduler = SchedulerTool;
 
     /**
      * Initialization status for tool categories
@@ -172,33 +172,9 @@ class Tools  {
     this.loading = false  ;
   }
 
-  async ensureBimToolsLoaded() {
-    return;
-  }
-
-  exportJSON( object, name ) {
-
-    const json = JSON.stringify( object );
-
-    const a = document.createElement( 'a' );
-
-    const file = new Blob( [ json ], { type: 'text/plain' } );
-
-    a.href = URL.createObjectURL( file );
-
-    a.download = name + '.json';
-
-    a.click();
-
-  }
-
-  async undo(modelName) {
-    return await this.code.pyWorker.run_api('undo', {
-      modelName,
-    });
-  }
 }
 
+/** @type {Tools} */
 const AECO_TOOLS = new Tools()
 
 export default AECO_TOOLS;

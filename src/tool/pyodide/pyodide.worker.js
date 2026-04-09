@@ -10,11 +10,12 @@ self.onunhandledrejection = (e) => {
     self.postMessage({ type: 'workerError', message: r?.message ?? String(r), stack: r?.stack });
   } catch (_) {}
 };
-import { installedPackages, setLocalToolsPath, getLocalToolsPath, getPyodide } from './worker_state.js';
+import { installedPackages, setLocalToolsPath, getLocalToolsPath, getPyodide, bootstrapMetrics, resetBootstrapMetrics, markFirstIfcToolReady, incrementIfcToolCallCount } from './worker_state.js';
 import { startPyodide, runCode, serializeForPostMessage, getVariable } from './worker_core.js';
 import { loadPackageManager, loadPackage, installPackage, uninstallPackage, installIfcOpenShell } from './worker_packages.js';
 import { fetchFile, loadLocalModule, importModule, getIfc } from './worker_files_modules.js';
 import { getAttributes, undo, redo, editAttributes, getProperties, saveModel, getDirectorOverview, getDirectorFilteredSlice } from './worker_ifc.js';
+import { ifcToolCall } from './worker_ifc_tool_bridge.js';
 import { 
   newIFCModel, loadModelFromPath, loadModelFromBlob, 
   generateMeshLayerStructure, generateMeshForElement,
@@ -24,7 +25,7 @@ import { AttributesData } from './worker_ifc_data.js';
 import { registerViewerAPI } from './worker_viewer_api.js';
 self.AttributesData = AttributesData;
 const handlerConfig = {
-  startPyodide: [startPyodide, ['version', 'mode', 'baseUrl']],
+  startPyodide: [startPyodide, ['version', 'mode', 'baseUrl', 'ifcopenshellWheelsBaseUrl']],
   runCode: [runCode, ['code']],
   install: [installPackage, ['packageName', 'wheelPath']],
   installIfcOpenShell: [installIfcOpenShell, ['wheelPath']],
@@ -61,7 +62,10 @@ const handlerConfig = {
   getProperties: [getProperties, ['modelName', 'GlobalId']],
   getDirectorOverview: [getDirectorOverview, ['modelName']],
   getDirectorFilteredSlice: [getDirectorFilteredSlice, ['modelName', 'filterSpec']],
+  ifcToolCall: [ifcToolCall, ['action', 'modelName', 'toolName', 'functionName', 'usecase', 'queryType', 'args', 'entityArgs', 'params']],
   getVariable: [getVariable, ['variableName']],
+  getBootstrapMetrics: [() => bootstrapMetrics, []],
+  resetBootstrapMetrics: [() => { resetBootstrapMetrics(); return { reset: true, runId: bootstrapMetrics.runId }; }, []],
   executeViewerMethod: [() => undefined, []],  
 };
 self.onmessage = async (event) => {
@@ -77,14 +81,31 @@ self.onmessage = async (event) => {
     const [func, keys] = config;
 
     const args = keys.map(key => payload[key]);
+    const ifcRelatedTypes = new Set([
+      "newIFCModel",
+      "loadModelFromPath",
+      "loadModelFromBlob",
+      "generateMeshLayerStructure",
+      "generateMeshForElement",
+      "vertical_layer",
+      "horizontal_layer",
+      "profiled_construction",
+      "createSpace",
+      "createTypeOccurence",
+      "saveModel",
+      "getAttributes",
+      "editAttributes",
+      "getProperties",
+      "getDirectorOverview",
+      "getDirectorFilteredSlice",
+      "ifcToolCall",
+    ]);
+    if (ifcRelatedTypes.has(type)) {
+      incrementIfcToolCallCount();
+      markFirstIfcToolReady();
+    }
 
     const result = await func(...args);
-
-    const meshGenerationTypes = [
-      "generateMeshLayerStructure",
-      "generateMeshForElement", 
-      "execute"
-    ];
 
     const serializedResult = serializeForPostMessage(result);
     

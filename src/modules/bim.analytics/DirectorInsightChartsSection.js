@@ -2,6 +2,17 @@ import { Components as UIComponents } from "../../ui/Components/Components.js";
 
 import { directorChartBackgrounds, directorChartBorders } from "./DirectorAnalyticsChartTheme.js";
 
+import {
+  analyticsChartCaptionStyles,
+  analyticsInsightHalfHostStyles,
+  analyticsInsightPairRowStyles,
+  analyticsInsightRadarBandStyles,
+  analyticsInsightTypesBandStyles,
+  analyticsRadarCellHostStyles,
+  analyticsSectionTitleStyles,
+  analyticsTypesChartHostStyles,
+} from "./bimAnalyticsPanelStyles.js";
+
 const DIRECTOR_HBAR_MAX = 8;
 
 const DIRECTOR_TYPE_HBAR_MAX = 10;
@@ -75,21 +86,21 @@ class DirectorInsightChartsSection {
 
     this.title = UIComponents.text("Intelligence and coverage");
 
-    this.title.addClass("director-analytics-section-title");
+    this.title.setStyles(analyticsSectionTitleStyles);
 
-    this.radarBand = UIComponents.row().gap("var(--phi-1)").addClass("director-analytics-insight-radar-band");
+    this.radarBand = UIComponents.row().gap("var(--phi-1)").setStyles(analyticsInsightRadarBandStyles);
 
-    this.radarHost = UIComponents.div().addClass("director-analytics-chart-host").addClass("director-analytics-radar-cell");
+    this.radarHost = UIComponents.div().setStyles(analyticsRadarCellHostStyles);
 
-    this.pairRow = UIComponents.row().gap("var(--phi-1)").addClass("director-analytics-insight-pair-row");
+    this.pairRow = UIComponents.row().gap("var(--phi-1)").setStyles(analyticsInsightPairRowStyles);
 
-    this.psetHost = UIComponents.div().addClass("director-analytics-chart-host").addClass("director-analytics-insight-half");
+    this.psetHost = UIComponents.div().setStyles(analyticsInsightHalfHostStyles);
 
-    this.materialHost = UIComponents.div().addClass("director-analytics-chart-host").addClass("director-analytics-insight-half");
+    this.materialHost = UIComponents.div().setStyles(analyticsInsightHalfHostStyles);
 
-    this.typesBand = UIComponents.div().addClass("director-analytics-insight-types-band");
+    this.typesBand = UIComponents.div().setStyles(analyticsInsightTypesBandStyles);
 
-    this.typeHost = UIComponents.div().addClass("director-analytics-chart-host").addClass("director-analytics-types-chart");
+    this.typeHost = UIComponents.div().setStyles(analyticsTypesChartHostStyles);
 
     this.radarPanel = null;
 
@@ -219,7 +230,7 @@ class DirectorInsightChartsSection {
 
       this.psetPanel.init();
 
-      this.psetHost.add(UIComponents.text("Top property sets").addClass("director-analytics-chart-caption"));
+      this.psetHost.add(UIComponents.text("Top property sets").setStyles(analyticsChartCaptionStyles));
 
       this.psetHost.add(this.psetPanel);
     } else {
@@ -258,7 +269,7 @@ class DirectorInsightChartsSection {
 
       this.materialPanel.init();
 
-      this.materialHost.add(UIComponents.text("Material definitions").addClass("director-analytics-chart-caption"));
+      this.materialHost.add(UIComponents.text("Material definitions").setStyles(analyticsChartCaptionStyles));
 
       this.materialHost.add(this.materialPanel);
     } else {
@@ -303,7 +314,7 @@ class DirectorInsightChartsSection {
 
       this.typePanel.init();
 
-      this.typeHost.add(UIComponents.text("Element type names (occurrences)").addClass("director-analytics-chart-caption"));
+      this.typeHost.add(UIComponents.text("Element type names (occurrences)").setStyles(analyticsChartCaptionStyles));
 
       this.typeHost.add(this.typePanel);
     } else {

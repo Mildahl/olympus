@@ -1,5 +1,5 @@
 import { Components as UIComponents } from '../../ui/Components/Components.js';
-import { TabPanel } from '../../../drawUI/TabPanel.js';
+
 import dataStore from '../../data/index.js';
 
 import FocusManager from '../../utils/FocusManager.js';
@@ -8,62 +8,154 @@ import Paths from '../../utils/paths.js';
 
 import CodeEditorTool from '../../tool/code/CodeEditorTool.js';
 
-class ScriptsUI extends TabPanel {
+
+class ScriptsUI {
   constructor({ context, operators }) {
-    super({
-      context,
-      operators,
-      position: 'right',
-      tabId: "CodeScriptingPanel",
-      tabLabel: 'Code Editor',
-      moduleId: "code.scripting",
-      icon: 'code',
-      title: 'Code Editor',
-      showHeader: false,
-      floatable: true,
-      panelStyles: { minWidth: '240px' },
-      autoShow: false,
-    });
+    this.context = context;
+    this.operators = operators;
 
     this.searchQuery = '';
     this.listContainer = null;
     this.scriptsPane = null;
     this.scriptsSidebarVisible = true;
+    this.panel = null;
+    this.panelRoot = null;
 
     this.editorPane = UIComponents.div().addClass('ScriptingPanel-editorHost');
+
+    this._onShowCodeEditorBound = (payload) => {
+      if (!payload) {
+        return;
+      }
+
+      if (payload.visible) {
+        if (this.panel && this.panel.isMinimized) {
+          this.panel.restore();
+        }
+
+        if (this.panel && this.context.viewport?.dom) {
+          this.context.viewport.dom.appendChild(this.panel.dom);
+        }
+
+        this.panel.show();
+        this._syncEditorWindowState();
+
+        if (this.scriptEditorWindow) {
+          this.scriptEditorWindow.scheduleMonacoLayout();
+        }
+      } else {
+        this.panel.hide();
+      }
+    };
+
+    this._boundRefreshList = () => {
+      this.updateScriptsList();
+    };
+
+    this._buildPanel();
 
     this.scriptEditorWindow = new ScriptEditorWindow({
       context,
       operators,
       embedHost: this.editorPane,
-      onShow: () => { this._refreshScriptEditorDockState(); },
+      onShow: () => {
+        this._syncEditorWindowState();
+      },
       onHide: () => {},
-      onScriptsSidebarToggle: () => { this._toggleScriptsSidebarFromToolbar(); },
-      onNewScript: () => { this.showNewScriptDialog(); },
+      onScriptsSidebarToggle: () => {
+        this._toggleScriptsSidebarFromToolbar();
+      },
+      onNewScript: () => {
+        this.showNewScriptDialog();
+      },
     });
 
-    this._onShowCodeEditorBound = (payload) => {
-      if (!payload) return;
-      payload.visible ? this.scriptEditorWindow.show() : this.scriptEditorWindow.hide();
-    };
-
-    this._boundRefreshList = () => { this.updateScriptsList(); };
-
-    context.signals.showCodeEditor.add(this._onShowCodeEditorBound);
-    context.signals.newScript.add(this._boundRefreshList);
-    context.signals.scriptNameChanged.add(this._boundRefreshList);
-
-    this.draw();
-    this.show();
+    this._bindSignals();
+    this.updateScriptsList();
+    this._syncEditorWindowState();
+    this._mountPanel();
+    this._setEditorVisible(false);
   }
 
-  _syncEditorPanelLayout() {
-    if (!this.scriptsPane || !this.editorPane) return;
+  _bindSignals() {
+    const signals = this.context.signals;
+
+    signals.showCodeEditor.add(this._onShowCodeEditorBound);
+    signals.newScript.add(this._boundRefreshList);
+    signals.scriptNameChanged.add(this._boundRefreshList);
+  }
+
+  _buildPanel() {
+    this.panel = UIComponents.floatingPanel({
+      context: this.context,
+      title: 'Scripts',
+      moduleId: 'code.scripting',
+      icon: 'code',
+      minimizedImageSrc: Paths.data('resources/images/python.svg'),
+      workspaceTabId: 'code-scripting',
+      workspaceTabLabel: 'Scripts',
+      startMinimized: true,
+    });
+
+    this.panel
+      .setStyle('width', ['min(78vw, 1180px)'])
+      .setStyle('height', ['min(82vh, 820px)'])
+      .setStyle('min-width', ['min(520px, 92vw)'])
+      .setStyle('min-height', ['360px'])
+      .setStyle('max-width', ['92vw'])
+      .setStyle('max-height', ['90vh']);
+
+    this.panel.onClose(() => {
+      this._setEditorVisible(false);
+      if (this.scriptEditorWindow) {
+        this.scriptEditorWindow.hide();
+      }
+    });
+
+    this.panelRoot = UIComponents.row();
+    this.panelRoot.addClass('ScriptingPanel-root');
+
+    this.scriptsPane = UIComponents.column();
+    this.scriptsPane.addClass('ScriptingPanel-sidebar');
+
+    const searchContainer = UIComponents.row();
+    searchContainer.addClass('ScriptingPanel-searchRow');
+
+    const searchInput = UIComponents.input();
+    searchInput.addClass('ScriptingPanel-searchInput');
+    searchInput.dom.setAttribute('placeholder', 'Search scripts...');
+    searchInput.dom.addEventListener('input', () => {
+      this.filterCollections(searchInput.getValue());
+    });
+
+    searchContainer.add(searchInput);
+    this.scriptsPane.add(searchContainer);
+
+    this.listContainer = UIComponents.column();
+    this.scriptsPane.add(this.listContainer);
+
+    this.panelRoot.add(this.scriptsPane);
+    this.panelRoot.add(this.editorPane);
+
+    this.panel.setContent(this.panelRoot);
     this._applyScriptsSidebarVisibility();
   }
 
+  _mountPanel() {
+    if (!this.panel.dom.parentNode) {
+      this.context.viewport.dom.appendChild(this.panel.dom);
+    }
+  }
+
+  _setEditorVisible(visible) {
+    this.context._codeEditorVisible = Boolean(visible);
+  }
+
   _applyScriptsSidebarVisibility() {
-    if (!this.scriptsPane) return;
+    if (!this.scriptsPane) {
+      return;
+    }
+
     if (this.scriptsSidebarVisible) {
       this.scriptsPane.addClass('ScriptingPanel-sidebar-open');
     } else {
@@ -73,59 +165,22 @@ class ScriptsUI extends TabPanel {
 
   _toggleScriptsSidebarFromToolbar() {
     this.scriptsSidebarVisible = !this.scriptsSidebarVisible;
+    this._syncEditorWindowState();
+  }
+
+  _syncEditorWindowState() {
     this._applyScriptsSidebarVisibility();
-    if (this.scriptEditorWindow) {
-      this.scriptEditorWindow.setScriptsSidebarToggleActive(this.scriptsSidebarVisible);
-      this.scriptEditorWindow.scheduleMonacoLayout();
+
+    if (!this.scriptEditorWindow) {
+      return;
     }
+
+    this.context._scriptEditorContainer = this.scriptEditorWindow.getEditorContainer();
+    this.scriptEditorWindow.setScriptsSidebarToggleActive(this.scriptsSidebarVisible);
+    this.scriptEditorWindow.scheduleMonacoLayout();
   }
 
-  _refreshScriptEditorDockState() {
-    this._syncEditorPanelLayout();
-    if (this.context) {
-      this.context._scriptEditorContainer = this.scriptEditorWindow.getEditorContainer();
-    }
-    if (this.scriptEditorWindow) {
-      this.scriptEditorWindow.scheduleMonacoLayout();
-      this.scriptEditorWindow.setScriptsSidebarToggleActive(this.scriptsSidebarVisible);
-    }
-  }
 
-  draw() {
-    this.clearContent();
-
-    this.content.addClass('ScriptingPanel-root');
-
-    this.scriptsPane = UIComponents.column();
-    this.scriptsPane.addClass('ScriptingPanel-sidebar');
-
-    const searchContainer = UIComponents.row();
-    searchContainer.addClass('ScriptingPanel-searchRow');
-    const searchInput = UIComponents.input();
-    searchInput.setValue('Search scripts...');
-    searchInput.addClass('ScriptingPanel-searchInput');
-    searchInput.dom.addEventListener('input', () => {
-      this.filterCollections(searchInput.getValue());
-    });
-    searchContainer.add(searchInput);
-    this.scriptsPane.add(searchContainer);
-
-    this.listContainer = UIComponents.column();
-
-    this.scriptsPane.add(this.listContainer);
-
-    this.content.add(this.scriptsPane);
-    this.content.add(this.editorPane);
-
-    this.updateScriptsList();
-    this._refreshScriptEditorDockState();
-  }
-
-  onTabSelected() {
-    if (this.scriptEditorWindow) {
-      this.scriptEditorWindow.scheduleMonacoLayout();
-    }
-  }
 
   destroy() {
     const signals = this.context.signals;
@@ -134,14 +189,22 @@ class ScriptsUI extends TabPanel {
         signal.remove(handler);
       }
     };
+
     remove(signals.showCodeEditor, this._onShowCodeEditorBound);
     remove(signals.newScript, this._boundRefreshList);
     remove(signals.scriptNameChanged, this._boundRefreshList);
+
     if (this.scriptEditorWindow) {
       this.scriptEditorWindow.dispose();
       this.scriptEditorWindow = null;
     }
-    super.destroy();
+
+    if (this.panel && !this.panel.isClosed) {
+      this.panel.close();
+    }
+
+    this.context._scriptEditorContainer = null;
+    this._setEditorVisible(false);
   }
 
   updateScriptsList() {
@@ -149,12 +212,10 @@ class ScriptsUI extends TabPanel {
     this.listContainer.clear();
 
     const allCollections = dataStore.getCollections('CodeCollection');
-
     const collections = this.searchQuery
-      ? allCollections.filter((col) =>
-          col.name &&
-          col.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
+      ? allCollections.filter((col) => (
+          col.name && col.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+        ))
       : allCollections;
 
     if (collections.length === 0) {
@@ -174,14 +235,11 @@ class ScriptsUI extends TabPanel {
     }
 
     for (const collection of collections) {
-      const item = this.drawCollectionItem(collection);
-
-      this.listContainer.add(item);
+      this.listContainer.add(this.drawScriptRow(collection));
     }
   }
 
   showNewScriptDialog() {
-
     const overlay = UIComponents.div();
     overlay.setStyles({
       position: 'fixed',
@@ -207,15 +265,22 @@ class ScriptsUI extends TabPanel {
     });
 
     const title = UIComponents.text('New Script');
-    title.setStyles({ 'font-weight': '600', 'font-size': '1rem', 'margin-bottom': '0.5rem' });
+    title.setStyles({
+      'font-weight': '600',
+      'font-size': '1rem',
+      'margin-bottom': '0.5rem',
+    });
     dialog.add(title);
 
     const nameLabel = UIComponents.text('Name:');
-    nameLabel.setStyles({ 'font-size': '0.8rem', color: 'var(--theme-text-light)' });
+    nameLabel.setStyles({
+      'font-size': '0.8rem',
+      color: 'var(--theme-text-light)',
+    });
     dialog.add(nameLabel);
 
     const nameInput = UIComponents.input();
-    nameInput.setValue('Script name');
+    nameInput.dom.setAttribute('placeholder', 'Script name');
     nameInput.setStyles({
       padding: '0.5rem',
       border: '1px solid var(--border)',
@@ -225,7 +290,10 @@ class ScriptsUI extends TabPanel {
     dialog.add(nameInput);
 
     const langLabel = UIComponents.text('Language:');
-    langLabel.setStyles({ 'font-size': '0.8rem', color: 'var(--theme-text-light)' });
+    langLabel.setStyles({
+      'font-size': '0.8rem',
+      color: 'var(--theme-text-light)',
+    });
     dialog.add(langLabel);
 
     const langSelect = UIComponents.select();
@@ -246,7 +314,18 @@ class ScriptsUI extends TabPanel {
       'margin-top': '0.5rem',
     });
 
-    const dismiss = () => { document.body.removeChild(overlay.dom); };
+    let dismissed = false;
+    const dismiss = () => {
+      if (dismissed) {
+        return;
+      }
+
+      dismissed = true;
+
+      if (overlay.dom.parentNode) {
+        overlay.dom.parentNode.removeChild(overlay.dom);
+      }
+    };
 
     const cancelBtn = UIComponents.text('Cancel');
     cancelBtn.addClass('Button');
@@ -268,57 +347,65 @@ class ScriptsUI extends TabPanel {
       'border-radius': '4px',
     });
     createBtn.onClick(async () => {
-      const name = nameInput.getValue() || 'Untitled Script';
+      const name = nameInput.getValue().trim() || 'Untitled Script';
       const language = langSelect.getValue();
       const result = await this.operators.execute('code.new_script', this.context, name, language);
+
       dismiss();
+
       const guid = result && result.codeCollection && result.codeCollection.guid;
+
       if (guid) {
         await this.operators.execute('code.open_script', this.context, guid);
       }
     });
     buttonsRow.add(createBtn);
+
     dialog.add(buttonsRow);
     overlay.add(dialog);
     overlay.dom.addEventListener('click', (event) => {
-      if (event.target === overlay.dom) dismiss();
+      if (event.target === overlay.dom) {
+        dismiss();
+      }
     });
+
     document.body.appendChild(overlay.dom);
-    setTimeout(() => nameInput.dom.focus(), 50);
   }
 
-  drawCollectionItem(collection) {
+  drawScriptRow(collection) {
     const item = UIComponents.listItem().addClass('Clickable');
-    const mainRow = UIComponents.row().gap('var(--phi-0-5)');
-    mainRow.setStyles({
-      justifyContent: 'space-between',
-      alignItems: 'center',
+    item.setStyles({
+      'justify-content': 'space-between',
+      'align-items': 'center',
     });
 
     const nameContainer = UIComponents.div();
     nameContainer.setStyle('flex', ['1']);
+
     const name = UIComponents.text(collection.name || 'Unnamed Script');
     name.addClass('ListboxItem-name');
     nameContainer.add(name);
 
     const runCount = UIComponents.text().addClass('GameNumber');
     runCount.setValue(`${collection.runCount || 0}`);
-    mainRow.add(runCount);
+    item.add(runCount);
 
-    const languageKey = collection.language;
-    const languageIconPath = languageKey === 'python'
+    const languageIconPath = collection.language === 'python'
       ? Paths.data('resources/images/python.svg')
       : Paths.data('resources/images/javascript.svg');
-    mainRow.add(UIComponents.image(languageIconPath, { width: '1rem', height: '1rem' }));
+    item.add(UIComponents.image(languageIconPath, { width: '1rem', height: '1rem' }));
 
     nameContainer.dom.addEventListener('dblclick', (event) => {
       event.stopPropagation();
       this.showRenameInput(nameContainer, name, collection);
     });
-    mainRow.add(nameContainer);
+    item.add(nameContainer);
 
     const info = UIComponents.row();
-    info.setStyles({ gap: '0.5rem', 'align-items': 'center' });
+    info.setStyles({
+      gap: '0.5rem',
+      'align-items': 'center',
+    });
 
     const quickRunButton = UIComponents.operator('play_arrow');
     quickRunButton.setStyle('color', ['var(--green)']);
@@ -328,18 +415,13 @@ class ScriptsUI extends TabPanel {
     });
     info.add(quickRunButton);
 
-    const openButton = UIComponents.operator('open_in_new');
-    openButton.onClick(async (event) => {
-      event.stopPropagation();
-      await this.operators.execute('code.open_script', this.context, collection.guid);
-    });
-    info.add(openButton);
     info.addClass('ListboxItem-info');
-    mainRow.add(info);
-    item.add(mainRow);
+    item.add(info);
+
     item.dom.addEventListener('click', () => {
       this.operators.execute('code.open_script', this.context, collection.guid);
     });
+
     return item;
   }
 
@@ -350,8 +432,10 @@ class ScriptsUI extends TabPanel {
 
   showRenameInput(container, nameElement, collection) {
     nameElement.setStyle('display', ['none']);
+
     const currentDisplayName = nameElement.dom.textContent || collection.name || '';
-    const input = UIComponents.input(currentDisplayName);
+    const input = UIComponents.input();
+    input.setValue(currentDisplayName);
     input.setStyles({
       padding: '0.25rem',
       'font-size': 'inherit',
@@ -361,22 +445,36 @@ class ScriptsUI extends TabPanel {
       width: '100%',
     });
     container.add(input);
+
     input.dom.focus();
-    input.dom.select();
+    
 
     let finished = false;
-    const finishEdit = () => {
-      if (finished) return;
-      finished = true;
-      const newName = input.getValue().trim();
-      if (newName && newName !== collection.name) {
-        this.operators.execute('code.rename_script', this.context, collection.guid, newName);
-        nameElement.dom.textContent = newName;
-      }
+    const restoreName = () => {
+      nameElement.setStyle('display', ['']);
+    };
+
+    const removeInput = () => {
       if (container.dom.contains(input.dom)) {
         container.dom.removeChild(input.dom);
       }
-      nameElement.setStyle('display', ['']);
+    };
+
+    const finishEdit = () => {
+      if (finished) {
+        return;
+      }
+
+      finished = true;
+
+      const newName = input.getValue().trim();
+      if (newName && newName !== collection.name) {
+        this.operators.execute('code.rename_script', this.context, collection.guid, newName);
+        nameElement.setValue(newName);
+      }
+
+      removeInput();
+      restoreName();
     };
 
     input.dom.addEventListener('blur', finishEdit);
@@ -386,10 +484,8 @@ class ScriptsUI extends TabPanel {
         finishEdit();
       } else if (event.key === 'Escape') {
         finished = true;
-        if (container.dom.contains(input.dom)) {
-          container.dom.removeChild(input.dom);
-        }
-        nameElement.setStyle('display', ['']);
+        removeInput();
+        restoreName();
       }
     });
   }
@@ -410,61 +506,45 @@ class ScriptEditorWindow {
     }
 
     this.context = context;
-
     this.operators = operators;
-
     this.embedHost = embedHost;
-
     this.onShow = onShow || null;
-
     this.onHide = onHide || null;
-
     this.onScriptsSidebarToggle = onScriptsSidebarToggle || null;
-
     this.onNewScript = onNewScript || null;
 
     this.scriptsSidebarToggleButton = null;
-
     this.isVisible = false;
-
     this.mainContainer = null;
-
     this.activeScriptGuid = null;
-
     this.activeCollection = null;
-
     this.openTabs = new Map();
-
     this.tabBar = null;
-
     this.editorContainer = null;
-
+    this.editorEmptyState = null;
+    this.consoleSection = null;
     this.consoleOutputElement = null;
 
     this._signalUnsubscribers = [];
+    this._domUnsubscribers = [];
 
     this._buildWindow();
-
     this._setupSignals();
   }
 
   _buildWindow() {
     const mainContainer = UIComponents.div();
-
     mainContainer.addClass('CodeEditor');
 
     FocusManager.registerContext('codeEditor', mainContainer.dom, { priority: 2 });
 
     this.toolbar = this._createToolbar();
-
     mainContainer.add(this.toolbar);
 
     this.tabBar = this._createTabBar();
-
     mainContainer.add(this.tabBar);
 
     this.editorContainer = UIComponents.div();
-
     this.editorContainer.addClass('CodeEditor-area');
 
     this.editorEmptyState = UIComponents.div();
@@ -475,25 +555,31 @@ class ScriptEditorWindow {
     mainContainer.add(this.editorContainer);
 
     const verticalResizer = this._createResizer();
-
     mainContainer.add(verticalResizer);
 
     this.consoleSection = this._createConsoleSection();
-
     mainContainer.add(this.consoleSection);
 
     this.mainContainer = mainContainer;
-
     this.embedHost.add(mainContainer);
+  }
+
+  _listenDomEvent(target, eventName, handler) {
+    if (!target || typeof target.addEventListener !== 'function') {
+      return;
+    }
+
+    target.addEventListener(eventName, handler);
+    this._domUnsubscribers.push(() => {
+      target.removeEventListener(eventName, handler);
+    });
   }
 
   _createToolbar() {
     const toolbar = UIComponents.div();
-
     toolbar.addClass('CodeEditor-toolbar');
 
     const leftTools = UIComponents.div();
-
     leftTools.addClass('CodeEditor-toolbar-left');
 
     if (this.onScriptsSidebarToggle) {
@@ -512,13 +598,10 @@ class ScriptEditorWindow {
     toolbar.add(leftTools);
 
     this.activeScriptInfo = UIComponents.div();
-
     this.activeScriptInfo.addClass('CodeEditor-toolbar-center');
-
     toolbar.add(this.activeScriptInfo);
 
     const rightTools = UIComponents.div();
-
     rightTools.addClass('CodeEditor-toolbar-right');
 
     if (this.onNewScript) {
@@ -531,15 +614,12 @@ class ScriptEditorWindow {
     const saveBtn = this._createToolbarButton('save', 'Save (Ctrl+S)', () => {
       this._saveActiveScript();
     });
-
     rightTools.add(saveBtn);
 
     const runBtn = this._createToolbarButton('play_arrow', 'Run (Ctrl+Enter)', () => {
       this._runActiveScript();
     });
-
     runBtn.addClass('run');
-
     rightTools.add(runBtn);
 
     toolbar.add(rightTools);
@@ -549,11 +629,8 @@ class ScriptEditorWindow {
 
   _createToolbarButton(icon, title, onClick) {
     const iconElement = UIComponents.operator(icon);
-
     iconElement.addClass('CodeEditor-toolbar-btn');
-
     iconElement.dom.title = title;
-
     iconElement.onClick(onClick);
 
     return iconElement;
@@ -561,72 +638,64 @@ class ScriptEditorWindow {
 
   setScriptsSidebarToggleActive(visible) {
     const toggleButton = this.scriptsSidebarToggleButton;
-    if (!toggleButton || !toggleButton.dom) return;
+
+    if (!toggleButton || !toggleButton.dom) {
+      return;
+    }
 
     toggleButton.dom.title = visible ? 'Hide script list' : 'Show script list';
 
     if (visible) {
-      toggleButton.addClass('active');
+      toggleButton.addClass('Active');
     } else {
-      toggleButton.removeClass('active');
+      toggleButton.removeClass('Active');
     }
   }
 
   _createTabBar() {
     const tabBar = UIComponents.div();
-
     tabBar.addClass('Tabs');
 
     return tabBar;
   }
 
   _renderTabs() {
-    if (!this.tabBar) return;
+    if (!this.tabBar) {
+      return;
+    }
 
     this.tabBar.clear();
 
     for (const [guid, collection] of this.openTabs) {
-      const tab = this._createTab(guid, collection);
-
-      this.tabBar.add(tab);
+      this.tabBar.add(this._createTab(guid, collection));
     }
   }
 
   _createTab(guid, collection) {
     const tab = UIComponents.div();
-
     tab.addClass('Tab');
 
     if (guid === this.activeScriptGuid) {
-      tab.addClass('active');
+      tab.addClass('Active');
     }
 
     const langImg = collection.language === 'python'
       ? Paths.data('resources/images/python.svg')
       : Paths.data('resources/images/javascript.svg');
-
     const langIcon = UIComponents.image(langImg);
-
     langIcon.addClass('Tab-icon');
-
     tab.add(langIcon);
 
     const ext = collection.language === 'python' ? '.py' : '.js';
-
     const nameText = UIComponents.text(`${collection.name || 'Untitled'}${ext}`);
-
     nameText.addClass('Tab-label');
-
     tab.add(nameText);
 
     const closeBtn = UIComponents.operator('close');
-
-    closeBtn.dom.addEventListener('click', (e) => {
-      e.stopPropagation();
-
+    closeBtn.dom.addEventListener('click', (event) => {
+      event.stopPropagation();
       this.operators.execute('code.close_script_tab', this.context, guid);
     });
-
     tab.add(closeBtn);
 
     tab.onClick(() => {
@@ -639,7 +708,9 @@ class ScriptEditorWindow {
   }
 
   _addTab(codeCollection) {
-    if (!codeCollection || !codeCollection.guid) return;
+    if (!codeCollection || !codeCollection.guid) {
+      return;
+    }
 
     if (!this.openTabs.has(codeCollection.guid)) {
       this.openTabs.set(codeCollection.guid, codeCollection);
@@ -649,7 +720,9 @@ class ScriptEditorWindow {
   }
 
   _removeTab(guid) {
-    if (!this.openTabs.has(guid)) return;
+    if (!this.openTabs.has(guid)) {
+      return;
+    }
 
     this.openTabs.delete(guid);
 
@@ -658,12 +731,15 @@ class ScriptEditorWindow {
 
       if (remainingGuids.length > 0) {
         const newActiveGuid = remainingGuids[remainingGuids.length - 1];
-
         this.operators.execute('code.switch_script', this.context, newActiveGuid);
       } else {
         this.activeScriptGuid = null;
         this.activeCollection = null;
-        CodeEditorTool.monacoEditor.clearActiveEditor();
+
+        if (typeof CodeEditorTool.monacoEditor.clearActiveEditor === 'function') {
+          CodeEditorTool.monacoEditor.clearActiveEditor();
+        }
+
         CodeEditorTool.activeScriptGuid = null;
         this._clearConsole();
         this._updateActiveScriptInfo();
@@ -676,51 +752,44 @@ class ScriptEditorWindow {
 
   _createResizer() {
     const verticalResizer = UIComponents.div();
-
     verticalResizer.addClass('CodeEditor-resizer');
 
     let isResizing = false;
-
     let startY = 0;
-
     let startHeight = 0;
 
-    verticalResizer.dom.addEventListener('mousedown', (e) => {
+    this._listenDomEvent(verticalResizer.dom, 'mousedown', (event) => {
       isResizing = true;
-
-      startY = e.clientY;
-
+      startY = event.clientY;
       startHeight = this.consoleSection.dom.offsetHeight;
 
       verticalResizer.addClass('resizing');
-
       document.body.style.cursor = 'ns-resize';
-
       document.body.style.userSelect = 'none';
 
-      e.preventDefault();
+      event.preventDefault();
     });
 
-    document.addEventListener('mousemove', (e) => {
-      if (!isResizing) return;
+    this._listenDomEvent(document, 'mousemove', (event) => {
+      if (!isResizing) {
+        return;
+      }
 
-      const deltaY = startY - e.clientY;
-
+      const deltaY = startY - event.clientY;
       const newHeight = Math.max(100, Math.min(startHeight + deltaY, window.innerHeight * 0.6));
 
-      this.consoleSection.dom.style.height = newHeight + 'px';
+      this.consoleSection.dom.style.height = `${newHeight}px`;
     });
 
-    document.addEventListener('mouseup', () => {
-      if (isResizing) {
-        isResizing = false;
-
-        verticalResizer.removeClass('resizing');
-
-        document.body.style.cursor = '';
-
-        document.body.style.userSelect = '';
+    this._listenDomEvent(document, 'mouseup', () => {
+      if (!isResizing) {
+        return;
       }
+
+      isResizing = false;
+      verticalResizer.removeClass('resizing');
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
     });
 
     return verticalResizer;
@@ -728,43 +797,33 @@ class ScriptEditorWindow {
 
   _createConsoleSection() {
     const section = UIComponents.div();
-
     section.addClass('EditorConsole');
 
     const header = UIComponents.div();
-
     header.addClass('ConsoleHeader');
 
     const title = UIComponents.text('Console Output');
-
     title.addClass('ConsoleHeader-title');
-
     header.add(title);
 
     const actions = UIComponents.div();
-
     actions.addClass('ConsoleHeader-actions');
 
     const clearBtn = this._createToolbarButton('delete_sweep', 'Clear Console', () => {
       this._clearConsole();
     });
-
     actions.add(clearBtn);
 
     const copyBtn = this._createToolbarButton('content_copy', 'Copy Output', async () => {
       await this._copyConsoleToClipboard();
     });
-
     actions.add(copyBtn);
 
     header.add(actions);
-
     section.add(header);
 
     this.consoleOutputElement = document.createElement('pre');
-
     this.consoleOutputElement.className = 'CodeEditorOutput';
-
     section.dom.appendChild(this.consoleOutputElement);
 
     return section;
@@ -789,10 +848,11 @@ class ScriptEditorWindow {
   }
 
   _subscribeSignal(signal, handler) {
-    if (!signal || typeof signal.add !== 'function') return;
+    if (!signal || typeof signal.add !== 'function') {
+      return;
+    }
 
     signal.add(handler);
-
     this._signalUnsubscribers.push(() => {
       if (typeof signal.remove === 'function') {
         signal.remove(handler);
@@ -803,100 +863,55 @@ class ScriptEditorWindow {
   _setupSignals() {
     const signals = this.context.signals;
 
-    const onOpenScript = async ({ codeCollection }) => {
-      if (!codeCollection || !codeCollection.guid) return;
+    this._subscribeSignal(signals.openScript, async ({ codeCollection }) => {
+      if (!codeCollection || !codeCollection.guid) {
+        return;
+      }
 
       await this._displayScript(codeCollection);
-
       this._scheduleMonacoLayout();
-    };
+    });
 
-    this._subscribeSignal(signals.openScript, onOpenScript);
-
-    const onOpenOutput = ({ language, outputText, scriptName }) => {
+    this._subscribeSignal(signals.openOutput, ({ language, outputText, scriptName }) => {
       const ext = language === 'python' ? '.py' : '.js';
 
       this._appendToConsole(`>>> ${scriptName}${ext}`);
-
       this._appendToConsole(outputText);
-    };
+    });
 
-    this._subscribeSignal(signals.openOutput, onOpenOutput);
-
-    const onScriptNameChanged = ({ guid, name }) => {
+    this._subscribeSignal(signals.scriptNameChanged, ({ guid, name }) => {
       if (this.openTabs.has(guid)) {
         const collection = this.openTabs.get(guid);
-
         collection.name = name;
-
         this._renderTabs();
       }
 
       if (guid === this.activeScriptGuid && this.activeCollection) {
         this.activeCollection.name = name;
-
         this._updateActiveScriptInfo();
       }
-    };
+    });
 
-    this._subscribeSignal(signals.scriptNameChanged, onScriptNameChanged);
-
-    const onNewScript = () => {
+    this._subscribeSignal(signals.newScript, () => {
       if (this.activeCollection) {
         this._updateActiveScriptInfo();
       }
-    };
+    });
 
-    this._subscribeSignal(signals.newScript, onNewScript);
-
-    const onScriptTabClosed = ({ guid }) => {
+    this._subscribeSignal(signals.scriptTabClosed, ({ guid }) => {
       this._removeTab(guid);
-    };
-
-    this._subscribeSignal(signals.scriptTabClosed, onScriptTabClosed);
-
-    const onScriptTabsRefresh = () => {
-      this._renderTabs();
-    };
-
-    this._subscribeSignal(signals.scriptTabsRefresh, onScriptTabsRefresh);
+    });
   }
 
-  show() {
-    if (this.onShow) {
-      this.onShow();
-    }
 
-    this.isVisible = true;
-
-    this.context._scriptEditorContainer = this.editorContainer.dom;
-
-    this._scheduleMonacoLayout();
-  }
-
-  hide() {
-    if (!this.isVisible) return;
-
-    this.isVisible = false;
-
-    if (this.onHide) {
-      this.onHide();
-    }
-  }
 
   async _displayScript(codeCollection) {
-    if (!this.isVisible) {
-      this.show();
-    }
 
     this._addTab(codeCollection);
-
     this.activeScriptGuid = codeCollection.guid;
-
     this.activeCollection = codeCollection;
 
     this._renderTabs();
-
     this._updateActiveScriptInfo();
   }
 
@@ -905,32 +920,34 @@ class ScriptEditorWindow {
   }
 
   _appendToConsole(text) {
-    if (!this.consoleOutputElement) return;
+    if (!this.consoleOutputElement) {
+      return;
+    }
 
     const hasContent = this.consoleOutputElement.textContent.length > 0;
-
     const separator = hasContent ? '\n' : '';
 
     this.consoleOutputElement.textContent += separator + text;
-
     this.consoleOutputElement.scrollTop = this.consoleOutputElement.scrollHeight;
   }
 
   _clearConsole() {
-    if (!this.consoleOutputElement) return;
+    if (!this.consoleOutputElement) {
+      return;
+    }
 
     this.consoleOutputElement.textContent = '';
   }
 
   async _copyConsoleToClipboard() {
-    if (!this.consoleOutputElement) return;
-
-    const text = this.consoleOutputElement.textContent;
+    if (!this.consoleOutputElement) {
+      return;
+    }
 
     try {
-      await navigator.clipboard.writeText(text);
-    } catch (err) {
-      console.error('Failed to copy to clipboard:', err);
+      await navigator.clipboard.writeText(this.consoleOutputElement.textContent);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
     }
   }
 
@@ -948,48 +965,48 @@ class ScriptEditorWindow {
     this.activeScriptInfo.clear();
 
     const ext = collection.language === 'python' ? '.py' : '.js';
-
     const langImg = collection.language === 'python'
       ? Paths.data('resources/images/python.svg')
       : Paths.data('resources/images/javascript.svg');
 
     const langIcon = UIComponents.image(langImg);
-
     langIcon.addClass('Tab-icon');
-
     this.activeScriptInfo.add(langIcon);
 
     const scriptName = UIComponents.text(`${collection.name || 'Untitled'}${ext}`);
-
     this.activeScriptInfo.add(scriptName);
 
     const runInfo = UIComponents.text(`Runs: ${collection.runCount || 0}`);
-
     runInfo.addClass('Tab-meta');
-
     this.activeScriptInfo.add(runInfo);
   }
 
   _saveActiveScript() {
-    if (!this.activeScriptGuid) return;
+    if (!this.activeScriptGuid) {
+      return;
+    }
 
     this.operators.execute('code.save_script', this.context, this.activeScriptGuid);
   }
 
   _runActiveScript() {
-    if (!this.activeScriptGuid) return;
+    if (!this.activeScriptGuid) {
+      return;
+    }
 
     this.operators.execute('code.run_script', this.context, this.activeScriptGuid);
   }
 
   dispose() {
-    for (let index = 0; index < this._signalUnsubscribers.length; index += 1) {
-      const unsub = this._signalUnsubscribers[index];
-
+    for (const unsub of this._signalUnsubscribers) {
       unsub();
     }
-
     this._signalUnsubscribers = [];
+
+    for (const unsub of this._domUnsubscribers) {
+      unsub();
+    }
+    this._domUnsubscribers = [];
 
     FocusManager.unregisterContext('codeEditor');
 
@@ -997,17 +1014,13 @@ class ScriptEditorWindow {
       this.mainContainer.dom.parentNode.removeChild(this.mainContainer.dom);
     }
 
-    if (
-      this.context &&
-      this.context._scriptEditorContainer === this.editorContainer.dom
-    ) {
+    if (this.context && this.context._scriptEditorContainer === this.editorContainer.dom) {
       this.context._scriptEditorContainer = null;
     }
 
+    this.openTabs.clear();
     this.activeScriptGuid = null;
-
     this.activeCollection = null;
-
     this.consoleOutputElement = null;
   }
 }

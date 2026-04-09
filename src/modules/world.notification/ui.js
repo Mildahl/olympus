@@ -1,10 +1,8 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-
-import { BasePanel } from "../../../drawUI/BasePanel.js";
+import { Components as UIComponents, BasePanel } from "../../ui/Components/Components.js";
 
 import dataStore from "../../data/index.js";
 
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 const NOTIFICATION_CONFIG = {
   info: { icon: 'info', color: 'var(--blue, #3498db)' },
@@ -287,7 +285,7 @@ class NotificationsUI extends BasePanel {
   }
 
   updateBadge() {
-    const count = AECO_tools.world.notification.getUnreadCount();
+    const count = AECO_TOOLS.world.notification.getUnreadCount();
 
     const parentId = this.parentId || (this.parent ? this.parent.id : null);
 
@@ -387,7 +385,7 @@ class NotificationsUI extends BasePanel {
 
     this.listContainer.clear();
 
-    const notifications = AECO_tools.world.notification.getAllNotifications();
+    const notifications = AECO_TOOLS.world.notification.getAllNotifications();
 
     if (!notifications || notifications.length === 0) {
       const emptyState = this.drawEmptyState();

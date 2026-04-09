@@ -2,6 +2,12 @@ import { Components as UIComponents } from "../../ui/Components/Components.js";
 
 import { directorChartBackgrounds, directorChartBorders } from "./DirectorAnalyticsChartTheme.js";
 
+import {
+  analyticsChartHalfHostStyles,
+  analyticsCompositionRowStyles,
+  analyticsSectionTitleStyles,
+} from "./bimAnalyticsPanelStyles.js";
+
 class DirectorElementCompositionSection {
   constructor({ onClassSelected }) {
     this.onClassSelected = onClassSelected;
@@ -10,13 +16,13 @@ class DirectorElementCompositionSection {
 
     this.title = UIComponents.text("Element composition");
 
-    this.title.addClass("director-analytics-section-title");
+    this.title.setStyles(analyticsSectionTitleStyles);
 
-    this.chartRow = UIComponents.row().gap("var(--phi-0-75)").addClass("director-analytics-composition-row");
+    this.chartRow = UIComponents.row().gap("var(--phi-0-75)").setStyles(analyticsCompositionRowStyles);
 
-    this.doughnutHost = UIComponents.div().addClass("director-analytics-chart-host").addClass("director-analytics-chart-half");
+    this.doughnutHost = UIComponents.div().setStyles(analyticsChartHalfHostStyles);
 
-    this.barHost = UIComponents.div().addClass("director-analytics-chart-host").addClass("director-analytics-chart-half");
+    this.barHost = UIComponents.div().setStyles(analyticsChartHalfHostStyles);
 
     this.doughnutPanel = null;
 

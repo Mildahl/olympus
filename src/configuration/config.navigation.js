@@ -16,7 +16,7 @@ export const NavigationConfig = {
       backward: ["", "KeyS"],
       left: ["", "KeyA"],
       right: ["", "KeyD"],
-      up: ["", "Space"],
+      up: ["", "KeyE"],
       down: ["", "KeyQ"],
       sprint: ["", "ShiftLeft"],
     },
@@ -24,10 +24,10 @@ export const NavigationConfig = {
       title: "FLY MODE",
       icon: "flight",
       tips: [
-        ["Mouse", "Look around"],
-        ["Click", "Enable mouse look"],
-        ["Ctrl+Space", "Toggle above camera / cockpit"],
-        ["ESC", "Exit fly mode"],
+        { controls: [{ type: "mouse", button: "move" }], description: "Look around" },
+        { controls: [{ type: "mouse", button: "left" }], description: "Enable mouse look" },
+        { controls: [{ type: "key", value: "Ctrl" }, { type: "key", value: "Space" }], description: "Toggle above camera / cockpit" },
+        { controls: [{ type: "key", value: "ESC" }], description: "Exit fly mode" },
       ],
       keyRows: [
         [
@@ -63,11 +63,11 @@ export const NavigationConfig = {
       title: "FIRST PERSON MODE",
       icon: "my_location",
       tips: [
-        ["Crosshair", "Aim from screen center"],
-        ["Mouse", "Look around"],
-        ["Click", "Lock pointer"],
-        ["Ctrl+Space", "Toggle above camera / cockpit"],
-        ["ESC", "Exit first person mode"],
+        { controls: [{ type: "key", value: "Crosshair" }], description: "Aim from screen center" },
+        { controls: [{ type: "mouse", button: "move" }], description: "Look around" },
+        { controls: [{ type: "mouse", button: "left" }], description: "Lock pointer" },
+        { controls: [{ type: "key", value: "Ctrl" }, { type: "key", value: "Space" }], description: "Toggle above camera / cockpit" },
+        { controls: [{ type: "key", value: "ESC" }], description: "Exit first person mode" },
       ],
       keyRows: [
         [
@@ -101,8 +101,8 @@ export const NavigationConfig = {
       title: "DRIVE MODE",
       icon: "directions_car",
       tips: [
-        ["Shift", "Boost"],
-        ["ESC", "Exit drive mode"],
+        { controls: [{ type: "key", value: "Shift" }], description: "Boost" },
+        { controls: [{ type: "key", value: "ESC" }], description: "Exit drive mode" },
       ],
       keyRows: [
         [
@@ -124,9 +124,9 @@ export const NavigationConfig = {
       title: "ORBIT MODE",
       icon: "3d_rotation",
       tips: [
-        ["Left Click + Drag", "Rotate view"],
-        ["Right Click + Drag", "Pan"],
-        ["Scroll", "Zoom in/out"],
+        { controls: [{ type: "mouse", button: "middle" }, { type: "key", value: "Drag" }], description: "Rotate view" },
+        { controls: [{ type: "key", value: "Shift" }, { type: "mouse", button: "middle" }, { type: "key", value: "Drag" }], description: "Pan" },
+        { controls: [{ type: "mouse", button: "scroll" }], description: "Zoom in/out" },
       ],
       keyRows: [],
     },

@@ -7,7 +7,7 @@ const ModuleDefinition = {
   name: 'BIM Project',
   description: 'BIM project management and templates',
   version: '1.0.0',
-  dependsOn: ['world', 'code.scripting'],
+  dependsOn: ['world'],
   operators: operators,
   ui: ProjectUI,
 };

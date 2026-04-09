@@ -279,9 +279,8 @@ class ModuleRegistry {
 
     const uiDisabledFromUIConfig = new Set(options.uiDisabledModuleIds || []);
 
-    // Include full dependency closure so required deps are activated even if explicitly
-    // disabled in config (e.g. code.scripting when bim.project is active).
-    // Only include modules that are actually registered (e.g. bim.cost may not be in the app bundle).
+    // Full dependency closure activates required deps even when active: false (operators only).
+    // UI for those ids is still skipped when explicitlyDisabledIds or ui config disables it.
     const allIdsToActivate = this.getAllDependencies(initialActiveIds).filter(
       (id) => this.modules.has(id)
     );
@@ -293,7 +292,9 @@ class ModuleRegistry {
 
       const loadUIFromConfig = config && config.ui === false ? false : true;
 
-      const loadUI = loadUIFromConfig && !uiDisabledFromUIConfig.has(id);
+      const loadUI = loadUIFromConfig
+        && !uiDisabledFromUIConfig.has(id)
+        && !explicitlyDisabledIds.has(id);
 
       this.activate(id, args, { loadUI });
     }

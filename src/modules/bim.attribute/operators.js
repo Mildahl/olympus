@@ -4,66 +4,20 @@ import operators from "../../operators/index.js";
 
 import AECO_TOOLS from "../../tool/index.js";
 
-import dataStore from "../../data/index.js";
+import * as Core from "../../core/bim.attribute.js";
 
-import { refreshSelectionData as refreshTypeSelectionData } from "../bim.types/data.js";
 
-let isSelectionEnabled = false;
-
-class EnableBIMSelection extends Operator {
-  static operatorName = "bim.enable_bim_selection";
-
-  static operatorLabel = "Enable BIM Selection";
-
-  static operatorOptions = ["REGISTER"];
-
-  constructor(context) {
-    super(context);
-
-    this.context = context;
-  }
-
-  poll() {
-    return !isSelectionEnabled;
-  }
-
-  execute() {
-    AECO_TOOLS.world.scene.onSelection(async (object) => {
-      if (!object)
-        return
-
-      const isIfcObject =
-        object.isIfc || (object.isMesh && object.parent?.isIfc);
-
-      if (!isIfcObject) return;
-
-      const entityGlobalId = AECO_TOOLS.world.scene.getEntityGlobalId(object);
-
-      if (!entityGlobalId || this.context.ifc.activeElement === entityGlobalId)
-        return;
-
-      this.context.ifc.activeElement = entityGlobalId;
-
-      await operators.execute(
-        "bim.enable_editing_attributes",
-        this.context,
-        null,
-        entityGlobalId,
-      );
-    });
-
-    isSelectionEnabled = true;
-
-    return { status: "FINISHED" };
-  }
-}
-
-class BIM_EnableEditingAttributes extends Operator {
+class BIM_OP_EnableEditingAttributes extends Operator {
   static operatorName = "bim.enable_editing_attributes";
 
   static operatorLabel = "Enable Editing Attributes";
 
   static operatorOptions = ["REGISTER"];
+
+  static operatorParams = {
+    modelName: { type: "string", description: "IFC model name (omit for active model)" },
+    GlobalId: { type: "string", description: "GlobalId of the IFC element" },
+  };
 
   constructor(context, modelName, GlobalId) {
     super(context);
@@ -76,32 +30,29 @@ class BIM_EnableEditingAttributes extends Operator {
   }
 
   poll() {
-    return AECO_TOOLS.initialized.bim && this.modelName !== null && this.GlobalId !== null;
+    return AECO_TOOLS.code.pyWorker.initialized.bim && this.modelName !== null && this.GlobalId !== null;
   }
 
   async execute() {
 
-    const { attributes, ifcClass } = await AECO_TOOLS.bim.attribute.loadAttributes(this.modelName, this.GlobalId);
+    Core.enableEditingAttributes(this.modelName, this.GlobalId, {context: this.context, attributeTool: AECO_TOOLS.bim.attribute, psetTool: AECO_TOOLS.bim.pset});
 
-    AECO_TOOLS.bim.attribute.storeAttributes(this.GlobalId, attributes, ifcClass);
-
-    await operators.execute("bim.load_properties", this.context, this.modelName, this.GlobalId);
-
-    this.context.signals.enableEditingAttributes.dispatch({
-      GlobalId: this.GlobalId,
-      Attributes: dataStore.getCollection("BIMAttributes", this.GlobalId),
-      PropertiesData: dataStore.getCollection("BIMPropertiesData", this.GlobalId),
-    });
     return { status: "FINISHED" };
   }
 }
 
-class BIM_EditAttributes extends Operator {
+class BIM_OP_EditAttributes extends Operator {
   static operatorName = "bim.edit_attributes";
 
   static operatorLabel = "Edit Attributes";
 
   static operatorOptions = ["REGISTER"];
+
+  static operatorParams = {
+    modelName: { type: "string", description: "IFC model name" },
+    GlobalId: { type: "string", description: "GlobalId of the IFC element to edit" },
+    attributes: { type: "object", description: "Key-value pairs of attributes to update" },
+  };
 
   constructor(context, modelName, GlobalId, attributes) {
     super(context);
@@ -114,35 +65,41 @@ class BIM_EditAttributes extends Operator {
   }
 
   poll() {
-    return AECO_TOOLS.initialized.bim && this.GlobalId && this.attributes;
+    return AECO_TOOLS.code.pyWorker.initialized.bim && this.GlobalId && this.attributes;
   }
 
   async execute() {
+
+    await AECO_TOOLS.bim.ifc.beginTransaction(this.modelName);
+
     const result2 = await AECO_TOOLS.code.pyWorker.run_api("editAttributes", {
       modelName: this.modelName,
       GlobalId: this.GlobalId,
       attributes: this.attributes,
     });
-    const entityClass = await AECO_TOOLS.ifc.getClass(this.modelName, this.GlobalId);
 
-    if (entityClass === "IfcWorkSchedule") {
-
-      operators.execute("bim.enable_editing_work_schedules", this.context, this.modelName);
-      
-      await operators.execute("bim.enable_editing_work_schedule_tasks", this.context, this.GlobalId);
-
-    } else if (entityClass === "IfcTask") {
-
-      const scheduleGlobalId = await AECO_TOOLS.bim.sequence.getTaskParentSchedule(this.modelName, this.GlobalId);
-
-      await operators.execute("bim.enable_editing_work_schedule_tasks", this.context, scheduleGlobalId);
-    }
+    await AECO_TOOLS.bim.ifc.endTransaction(this.modelName);
+    
     return { status: "FINISHED", result: result2, success: true };
   }
+
+  
+    undo() {
+
+        AECO_TOOLS.bim.ifc.undo(this.modelName);
+
+      return { status: "CANCELLED" };
+    }
+
+    redo() {
+
+      AECO_TOOLS.bim.ifc.redo(this.modelName);
+
+      return { status: "FINISHED" };
+    }
 }
 
 export default [
-  BIM_EnableEditingAttributes,
-  BIM_EditAttributes,
-  EnableBIMSelection,
+  BIM_OP_EnableEditingAttributes,
+  BIM_OP_EditAttributes,
 ];

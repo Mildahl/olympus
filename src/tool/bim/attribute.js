@@ -6,24 +6,6 @@ import tools from "../index.js";
 
 class AttributeTool {
 
-    static projectName = "default";
-    static async loadAttributes( modelName, GlobalId ) {
-        
-        const response = await AttributeTool.getAttributes( modelName, GlobalId );
-
-        const attributes = response.attributes || response;
-
-        const entityClass = response.entityClass || null;
-
-        if (!attributes || !Array.isArray(attributes)) {
-            console.error("[AttributeTool] Invalid attributes data received");
-
-            return;
-        }
-        return { attributes, ifcClass: entityClass}
-
-    }
-
     static async getAttributes( modelName, GlobalId ) {
         
         if (!modelName || !GlobalId) {
@@ -37,11 +19,36 @@ class AttributeTool {
 
     }
 
+    static async loadAttributes( modelName, GlobalId ) {
+        
+        const response = await AttributeTool.getAttributes( modelName, GlobalId );
+
+        const attributes = response.attributes || response;
+
+        const entityClass = response.entityClass || null;
+
+        if (!attributes || !Array.isArray(attributes)) {
+            console.error("[AttributeTool] Invalid attributes data received");
+
+            return;
+        }
+        
+        return { attributes, ifcClass: entityClass}
+
+    }
+
+
     static storeAttributes( GlobalId, attributes, entityClass = null ) {
 
         const BIMAttrCollection = new BIMAttributes(GlobalId, attributes, entityClass);
 
         dataStore.registerCollection(GlobalId, BIMAttrCollection);
+
+    }
+
+    static getStoredAttributes(GlobalId) {
+
+        return dataStore.getCollection("BIMAttributes", GlobalId);
 
     }
 }

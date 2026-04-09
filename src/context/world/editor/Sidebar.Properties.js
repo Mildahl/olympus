@@ -15,7 +15,7 @@ function SidebarProperties( {context, operators} ) {
 	container.addTab( 'objectTab', strings.getKey( 'sidebar/properties/object' ), new SidebarObject( editor ) );
 	container.addTab( 'geometryTab', strings.getKey( 'sidebar/properties/geometry' ), new SidebarGeometry( editor ) );
 	container.addTab( 'materialTab', strings.getKey( 'sidebar/properties/material' ), new SidebarMaterial( editor ) );
-	container.addTab( 'scriptTab', strings.getKey( 'sidebar/properties/script' ), new SidebarScript( editor ) );
+	// container.addTab( 'scriptTab', strings.getKey( 'sidebar/properties/script' ), new SidebarScript( editor ) );
 	container.select( 'objectTab' );
 
 	function getTabByTabId( tabs, tabId ) {
@@ -30,7 +30,7 @@ function SidebarProperties( {context, operators} ) {
 
 	const geometryTab = getTabByTabId( container.tabs, 'geometryTab' );
 	const materialTab = getTabByTabId( container.tabs, 'materialTab' );
-	const scriptTab = getTabByTabId( container.tabs, 'scriptTab' );
+	// const scriptTab = getTabByTabId( container.tabs, 'scriptTab' );
 
 	function toggleTabs( object ) {
 
@@ -40,7 +40,7 @@ function SidebarProperties( {context, operators} ) {
 
 			materialTab.setHidden( true );
 
-			scriptTab.setHidden( true );
+			// scriptTab.setHidden( true );
 
 			container.select( 'objectTab' );
 
@@ -52,7 +52,7 @@ function SidebarProperties( {context, operators} ) {
 
 		materialTab.setHidden( ! object.material );
 
-		scriptTab.setHidden( object === editor.camera );
+		// scriptTab.setHidden( object === editor.camera );
 		if ( container.selected === 'geometryTab' ) {
 
 			container.select( geometryTab.isHidden() ? 'objectTab' : 'geometryTab' );
@@ -63,7 +63,7 @@ function SidebarProperties( {context, operators} ) {
 
 		} else if ( container.selected === 'scriptTab' ) {
 
-			container.select( scriptTab.isHidden() ? 'objectTab' : 'scriptTab' );
+			// container.select( scriptTab.isHidden() ? 'objectTab' : 'scriptTab' );
 
 		}
 

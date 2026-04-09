@@ -1,8 +1,6 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
+import { Components as UIComponents, BasePanel } from "../../ui/Components/Components.js";
 
-import { BasePanel } from "../../../drawUI/BasePanel.js";
-
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 class ViewpointsUI extends BasePanel {
   constructor({ context, operators }) {
@@ -60,7 +58,7 @@ class ViewpointsUI extends BasePanel {
     addButton.addClass('Button');
 
     addButton.onClick(() => {
-      const name = `Viewpoint ${AECO_tools.world.viewpoint.getCount() + 1}`;
+      const name = `Viewpoint ${AECO_TOOLS.world.viewpoint.getCount() + 1}`;
 
       this.operators.execute('viewpoint.create', this.context, name);
     });
@@ -90,9 +88,9 @@ class ViewpointsUI extends BasePanel {
       .setStyle('padding', ['0.5rem'])
       .setStyle('border-bottom', ['1px solid var(--border)']);
 
-    const canGoBack = AECO_tools.world.viewpoint.canNavigateBack();
+    const canGoBack = AECO_TOOLS.world.viewpoint.canNavigateBack();
 
-    const canGoForward = AECO_tools.world.viewpoint.canNavigateForward();
+    const canGoForward = AECO_TOOLS.world.viewpoint.canNavigateForward();
 
     const backButton = UIComponents.icon('arrow_back');
 
@@ -116,7 +114,7 @@ class ViewpointsUI extends BasePanel {
       if (canGoForward) this.operators.execute('viewpoint.navigate_forward', this.context);
     });
 
-    const history = AECO_tools.world.viewpoint.getNavigationHistory();
+    const history = AECO_TOOLS.world.viewpoint.getNavigationHistory();
 
     const currentIndex = history.findIndex(h => h.isCurrent);
 
@@ -148,7 +146,7 @@ class ViewpointsUI extends BasePanel {
 
     this.updateNavigationControls();
 
-    const allViewpoints = AECO_tools.world.viewpoint.getAll();
+    const allViewpoints = AECO_TOOLS.world.viewpoint.getAll();
 
     const viewpoints = this.searchQuery
       ? allViewpoints.filter(vp => vp.name.toLowerCase().includes(this.searchQuery.toLowerCase()))
@@ -173,8 +171,6 @@ class ViewpointsUI extends BasePanel {
     const isExpanded = this.expandedIds.has(viewpoint.GlobalId);
 
     const item = UIComponents.div();
-
-    item.addClass('ViewpointItem');
 
     if (isExpanded) item.addClass('expanded');
 
@@ -214,7 +210,7 @@ class ViewpointsUI extends BasePanel {
 
     const actionsRow = UIComponents.row();
 
-    actionsRow.addClass('ViewpointItem-actions');
+    actionsRow.addClass('Item-actions');
 
     actionsRow.setStyle('gap', ['0.25rem']).setStyle('opacity', ['0']);
 

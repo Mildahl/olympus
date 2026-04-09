@@ -1,0 +1,32 @@
+.blue {
+  background: var(--blue);
+}
+
+.green:hover {
+  background-color: var(--green);
+  color: var(--theme-text);
+}
+
+.red {
+  background: var(--red);
+}
+
+.brand-color {
+  color: var(--brand-color);
+  font-family: "Orbitron", monospace;
+}
+
+.brand-color-background {
+  background-color: var(--brand-color);
+  color: var(--theme-text);
+}
+
+.yellow:hover {
+  background-color: var(--yellow);
+  color: var(--theme-text);
+}
+
+.circle.red:hover {
+  background-color: var(--red);
+  color: var(--theme-text);
+}

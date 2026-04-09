@@ -2,9 +2,7 @@ import { TypeData } from "../bim.types/data.js";
 
 import AECO_TOOLS from "../../tool/index.js";
 
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-
-import { BasePanel, SimpleFloatingWindow } from "../../../drawUI/BasePanel.js";
+import { Components as UIComponents, BasePanel, SimpleFloatingWindow } from "../../ui/Components/Components.js";
 
 import { UIHelper } from "../../ui/UIHelper.js";
 
@@ -42,7 +40,7 @@ class TypesUI extends BasePanel {
 
     this.dataLoaded = false;
 
-    AECO_TOOLS.world.drawing.init(context);
+    AECO_TOOLS.world.drawing.init();
 
     this.content.setId("Types")
 
@@ -327,12 +325,12 @@ class TypesUI extends BasePanel {
     
     item.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-    item.classList.add('active');
+    item.classList.add('Active');
   }
 
   _deactivateCards() {
     if (this.dropdownPortal) {
-      this.dropdownPortal.dom.querySelectorAll('.weapons-item-card.active').forEach((n) => n.classList.remove('active'));
+      this.dropdownPortal.dom.querySelectorAll('.weapons-item-card.active').forEach((n) => n.classList.remove('Active'));
     }
   }
 

@@ -8,8 +8,6 @@ import PythonSandbox from "../tool/pyodide/Python.js";
 
 import Paths from "../utils/paths.js";
 
-import JSSandboxTool from "../tool/js/JsSandbox.js";
-
 import CodeEditorTool from "../tool/code/CodeEditorTool.js";
 
 import ViewerAPI from "../tool/pyodide/ViewerAPI.js";
@@ -22,10 +20,21 @@ import core from "./index.js";
 
 import dataStore from "../data/index.js";
 
-async function enableJavaScript({ signals, jsTool }) {
-  const result = await jsTool.start();
-
-  return result;
+function resolveIfcopenshellWheelsBaseUrl(context) {
+  const configured = context?.config?.app?.Settings?.ifcopenshellWheelsBaseUrl;
+  if (configured && String(configured).trim()) {
+    const trimmed = String(configured).trim();
+    return trimmed.endsWith("/") ? trimmed : `${trimmed}/`;
+  }
+  if (typeof window === "undefined" || !window.location?.origin) {
+    return null;
+  }
+  let relative = Paths.vendor("ifcopenshell/wheels/");
+  if (!relative.startsWith("/")) {
+    relative = `/${relative}`;
+  }
+  const withSlash = relative.endsWith("/") ? relative : `${relative}/`;
+  return `${window.location.origin}${withSlash}`;
 }
 
 /**
@@ -41,7 +50,7 @@ async function enableJavaScript({ signals, jsTool }) {
 async function enablePython(
   version = "v0.29.0",
   onMessage = null,
-  { signals, context, pythonTool, codeTool },
+  { context, pythonTool, codeTool },
 ) {
   const mode = "full";
 
@@ -51,9 +60,24 @@ async function enablePython(
 
   const workerUrl = context?.config?.app?.Settings?.pyodideWorkerUrl ?? null;
 
-  const result = await pythonTool.startPyodide(version, mode, baseUrl, scriptBaseUrl, workerUrl);
+  const ifcopenshellWheelsBaseUrl = resolveIfcopenshellWheelsBaseUrl(context);
 
-  await enableViewerAPI({ context, signals, pythonTool, codeTool });
+  const result = await pythonTool.startPyodide(
+    version,
+    mode,
+    baseUrl,
+    scriptBaseUrl,
+    workerUrl,
+    ifcopenshellWheelsBaseUrl,
+  );
+
+  await enableViewerAPI({ context, pythonTool, codeTool });
+
+  context.signals.pythonReady.dispatch({
+    ready: true,
+    version,
+    checkedAt: Date.now(),
+  });
 
   return result;
 }
@@ -62,11 +86,10 @@ async function enablePython(
  * Enable ViewerAPI - exposes AECO tools, operators, and core to Python
  * @param {Object} options
  * @param {Object} options.context - AECO context
- * @param {Object} options.signals - Context signals
  * @param {typeof PythonSandbox} options.pythonTool
  * @param {typeof CodeEditorTool} options.codeTool - Code editor tool (optional, for IntelliSense)
  */
-async function enableViewerAPI({ context, signals, pythonTool, codeTool }) {
+async function enableViewerAPI({ context, pythonTool, codeTool }) {
   if (ViewerAPI._initialized) {
     return { status: "FINISHED" };
   }
@@ -100,34 +123,32 @@ async function enableMonacoEditor({ codeTool, context }) {
 /**
  * Run code in specified language
  * @param {string} code - Code to run
- * @param {string} language - 'python' or 'javascript'
  * @param {Object} options
- * @param {Object} options.signals - Context signals
+ * @param {Object} options.context - AECO context
  * @param {typeof PythonSandbox} options.pythonTool
- * @param {typeof JSSandboxTool } options.jsTool
  */
 async function runCode(
   code,
-  language = "javascript",
-  { signals, pythonTool, jsTool },
+  { context, pythonTool },
 ) {
-  if (language === "javascript")
-    return await runJavaScriptCode(code, null, { signals, jsTool });
-  else return await runPythonCode(code, null, { signals, pythonTool });
+
+  return await runPythonCode(code, null, { context, pythonTool });
 }
 
 /** Run Python code
  * @param {string} code - Python code to run
  * @param {string} GlobalId - Optional script GUID for output dispatch
  * @param {Object} options
- * @param {Object} options.signals - Context signals
+ * @param {Object} options.context - AECO context
  * @param {typeof PythonSandbox} options.pythonTool
  */
 async function runPythonCode(
   code = null,
   GlobalId = null,
-  { signals, pythonTool },
+  { context, pythonTool },
 ) {
+
+  const signals = context.signals;
 
   if (!code) return { success: false, message: "No code provided" };
   
@@ -178,40 +199,11 @@ async function runPythonCode(
   return result;
 }
 
-async function runJavaScriptCode(
-  code = null,
-  GlobalId = null,
-  { signals, jsTool },
-) {
-  if (!code) {
-    return { success: false, message: "No code provided" };
-  }
-
-  const result = await jsTool.execute(code);
-
-  const isError = result instanceof Error;
-
-  const outputText = isError ? `Error: ${result.message}` : String(result);
-
-  if (GlobalId) {
-    signals.openOutput.dispatch({
-      GlobalId,
-      language: "javascript",
-      result: outputText,
-      scriptName: "script",
-    });
-  }
-
-  return isError
-    ? { success: false, message: result.message }
-    : { success: true, result: String(result) };
-}
-
 /**
  * Create a new script
  * @param {string} name - Script name
  * @param {string} code - Initial code
- * @param {string} language - 'python' or 'javascript'
+ * @param {string} language - 'python'
  * @param {Object} options
  * @param {typeof CodeEditorTool} options.codeTool - Code editor tool (optional, for IntelliSense)
  * @param {Object} options.context - AECO context
@@ -306,29 +298,37 @@ async function openScript(
 /**
  * Enable BIM tools (IfcOpenShell)
  * @param {Object} options
- * @param {Object} options.signals - Context signals
+ * @param {Object} options.context - AECO context
  * @param {typeof PythonSandbox} options.pythonTool
- * @param {Object} options.wheelsPath - Path to the IfcOpenShell wheel
- * @param {Object} options.pythonToolsPath - Path to the BIM tools
  */
-async function enableBIM({ wheelsPath, pythonToolsPath, signals, pythonTool }) {
+async function enableBIM({ context, pythonTool }) {
 
-  if (pythonTool.initialized?.ifcopenshell) {
-    signals.bimEnabled.dispatch();
+  if (pythonTool.initialized?.bim) {
+    context.signals.bimEnabled.dispatch({
+      ready: true,
+      cached: true,
+      checkedAt: Date.now(),
+    });
 
     return { status: "FINISHED" };
   }
 
-  if(!wheelsPath) {
-    wheelsPath = `${window.location.origin}${Paths.vendor('ifcopenshell/wheels/')}`;
-  }
 
-  await pythonTool.loadIfcOpenShell(`${wheelsPath}ifcopenshell-0.8.4+1492a66-cp313-cp313-emscripten_4_0_9_wasm32.whl`);
+  const wheelsPath = Paths.vendor("ifcopenshell/wheels/");
+  
+  await pythonTool.loadIfcOpenShell(wheelsPath);
+
+  let pythonToolsBaseUrl = Paths.pythonTools();
+
+  if (!pythonToolsBaseUrl.endsWith("/")) {
+    pythonToolsBaseUrl += "/";
+  }
 
   const modules = [
     "context",
     "spatial",
     "sequence",
+    "cost",
     "attribute",
     "pset",
     "doc",
@@ -336,9 +336,13 @@ async function enableBIM({ wheelsPath, pythonToolsPath, signals, pythonTool }) {
     "analytics"
   ];
 
-  await pythonTool.startBIMTools(pythonToolsPath || `${window.location.origin}${Paths.pythonTools()}/`, modules);
+  await pythonTool.startBIMTools(pythonToolsBaseUrl, modules);
 
-  signals.bimEnabled.dispatch();
+  context.signals.bimEnabled.dispatch({
+    ready: true,
+    cached: false,
+    checkedAt: Date.now(),
+  });
 
   return { status: "FINISHED" };
 }
@@ -412,7 +416,7 @@ function refreshScript(GlobalId, newCode, { codeTool, context }) {
  */
 async function runScript(
   GlobalId = null,
-  { signals, pythonTool, jsTool, codeTool },
+  { context, pythonTool, codeTool },
 ) {
   if (!GlobalId) {
     throw new Error("No GlobalId provided to find script");
@@ -424,29 +428,16 @@ async function runScript(
     throw new Error(`No Code Collection found with GlobalId: ${GlobalId}`);
   }
 
-  const lang = codeCollection.language;
-
   const code = codeCollection.currentCode;
 
   codeCollection.runCount += 1;
 
-  signals.newScript.dispatch(); 
+  context.signals.newScript.dispatch(); 
 
-  let result;
-
-  if (lang === "python") {
-    result = await runPythonCode(code, codeCollection.guid, {
-      signals,
-      pythonTool,
-    });
-  } else if (lang === "javascript") {
-    result = await runJavaScriptCode(code, codeCollection.guid, {
-      signals,
-      jsTool,
-    });
-  }
-
-  return result;
+  return await runPythonCode(code, codeCollection.guid, {
+    context,
+    pythonTool,
+  });
 }
 
 /**
@@ -455,7 +446,7 @@ async function runScript(
  * @param {string} newName - New name
  * @param {Object} options
  */
-function renameScript(scriptGuid, newName, { codeTool, signals }) {
+function renameScript(scriptGuid, newName, { codeTool, context }) {
   const script = codeTool.getScript(scriptGuid);
 
   if (!script) {
@@ -464,13 +455,14 @@ function renameScript(scriptGuid, newName, { codeTool, signals }) {
 
   script.name = newName;
 
-  signals.scriptNameChanged.dispatch({ guid: scriptGuid, name: newName });
+  context.signals.scriptNameChanged.dispatch({ guid: scriptGuid, name: newName });
 }
 
 /**
  * Colorize a DOM element with syntax highlighting
  * @param {HTMLElement} dom - DOM element to colorize
  * @param {Object} options
+ * @param {typeof CodeEditorTool} options.codeTool - Code editor tool (for syntax highlighting)
  */
 async function colorizeDom(dom, { codeTool }) {
   codeTool.colorizeDom(dom);
@@ -479,23 +471,23 @@ async function colorizeDom(dom, { codeTool }) {
 /**
  * Minimize all open editor panels
  * @param {Object} options
- * @param {Object} options.signals - Context signals to dispatch minimize event
+ * @param {Object} options.context - AECO context
  * @param {Array<string>} options.excludeGuids - Optional array of GUIDs to exclude from minimizing
  */
-function minimizeAllEditorPanels({ signals, excludeGuids = [] }) {
-  signals.minimizeAllEditorPanels.dispatch({ excludeGuids });
+function minimizeAllEditorPanels({ context, excludeGuids = [] }) {
+  context.signals.minimizeAllEditorPanels.dispatch({ excludeGuids });
 }
 
 /**
  * Maximize/restore a specific editor panel
  * @param {string} GlobalId - Script GUID to maximize
  * @param {Object} options
- * @param {Object} options.signals - Context signals to dispatch maximize event
+ * @param {Object} options.context - AECO context
  */
-function maximizeEditorPanel(GlobalId, { signals }) {
+function maximizeEditorPanel(GlobalId, { context }) {
   if (!GlobalId) return;
   
-  signals.maximizeEditorPanel.dispatch({ GlobalId });
+  context.signals.maximizeEditorPanel.dispatch({ GlobalId });
 }
 
 function activateScript(GlobalId, { codeTool }) {
@@ -511,11 +503,9 @@ function getScriptCode(GlobalId, { codeTool }) {
 export {
   enablePython,
   enableMonacoEditor,
-  enableJavaScript,
   enableViewerAPI,
   enableBIM,
   runPythonCode,
-  runJavaScriptCode,
   runCode,
   newScript,
   openScript,

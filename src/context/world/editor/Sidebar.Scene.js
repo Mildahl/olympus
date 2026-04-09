@@ -78,7 +78,7 @@ function SidebarScene( editor ) {
 
 			iconImg.className = 'icon';
 
-			iconImg.src = `./../examples/resources/icons/entities/${object.ifcClass}.svg`;
+			iconImg.src = `./data/resources/icons/entities/${object.ifcClass}.svg`;
 
 			iconImg.alt = object.ifcClass;
 
@@ -651,7 +651,7 @@ function SidebarScene( editor ) {
 
 				const openerHTML = openerElement ? openerElement.outerHTML : '';
 				const iconHTML = object.ifcClass && ['IfcWall', 'IfcDoor', 'IfcProject', 'IfcSite', 'IfcWindow', 'IfcOpening'].includes(object.ifcClass)
-					? `<img class="icon" src="./../examples/resources/icons/entities/${object.ifcClass}.svg" alt="${object.ifcClass}" style="margin-right: 6px;">`
+					? `<img class="icon" src="./data/resources/icons/entities/${object.ifcClass}.svg" alt="${object.ifcClass}" style="margin-right: 6px;">`
 					: '';
 				
 				const badgeHTML = object.ifcClass

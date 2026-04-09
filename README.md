@@ -12,7 +12,7 @@ Don't waste time re-building an editor from scratch: olympus is here!
 
 [**Hello World (reference app)**](https://myoualid.github.io/olympus/examples/HelloWorld/index.html) · [**Addons (build your host app)**](https://myoualid.github.io/olympus/examples/Addons/index.html)
 
-![Olympus — digital construction app](https://www.aeco.dev/static/img/HomePage.png)
+![Olympus — digital construction app](./AECO_20260409.png)
 
 <details>
 <summary>More Screenshots</summary>
@@ -29,20 +29,63 @@ Don't waste time re-building an editor from scratch: olympus is here!
 
 ## Overview
 
-Olympus is a JavaScript library for 3D web applications in architecture, engineering, construction, and operations (AECO), with emphasis on visual analysis of building and infrastructure data. 
+A lightweight web framework (1.4MB js build + tool dependencies) for build or prototyping 3D web applications for the architecture, engineering, construction, and operations (AECO).
 
-### Features
+Olympus removes the overhead of building a 3D viewer from scratch.
 
-- **Viewport** — Three.js-based 3D editor (orbit, first-person, fly, drive)
-- **Scripting** — Monaco editor with Python (Pyodide) and JavaScript
-- **IFC** — IfcOpenShell, ifc-lite, and web-ifc-related integration ([repository setup](docs/guides/repository-setup.md))
-- **Modules and operators** — Pluggable addons, `operators.execute`, configurable UI shell
+## Quick start
+
+### Prerequisites
+- Node.js 18+
+- npm 9+
+- pip 
+- python 3.10+
+
+
+###  Let's Get Started
+```bash
+# Clone the repository
+git clone <repository-url>
+cd Olympus
+
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+
+# Start the development server
+npm run serve
+```
+
+Serve the repository root, then open directory URLs (for example `npm run serve` on port 3000, or `python -m http.server 8080`):
+
+- [http://localhost:3000/examples/HelloWorld/](http://localhost:3000/examples/HelloWorld/)
+
+- [http://localhost:3000/examples/Addons/](http://localhost:3000/examples/Addons/)
+
+
+## Olympus AECO Modes
+
+Features are additive: each row includes everything to its left.
+
+| **Mode** | **Viewport** | **IFC Geometry** | **IFC editing** | **Code editor** | **Python prototyping** |
+| --- | --- | --- | --- | --- | --- |
+| **AECO_Vanilla** | ✓ | ✓ | — | — | — |
+| **AECO_Power**  | ✓ | ✓ | ✓ | ✓| — |
+| **AECO_SuperPower**  | ✓ | ✓ |✓ |✓ | ✓ |
 
 ### Useful applications:
 
-- Custom BIM viewers
-- Internal authoring tools
-- Prototypes that need navigation, layers, and extension points without building an editor stack from scratch.
+Any Business Usecase in the AEC industry can be built with Olympus.
+
+We already cover some construction use cases and plan to cover more in the future. ( Community Powered !)
+
+You can freely create your own app with Olympus:
+- Slap your logo and call it a day
+- Modify core to your liking 
+- Create addons for your own application
+
 
 ### Examples in this repository
 
@@ -53,46 +96,17 @@ There are **two** hosted examples. Both load **template IFC** samples from `exte
 | **HelloWorld** | **Reference application** — the default app layout in the repo; use it for first run, tutorials, and to see core module defaults. |
 | **Addons** | **Host application pattern** — same stack as HelloWorld, plus a `configuration/` layout and **custom addons** under `examples/Addons/addons/`; use it as the template for your own product or internal tool. |
 
-## Quick start
+## Development (rebuild from source)
 
-### Hosted demos
+Changing `src/` or regenerating `dist/index.js` and `dist/pyodide.worker.js` uses Node.js and npm. Use **`npm run setup`** for install, full vendor sync, and build in one step, or see [Repository setup](docs/guides/repository-setup.md).
 
-Published examples run in the browser without cloning or Node.js.
-
-- [Hello World — reference app](https://myoualid.github.io/olympus/examples/HelloWorld/index.html)
-- [Addons — host app with custom addons](https://myoualid.github.io/olympus/examples/Addons/index.html)
-
-### Local examples (prebuilt bundle)
-
-The default clone includes `dist/index.js` and `external/vendor/` so examples can run without `npm install` or `npm run build`. IFC Lite (`external/vendor/ifc-lite/`) is part of that vendor tree; if it is missing, run **`npm install`** (which runs **`npm run sync:ifc-lite`**) or **`npm run sync:ifc-lite`** after installing dependencies.
-
-```bash
-git clone https://github.com/myoualid/olympus.git
-cd olympus
-```
-
-Examples use import maps and ES modules; a static HTTP origin is required (`file://` is not supported). Serve the repository root, then open directory URLs:
-
-```bash
-python -m http.server 8080
-```
-
-- [http://localhost:8080/examples/HelloWorld/](http://localhost:8080/examples/HelloWorld/)
-- [http://localhost:8080/examples/Addons/](http://localhost:8080/examples/Addons/)
-
-`npm install` and `npm run build` are unnecessary for this path when `dist/` and `external/vendor/` are present. VS Code Live Server is valid if the opened workspace is the repository root.
-
-### Development (rebuild from source)
-
-Changing `src/` or regenerating `dist/index.js` and `dist/pyodide.worker.js` requires Node.js, npm, and the vendor layout in [Repository setup](docs/guides/repository-setup.md).
-
-```bash
-npm install
-npm run setup
-npm run serve
-```
 
 Examples: [http://localhost:3000/examples/HelloWorld/](http://localhost:3000/examples/HelloWorld/). The project server sets MIME types suitable for Pyodide and `.mjs` loads. For Pyodide or module load issues behind a minimal static server, use `npm run serve` or [Build and runtime troubleshooting](docs/guides/build-and-runtime-troubleshooting.md).
+
+
+## Data Agnostic
+
+Olympus is data agnostic. It currently implements the IFC standard for Building Information Modeling. Other data schemas will be supported in the future ( BrickSchema for Operations, Google Buildings Schema).
 
 ## Documentation
 
@@ -108,7 +122,7 @@ This page summarizes orientation, quick paths, and a documentation index. Proced
 
 - [Repository setup](docs/guides/repository-setup.md) — Layout, vendors, `dist/`, build, serve, scripts
 - [Configure and deploy](docs/guides/configure-and-deploy.md) — `Settings` base URLs for deployment
-- [Minimal host application](docs/guides/minimal-host-application.md) — `AECO` and `createUI` embedding
+- [Minimal host application](docs/guides/minimal-host-application.md) — `AECO` and `initWorld` embedding
 - [Build and runtime troubleshooting](docs/guides/build-and-runtime-troubleshooting.md) — Build and runtime faults
 
 ### Tutorials
@@ -133,7 +147,7 @@ This page summarizes orientation, quick paths, and a documentation index. Proced
 
 ### Generated documentation site
 
-Canonical prose and API notes are maintained under `docs/getting-started/`, `docs/guides/`, and `docs/api/`. The static site under `docs/olympus/` is built with `npm run docs:olympus` and previewed with `npm run docs:olympus:serve`.
+Canonical prose and API notes are maintained under `docs/getting-started/`, `docs/guides/`, and `docs/api/`. The static pages under `docs/olympus/` can be previewed with a static server (for example `npx serve docs/olympus`).
 
 - [Olympus doc hub](docs/olympus/README.md) — Entry point for the site bundle
 - [How the app works](docs/olympus/guides/how-the-app-works.md) — Architecture overview

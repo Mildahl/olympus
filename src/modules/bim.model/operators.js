@@ -16,12 +16,16 @@ import { CoordinateSystemHelper } from "../../context/world/utils/CoordinateSyst
 
 const AVAILABLE_ELEMENT_TOOLS = AECO_TOOLS.world.drawing.AVAILABLETOOLS;
 
-class BIM_SetActiveType extends Operator {
+class BIM_OP_SetActiveType extends Operator {
   static operatorName = "bim.set_active_type";
 
   static operatorLabel = "Operator Template";
 
   static operatorOptions = ["REGISTER"];
+
+  static operatorParams = {
+    GlobalId: { type: "string", description: "GlobalId of the IFC type to activate" },
+  };
 
   constructor(context, GlobalId) {
     super(context);
@@ -43,14 +47,14 @@ class BIM_SetActiveType extends Operator {
 
     const activeModel = this.context.ifc.activeModel;
 
-    const ifcClass = await AECO_TOOLS.ifc.getClass(activeModel, this.GlobalId);
+    const ifcClass = await AECO_TOOLS.bim.ifc.getClass(activeModel, this.GlobalId);
 
     const isSetup = await this._setupMode(ifcClass);
 
     if (!isSetup) {
       return {
         status: "CANCELLED",
-        message: `BIM_SetActiveType: No available modeling Tool for IFC type ${ifcClass}`,
+        message: `BIM_OP_SetActiveType: No available modeling Tool for IFC type ${ifcClass}`,
       };
     }
 
@@ -74,7 +78,7 @@ class BIM_SetActiveType extends Operator {
       return false;
     }
 
-    AECO_TOOLS.world.drawing.setMode(this.context, mode.drawMode, ifcClass);
+    AECO_TOOLS.world.drawing.setMode(mode.drawMode, ifcClass);
 
     await this._setupModelingParameters(ifcClass);
 
@@ -198,12 +202,17 @@ class BIM_SetActiveType extends Operator {
   }
 }
 
-class BIM_CreateSpace extends Operator {
+class BIM_OP_CreateSpace extends Operator {
   static operatorName = "bim.create_space";
 
   static operatorLabel = "Create Space";
 
   static operatorOptions = ["REGISTER", "UNDO"];
+
+  static operatorParams = {
+    modelName: { type: "string", description: "IFC model name (omit for active model)" },
+    params: { type: "object", description: "Space parameters: { height, polyline: [{x,y},...] }" },
+  };
 
   constructor(context, modelName, params) {
     super(context);
@@ -268,12 +277,17 @@ class BIM_CreateSpace extends Operator {
 /**
  * Create a wall between two points
  */
-class BIM_CreateLayeredConstruction extends Operator {
+class BIM_OP_CreateLayeredConstruction extends Operator {
   static operatorName = "bim.vertical_layer";
 
   static operatorLabel = "Horizontal Construction";
 
   static operatorOptions = ["REGISTER", "UNDO"];
+
+  static operatorParams = {
+    modelName: { type: "string", description: "IFC model name (omit for active model)" },
+    params: { type: "object", description: "Construction parameters: { start: {x,y,z}, end: {x,y,z}, height, thickness, alignment, typeGuid }" },
+  };
 
   constructor(context, modelName, params) {
     super(context);
@@ -335,12 +349,17 @@ class BIM_CreateLayeredConstruction extends Operator {
   }
 }
 
-class BIM_CreateProfiledConstruction extends Operator {
+class BIM_OP_CreateProfiledConstruction extends Operator {
   static operatorName = "bim.profiled_construction";
 
   static operatorLabel = "Profiled Construction";
 
   static operatorOptions = ["REGISTER", "UNDO"];
+
+  static operatorParams = {
+    modelName: { type: "string", description: "IFC model name (omit for active model)" },
+    params: { type: "object", description: "Profiled construction parameters: { start: {x,y,z}, end: {x,y,z}, depth, width, thickness, typeGuid }" },
+  };
 
   constructor(context, modelName, params) {
     super(context);
@@ -398,12 +417,17 @@ class BIM_CreateProfiledConstruction extends Operator {
   }
 }
 
-class BIM_CreateTypeOccurence extends Operator {
+class BIM_OP_CreateTypeOccurence extends Operator {
   static operatorName = "bim.new_occurence";
 
   static operatorLabel = "New Occurence";
 
   static operatorOptions = ["REGISTER", "UNDO"];
+
+  static operatorParams = {
+    modelName: { type: "string", description: "IFC model name (omit for active model)" },
+    params: { type: "object", description: "Occurence parameters: { position: {x,y,z}, width, height, depth, rotation, typeGuid }" },
+  };
 
   constructor(context, modelName, params) {
     super(context);
@@ -464,12 +488,17 @@ class BIM_CreateTypeOccurence extends Operator {
 /**
  * Create a horizontal layered element (slab, floor) from a polyline perimeter
  */
-class BIM_CreateHorizontalLayer extends Operator {
+class BIM_OP_CreateHorizontalLayer extends Operator {
   static operatorName = "bim.horizontal_layer";
 
   static operatorLabel = "Horizontal Layer";
 
   static operatorOptions = ["REGISTER", "UNDO"];
+
+  static operatorParams = {
+    modelName: { type: "string", description: "IFC model name (omit for active model)" },
+    params: { type: "object", description: "Horizontal layer parameters: { polyline: [{x,y},...], thickness, typeGuid }" },
+  };
 
   constructor(context, modelName, params) {
     super(context);
@@ -529,12 +558,17 @@ class BIM_CreateHorizontalLayer extends Operator {
 /**
  * Create a window in a wall
  */
-class BIM_CreateWindow extends Operator {
+class BIM_OP_CreateWindow extends Operator {
   static operatorName = "bim.create_window";
 
   static operatorLabel = "Create Window";
 
   static operatorOptions = ["REGISTER", "UNDO"];
+
+  static operatorParams = {
+    modelName: { type: "string", description: "IFC model name (omit for active model)" },
+    params: { type: "object", description: "Window parameters: { hostGuid, width, height, sillHeight, position: {x,y,z}, rotation }" },
+  };
 
   constructor(context, modelName, params) {
     super(context);
@@ -593,12 +627,17 @@ class BIM_CreateWindow extends Operator {
 /**
  * Create a door in a wall
  */
-class BIM_CreateDoor extends Operator {
+class BIM_OP_CreateDoor extends Operator {
   static operatorName = "bim.create_door";
 
   static operatorLabel = "Create Door";
 
   static operatorOptions = ["REGISTER", "UNDO"];
+
+  static operatorParams = {
+    modelName: { type: "string", description: "IFC model name (omit for active model)" },
+    params: { type: "object", description: "Door parameters: { hostGuid, width, height, position: {x,y,z}, rotation }" },
+  };
 
   constructor(context, modelName, params) {
     super(context);
@@ -657,12 +696,17 @@ class BIM_CreateDoor extends Operator {
 /**
  * Refresh geometry for an existing element
  */
-class BIM_RefreshElement extends Operator {
+class BIM_OP_RefreshElement extends Operator {
   static operatorName = "bim.refresh_element";
 
   static operatorLabel = "Refresh Element Geometry";
 
   static operatorOptions = ["REGISTER"];
+
+  static operatorParams = {
+    modelName: { type: "string", description: "IFC model name (omit for active model)" },
+    GlobalId: { type: "string", description: "GlobalId of the IFC element to refresh" },
+  };
 
   constructor(context, modelName, GlobalId) {
     super(context);
@@ -693,12 +737,17 @@ class BIM_RefreshElement extends Operator {
 /**
  * Delete an IFC element
  */
-class BIM_DeleteElement extends Operator {
+class BIM_OP_DeleteElement extends Operator {
   static operatorName = "bim.delete_element";
 
   static operatorLabel = "Delete Element";
 
   static operatorOptions = ["REGISTER", "UNDO"];
+
+  static operatorParams = {
+    modelName: { type: "string", description: "IFC model name (omit for active model)" },
+    GlobalId: { type: "string", description: "GlobalId of the IFC element to delete" },
+  };
 
   constructor(context, modelName, GlobalId) {
     super(context);
@@ -731,14 +780,14 @@ class BIM_DeleteElement extends Operator {
 }
 
 export default [
-  BIM_SetActiveType,
-  BIM_CreateSpace,
-  BIM_CreateTypeOccurence,
-  BIM_CreateLayeredConstruction,
-  BIM_CreateHorizontalLayer,
-  BIM_CreateProfiledConstruction,
-  BIM_CreateWindow,
-  BIM_CreateDoor,
-  BIM_RefreshElement,
-  BIM_DeleteElement,
+  BIM_OP_SetActiveType,
+  BIM_OP_CreateSpace,
+  BIM_OP_CreateTypeOccurence,
+  BIM_OP_CreateLayeredConstruction,
+  BIM_OP_CreateHorizontalLayer,
+  BIM_OP_CreateProfiledConstruction,
+  BIM_OP_CreateWindow,
+  BIM_OP_CreateDoor,
+  BIM_OP_RefreshElement,
+  BIM_OP_DeleteElement,
 ];

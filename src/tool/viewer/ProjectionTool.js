@@ -4,7 +4,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 import { MapControls } from 'three/examples/jsm/controls/MapControls.js';
 
-import { PlanarIntersectionGenerator } from '../../../external/vendor/three-edge-projection/index.js';
+import { PlanarIntersectionGenerator } from '../../third-party/three-edge-projection/index.js';
 
 import { ThreeHelpers } from '../../context/world/utils/ThreeHelpers.js';
 
@@ -17,7 +17,7 @@ function applyProjectionPreviewRoll(camera, rollDegrees) {
 
   const forward = new THREE.Vector3();
 
-  camera.getWorldDirection(forward);
+  camera.getWorldDirection(forward); 
 
   const rollQuaternion = new THREE.Quaternion().setFromAxisAngle(
     forward,
@@ -89,6 +89,38 @@ class ProjectionTool {
 
     const geometries = [];
 
+    const appendPreparedGeometry = (baseGeometry, matrixWorld) => {
+      if (!baseGeometry) return;
+
+      let clone = baseGeometry.clone();
+
+      clone.applyMatrix4(matrixWorld);
+
+      for (const key in clone.attributes) {
+        if (key !== 'position') clone.deleteAttribute(key);
+      }
+
+      // Keep merge input minimal and consistent across all scene meshes.
+      clone.morphAttributes = {};
+      clone.morphTargetsRelative = false;
+
+      if (clone.index) {
+        const nonIndexed = clone.toNonIndexed();
+
+        clone.dispose();
+
+        clone = nonIndexed;
+      }
+
+      const positionAttribute = clone.getAttribute('position');
+
+      if (positionAttribute && positionAttribute.count > 0) {
+        geometries.push(clone);
+      } else {
+        clone.dispose();
+      }
+    };
+
     const instanceMatrix = new THREE.Matrix4();
 
     const combinedWorldMatrix = new THREE.Matrix4();
@@ -114,21 +146,7 @@ class ProjectionTool {
 
           combinedWorldMatrix.multiplyMatrices(object.matrixWorld, instanceMatrix);
 
-          const clone = baseGeometry.clone();
-
-          clone.applyMatrix4(combinedWorldMatrix);
-
-          for (const key in clone.attributes) {
-            if (key !== 'position') clone.deleteAttribute(key);
-          }
-
-          const pos = clone.getAttribute('position');
-
-          if (pos && pos.count > 0) {
-            geometries.push(clone);
-          } else {
-            clone.dispose();
-          }
+          appendPreparedGeometry(baseGeometry, combinedWorldMatrix);
         }
 
         return;
@@ -140,21 +158,7 @@ class ProjectionTool {
 
       object.updateWorldMatrix(true, false);
 
-      const clone = object.geometry.clone();
-
-      clone.applyMatrix4(object.matrixWorld);
-
-      for (const key in clone.attributes) {
-        if (key !== 'position') clone.deleteAttribute(key);
-      }
-
-      const pos = clone.getAttribute('position');
-
-      if (pos && pos.count > 0) {
-        geometries.push(clone);
-      } else {
-        clone.dispose();
-      }
+      appendPreparedGeometry(object.geometry, object.matrixWorld);
     });
 
     if (geometries.length === 0) return null;

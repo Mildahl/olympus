@@ -6,7 +6,6 @@
  *   
  *   # Access world tools
  *   tools.scene.selectObjectsByGuid([guid1, guid2])
- *   tools.scene.add(obj, parent)
  *   
  *   # Execute operators
  *   operators.execute("layer.new", {"name": "My Layer"})

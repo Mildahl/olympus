@@ -1,19 +1,19 @@
 function create(name = 'New Animation Path', { animationPathTool, context, signals }) {
-  const path = animationPathTool.createPath(context, name);
+  const path = animationPathTool.createPath(name);
 
-  signals.animationPathCreated.dispatch(path);
+  context.signals.animationPathCreated.dispatch(path);
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   return path;
 }
 
 function remove(GlobalId, { animationPathTool, context, signals }) {
-  const result = animationPathTool.removePath(context, GlobalId);
+  const result = animationPathTool.removePath(GlobalId);
 
-  signals.animationPathRemoved.dispatch(GlobalId);
+  context.signals.animationPathRemoved.dispatch(GlobalId);
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   context.editor.signals.animationPathChanged.dispatch();
 
@@ -21,21 +21,21 @@ function remove(GlobalId, { animationPathTool, context, signals }) {
 }
 
 function rename(GlobalId, newName, { animationPathTool, context, signals }) {
-  const result = animationPathTool.renamePath(context, GlobalId, newName);
+  const result = animationPathTool.renamePath(GlobalId, newName);
 
-  signals.animationPathUpdated.dispatch({ GlobalId, newName });
+  context.signals.animationPathUpdated.dispatch({ GlobalId, newName });
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   return result;
 }
 
 function activate(GlobalId, { animationPathTool, context, signals }) {
-  const result = animationPathTool.activatePath(context, GlobalId);
+  const result = animationPathTool.activatePath(GlobalId);
 
-  signals.animationPathActivated.dispatch(GlobalId);
+  context.signals.animationPathActivated.dispatch(GlobalId);
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   context.editor.signals.animationPathChanged.dispatch();
 
@@ -43,11 +43,11 @@ function activate(GlobalId, { animationPathTool, context, signals }) {
 }
 
 function setVisibility(GlobalId, visible, { animationPathTool, context, signals }) {
-  const result = animationPathTool.setPathVisibility(context, GlobalId, visible);
+  const result = animationPathTool.setPathVisibility(GlobalId, visible);
 
-  signals.animationPathUpdated.dispatch({ GlobalId, visible });
+  context.signals.animationPathUpdated.dispatch({ GlobalId, visible });
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   context.editor.signals.animationPathChanged.dispatch();
 
@@ -59,11 +59,11 @@ function toggleVisibility(GlobalId, { animationPathTool, context, signals }) {
 
   const newVisible = !path.visible;
 
-  const result = animationPathTool.setPathVisibility(context, GlobalId, newVisible);
+  const result = animationPathTool.setPathVisibility(GlobalId, newVisible);
 
-  signals.animationPathUpdated.dispatch({ GlobalId, visible: newVisible });
+  context.signals.animationPathUpdated.dispatch({ GlobalId, visible: newVisible });
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   context.editor.signals.animationPathChanged.dispatch();
 
@@ -71,27 +71,27 @@ function toggleVisibility(GlobalId, { animationPathTool, context, signals }) {
 }
 
 function play(GlobalId, { animationPathTool, context, signals }) {
-  animationPathTool.playPath(context, GlobalId);
+  animationPathTool.playPath(GlobalId);
 
-  signals.animationPathPlaybackStarted.dispatch(GlobalId);
+  context.signals.animationPathPlaybackStarted.dispatch(GlobalId);
 
   return true;
 }
 
 function stop(GlobalId, { animationPathTool, context, signals }) {
-  const result = animationPathTool.stopPath(context, GlobalId);
+  const result = animationPathTool.stopPath(GlobalId);
 
-  signals.animationPathPlaybackEnded.dispatch(GlobalId);
+  context.signals.animationPathPlaybackEnded.dispatch(GlobalId);
 
   return result;
 }
 
 function addViewpoint(pathGlobalId, viewpointGlobalId, { animationPathTool, context, signals }) {
-  const result = animationPathTool.addViewpointToPath(context, pathGlobalId, viewpointGlobalId);
+  const result = animationPathTool.addViewpointToPath(pathGlobalId, viewpointGlobalId);
 
-  signals.animationPathUpdated.dispatch({ pathGlobalId, action: 'addViewpoint', viewpointGlobalId });
+  context.signals.animationPathUpdated.dispatch({ pathGlobalId, action: 'addViewpoint', viewpointGlobalId });
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   context.editor.signals.animationPathChanged.dispatch();
 
@@ -99,11 +99,11 @@ function addViewpoint(pathGlobalId, viewpointGlobalId, { animationPathTool, cont
 }
 
 function removeViewpoint(pathGlobalId, viewpointGlobalId, { animationPathTool, context, signals }) {
-  const result = animationPathTool.removeViewpointFromPath(context, pathGlobalId, viewpointGlobalId);
+  const result = animationPathTool.removeViewpointFromPath(pathGlobalId, viewpointGlobalId);
 
-  signals.animationPathUpdated.dispatch({ pathGlobalId, action: 'removeViewpoint', viewpointGlobalId });
+  context.signals.animationPathUpdated.dispatch({ pathGlobalId, action: 'removeViewpoint', viewpointGlobalId });
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   context.editor.signals.animationPathChanged.dispatch();
 
@@ -111,11 +111,11 @@ function removeViewpoint(pathGlobalId, viewpointGlobalId, { animationPathTool, c
 }
 
 function moveViewpoint(pathGlobalId, viewpointGlobalId, newIndex, { animationPathTool, context, signals }) {
-  const result = animationPathTool.moveViewpointInPath(context, pathGlobalId, viewpointGlobalId, newIndex);
+  const result = animationPathTool.moveViewpointInPath(pathGlobalId, viewpointGlobalId, newIndex);
 
-  signals.animationPathUpdated.dispatch({ pathGlobalId, action: 'moveViewpoint', viewpointGlobalId, newIndex });
+  context.signals.animationPathUpdated.dispatch({ pathGlobalId, action: 'moveViewpoint', viewpointGlobalId, newIndex });
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   context.editor.signals.animationPathChanged.dispatch();
 
@@ -123,19 +123,19 @@ function moveViewpoint(pathGlobalId, viewpointGlobalId, newIndex, { animationPat
 }
 
 function updateSettings(GlobalId, settings, { animationPathTool, context, signals }) {
-  const result = animationPathTool.updateAnimationSettings(context, GlobalId, settings);
+  const result = animationPathTool.updateAnimationSettings(GlobalId, settings);
 
-  signals.animationPathUpdated.dispatch({ GlobalId, settings });
+  context.signals.animationPathUpdated.dispatch({ GlobalId, settings });
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   return result;
 }
 
 function setPathColor(GlobalId, color, { animationPathTool, context, signals }) {
-  const result = animationPathTool.setPathColor(context, GlobalId, color);
+  const result = animationPathTool.setPathColor(GlobalId, color);
 
-  signals.animationPathUpdated.dispatch({ GlobalId, pathColor: color });
+  context.signals.animationPathUpdated.dispatch({ GlobalId, pathColor: color });
 
   context.editor.signals.animationPathChanged.dispatch();
 
@@ -143,9 +143,9 @@ function setPathColor(GlobalId, color, { animationPathTool, context, signals }) 
 }
 
 function setMarkerColor(GlobalId, color, { animationPathTool, context, signals }) {
-  const result = animationPathTool.setMarkerColor(context, GlobalId, color);
+  const result = animationPathTool.setMarkerColor(GlobalId, color);
 
-  signals.animationPathUpdated.dispatch({ GlobalId, markerColor: color });
+  context.signals.animationPathUpdated.dispatch({ GlobalId, markerColor: color });
 
   context.editor.signals.animationPathChanged.dispatch();
 
@@ -153,9 +153,9 @@ function setMarkerColor(GlobalId, color, { animationPathTool, context, signals }
 }
 
 function setTargetColor(GlobalId, color, { animationPathTool, context, signals }) {
-  const result = animationPathTool.setTargetColor(context, GlobalId, color);
+  const result = animationPathTool.setTargetColor(GlobalId, color);
 
-  signals.animationPathUpdated.dispatch({ GlobalId, targetColor: color });
+  context.signals.animationPathUpdated.dispatch({ GlobalId, targetColor: color });
 
   context.editor.signals.animationPathChanged.dispatch();
 
@@ -165,19 +165,19 @@ function setTargetColor(GlobalId, color, { animationPathTool, context, signals }
 function createTemplate({ animationPathTool, context, signals }) {
   const template = animationPathTool.createTemplate(context);
 
-  signals.animationPathCreated.dispatch(template);
+  context.signals.animationPathCreated.dispatch(template);
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   return template;
 }
 
 function updateViewpointSettings(pathGlobalId, viewpointGlobalId, settings, { animationPathTool, context, signals }) {
-  const result = animationPathTool.updateViewpointSettings(context, pathGlobalId, viewpointGlobalId, settings);
+  const result = animationPathTool.updateViewpointSettings(pathGlobalId, viewpointGlobalId, settings);
 
-  signals.animationPathUpdated.dispatch({ pathGlobalId, viewpointGlobalId, settings });
+  context.signals.animationPathUpdated.dispatch({ pathGlobalId, viewpointGlobalId, settings });
 
-  signals.animationPathsChanged.dispatch();
+  context.signals.animationPathsChanged.dispatch();
 
   return result;
 }

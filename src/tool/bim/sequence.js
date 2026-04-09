@@ -1,49 +1,11 @@
+import { Collection } from "../../data/index.js";
+
 import dataStore from "../../data/index.js";
 
 import IfcTool from "./ifc.js";
 
-import { Collection } from "../../data/index.js";
+import SceneTool from "../viewer/SceneTool.js";
 
-import { IfcRoot, IfcModel } from "../../data/index.js";
-
-function parseRunToolJson(result, contextLabel) {
-  if (result instanceof Error) {
-    console.error(`[SequenceTool] ${contextLabel}:`, result.message);
-
-    return null;
-  }
-
-  if (result !== null && typeof result === "object") {
-    return result;
-  }
-
-  if (typeof result !== "string") {
-    console.error(
-      `[SequenceTool] ${contextLabel}: expected JSON string, got ${typeof result}`,
-    );
-
-    return null;
-  }
-
-  const trimmed = result.trim();
-
-  if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) {
-    console.error(
-      `[SequenceTool] ${contextLabel}: worker did not return JSON:`,
-      trimmed.slice(0, 200),
-    );
-
-    return null;
-  }
-
-  try {
-    return JSON.parse(trimmed);
-  } catch (e) {
-    console.error(`[SequenceTool] ${contextLabel}:`, e.message);
-
-    return null;
-  }
-}
 
 class BIMWorkScheduleProperties extends Collection {
   constructor(GlobalId, name) {
@@ -76,8 +38,9 @@ class SequenceTool {
       toolName:"sequence",
       functionName :"get_task_parent_schedule",
       args: {
-        task: new IfcRoot(taskGlobalId),
-      }
+        task: taskGlobalId,
+      },
+      entityArgs: ["task"],
     })
   }
 
@@ -87,16 +50,105 @@ class SequenceTool {
         toolName:"sequence",
         functionName :"load_work_schedules",
         args: {
-            model: new IfcModel(modelName),
-        }
+            model: modelName,
+        },
+        entityArgs: ["model"]
+    });
+    return JSON.parse(result) ?? [];
+  
+  }
+
+  static async getTasks(modelName) {
+    const result = await IfcTool.runTool(modelName, {
+        toolName:"sequence",
+        functionName :"load_tasks",
+        args: {
+            model: modelName,
+        },
+        entityArgs: ["model"]
     });
 
-    return (
-      parseRunToolJson(result, "getWorkSchedules") ?? {
-        work_schedules: {},
-        work_schedules_enum: [],
-      }
-    );
+    return JSON.parse(result) ?? [];
+  }
+
+  static async getTaskTimes(modelName) {
+    const result = await IfcTool.runTool(modelName, {
+        toolName:"sequence",
+        functionName :"load_task_times",
+        args: {
+            model: modelName,
+        },
+        entityArgs: ["model"]
+    });
+
+    return JSON.parse(result) ?? [];
+  }
+
+  static async getRecurrencePatterns(modelName) {
+    const result = await IfcTool.runTool(modelName, {
+        toolName:"sequence",
+        functionName :"load_recurrence_patterns",
+        args: {
+            model: modelName,
+        },
+        entityArgs: ["model"]
+    });
+
+    return JSON.parse(result) ?? [];
+  }
+
+  static async getSequences(modelName) {
+    const result = await IfcTool.runTool(modelName, {
+        toolName:"sequence",
+        functionName :"load_sequences",
+        args: {
+            model: modelName,
+        },
+        entityArgs: ["model"]
+    });
+
+    return JSON.parse(result) ?? [];
+  }
+
+
+  static async getTimePeriods(modelName) {
+    const result = await IfcTool.runTool(modelName, {
+        toolName:"sequence",
+        functionName :"load_time_periods",
+        args: {
+            model: modelName,
+        },
+        entityArgs: ["model"]
+    });
+
+    return JSON.parse(result) ?? [];
+  }
+
+  static async getCalendars(modelName) {
+    const result = await IfcTool.runTool(modelName, {
+        toolName:"sequence",
+        functionName :"load_work_calendars",
+        args: {
+            model: modelName,
+        },
+        entityArgs: ["model"]
+    });
+
+    return JSON.parse(result) ?? [];
+  }
+
+
+  static async getWorkingTimes(modelName) {
+    const result = await IfcTool.runTool(modelName, {
+        toolName:"sequence",
+        functionName :"load_work_times",
+        args: {
+            model: modelName,
+        },
+        entityArgs: ["model"]
+    });
+
+    return JSON.parse(result) ?? [];
   }
 
   static async create_tasks_json(modelName, work_schedule) {
@@ -105,11 +157,12 @@ class SequenceTool {
         toolName:"sequence",
         functionName :"create_tasks_json",
         args: {
-            work_schedule: new IfcRoot(work_schedule),
-        }
+            work_schedule: work_schedule,
+        },
+        entityArgs: ["work_schedule"]
     })
 
-    return parseRunToolJson(result, "create_tasks_json") ?? [];
+    return JSON.parse(result) ?? [];
 
   }
 
@@ -155,95 +208,144 @@ class SequenceTool {
     }
   }
 
-  static async getTaskOutputs(modelName, stepID) {
-    const globalID = await IfcTool.getGLobalId(modelName, stepID);
+  static async getTasksForProduct(modelName, productGlobalId) {
+    const result = await IfcTool.runTool(modelName, {
+      toolName: "sequence",
+      functionName: "get_tasks_for_product",
+      args: {
+        product: productGlobalId,
+      },
+      entityArgs: ["product"],
+    });
+
+    return JSON.parse(result) ?? { inputs: [], outputs: [] };
+  }
+
+  static async getTaskOutputs(modelName, taskID) {
+    const globalID = await IfcTool.getGLobalId(modelName, taskID);
 
     const result = await IfcTool.runTool(modelName, {
       toolName: "sequence",
       functionName: "get_task_outputs",
       args: {
-        task: new IfcRoot(globalID),
+        task: globalID,
+        is_deep: false,
       },
+      entityArgs: ["task"],
     })
 
     return result;
   }
+  
 
-  static async getTaskInputs(modelName, stepID) {
-    const globalID = await IfcTool.getGLobalId(modelName, stepID);
+  static async getTaskInputs(modelName, taskID) {
+    const globalID = await IfcTool.getGLobalId(modelName, taskID);
 
     const result = await IfcTool.runTool(modelName, {
       toolName: "sequence",
       functionName: "get_task_inputs",
       args: {
-        task: new IfcRoot(globalID),
+        task: globalID,
+        is_deep: false,
       },
+      entityArgs: ["task"],
     })
 
     return result;
   }
 
-  static async getTaskResources(modelName, stepID) {
-    const globalID = await IfcTool.getGLobalId(modelName, stepID);
+  static async getTaskResources(modelName, taskID) {
+    const globalID = await IfcTool.getGLobalId(modelName, taskID);
 
     const result = await IfcTool.runTool(modelName, {
       toolName: "sequence",
       functionName: "get_task_resources",
       args: {
-        task: new IfcRoot(globalID),
+        task: globalID,
+        is_deep: false,
       },
+      entityArgs: ["task"],
     })
 
     return result;
   }
 
-  static async getTaskDetails(modelName, stepID) {
+  static async getTaskDetails(modelName, taskID) {
     const [outputs, inputs, resources] = await Promise.all([
-      SequenceTool.getTaskOutputs(modelName, stepID),
-      SequenceTool.getTaskInputs(modelName, stepID),
-      SequenceTool.getTaskResources(modelName, stepID)
+      SequenceTool.getTaskOutputs(modelName, taskID),
+      SequenceTool.getTaskInputs(modelName, taskID),
+      SequenceTool.getTaskResources(modelName, taskID)
     ]);
 
     return { outputs, inputs, resources };
   }
 
-  static async getAnimationData(modelName, workScheduleId) {
+
+  static async higlight_task_elements(modelName, taskID){
+    
+    const inputs = await SequenceTool.getTaskInputs(modelName, taskID)
+
+    const outputs = await SequenceTool.getTaskOutputs(modelName, taskID)
+
+    const guids = [];
+
+      for (const element of [...inputs, ...outputs]) {
+        if (element.GlobalId) {
+          guids.push(element.GlobalId);
+        }
+      }
+    
+    const getThreeObjs = IfcTool.getObjects(guids)
+
+    console.log(guids, "resolved to", getThreeObjs)
+    
+    SceneTool.highlight("off");
+
+    SceneTool.highlight("on", getThreeObjs);
+
+  }
+
+
+  static async getAnimationData(modelName, workScheduleGlobalId) {
     const result = await IfcTool.runTool(modelName, {
       toolName: "sequence",
       functionName: "get_animation_data",
       args: {
-        work_schedule: new IfcRoot(workScheduleId),
+        work_schedule: workScheduleGlobalId,
       },
+      entityArgs: ["work_schedule"],
     });
 
-    return parseRunToolJson(result, "getAnimationData") ?? {};
+    return JSON.parse(result) ?? {};
   }
 
-  static async getElementsAtDate(modelName, workScheduleId, targetDate) {
+  static async getElementsAtDate(modelName, workScheduleGlobalId, targetDate) {
     const dateStr = targetDate instanceof Date ? targetDate.toISOString() : targetDate;
 
     const result = await IfcTool.runTool(modelName, {
       toolName: "sequence",
       functionName: "get_elements_at_date",
       args: {
-        work_schedule: new IfcRoot(workScheduleId),
+        work_schedule: workScheduleGlobalId,
         target_date: dateStr,
       },
+      entityArgs: ["work_schedule"],
     });
 
-    return parseRunToolJson(result, "getElementsAtDate") ?? [];
+    return JSON.parse(result) ?? [];
   }
 
-  static async getScheduleDateRange(modelName, workScheduleId) {
+  static async getScheduleDateRange(modelName, workScheduleGlobalId) {
     const result = await IfcTool.runTool(modelName, {
       toolName: "sequence",
       functionName: "get_schedule_date_range",
       args: {
-        work_schedule: new IfcRoot(workScheduleId),
+        work_schedule: workScheduleGlobalId,
       },
+      entityArgs: ["work_schedule"],
     });
 
-    return parseRunToolJson(result, "getScheduleDateRange");
+    return JSON.parse(result) ?? {};
   }
 
 }

@@ -1,0 +1,845 @@
+.LLMChat-root {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.LLMChat-layout {
+  display: flex;
+  flex: 1 1 0%;
+  min-height: 0;
+  width: 100%;
+}
+
+.LLMChat-layout.LLMChat-sidebar-collapsed .LLMChat-sidebar {
+  display: none;
+}
+
+.Column.LLMChat-sidebar {
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex: 0 0 220px;
+  min-height: 0;
+  min-width: 180px;
+  max-width: 280px;
+  overflow: hidden;
+}
+
+.LLMChat-sidebarHeader {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+}
+
+.LLMChat-sidebarTitle {
+  color: var(--theme-text-light);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.Button.LLMChat-newChatButton {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+.LLMChat-sidebarList {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.LLMChat-sidebarItem {
+  align-items: center;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 6px;
+}
+
+.LLMChat-sidebarItem:hover {
+  background: var(--theme-hover-bg);
+}
+
+.LLMChat-sidebarItem.active {
+  background: var(--active);
+}
+
+.LLMChat-sidebarItemTitle {
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Icon.LLMChat-sidebarDelete {
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0;
+  padding: 2px;
+}
+
+.LLMChat-sidebarItem:hover .LLMChat-sidebarDelete,
+.LLMChat-sidebarItem.active .LLMChat-sidebarDelete {
+  opacity: 0.6;
+}
+
+.LLMChat-sidebarRenameInput {
+  flex: 1 1 0%;
+  font-size: 11px;
+  min-width: 0;
+}
+
+.LLMChat-main {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.LLMChat-topToolbar {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  padding: 6px 12px;
+}
+
+.LLMChat-transcriptSection {
+  display: flex;
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.LLMChat-messages {
+  border-radius: 6px;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 8px 8px;
+  width: 100%;
+}
+
+.LLMChat-messageItem {
+  padding: 8px 8px;
+}
+
+.LLMChat-messageItem.role-user {
+  background: var(--active);
+  border: 1px solid var(--border-hover);
+  border-radius: 4px;
+}
+
+.LLMChat-messageItem.role-assistant,
+.LLMChat-messageItem.role-tool,
+.LLMChat-messageItem.role-tool_call,
+.LLMChat-messageItem.role-thinking {
+  background: transparent;
+}
+
+.LLMChat-messageItem.role-thinking {
+  border: 1px solid var(--border-hover);
+}
+
+.LLMChat-messageRole {
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.LLMChat-messageBody {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.LLMChat-messageBody.Markdown {
+  white-space: normal;
+}
+
+.LLMChat-messageBody.Markdown p,
+.LLMChat-messageBody.Markdown ul,
+.LLMChat-messageBody.Markdown ol,
+.LLMChat-messageBody.Markdown h1,
+.LLMChat-messageBody.Markdown h2,
+.LLMChat-messageBody.Markdown h3,
+.LLMChat-messageBody.Markdown h4,
+.LLMChat-messageBody.Markdown h5,
+.LLMChat-messageBody.Markdown h6 {
+  margin-bottom: 0.3em;
+  margin-top: 0.3em;
+}
+
+.LLMChat-messageBody.Markdown p:first-child,
+.LLMChat-messageBody.Markdown ul:first-child,
+.LLMChat-messageBody.Markdown ol:first-child,
+.LLMChat-messageBody.Markdown h1:first-child,
+.LLMChat-messageBody.Markdown h2:first-child,
+.LLMChat-messageBody.Markdown h3:first-child {
+  margin-top: 0;
+}
+
+.LLMChat-messageBody.Markdown p:last-child,
+.LLMChat-messageBody.Markdown ul:last-child,
+.LLMChat-messageBody.Markdown ol:last-child {
+  margin-bottom: 0;
+}
+
+/* Adjacent ol+ul (LLM often generates numbered heading then bullets) */
+.LLMChat-messageBody.Markdown ol + ul,
+.LLMChat-messageBody.Markdown ul + ol {
+  margin-top: 0;
+}
+
+/* Paragraphs inside list items add unwanted vertical space */
+.LLMChat-messageBody.Markdown li > p {
+  margin: 0;
+}
+
+.LLMChat-composerSection {
+  padding: 0 12px 10px;
+}
+
+.LLMChat-textareaWrapper {
+  position: relative;
+}
+
+.LLMChat-textareaWrapper:focus-within {
+  border-color: var(--border-hover);
+}
+
+.LLMChat-promptInput {
+  background: transparent;
+  border: none;
+  box-sizing: border-box;
+  display: block;
+  max-height: 140px;
+  min-height: 200px;
+  padding: 8px 10px 32px;
+  resize: none;
+  width: 100%;
+}
+
+.LLMChat-promptInput:focus {
+  border: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.LLMChat-contextBar {
+  align-items: center;
+  gap: 6px;
+}
+
+.LLMChat-contextIcon {
+  font-size: 13px;
+  opacity: 0.5;
+}
+
+.LLMChat-contextLabel,
+.LLMChat-contextMsgCount {
+  font-size: 11px;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.LLMChat-contextMsgCount {
+  opacity: 0.5;
+}
+
+.LLMChat-contextTrack {
+  background: var(--border);
+  border-radius: 2px;
+  flex: 1 1 0%;
+  height: 3px;
+  min-width: 30px;
+  overflow: hidden;
+}
+
+.LLMChat-contextFill {
+  background: var(--theme-accent, #4c9a72);
+  border-radius: 2px;
+  height: 100%;
+  transition: width 0.3s, background 0.3s;
+  width: 0%;
+}
+
+.LLMChat-contextPercent {
+  font-size: 11px;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.LLMChat-contextDetailContent {
+  padding: 4px 0;
+}
+
+.LLMChat-contextDetailHeader {
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.LLMChat-contextDetailTitle {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.LLMChat-contextDetailSummary {
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.LLMChat-contextDetailSummaryText {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.LLMChat-contextDetailSummaryPercent {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.LLMChat-contextDetailTrack {
+  background: var(--border);
+  border-radius: 3px;
+  height: 6px;
+  overflow: hidden;
+  margin: 4px 0 8px;
+}
+
+.LLMChat-contextDetailFill {
+  background: var(--theme-accent, #4c9a72);
+  border-radius: 3px;
+  height: 100%;
+  transition: width 0.3s, background 0.3s;
+  width: 0%;
+}
+
+.LLMChat-contextDetailSection {
+  margin-bottom: 6px;
+}
+
+.LLMChat-contextDetailSectionHeading {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.6;
+  margin-bottom: 2px;
+}
+
+.LLMChat-contextDetailRow {
+  align-items: center;
+  justify-content: space-between;
+  padding: 1px 0;
+}
+
+.LLMChat-contextDetailRowLabel {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.LLMChat-contextDetailRowValue {
+  font-size: 12px;
+  opacity: 0.7;
+  text-align: right;
+}
+
+.LLMChat-contextDetailWarning {
+  font-size: 11px;
+  color: var(--theme-warning, #d4a017);
+  font-style: italic;
+  margin: 4px 0;
+  opacity: 0.9;
+}
+
+.LLMChat-contextDetailActions {
+  margin-top: 4px;
+}
+
+.LLMChat-contextDetailCompactButton {
+  font-size: 11px;
+  padding: 4px 10px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.LLMChat-actionsRow {
+  align-items: center;
+  bottom: 2px;
+  display: flex;
+  gap: 4px;
+  left: 4px;
+  position: absolute;
+  right: 4px;
+}
+
+.Operator.LLMChat-inlineControlButton {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  min-height: 26px;
+  min-width: 26px;
+  opacity: 0.8;
+}
+
+.Operator.LLMChat-inlineControlButton:hover {
+  opacity: 1;
+}
+
+.Select.LLMChat-modelSelect {
+  font-size: 11px;
+}
+
+.LLMChat-statusText {
+  flex-shrink: 0;
+  font-size: 11px;
+  margin-left: 4px;
+  opacity: 0.7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.LLMChat-actionsButtons {
+  display: flex;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.Icon.LLMChat-clearButton {
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 6px;
+}
+
+.Button.LLMChat-sendButton {
+  padding: 6px 12px;
+}
+
+.LLMChat-floatingSettingsContent {
+  box-sizing: border-box;
+  min-width: 280px;
+  padding: 10px;
+}
+
+.LLMChat-floatingToolsContent {
+  box-sizing: border-box;
+  min-width: 460px;
+  padding: 10px;
+}
+
+.LLMChat-toolsHeaderRow {
+  align-items: center;
+  display: flex;
+}
+
+.LLMChat-toolsSearchInput {
+  flex: 1 1 0%;
+}
+
+.LLMChat-toolsSelectedCount {
+  background: var(--active, rgba(100, 180, 160, 0.2));
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 4px 7px;
+}
+
+.LLMChat-toolsListContainer {
+  background: var(--theme-bg-secondary, rgba(0, 0, 0, 0.08));
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  max-height: 360px;
+  min-height: 220px;
+  overflow: auto;
+  padding: 6px;
+}
+
+.LLMChat-toolsCategory {
+  border-radius: 4px;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.LLMChat-toolsCategorySummary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  padding: 4px 2px;
+  user-select: none;
+}
+
+.LLMChat-toolsCategorySummary::-webkit-details-marker {
+  display: none;
+}
+
+.LLMChat-toolsCategorySummary::before {
+  color: var(--theme-text-light);
+  content: '\25B6';
+  font-size: 8px;
+  margin-right: 2px;
+  opacity: 0.6;
+  transition: transform 0.12s;
+}
+
+details.LLMChat-toolsCategory[open] > .LLMChat-toolsCategorySummary::before {
+  transform: rotate(90deg);
+}
+
+.LLMChat-toolsCategoryLabel {
+  flex: 1 1 0%;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: lowercase;
+}
+
+.LLMChat-toolsCategoryCount {
+  font-size: 11px;
+  opacity: 0.65;
+}
+
+.LLMChat-toolsCategoryBody {
+  border-left: 1px solid var(--border);
+  margin-left: 16px;
+  padding-left: 10px;
+}
+
+.LLMChat-toolsSubcategoryHeader {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 8px 0 2px;
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
+.LLMChat-toolsToolRow {
+  align-items: flex-start;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 0;
+}
+
+.LLMChat-toolsToolText {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.LLMChat-toolsToolName {
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.LLMChat-toolsToolDescription {
+  font-size: 11px;
+  line-height: 1.35;
+  opacity: 0.72;
+}
+
+.LLMChat-toolsToolDetailWrap {
+  margin-top: 4px;
+}
+
+.LLMChat-toolsToolDetailHeader {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.72;
+  text-transform: uppercase;
+}
+
+.LLMChat-toolsToolDetailList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.LLMChat-toolsToolDetailChip,
+.LLMChat-toolsToolDetailMore {
+  background: var(--theme-hover-bg, rgba(128, 128, 128, 0.1));
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: monospace;
+  font-size: 10px;
+  line-height: 1.25;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 2px 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.LLMChat-toolsToolDetailMore {
+  opacity: 0.75;
+}
+
+.LLMChat-toolsFooterRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.Button.LLMChat-toolsFooterButton {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+.LLMChat-toolsEmpty {
+  font-size: 12px;
+  opacity: 0.7;
+  padding: 10px;
+}
+
+.LLMChat-fieldRow {
+  align-items: center;
+  display: flex;
+  width: 100%;
+}
+
+.LLMChat-fieldLabel {
+  flex-shrink: 0;
+  width: 74px;
+}
+
+.LLMChat-fieldInput {
+  flex: 1 1 0%;
+}
+
+/* ─── Message entrance animation ─────────────────────────────────────────── */
+
+@keyframes LLMChat-fadeSlide {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.LLMChat-messageItem {
+  animation: LLMChat-fadeSlide 0.16s ease-out both;
+}
+
+/* ─── Thinking thread (collapsed tool-use process) ───────────────────────── */
+
+.LLMChat-thinkingBlock {
+  font-size: 12px;
+  overflow: hidden;
+}
+
+.LLMChat-thinkingHeader {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+}
+
+.LLMChat-thinkingHeader:hover {
+  background: var(--theme-hover-bg, rgba(128,128,128,0.08));
+}
+
+.LLMChat-thinkingIcon {
+  color: var(--theme-accent, #4c9a72);
+  flex-shrink: 0;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.LLMChat-thinkingLabel {
+  flex: 1 1 0%;
+  font-weight: 500;
+}
+
+.LLMChat-thinkingMeta {
+  flex-shrink: 0;
+  font-size: 11px;
+  opacity: 0.45;
+}
+
+.LLMChat-thinkingChevron {
+  flex-shrink: 0;
+  font-size: 15px;
+  opacity: 0.4;
+  transition: transform 0.18s ease;
+}
+
+.LLMChat-thinkingBlock.open .LLMChat-thinkingChevron {
+  transform: rotate(180deg);
+}
+
+.LLMChat-thinkingBody {
+  border-top: 1px solid var(--border);
+  display: none;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.LLMChat-thinkingBlock.open .LLMChat-thinkingBody {
+  display: block;
+}
+
+.LLMChat-thinkingStep {
+  border-left: 2px solid var(--border);
+  margin: 4px 10px 4px 14px;
+  padding: 2px 0 2px 10px;
+}
+
+.LLMChat-thinkingStep + .LLMChat-thinkingStep {
+  margin-top: 6px;
+}
+
+.LLMChat-thinkingRow {
+  align-items: flex-start;
+  display: flex;
+  gap: 6px;
+}
+
+.LLMChat-thinkingArrow {
+  flex-shrink: 0;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.LLMChat-thinkingArrow--call {
+  color: var(--theme-accent, #4c9a72);
+  opacity: 0.85;
+}
+
+.LLMChat-thinkingArrow--result {
+  opacity: 0.35;
+}
+
+.LLMChat-thinkingRowText {
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.LLMChat-thinkingRowText--result {
+  opacity: 0.55;
+}
+
+/* ─── Monospace body (legacy tool rows) ──────────────────────────────────── */
+
+/* ─── JSON tree (thinking block results) ─────────────────────────────────── */
+
+.LLMChat-jsonTreeWrap {
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.LLMChat-jNode {
+  display: block;
+}
+
+.LLMChat-jSummary {
+  cursor: pointer;
+  list-style: none;
+  outline: none;
+  user-select: none;
+}
+
+.LLMChat-jSummary::-webkit-details-marker { display: none; }
+
+.LLMChat-jSummary::before {
+  content: '\25B6';
+  display: inline-block;
+  font-size: 8px;
+  margin-right: 3px;
+  opacity: 0.4;
+  transition: transform 0.12s;
+}
+
+details.LLMChat-jNode[open] > .LLMChat-jSummary::before {
+  transform: rotate(90deg);
+}
+
+.LLMChat-jChildren {
+  border-left: 1px solid var(--border);
+  margin-left: 5px;
+  padding-left: 10px;
+}
+
+.LLMChat-jRow { line-height: 1.6; }
+
+.LLMChat-jKey    { color: var(--theme-accent, #4c9a72); opacity: 0.9; }
+.LLMChat-jStr    { color: #e6a07a; }
+.LLMChat-jNum    { color: #79c7e3; }
+.LLMChat-jBool   { color: #c89ee0; }
+.LLMChat-jNull   { color: #888; font-style: italic; }
+.LLMChat-jEmpty  { opacity: 0.5; }
+.LLMChat-jBracket { opacity: 0.55; }
+.LLMChat-jCount  { color: var(--theme-text-light, #999); font-size: 0.9em; margin: 0 2px; }
+.LLMChat-jMore   { font-style: italic; opacity: 0.45; }
+
+/* ─── Monospace body (legacy tool rows) ──────────────────────────────────── */
+
+.LLMChat-messageBody--mono {
+  font-family: monospace;
+  font-size: 11px;
+  opacity: 0.75;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ─── Typing indicator ────────────────────────────────────────────────────── */
+
+.LLMChat-typingIndicator {
+  align-items: center;
+  display: flex;
+  gap: 5px;
+  padding: 10px 10px;
+}
+
+@keyframes LLMChat-bounce {
+  0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+  40%           { opacity: 0.9; transform: translateY(-5px); }
+}
+
+.LLMChat-typingDot {
+  animation: LLMChat-bounce 1.1s infinite ease-in-out;
+  background: currentColor;
+  border-radius: 50%;
+  height: 5px;
+  width: 5px;
+}
+
+.LLMChat-typingDot:nth-child(2) { animation-delay: 0.18s; }
+.LLMChat-typingDot:nth-child(3) { animation-delay: 0.36s; }

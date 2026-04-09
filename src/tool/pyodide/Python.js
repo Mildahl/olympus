@@ -1,5 +1,3 @@
-import { IfcModel, IfcRoot } from '../../data/index.js';
-
 class PythonSandbox {
   static version = "v0.29.0";
 
@@ -49,7 +47,14 @@ class PythonSandbox {
     return "./pyodide.worker.js";
   }
 
-  static async startPyodide(version, mode, baseUrl = null, scriptBaseUrl = null, workerUrlOverride = null) {
+  static async startPyodide(
+    version,
+    mode,
+    baseUrl = null,
+    scriptBaseUrl = null,
+    workerUrlOverride = null,
+    ifcopenshellWheelsBaseUrl = null,
+  ) {
     if (PythonSandbox.worker) return { status: "already_started" };
 
     const documentBase = typeof window !== "undefined" && window.location?.href
@@ -88,7 +93,7 @@ class PythonSandbox {
       console.error(
         "Pyodide Worker Error: worker failed to load or threw. Worker script URL:",
         workerUrl.href,
-        "- If 404: serve dist/pyodide.worker.js at this path, or set app.Settings.scriptBaseUrl (e.g. \"/external/_aeco-dev/dist\") or app.Settings.pyodideWorkerUrl to the URL that works."
+        "- If 404: serve dist/pyodide.worker.js at this path"
       );
     };
 
@@ -96,6 +101,7 @@ class PythonSandbox {
       version: version,
       mode: mode,
       baseUrl: baseUrl ?? undefined,
+      ifcopenshellWheelsBaseUrl: ifcopenshellWheelsBaseUrl ?? undefined,
     });
 
     window.addEventListener('beforeunload', () => {
@@ -202,6 +208,16 @@ class PythonSandbox {
     return result;
   }
 
+  static async getBootstrapMetrics() {
+    PythonSandbox._checkReady();
+    return PythonSandbox.run_api("getBootstrapMetrics", {});
+  }
+
+  static async resetBootstrapMetrics() {
+    PythonSandbox._checkReady();
+    return PythonSandbox.run_api("resetBootstrapMetrics", {});
+  }
+
   static async install(packageName, wheelPath = null) {
     PythonSandbox._checkReady();
 
@@ -216,6 +232,9 @@ class PythonSandbox {
       });
 
       PythonSandbox.installedPackages.add(packageName);
+      if (Array.isArray(result.dependencies)) {
+        result.dependencies.forEach((p) => PythonSandbox.installedPackages.add(p));
+      }
 
       return result;
     }

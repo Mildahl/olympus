@@ -41,362 +41,21 @@ import { FloatingPanel } from "./FloatingPanel.js";
 
 import { buildWorkspaceDockHandlers } from "./utils/workspacePanelDock.js";
 
-import { getLayoutManagerFromContext } from "../src/ui/utils/layoutManagerAccess.js";
-
 import { CollapsiblePanel } from "./CollapsiblePanel.js";
 
 import { CollapsibleSection } from "./CollapsibleSection.js";
+
+import { DrillDownUpList } from "./DrillDownUpList.js";
 
 import { BasePanel } from "./BasePanel.js";
 
 import { TabPanel } from "./TabPanel.js";
 
+import { PieMenu } from "./PieMenu.js";
+
 import { ReorderableList } from "./ReorderableList.js";
 
-import { enhanceContainer } from "./utils/markdownEnhancements.js";
-
-const LOG_MARKDOWN = true;
-
-/**
- * Minimal markdown-to-HTML (no Showdown). Supports headings, fenced code blocks,
- * paragraphs, bold/italic, and lists. Code blocks get language-* class for CodeMirror/hljs.
- * @param {string} markdown - The markdown text to convert.
- * @returns {Object} Object with html property containing the converted HTML.
- */
-export function simpleMarkdownToHtml(markdown) {
-  if (!markdown || typeof markdown !== 'string') return { html: '', codes: [] };
-  const lines = markdown.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
-  const out = [];
-  let i = 0;
-
-  function escapeHtml(s) {
-    return s
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  function inline(s) {
-    return s
-      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-      .replace(/`([^`]+)`/g, '<code>$1</code>');
-  }
-
-  while (i < lines.length) {
-    const line = lines[i];
-    // Fenced code block
-    const openFence = line.match(/^(`{3,}|~{3,})\s*(\w*)\s*$/);
-    if (openFence) {
-      const lang = (openFence[2] || 'text').trim().toLowerCase();
-      const fence = openFence[1];
-      const closeFenceRe = new RegExp('^\\s*' + fence.charAt(0) + '{' + fence.length + ',}\\s*$');
-      i++;
-      const codeLines = [];
-      while (i < lines.length && !closeFenceRe.test(lines[i])) {
-        codeLines.push(escapeHtml(lines[i]));
-        i++;
-      }
-      if (i < lines.length) i++;
-      const code = codeLines.join('\n');
-      out.push(`<pre><code class="language-${escapeHtml(lang)}">${code}</code></pre>`);
-      continue;
-    }
-    // ATX headings
-    const h = line.match(/^(#{1,6})\s+(.+)$/);
-    if (h) {
-      const level = h[1].length;
-      out.push(`<h${level}>${inline(escapeHtml(h[2].trim()))}</h${level}>`);
-      i++;
-      continue;
-    }
-    // Unordered list
-    if (/^[-*+]\s+/.test(line) || /^\d+\.\s+/.test(line)) {
-      const tag = /^\d+\.\s+/.test(line) ? 'ol' : 'ul';
-      out.push(`<${tag}>`);
-      while (i < lines.length && (/^[-*+]\s+/.test(lines[i]) || /^\d+\.\s+/.test(lines[i]))) {
-        const content = lines[i].replace(/^[-*+]\s+/, '').replace(/^\d+\.\s+/, '');
-        out.push(`<li>${inline(escapeHtml(content))}</li>`);
-        i++;
-      }
-      out.push(`</${tag}>`);
-      continue;
-    }
-    // Empty line → close paragraph
-    if (line.trim() === '') {
-      i++;
-      continue;
-    }
-    // Paragraph
-    const pLines = [line];
-    i++;
-    const isCollapsibleMarker = (s) => /^\[MORE(?::[^\]]+)?\]$/.test(s) || /^\[(MORE_END|HINT_END|EXPECTED_END|TAKEAWAY_END)\]$/.test(s) || /^\[HINT:[^\]]+\]$/.test(s) || /^\[EXPECTED:[^\]]+\]$/.test(s) || /^\[TAKEAWAY\]$/.test(s);
-    while (i < lines.length && lines[i].trim() !== '' && !lines[i].match(/^#{1,6}\s/) && !lines[i].match(/^(`{3,}|~{3,})/) && !/^[-*+]\s+/.test(lines[i]) && !/^\d+\.\s+/.test(lines[i])) {
-      const nextLine = lines[i].trim();
-      const currentText = pLines.join('\n').trim();
-      if (isCollapsibleMarker(currentText) || isCollapsibleMarker(nextLine)) {
-        break;
-      }
-      pLines.push(lines[i]);
-      i++;
-    }
-    out.push('<p>' + inline(escapeHtml(pLines.join('\n').trim())) + '</p>');
-  }
-
-  const html = out.join('\n');
-  return { html, codes: [] };
-}
-
-/**
- * Sanitize HTML for safe injection into lesson notes (allow-list of tags and attributes).
- * @param {string} html - Raw HTML string
- * @returns {string} Sanitized HTML string
- */
-function sanitizeLessonHtml(html) {
-  if (!html || typeof html !== 'string') return '';
-  const allowedTags = new Set(['p', 'br', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'code', 'a', 'strong', 'em', 'b', 'i', 'span', 'div', 'blockquote', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'img', 'hr', 'style']);
-  const allowedAttrs = new Set(['href', 'src', 'alt', 'title', 'class', 'id', 'data-lesson-injected']);
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-
-  function sanitizeNode(node) {
-    if (node.nodeType === Node.TEXT_NODE) return document.createTextNode(node.textContent);
-    if (node.nodeType !== Node.ELEMENT_NODE) return null;
-    const tag = node.tagName.toLowerCase();
-    if (!allowedTags.has(tag)) {
-      const frag = document.createDocumentFragment();
-      for (const child of node.childNodes) {
-        const c = sanitizeNode(child);
-        if (c) frag.appendChild(c);
-      }
-      return frag;
-    }
-    const out = document.createElement(tag);
-    for (const a of node.attributes) {
-      const name = a.name.toLowerCase();
-      if (name.startsWith('on')) continue;
-      if (name === 'href' || name === 'src') {
-        const v = String(a.value).trim().toLowerCase();
-        if (v.startsWith('javascript:')) continue;
-      }
-      if (allowedAttrs.has(name)) out.setAttribute(name, a.value);
-    }
-    for (const child of node.childNodes) {
-      const c = sanitizeNode(child);
-      if (c) out.appendChild(c);
-    }
-    return out;
-  }
-
-  const fragment = document.createDocumentFragment();
-  for (const child of tmp.childNodes) {
-    const c = sanitizeNode(child);
-    if (c) fragment.appendChild(c);
-  }
-  const wrapper = document.createElement('div');
-  wrapper.appendChild(fragment);
-  return wrapper.innerHTML;
-}
-
-/**
- * A navigable list component with back/forth navigation support.
- * Manages history stack and renders items with optional children navigation.
- */
-class NavigableList {
-  constructor(options = {}) {
-    this.history = [];
-
-    this.currentData = null;
-
-    this.rootData = null;
-
-    // Callbacks
-    this.onItemClick = options.onItemClick || null;
-
-    this.onNavigate = options.onNavigate || null;
-
-    this.renderItem = options.renderItem || this.defaultRenderItem.bind(this);
-
-    this.getChildren = options.getChildren || ((item) => item.children || []);
-
-    this.getLabel =
-      options.getLabel || ((item) => item.name || item.label || "Item");
-
-    this.getTitle = options.getTitle || ((item) => item.name || "Items");
-
-    this.emptyMessage = options.emptyMessage || "No items";
-
-    // Build UI
-    this.panel = new UIDiv();
-
-    this.panel.addClass("NavigableList");
-
-    // Header
-    this.header = new UIDiv().addClass("PanelHeader");
-
-    this.header.addClass("Header");
-
-    this.header.dom.style.cssText =
-      "display:flex;align-items:center;gap:10px;padding:1rem;";
-
-    this.headerContent = new UIDiv();
-
-    this.header.add(this.headerContent);
-
-    this.panel.add(this.header);
-
-    // Content
-    this.content = new UIDiv();
-
-    this.content.addClass("NavigableList-content");
-
-    this.panel.add(this.content);
-  }
-
-  /**
-   * Set the data and render the list.
-   * @param {Object} data - Root data object with children.
-   */
-  setData(data) {
-    this.rootData = data;
-
-    this.currentData = data;
-
-    this.history = [];
-
-    this.refresh();
-  }
-
-  /**
-   * Navigate to a child item.
-   * @param {Object} item - The item to navigate to.
-   */
-  navigateTo(item) {
-    this.history.push(this.currentData);
-
-    this.currentData = item;
-
-    this.refresh();
-
-    if (this.onNavigate) this.onNavigate(item, "forward");
-  }
-
-  /**
-   * Navigate back to the previous item.
-   */
-  navigateBack() {
-    if (this.history.length > 0) {
-      this.currentData = this.history.pop();
-
-      this.refresh();
-
-      if (this.onNavigate) this.onNavigate(this.currentData, "back");
-    }
-  }
-
-  /**
-   * Refresh the list display.
-   */
-  refresh() {
-    if (!this.currentData) return;
-
-    // Update header
-    this.headerContent.clear();
-
-    const headerRow = new UIRow();
-
-    headerRow.dom.style.cssText = "display:flex;align-items:center;gap:10px;";
-
-    if (this.history.length > 0) {
-      const backBtn = new UIIcon("arrow_back");
-
-      backBtn.addClass("NavigableList-back");
-
-      backBtn.dom.style.cursor = "pointer";
-
-      backBtn.onClick(() => this.navigateBack());
-
-      headerRow.add(backBtn);
-    }
-
-    const title = new UIText(`Active: ${this.getTitle(this.currentData)}`);
-
-    title.addClass("NavigableList-title");
-
-    headerRow.add(title);
-
-    this.headerContent.add(headerRow);
-
-    // Update content
-    this.content.clear();
-
-    const children = this.getChildren(this.currentData);
-
-    if (children.length === 0) {
-      const emptyMsg = new UIText(this.emptyMessage);
-
-      emptyMsg.addClass("NavigableList-empty");
-
-      this.content.add(emptyMsg);
-    } else {
-      children.forEach((child) => {
-        const item = this.renderItem(child, this);
-
-        this.content.add(item);
-      });
-    }
-  }
-
-  /**
-   * Default item renderer.
-   * @param {Object} item - The item data.
-   * @param {NavigableList} list - Reference to this list.
-   * @returns {UIDiv} The rendered item element.
-   */
-  defaultRenderItem(item, list) {
-    const row = new UIDiv();
-
-    row.addClass("NavigableList-item");
-
-    row.dom.style.cssText =
-      "display:flex;align-items:center;justify-content:space-between;padding:0.5rem 1rem;cursor:pointer;";
-
-    const label = new UIText(this.getLabel(item));
-
-    label.addClass("NavigableList-item-label");
-
-    row.add(label);
-
-    const children = this.getChildren(item);
-
-    if (children.length > 0) {
-      const arrow = new UIIcon("chevron_right");
-
-      arrow.addClass("Button");
-
-      row.add(arrow);
-    }
-
-    row.onClick(() => {
-      if (this.onItemClick) {
-        this.onItemClick(item, list);
-      } else if (children.length > 0) {
-        this.navigateTo(item);
-      }
-    });
-
-    return row;
-  }
-
-  /**
-   * Get the DOM element.
-   * @returns {UIDiv} The panel element.
-   */
-  getElement() {
-    return this.panel;
-  }
-}
+import { simpleMarkdownToHtml, sanitizeHtml } from "./utils/markdown.js";
 
 /**
  * @typedef {import('../base/ui.js').UIElement} UIElement
@@ -576,13 +235,11 @@ export class DrawUI {
       : text;
 
 
-    const sanitized = sanitizeLessonHtml(html);
+    const sanitized = sanitizeHtml(html);
 
     const div = new UIDiv();
     div.setInnerHTML(sanitized);
     div.addClass('Markdown');
-
-    enhanceContainer(div.dom, options.highlightCallback || null);
 
     return div;
   }
@@ -974,7 +631,9 @@ export class DrawUI {
   static instructionLine(keyText, description) {
     const line = new UIRow();
 
-    line.setClass("instruction-line");
+    line.setStyle("alignItems", ["center"]);
+
+    line.setStyle("display", ["flex"]);
 
     line.gap("8px");
 
@@ -983,8 +642,6 @@ export class DrawUI {
     const desc = new UISpan();
 
     desc.setTextContent(description);
-
-    desc.setClass("instruction-desc");
 
     line.add(kbd);
 
@@ -996,21 +653,39 @@ export class DrawUI {
   static instructionPanel(title, iconName, instructions = []) {
     const panel = new UIDiv();
 
-    panel.setClass("instruction-panel");
+    panel.setStyle("background", ["var(--glass-surface)"]);
+
+    panel.setStyle("border", ["1px solid var(--border)"]);
+
+    panel.setStyle("borderRadius", ["12px"]);
+
+    panel.setStyle("overflow", ["hidden"]);
 
     const header = new UIRow();
 
-    header.setClass("instruction-header");
+    header.setStyle("alignItems", ["center"]);
 
-    header.gap("8px");
+    header.setStyle("background", ["var(--glass-surface)"]);
+
+    header.setStyle("borderBottom", ["1px solid var(--border)"]);
+
+    header.setStyle("display", ["flex"]);
+
+    header.setStyle("gap", ["8px"]);
+
+    header.setStyle("padding", ["12px 16px"]);
 
     const icon = new UIIcon(iconName);
 
-    icon.setClass("instruction-icon");
+    icon.setStyle("color", ["var(--brand-color)"]);
+
+    icon.setStyle("fontSize", ["20px"]);
 
     const titleText = new UIText(title);
 
-    titleText.setClass("instruction-title");
+    titleText.setStyle("color", ["var(--theme-text-light)"]);
+
+    titleText.setStyle("fontWeight", ["600"]);
 
     header.add(icon);
 
@@ -1018,9 +693,7 @@ export class DrawUI {
 
     panel.add(header);
 
-    const content = new UIDiv();
-
-    content.setClass("instruction-content");
+    const content = DrawUI.column().gap("var(--phi-0-5)").padding("var(--phi-0-5)");
 
     instructions.forEach(({ key, desc }) => {
       const line = DrawUI.instructionLine(key, desc);
@@ -1157,10 +830,7 @@ export class DrawUI {
       ...fpOptions
     } = options;
 
-    let layoutManager = null;
-    if (context) {
-      layoutManager = getLayoutManagerFromContext(context);
-    }
+    let layoutManager = context.ui.model.layoutManager;
 
     const resolvedTabLabel =
       workspaceTabLabel != null ? workspaceTabLabel : fpOptions.title;
@@ -1248,6 +918,10 @@ export class DrawUI {
     return new TabPanel(options);
   }
 
+  static pieMenu(options = {}) {
+    return new PieMenu(options);
+  }
+
   /**
    * Create a spreadsheet component
    * @param {SpreadsheetOptions} options - Spreadsheet configuration
@@ -1294,17 +968,17 @@ export class DrawUI {
    * Creates a navigable list component with back/forth navigation.
    * Useful for hierarchical data browsing.
    * @param {NavigableListOptions} [options={}] - List configuration
-   * @returns {NavigableList} The navigable list component
+   * @returns {DrillDownUpList} The navigable list component
    * @example
-   * const list = DrawUI.navigableList({
+   * const list = DrawUI.drillDownUpList({
    *   onItemClick: (item) => console.log('Selected:', item),
    *   getLabel: (item) => item.name,
    *   getChildren: (item) => item.children || []
    * });
    * list.setData(treeData);
    */
-  static navigableList(options = {}) {
-    return new NavigableList(options);
+  static drillDownUpList(options = {}) {
+    return new DrillDownUpList(options);
   }
 
   /**
@@ -1433,3 +1107,54 @@ export const ICONS = {
 // Re-export panel components for convenience
 export { BasePanel, SimpleFloatingWindow, AccountPanel } from "./BasePanel.js";
 export { TabPanel } from "./TabPanel.js";
+export { FloatingPanel } from "./FloatingPanel.js";
+export { CollapsiblePanel } from "./CollapsiblePanel.js";
+export { CollapsibleSection } from "./CollapsibleSection.js";
+export { PieMenu } from "./PieMenu.js";
+export { ReorderableList } from "./ReorderableList.js";
+
+// Re-export utility functions
+export { focusDockedWorkspaceTab, buildWorkspaceDockHandlers } from "./utils/workspacePanelDock.js";
+export { makeDraggable, makeResizable } from "./utils/panelResizer.js";
+
+// Re-export all UI primitives from ui.js
+export {
+  UIElement,
+  UILink,
+  UIImage,
+  UISVG,
+  UIParagraph,
+  UIH1,
+  UIH2,
+  UIH3,
+  UIH4,
+  UIH5,
+  UIH6,
+  UISpan,
+  UIDiv,
+  UIRow,
+  UIColumn,
+  UIPanel,
+  UILabel,
+  UIForm,
+  UIText,
+  UISmallText,
+  UIInput,
+  UIIcon,
+  UITextArea,
+  UISelect,
+  UICheckbox,
+  UIColor,
+  UINumber,
+  UIInteger,
+  UIBreak,
+  UIHorizontalRule,
+  UIButton,
+  UIProgress,
+  UITabbedPanel,
+  UIListbox,
+  ListboxItem,
+  UIDatePicker,
+  UISpinner,
+  UITooltip,
+} from "./ui.js";

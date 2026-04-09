@@ -4,9 +4,7 @@ import operators from "../../operators/Operators.js";
 
 import * as ScheduleCore from "../../core/bim.sequence.js";
 
-import AECO_tools from "../../tool/index.js";
-
-import { IfcRoot } from "../../data/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 class BIM_OP_addWorkSchedule extends Operator {
   static operatorName = "bim.add_work_schedule";
@@ -41,8 +39,8 @@ class BIM_OP_addWorkSchedule extends Operator {
     const objectType = this.objectType;
 
     const result = await ScheduleCore.add_work_schedule(model, name, predefinedType, objectType, {
-      ifc: AECO_tools.ifc,
-      sequence: AECO_tools.bim.sequence,
+      ifc: AECO_TOOLS.bim.ifc,
+      sequence: AECO_TOOLS.bim.sequence,
       signals: this.context.signals
     })
 
@@ -78,7 +76,7 @@ class BIM_OP_removeWorkSchedule extends Operator {
   async execute() {
     
     const result = await ScheduleCore.remove_work_schedule(this.modelName, this.GlobalId, {
-      ifc: AECO_tools.ifc,
+      ifc: AECO_TOOLS.bim.ifc,
       signals: this.context.signals
     })
 
@@ -104,21 +102,21 @@ class BIM_OP_listWorkSchedules extends Operator {
   }
 
   poll() {
-    return AECO_tools.ifc !== null;
+    return AECO_TOOLS.bim.ifc !== null;
   }
 
   execute() {
-    if (!this.context.activeWorkScheduleSource) {
+    if (!this.context.ifc.activeWorkScheduleSource) {
       console.error("Model name is required");
 
       return { status: "CANCELLED" };
     }
 
     try {
-      const model = AECO_tools.ifc.get(this.context.activeWorkScheduleSource);
+      const model = AECO_TOOLS.bim.ifc.get(this.context.ifc.activeWorkScheduleSource);
 
       if (!model) {
-        console.error("Model not found:", this.context.activeWorkScheduleSource);
+        console.error("Model not found:", this.context.ifc.activeWorkScheduleSource);
 
         return { status: "CANCELLED" };
       }
@@ -138,33 +136,6 @@ class BIM_OP_listWorkSchedules extends Operator {
   }
 }
 
-class BIM_OP_enableEditingWorkSchedules extends Operator {
-  static operatorName = "bim.enable_editing_work_schedules"
-
-  static operatorLabel = "Enable Editing Work Schedule"
-
-  static operatorOptions = ["REGISTER"];
-
-  constructor( context, model ) {
-    super( context );
-
-    this.model = model;
-  }
-
-  poll() {
-    
-    return true
-  }
-
-   async execute() {
-
-    ScheduleCore.enable_editing_work_schedules(this.model, {
-      sequence: AECO_tools.bim.sequence,
-      signals: this.context.signals
-    });
-  }
-
-}
 
 class BIM_OP_EnableEditingWorkScheduleTasks extends Operator {
   static operatorName = "bim.enable_editing_work_schedule_tasks"
@@ -185,7 +156,7 @@ class BIM_OP_EnableEditingWorkScheduleTasks extends Operator {
 
   poll() {
 
-    return AECO_tools.bim.sequence !== null && this.context.ifc.activeModel;
+    return AECO_TOOLS.bim.sequence !== null && this.context.ifc.activeModel;
     
   }
 
@@ -193,11 +164,11 @@ class BIM_OP_EnableEditingWorkScheduleTasks extends Operator {
 
       const model = this.context.ifc.activeModel
 
-      const workScheduleId = this.scheduleId
+      const workScheduleGlobalId = this.scheduleId
 
-      ScheduleCore.enable_editing_workschedule_tasks( model, workScheduleId,  { 
-        ifc:AECO_tools.ifc, 
-        sequence:AECO_tools.bim.sequence, 
+      ScheduleCore.enable_editing_workschedule_tasks( model, workScheduleGlobalId,  { 
+        ifc:AECO_TOOLS.bim.ifc, 
+        sequence:AECO_TOOLS.bim.sequence, 
         signals: this.context.signals, 
         context: this.context,
         viewType: this.viewType,
@@ -235,21 +206,21 @@ class BIM_OP_switchView extends Operator {
 
 }
 
-class BIM_OP_loadTaskDetails extends Operator {
-  static operatorName = "bim.load_task_details";
+class BIM_OP_enableEditingTask extends Operator {
+  static operatorName = "bim.enable_editing_task";
 
-  static operatorLabel = "Load Schedule Task Details";
+  static operatorLabel = "Enable editing task";
 
   static operatorOptions = ["REGISTER"];
 
   constructor(context, taskId) {
     super(context);
 
-    this.taskId = taskId;
+    this.taskId = Number(taskId);
   }
 
   poll() {
-    return AECO_tools.ifc !== null && AECO_tools.bim.sequence !== null;
+    return AECO_TOOLS.bim.ifc !== null && AECO_TOOLS.bim.sequence !== null;
   }
 
   async execute() {
@@ -258,37 +229,17 @@ class BIM_OP_loadTaskDetails extends Operator {
     if (!activeModel) {
       return { status: "CANCELLED" };
     }
+    
+    await AECO_TOOLS.bim.sequence.higlight_task_elements(activeModel, this.taskId);
 
-    const taskDetails = await AECO_tools.bim.sequence.getTaskDetails(activeModel, this.taskId);
-
-    const outputs = taskDetails.outputs;
-
-    const outputGuids = [];
-
-    if (outputs && outputs.length > 0) {
-      for (let index = 0; index < outputs.length; index++) {
-        const outputEntry = outputs[index];
-
-        if (outputEntry && outputEntry.GlobalId) {
-          outputGuids.push(outputEntry.GlobalId);
-        }
-      }
-    }
-
-    if (outputGuids.length > 0) {
-      AECO_tools.world.scene.selectObjectsByGuid(this.context, outputGuids);
-    }
-
-    this.context.signals.taskDetailsLoaded.dispatch({
+    this.context.signals.taskClicked.dispatch({
       taskId: this.taskId,
-      outputs: outputs || [],
-      inputs: taskDetails.inputs || [],
-      resources: taskDetails.resources || [],
     });
 
     return { status: "FINISHED" };
   }
 }
+
 
 class BIM_OP_selectTask extends Operator {
   static operatorName = "bim.select_task"
@@ -304,18 +255,13 @@ class BIM_OP_selectTask extends Operator {
   }
 
   poll() {
-    return AECO_tools.ifc !== null && AECO_tools.scheduler !== null;
+    return AECO_TOOLS.code.pyWorker.initialized.bim;
   }
 
     async execute() { 
 
-      AECO_tools.scheduler.addSelectedTask(this.taskId);
-
-      const selectedTasks = AECO_tools.scheduler.getSelectedTasks();
-
       this.context.signals.taskSelected.dispatch({ taskId: this.taskId, selected: true });
       
-      this.context.signals.taskSelectionChanged.dispatch({ selectedCount: selectedTasks.length });
     
     }
 }
@@ -334,18 +280,14 @@ class BIM_OP_deselectTask extends Operator {
   }
 
   poll() {
-    return AECO_tools.initialized.bim;
+    return AECO_TOOLS.code.pyWorker.initialized.bim;
   }
 
     async execute() {
-      AECO_tools.scheduler.removeSelectedTask(this.taskId);
-
-      const selectedTasks = AECO_tools.scheduler.getSelectedTasks();
 
       this.context.signals.taskSelected.dispatch({ taskId: this.taskId, selected: false });
       
-      this.context.signals.taskSelectionChanged.dispatch({ selectedCount: selectedTasks.length });
-    
+
     }
 
 }
@@ -360,18 +302,18 @@ class BIM_OP_expandNodePath extends Operator {
   constructor( context, workscheduleId, pathType ) {
     super( context );
 
-    this.workscheduleId = workscheduleId;
+    this.workScheduleGlobalId = workscheduleId;
 
     this.pathType = pathType;
   }
 
   poll() {
-    return AECO_tools.initialized.bim;
+    return AECO_TOOLS.code.pyWorker.initialized.bim;
   }
 
    async execute() {
       const modelName =
-        this.context.activeWorkScheduleSource || this.context.ifc?.activeModel;
+        this.context.ifc.activeWorkScheduleSource || this.context.ifc?.activeModel;
 
       if (!modelName) {
         console.error("bim.expand_node_path: no model name (activeWorkScheduleSource / ifc.activeModel)");
@@ -382,19 +324,20 @@ class BIM_OP_expandNodePath extends Operator {
       let nodeIds = [];
 
       if (this.pathType === "critical") {
-        const result = await AECO_tools.ifc.runTool(modelName, {
+        const result = await AECO_TOOLS.bim.ifc.runTool(modelName, {
           toolName: "sequence",
           functionName: "get_critical_path_tasks",
           args: {
-            work_schedule: new IfcRoot(this.workscheduleId),
+            work_schedule: this.workScheduleGlobalId,
           },
+          entityArgs: ["work_schedule"],
         });
 
         nodeIds = Array.isArray(result) ? result : [];
       }
 
       this.context.signals.nodePathExpanded.dispatch({
-        workscheduleId: this.workscheduleId,
+        workscheduleId: this.workScheduleGlobalId,
         pathType: this.pathType,
         nodeIds,
       });
@@ -412,26 +355,26 @@ class BIM_OP_loadAnimationData extends Operator {
 
   static operatorOptions = ["REGISTER"];
 
-  constructor(context, workScheduleId) {
+  constructor(context, workScheduleGlobalId) {
     super(context);
 
-    this.workScheduleId = workScheduleId;
+    this.workScheduleGlobalId = workScheduleGlobalId;
   }
 
   poll() {
-    return AECO_tools.bim.sequence !== null && this.context.ifc.activeModel;
+    return AECO_TOOLS.bim.sequence !== null && this.context.ifc.activeModel;
   }
 
   async execute() {
     const model = this.context.ifc.activeModel;
 
-    const scheduleId = this.workScheduleId || AECO_tools.scheduler?.getActiveSchedule();
+    const scheduleId = this.workScheduleGlobalId || this.context.ifc.activeWorkSchedule
 
     if (!scheduleId) {
       return { status: "CANCELLED", error: "No active schedule" };
     }
 
-    const animationData = await AECO_tools.bim.sequence.getAnimationData(model, scheduleId);
+    const animationData = await AECO_TOOLS.bim.sequence.getAnimationData(model, scheduleId);
 
     this.context.signals.scheduleAnimationDataLoaded?.dispatch(animationData);
 
@@ -446,28 +389,28 @@ class BIM_OP_getElementsAtDate extends Operator {
 
   static operatorOptions = ["REGISTER"];
 
-  constructor(context, workScheduleId, targetDate) {
+  constructor(context, workScheduleGlobalId, targetDate) {
     super(context);
 
-    this.workScheduleId = workScheduleId;
+    this.workScheduleGlobalId = workScheduleGlobalId;
 
     this.targetDate = targetDate;
   }
 
   poll() {
-    return AECO_tools.bim.sequence !== null && this.context.ifc.activeModel;
+    return AECO_TOOLS.bim.sequence !== null && this.context.ifc.activeModel;
   }
 
   async execute() {
     const model = this.context.ifc.activeModel;
 
-    const scheduleId = this.workScheduleId || AECO_tools.scheduler?.getActiveSchedule();
+    const scheduleId = this.workScheduleGlobalId || this.context.ifc.activeWorkSchedule;
 
     if (!scheduleId || !this.targetDate) {
       return { status: "CANCELLED", error: "Missing schedule or date" };
     }
 
-    const elementsData = await AECO_tools.bim.sequence.getElementsAtDate(
+    const elementsData = await AECO_TOOLS.bim.sequence.getElementsAtDate(
       model,
       scheduleId,
       this.targetDate
@@ -484,28 +427,69 @@ class BIM_OP_getScheduleDateRange extends Operator {
 
   static operatorOptions = ["REGISTER"];
 
-  constructor(context, workScheduleId) {
+  constructor(context, workScheduleGlobalId) {
     super(context);
 
-    this.workScheduleId = workScheduleId;
+    this.workScheduleGlobalId = workScheduleGlobalId;
   }
 
   poll() {
-    return AECO_tools.bim.sequence !== null && this.context.ifc.activeModel;
+    return AECO_TOOLS.bim.sequence !== null && this.context.ifc.activeModel;
   }
 
   async execute() {
     const model = this.context.ifc.activeModel;
 
-    const scheduleId = this.workScheduleId || AECO_tools.scheduler?.getActiveSchedule();
+    const scheduleId = this.workScheduleGlobalId || this.context.ifc.activeWorkSchedule;
 
     if (!scheduleId) {
       return { status: "CANCELLED", error: "No active schedule" };
     }
 
-    const dateRange = await AECO_tools.bim.sequence.getScheduleDateRange(model, scheduleId);
+    const dateRange = await AECO_TOOLS.bim.sequence.getScheduleDateRange(model, scheduleId);
 
     return { status: "FINISHED", result: dateRange };
+  }
+}
+
+class BIM_OP_editTaskTime extends Operator {
+  static operatorName = "bim.edit_task_time"
+
+  static operatorLabel = "Edit Task Time"
+
+  static operatorOptions = ["REGISTER"];
+
+  constructor(context, payload = {}) {
+    super(context);
+
+    this.payload = payload;
+  }
+
+  poll() {
+    return AECO_TOOLS.bim.sequence !== null && this.context.ifc.activeModel;
+  }
+
+  async execute() {
+    const { taskId, attrName, attrValue } = this.payload || {};
+
+    if (!taskId || !attrName) {
+      return { status: "CANCELLED", error: "Missing taskId or attrName" };
+    }
+
+    this.context.signals.taskTimeEdited?.dispatch({
+      taskId,
+      attrName,
+      attrValue,
+    });
+
+    return {
+      status: "FINISHED",
+      result: {
+        taskId,
+        attrName,
+        attrValue,
+      },
+    };
   }
 }
 
@@ -516,34 +500,33 @@ class BIM_OP_wireAnimationSchedule extends Operator {
 
   static operatorOptions = ["REGISTER"];
 
-  constructor(context, workScheduleId) {
+  constructor(context, workscheduleGlobalId) {
     super(context);
 
-    this.workScheduleId = workScheduleId;
+    this.workScheduleGlobalId = workscheduleGlobalId;
   }
 
   poll() {
-    return AECO_tools.bim.sequence !== null && this.context.ifc.activeModel;
+    console.warn("BIM_OP_wireAnimationSchedule is currently disabled until a proper implementation is added");
+    return false
   }
 
   async execute() {
     const model = this.context.ifc.activeModel;
 
-    const scheduleId = this.workScheduleId;
+    const scheduleId = this.workScheduleGlobalId;
 
     if (!scheduleId) {
       return { status: "CANCELLED", error: "No schedule specified" };
     }
 
-    AECO_tools.scheduler.setActiveSchedule(scheduleId);
+    this.context.ifc.activeWorkSchedule = scheduleId;
 
-    const tasks = await AECO_tools.bim.sequence.create_tasks_json(model, scheduleId);
+    const tasks = await AECO_TOOLS.bim.sequence.create_tasks_json(model, scheduleId);
 
-    AECO_tools.scheduler.setTasks(tasks);
+    const dateRange = await AECO_TOOLS.bim.sequence.getScheduleDateRange(model, scheduleId);
 
-    const dateRange = await AECO_tools.bim.sequence.getScheduleDateRange(model, scheduleId);
-
-    const animationData = await AECO_tools.bim.sequence.getAnimationData(model, scheduleId);
+    const animationData = await AECO_TOOLS.bim.sequence.getAnimationData(model, scheduleId);
 
 
     return { status: "FINISHED", result: { scheduleId, tasks, dateRange, animationData } };
@@ -555,15 +538,15 @@ export default [
   BIM_OP_removeWorkSchedule,
   BIM_OP_switchView,
   BIM_OP_listWorkSchedules,
-  BIM_OP_enableEditingWorkSchedules,
   BIM_OP_EnableEditingWorkScheduleTasks,
-  BIM_OP_loadTaskDetails,
+  BIM_OP_enableEditingTask,
   BIM_OP_selectTask,
   BIM_OP_deselectTask,
   BIM_OP_expandNodePath,
   BIM_OP_loadAnimationData,
   BIM_OP_getElementsAtDate,
   BIM_OP_getScheduleDateRange,
+  BIM_OP_editTaskTime,
   BIM_OP_wireAnimationSchedule
 ];
 

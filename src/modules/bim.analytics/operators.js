@@ -1,13 +1,13 @@
 import { Operator } from "../../operators/Operator.js";
 
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 import operators from "../../operators/index.js";
 
 import * as BIMCore from "../../core/bim.js";
 
 
-class BIM_TaskAnalytics extends Operator {
+class BIM_OP_TaskAnalytics extends Operator {
 
     static operatorName = "bim.task_analytics";
 
@@ -25,7 +25,7 @@ class BIM_TaskAnalytics extends Operator {
     }
 
     poll() {
-      return AECO_tools.code.pyWorker.initialized.bim;
+      return AECO_TOOLS.code.pyWorker.initialized.bim;
     }
 
     async execute() {
@@ -37,4 +37,4 @@ class BIM_TaskAnalytics extends Operator {
 }
 
 
-export default [ BIM_TaskAnalytics ];
+export default [ BIM_OP_TaskAnalytics ];

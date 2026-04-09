@@ -2,7 +2,7 @@
 
 This guide walks you through setting up a development environment for Olympus/AECO.
 
-For **vendor assets** under `external/vendor/`, full folder layout, and npm scripts, use the canonical guide: **[Repository setup](../guides/repository-setup.md)**.
+For **example vendor assets** under **`examples/vendor/`**, full folder layout, and npm scripts, use the canonical guide: **[Repository setup](../guides/repository-setup.md)**.
 
 ## Prerequisites
 
@@ -38,8 +38,9 @@ The app will be available at `http://localhost:3000`.
 | `npm run build` | Production build with webpack |
 | `npm run dev` | Development build with watch mode |
 | `npm run dev:worker` | Build Pyodide worker with watch mode |
+| `npm run setup` | Install, refresh `examples/vendor/`, and build |
+| `npm run vendor:sync` | Refresh `examples/vendor/` from `node_modules` |
 | `npm test` | Run test suite |
-| `npm run docs:olympus` | Generate API documentation |
 
 ## Running Examples
 
@@ -71,10 +72,10 @@ dist/
 ## Troubleshooting
 
 ### "Module not found" errors
-Make sure you've run `npm run build` at least once so `dist/` exists, and that `external/vendor/` is complete. See [Build and runtime troubleshooting](../guides/build-and-runtime-troubleshooting.md) and [Repository setup](../guides/repository-setup.md).
+Make sure you've run `npm run build` at least once so `dist/` exists, and that **`npm install`** has run so **`postinstall`** populated **`examples/vendor/`** (or run **`npm run vendor:sync`**). See [Repository setup](../guides/repository-setup.md) and [Build and runtime troubleshooting](../guides/build-and-runtime-troubleshooting.md).
 
 ### Port already in use
-Change the port: `npm run serve -- 8080` or use `serve:5502`.
+Use `npm run serve:5502` or run `npx serve@14 . -l <port>` from the repository root.
 
 ### Python features not working
 Ensure the Pyodide worker is built: `npm run dev:worker`

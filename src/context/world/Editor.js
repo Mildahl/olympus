@@ -30,6 +30,8 @@ function Editor( context ) {
 
 	const Signal = signals.Signal; 
 
+	context.editor = this;
+
 	this.signals = {
 		editScript: new Signal(),
 		loadScript: new Signal(),
@@ -207,6 +209,11 @@ function Editor( context ) {
 	this.isTransforming = false;
 
 	this.cameraAnimation = null;
+
+	this._dimState = {
+		entries: new Map(),
+		highlightedEntries: new Set(),
+	};
 
 	this.addCamera( this.camera );
 
@@ -743,6 +750,8 @@ Editor.prototype = {
 
 		this.mixer.stopAllAction();
 
+		this.undimObjects();
+
 		this.deselect();
 
 		this.signals.editorCleared.dispatch();
@@ -854,11 +863,11 @@ Editor.prototype = {
 	},
 
 	findVehicle: function() {
-		return NavigationTool.findDefaultVehicleInScene(this.scene);
+		return NavigationTool.findDefaultVehicleInScene();
 	},
 
 	findFlyObject: function() {
-		return NavigationTool.findDefaultFlyingObjectInScene(this.scene);
+		return NavigationTool.findDefaultFlyingObjectInScene();
 	},
 
 	toggleDriveMode: function(vehicle, options = {}) {
@@ -880,11 +889,11 @@ Editor.prototype = {
 		const navController = this.navigationController;
 
 		if (mode === 'DRIVE' && !options.vehicle) {
-			options.vehicle = NavigationTool.findDefaultVehicleInScene(this.scene);
+			options.vehicle = NavigationTool.findDefaultVehicleInScene();
 		}
 
 		if ((mode === 'FLY' || mode === 'FIRST_PERSON') && !options.flyObject) {
-			options.flyObject = NavigationTool.findDefaultFlyingObjectInScene(this.scene);
+			options.flyObject = NavigationTool.findDefaultFlyingObjectInScene();
 		}
 
 		navController.setMode(mode, options);
@@ -939,6 +948,246 @@ Editor.prototype = {
 	 * Store for visibility state before isolation (for undo)
 	 */
 	_isolationState: null,
+
+	getDimmableObjects: function() {
+		const objects = [];
+
+		const isHelper = (child) => {
+			if (child.isHelperGroup || child.name === '_InstancedMeshes') return true;
+
+			let parent = child.parent;
+
+			while (parent) {
+				if (parent.isHelperGroup || parent.name === '_InstancedMeshes') return true;
+
+				parent = parent.parent;
+			}
+
+			return false;
+		};
+
+		this.scene.traverse((child) => {
+			const sceneObject = /** @type {any} */ (child);
+
+			if (sceneObject === this.scene) return;
+
+			if (sceneObject.isCamera || sceneObject.isLight || isHelper(sceneObject)) return;
+
+			if (sceneObject.material || sceneObject.isIfc) {
+				objects.push(sceneObject);
+			}
+		});
+
+		return objects;
+	},
+
+	_resolveDimTargets: function(objects = null) {
+		const queue = Array.isArray(objects) && objects.length > 0
+			? objects.filter(Boolean)
+			: this.getDimmableObjects();
+
+		const targets = [];
+		const seen = new Set();
+
+		const pushTarget = (object) => {
+			const sceneObject = /** @type {any} */ (object);
+
+			if (!sceneObject || !sceneObject.material) return;
+
+			if (sceneObject.isCamera || sceneObject.isLight) return;
+
+			if (seen.has(sceneObject.uuid)) return;
+
+			seen.add(sceneObject.uuid);
+			targets.push(sceneObject);
+		};
+
+		for (const object of queue) {
+			if (!object) continue;
+
+			if (object.material) {
+				pushTarget(object);
+			}
+
+			object.traverse((child) => {
+				pushTarget(child);
+			});
+		}
+
+		return targets;
+	},
+
+	_cloneObjectMaterial: function(object) {
+		if (Array.isArray(object.material)) {
+			return object.material.map((material) => material?.clone ? material.clone() : material);
+		}
+
+		return object.material?.clone ? object.material.clone() : object.material;
+	},
+
+	_applyDimToMaterial: function(material) {
+		if (!material) return;
+
+		material.opacity = 0.05;
+		material.transparent = true;
+		material.needsUpdate = true;
+	},
+
+	_restoreDimmedObject: function(entry) {
+		if (!entry?.object) return;
+
+		entry.object.material = entry.originalMaterial;
+
+		const materials = Array.isArray(entry.originalMaterial)
+			? entry.originalMaterial
+			: [entry.originalMaterial];
+
+		for (const material of materials) {
+			if (material) {
+				material.needsUpdate = true;
+			}
+		}
+	},
+
+	_collectComplementObjects: function(objects) {
+		const dimmableObjects = this._resolveDimTargets(this.getDimmableObjects());
+		const keepSet = new Set();
+
+		for (const target of this._resolveDimTargets(objects)) {
+			keepSet.add(target.uuid);
+		}
+
+		return dimmableObjects.filter((object) => !keepSet.has(object.uuid));
+	},
+
+	getHighlightedObjects: function() {
+		if (this._dimState.highlightedEntries.size === 0) {
+			return [];
+		}
+
+		const dimmableObjects = this._resolveDimTargets(this.getDimmableObjects());
+
+		return dimmableObjects.filter((object) => !this._dimState.highlightedEntries.has(object.uuid));
+	},
+
+	getIsolationTargetIds: function() {
+		const isolationState = this._isolationState;
+
+		return isolationState ? isolationState.isolatedObjects : [];
+	},
+
+	/**
+	 * Store for material state before dim/highlight operations.
+	 */
+	_dimState: {
+		entries: new Map(),
+		highlightedEntries: new Set(),
+	},
+
+	dimObjects: function(objects = null, options = {}) {
+		const owner = options.owner || 'manual';
+		const targets = this._resolveDimTargets(objects);
+
+		if (targets.length === 0) {
+			return [];
+		}
+
+		this.signals.sceneGraphChanged.active = false;
+
+		for (const object of targets) {
+			let entry = this._dimState.entries.get(object.uuid);
+
+			if (!entry) {
+				entry = {
+					object,
+					originalMaterial: object.material,
+					dimmedMaterial: this._cloneObjectMaterial(object),
+					owners: new Set(),
+				};
+
+				object.material = entry.dimmedMaterial;
+
+				const dimmedMaterials = Array.isArray(entry.dimmedMaterial)
+					? entry.dimmedMaterial
+					: [entry.dimmedMaterial];
+
+				for (const material of dimmedMaterials) {
+					this._applyDimToMaterial(material);
+				}
+
+				this._dimState.entries.set(object.uuid, entry);
+			}
+
+			entry.owners.add(owner);
+
+			if (owner === 'highlight') {
+				this._dimState.highlightedEntries.add(object.uuid);
+			}
+		}
+
+		this.signals.sceneGraphChanged.active = true;
+		this.signals.sceneGraphChanged.dispatch();
+
+		return targets;
+	},
+
+	undimObjects: function(objects = null, options = {}) {
+		const owner = options.owner || null;
+		const targets = Array.isArray(objects) && objects.length > 0
+			? this._resolveDimTargets(objects)
+			: Array.from(this._dimState.entries.values()).map((entry) => entry.object);
+
+		if (targets.length === 0) {
+			return [];
+		}
+
+		this.signals.sceneGraphChanged.active = false;
+
+		for (const object of targets) {
+			const entry = this._dimState.entries.get(object.uuid);
+
+			if (!entry) continue;
+
+			if (owner) {
+				entry.owners.delete(owner);
+
+				if (owner === 'highlight') {
+					this._dimState.highlightedEntries.delete(object.uuid);
+				}
+			} else {
+				entry.owners.clear();
+				this._dimState.highlightedEntries.delete(object.uuid);
+			}
+
+			if (entry.owners.size === 0) {
+				this._restoreDimmedObject(entry);
+				this._dimState.entries.delete(object.uuid);
+			}
+		}
+
+		this.signals.sceneGraphChanged.active = true;
+		this.signals.sceneGraphChanged.dispatch();
+
+		return targets;
+	},
+
+	highlightObjects: function(objects = null) {
+		this.undimObjects(null, { owner: 'highlight' });
+
+		const targets = this._resolveDimTargets(objects);
+
+		if (targets.length === 0) {
+			return [];
+		}
+
+		const complement = this._collectComplementObjects(targets);
+
+		return this.dimObjects(complement, { owner: 'highlight' });
+	},
+
+	unhighlightObjects: function() {
+		return this.undimObjects(null, { owner: 'highlight' });
+	},
 
 	/**
 	 * Isolate selected objects - hide everything except selected objects and their ancestors
@@ -1116,14 +1365,14 @@ Editor.prototype = {
 
 			targetTarget = lookAtPosition;
 
-			startTarget = this.controls.target.clone();
+			startTarget = this.controls.center.clone();
 		} else {
 			
-			const currentOffset = new THREE.Vector3().subVectors(this.controls.target, this.camera.position);
+			const currentOffset = new THREE.Vector3().subVectors(this.controls.center, this.camera.position);
 
 			targetTarget = targetPosition.clone().add(currentOffset);
 
-			startTarget = this.controls.target.clone();
+			startTarget = this.controls.center.clone();
 		}
 
 		this.cameraAnimation = {
@@ -1151,7 +1400,7 @@ Editor.prototype = {
 		this.camera.position.lerpVectors(startPosition, targetPosition, eased);
 
 		if (startTarget && targetTarget) {
-			this.controls.target.lerpVectors(startTarget, targetTarget, eased);
+			this.controls.center.lerpVectors(startTarget, targetTarget, eased);
 		}
 
 		this.controls.update();

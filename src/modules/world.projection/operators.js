@@ -2,7 +2,7 @@ import { Operator } from "../../operators/Operator.js";
 
 import * as ProjectionCore from "../../core/projection.js";
 
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 
 class SetProjectionCutPlane extends Operator {
@@ -27,7 +27,7 @@ class SetProjectionCutPlane extends Operator {
 
     if (!context || !context.editor || !context.editor.sceneHelpers) return false;
     
-    const axis = AECO_tools.world.projection.normalizePlanarAxisKey(this.axis);
+    const axis = AECO_TOOLS.world.projection.normalizePlanarAxisKey(this.axis);
 
     return (axis === 'x' || axis === 'y' || axis === 'z') && Number.isFinite(this.position);
   }
@@ -35,9 +35,9 @@ class SetProjectionCutPlane extends Operator {
 
   execute() {
 
-    ProjectionCore.setCutPlane(this.axis, this.position, {projectionTool: AECO_tools.world.projection, context: this.context});
+    ProjectionCore.setCutPlane(this.axis, this.position, {projectionTool: AECO_TOOLS.world.projection, context: this.context});
 
-    return { status: "FINISHED", axis: AECO_tools.world.projection.axis, position: AECO_tools.world.projection.position };
+    return { status: "FINISHED", axis: AECO_TOOLS.world.projection.axis, position: AECO_TOOLS.world.projection.position };
   }
 }
 
@@ -57,16 +57,16 @@ class ClearProjectionViewportIndicator extends Operator {
   poll() {
     const context = this.context;
 
-    return Boolean(context && context.editor && AECO_tools.world.projection.viewportPlaneGroup);
+    return Boolean(context && context.editor && AECO_TOOLS.world.projection.viewportPlaneGroup);
   }
 
   execute() {
 
-    AECO_tools.world.projection.removeCutPlane(this.context.editor, AECO_tools.world.projection.viewportPlaneGroup);
+    AECO_TOOLS.world.projection.removeCutPlane(this.context.editor, AECO_TOOLS.world.projection.viewportPlaneGroup);
 
-    AECO_tools.world.projection.disposeCutPlaneGroup(AECO_tools.world.projection.viewportPlaneGroup);
+    AECO_TOOLS.world.projection.disposeCutPlaneGroup(AECO_TOOLS.world.projection.viewportPlaneGroup);
 
-    AECO_tools.world.projection.viewportPlaneGroup = null;
+    AECO_TOOLS.world.projection.viewportPlaneGroup = null;
 
     return { status: "FINISHED" };
   }
@@ -94,14 +94,14 @@ class GenerateSectionCut extends Operator {
 
     if (!context || !context.editor) return false;
 
-    const axis = AECO_tools.world.projection.normalizePlanarAxisKey(this.axis);
+    const axis = AECO_TOOLS.world.projection.normalizePlanarAxisKey(this.axis);
 
     return (axis === 'x' || axis === 'y' || axis === 'z') && Number.isFinite(this.position);
   }
 
   execute() {
 
-    ProjectionCore.generateCutPlaneSection(this.axis, this.position, {projectionTool: AECO_tools.world.projection, context: this.context});
+    ProjectionCore.generateCutPlaneSection(this.axis, this.position, {projectionTool: AECO_TOOLS.world.projection, context: this.context});
 
     return { status: "FINISHED" };
   }
@@ -127,7 +127,7 @@ class MountPlanarSectionPreview extends Operator {
   }
 
   execute() {
-    AECO_tools.world.projection.mountPlanarSectionPreview(this.hostDomElement);
+    AECO_TOOLS.world.projection.mountPlanarSectionPreview(this.hostDomElement);
 
     return { status: "FINISHED" };
   }
@@ -151,7 +151,7 @@ class UnmountPlanarSectionPreview extends Operator {
   }
 
   execute() {
-    AECO_tools.world.projection.disposePlanarSectionPreview();
+    AECO_TOOLS.world.projection.disposePlanarSectionPreview();
 
     return { status: "FINISHED" };
   }

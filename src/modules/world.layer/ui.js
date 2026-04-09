@@ -1,8 +1,6 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
+import { Components as UIComponents, BasePanel } from "../../ui/Components/Components.js";
 
-import { BasePanel } from "../../../drawUI/BasePanel.js";
-
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 const NAV = {
   world: "world",
@@ -36,7 +34,7 @@ class LayersUI extends BasePanel {
 
     this.editor = context.editor;
 
-    this.navigableList = null;
+    this.drillDownUpList = null;
 
     this.listContent = null;
 
@@ -51,7 +49,7 @@ class LayersUI extends BasePanel {
 
   listen(context) {
     context.signals.activeLayerUpdate.add((world) => {
-      this.navigableList.setData(this.makeWorldNode(world));
+      this.drillDownUpList.setData(this.makeWorldNode(world));
     });
 
     context.signals.layerCreated.add(() => {
@@ -158,17 +156,33 @@ class LayersUI extends BasePanel {
     const renderNavItem = (node, list) => {
       const item = UIComponents.div();
 
-      item.addClass("LayerItem");
+      item.addClass("layer-nav-item");
+
+      item.setStyle("alignItems", ["center"]);
+
+      item.setStyle("background", ["rgba(255, 255, 255, 0.05)"]);
+
+      item.setStyle("border", ["1px solid transparent"]);
+
+      item.setStyle("cursor", ["pointer"]);
+
+      item.setStyle("display", ["flex"]);
+
+      item.setStyle("justifyContent", ["space-between"]);
+
+      item.setStyle("padding", ["10px 12px"]);
+
+      item.setStyle("transition", ["all var(--transition-fast)"]);
 
       const children = this.getNavChildren(node);
 
       if (node.nav === NAV.layer && node.collection?.active) {
-        item.addClass("active");
+        item.addClass('Active');
       }
 
       const label = UIComponents.text(this.getNavLabel(node));
 
-      label.addClass("LayerItem-name");
+      label.setStyle("fontSize", ["0.9rem"]);
 
       item.add(label);
 
@@ -207,7 +221,7 @@ class LayersUI extends BasePanel {
       return item;
     };
 
-    this.navigableList = UIComponents.navigableList({
+    this.drillDownUpList = UIComponents.drillDownUpList({
       icon: "layers",
       emptyMessage: "Nothing here",
       getChildren: (n) => this.getNavChildren(n),
@@ -216,18 +230,18 @@ class LayersUI extends BasePanel {
       renderItem: renderNavItem,
     });
 
-    this.listContent = this.navigableList.getElement();
+    this.listContent = this.drillDownUpList.getElement();
 
-    this.listContent.addClass("LayersPanel-content");
+    this.listContent.addClass("panel-scrollable");
 
     this.content.add(this.listContent);
   }
 
   refresh() {
-    const world = AECO_tools.world.layer.World;
+    const world = AECO_TOOLS.world.layer.World;
 
     if (world) {
-      this.navigableList.setData(this.makeWorldNode(world));
+      this.drillDownUpList.setData(this.makeWorldNode(world));
     }
   }
 }

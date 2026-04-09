@@ -2,6 +2,14 @@ import { Components as UIComponents } from "../../ui/Components/Components.js";
 
 import { directorChartBackgrounds, directorChartBorders } from "./DirectorAnalyticsChartTheme.js";
 
+import {
+  analyticsChartCaptionStyles,
+  analyticsDenseListRowItemStyles,
+  analyticsScheduleChartHostStyles,
+  analyticsSectionTitleStyles,
+  analyticsSubtitleScheduleSummaryStyles,
+} from "./bimAnalyticsPanelStyles.js";
+
 function directorTruncateLabel(text, maxLength) {
   const stringText = String(text);
 
@@ -18,11 +26,11 @@ class DirectorScheduleKpiSection {
 
     this.title = UIComponents.text("Schedule health");
 
-    this.title.addClass("director-analytics-section-title");
+    this.title.setStyles(analyticsSectionTitleStyles);
 
-    this.summaryRow = UIComponents.div().addClass("director-analytics-schedule-summary");
+    this.summaryRow = UIComponents.div();
 
-    this.chartHost = UIComponents.div().addClass("director-analytics-chart-host").addClass("director-analytics-schedule-chart");
+    this.chartHost = UIComponents.div().setStyles(analyticsScheduleChartHostStyles);
 
     this.detailsHost = UIComponents.div();
 
@@ -82,7 +90,7 @@ class DirectorScheduleKpiSection {
 
     const summaryNode = UIComponents.text(summaryText);
 
-    summaryNode.addClass("director-analytics-subtitle");
+    summaryNode.setStyles(analyticsSubtitleScheduleSummaryStyles);
 
     this.summaryRow.add(summaryNode);
 
@@ -151,7 +159,7 @@ class DirectorScheduleKpiSection {
 
       const cap = UIComponents.text("Tasks per work schedule");
 
-      cap.addClass("director-analytics-chart-caption");
+      cap.setStyles(analyticsChartCaptionStyles);
 
       this.chartHost.add(cap);
 
@@ -165,12 +173,12 @@ class DirectorScheduleKpiSection {
       collapsed: true,
     });
 
-    const list = UIComponents.list().addClass("director-analytics-dense-list");
+    const list = UIComponents.list();
 
     for (let index = 0; index < source.length; index++) {
       const row = source[index];
 
-      const item = UIComponents.listItem().addClass("director-analytics-dense-row");
+      const item = UIComponents.listItem().setStyles(analyticsDenseListRowItemStyles);
 
       const name = row.Name || "Unnamed";
 

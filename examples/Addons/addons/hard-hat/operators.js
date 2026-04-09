@@ -2,7 +2,7 @@ import { Operator, tools } from "aeco";
 
 import * as THREE from "three";
 
-import * as Core from "./core.js";
+import * as hardHatStore from "./hardHatStore.js";
 
 const SIGNALS = [
   "hardHatEnabled",
@@ -88,13 +88,13 @@ class EnableHardHat extends Operator {
   }
 
   async execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
     
     if (this.location) {
-      Core.updateProjectLocation(store, this.location);
+      hardHatStore.updateProjectLocation(store, this.location);
     }
 
-    Core.saveStore(store);
+    hardHatStore.saveStore(store);
 
     this.context.hardHat = this.context.hardHat || {};
 
@@ -104,18 +104,17 @@ class EnableHardHat extends Operator {
 
     const towerCrane = tools.world.model.createTowerCrane(craneConfig);
 
-    tools.world.scene.addToLayer(this.context, towerCrane.object, "Logistics");
+    tools.world.scene.addToLayer(towerCrane.object, "Logistics");
 
     this.context.editor.signals.sceneGraphChanged.dispatch();
 
     const weather = await getWeather(this.location);
 
-    Core.updateWeather(store, weather);
+    hardHatStore.updateWeather(store, weather);
 
-    Core.saveStore(store);
+    hardHatStore.saveStore(store);
 
     const weatherPanel = tools.world.scene.attachWeatherToCrane(
-      this.context,
       weather,
       { object: towerCrane.object, config: craneConfig }
     );
@@ -186,10 +185,10 @@ class AddLift extends Operator {
   }
 
   execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
     
     // Use addLiftToActiveSchedule which respects the active equipment filter
-    const lift = Core.addLiftToActiveSchedule(store, {
+    const lift = hardHatStore.addLiftToActiveSchedule(store, {
       subcontractor: this.liftData.subcontractor || this.liftData.pRes,
       name: this.liftData.name || this.liftData.pName || "New Lift",
       description: this.liftData.description || this.liftData.pDescription,
@@ -207,7 +206,7 @@ class AddLift extends Operator {
       equipmentId: this.liftData.equipmentId, // Can override if specified
     });
 
-    Core.saveStore(store);
+    hardHatStore.saveStore(store);
 
     this.context.hardHat = this.context.hardHat || {};
 
@@ -241,13 +240,13 @@ class RemoveLift extends Operator {
   }
 
   execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
     
-    if (!Core.removeLift(store, this.liftId)) {
+    if (!hardHatStore.removeLift(store, this.liftId)) {
       return { status: "CANCELLED", reason: "Lift not found" };
     }
 
-    Core.saveStore(store);
+    hardHatStore.saveStore(store);
 
     this.context.hardHat = this.context.hardHat || {};
 
@@ -283,13 +282,13 @@ class UpdateLift extends Operator {
   }
 
   execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
     
-    if (!Core.updateLift(store, this.liftId, this.patch)) {
+    if (!hardHatStore.updateLift(store, this.liftId, this.patch)) {
       return { status: "CANCELLED", reason: "Lift not found" };
     }
 
-    Core.saveStore(store);
+    hardHatStore.saveStore(store);
 
     this.context.hardHat = this.context.hardHat || {};
 
@@ -321,13 +320,13 @@ class SelectLift extends Operator {
   }
 
   execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
     
-    if (!Core.selectLift(store, this.liftId)) {
+    if (!hardHatStore.selectLift(store, this.liftId)) {
       return { status: "CANCELLED", reason: "Lift not found" };
     }
 
-    Core.saveStore(store);
+    hardHatStore.saveStore(store);
 
     this.context.hardHat = this.context.hardHat || {};
 
@@ -361,11 +360,11 @@ class UpdateCraneSpeed extends Operator {
   }
 
   execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
 
-    Core.updateCraneConfig(store, { speed: this.speed });
+    hardHatStore.updateCraneConfig(store, { speed: this.speed });
 
-    Core.saveStore(store);
+    hardHatStore.saveStore(store);
 
     this.context.hardHat = this.context.hardHat || {};
 
@@ -397,11 +396,11 @@ class UpdateWorkingHours extends Operator {
   }
 
   execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
 
-    Core.updateWorkingParams(store, { workingHours: this.hours });
+    hardHatStore.updateWorkingParams(store, { workingHours: this.hours });
 
-    Core.saveStore(store);
+    hardHatStore.saveStore(store);
 
     this.context.hardHat = this.context.hardHat || {};
 
@@ -427,9 +426,9 @@ class ExportLiftingSchedule extends Operator {
   }
 
   execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
 
-    const json = Core.exportStoreJson(store);
+    const json = hardHatStore.exportStoreJson(store);
 
     const blob = new Blob([json], { type: "application/json" });
 
@@ -473,13 +472,13 @@ class ImportLiftingSchedule extends Operator {
   }
 
   execute() {
-    const imported = Core.importStoreJson(this.jsonText);
+    const imported = hardHatStore.importStoreJson(this.jsonText);
     
     if (!imported) {
       return { status: "CANCELLED", reason: "Invalid JSON data" };
     }
 
-    Core.saveStore(imported);
+    hardHatStore.saveStore(imported);
 
     this.context.hardHat = this.context.hardHat || {};
 
@@ -509,13 +508,13 @@ class ClearLiftingSchedule extends Operator {
   }
 
   execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
 
     store.lifts = [];
 
     store.ui.selectedLiftId = null;
 
-    Core.saveStore(store);
+    hardHatStore.saveStore(store);
 
     this.context.hardHat = this.context.hardHat || {};
 
@@ -577,7 +576,7 @@ class ExportTaskData extends Operator {
   }
 
   execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
     
     // Import the conversion function dynamically to avoid circular deps
     import("./utils.js").then(({ enrichLiftsWithEstimates, liftsToTaskFormat }) => {
@@ -634,11 +633,11 @@ class SetActiveEquipment extends Operator {
   }
 
   execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
 
-    Core.setActiveEquipment(store, this.equipmentId);
+    hardHatStore.setActiveEquipment(store, this.equipmentId);
 
-    Core.saveStore(store);
+    hardHatStore.saveStore(store);
 
     this.context.hardHat = this.context.hardHat || {};
 
@@ -670,11 +669,11 @@ class SetActiveDateFilter extends Operator {
   }
 
   execute() {
-    const store = Core.loadStore();
+    const store = hardHatStore.loadStore();
 
-    Core.setActiveDateFilter(store, this.dateStr);
+    hardHatStore.setActiveDateFilter(store, this.dateStr);
 
-    Core.saveStore(store);
+    hardHatStore.saveStore(store);
 
     this.context.hardHat = this.context.hardHat || {};
 

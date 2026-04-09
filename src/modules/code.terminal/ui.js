@@ -3,9 +3,7 @@
  * 
  * UI panels for managing and using interactive terminal sessions.
  */
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-
-import { BasePanel } from "../../../drawUI/BasePanel.js";
+import { Components as UIComponents, BasePanel } from "../../ui/Components/Components.js";
 
 import dataStore from "../../data/index.js";
 

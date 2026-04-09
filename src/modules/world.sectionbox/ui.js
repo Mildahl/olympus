@@ -1,8 +1,4 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-
-import { BasePanel } from "../../../drawUI/BasePanel.js";
-
-import { UIDiv } from "../../../drawUI/ui.js";
+import { Components as UIComponents, BasePanel, UIDiv } from "../../ui/Components/Components.js";
 
 import { SectionBoxState } from "./operators.js";
 

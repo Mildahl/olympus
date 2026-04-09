@@ -5,7 +5,7 @@
  * These functions are called by operators and should remain decoupled from UI.
  */
 
-import LayerTool from '../tool/layer/LayerTool.js';
+import LayerTool from '../tool/viewer/LayerTool.js';
 /**
  * Activate a layer (make it the current working layer)
  * @param {string} layerGuid - GUID of the layer to activate

@@ -554,10 +554,6 @@ function Viewport( context, ops, parent ) {
 
 		renderer.setSize( container.dom.offsetWidth, container.dom.offsetHeight );
 
-		lastViewportSyncWidth = container.dom.offsetWidth;
-
-		lastViewportSyncHeight = container.dom.offsetHeight;
-
 		pmremGenerator = new THREE.PMREMGenerator( renderer );
 
 		pmremGenerator.compileEquirectangularShader();
@@ -565,6 +561,14 @@ function Viewport( context, ops, parent ) {
 		pathtracer = new ViewportPathtracer( renderer );
 
 		container.dom.appendChild( renderer.domElement );
+
+		// Force one canonical startup sync so camera aspect and viewport metrics are correct
+		// before any external resize/toggle event occurs.
+		lastViewportSyncWidth = - 1;
+
+		lastViewportSyncHeight = - 1;
+
+		syncViewportSizeFromContainer();
 
 		editor.renderer = renderer;
 
@@ -1138,13 +1142,17 @@ function Viewport( context, ops, parent ) {
 
 	let prevActionsInUse = 0;
 
-	const clock = new THREE.Clock(); 
+	const viewportAnimationTimer = new THREE.Timer();
 
-	function animate() {
+	viewportAnimationTimer.connect( document );
+
+	function animate( timestamp ) {
 
 		const mixer = editor.mixer;
 
-		const delta = clock.getDelta();
+		viewportAnimationTimer.update( timestamp );
+
+		const delta = viewportAnimationTimer.getDelta();
 
 		let needsUpdate = false;
 

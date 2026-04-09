@@ -1,4 +1,4 @@
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 import context from "../../context/index.js";
 
@@ -31,7 +31,7 @@ export class TypeData {
   static is_active_type_loaded  = false;
   static async load() {
 
-    TypeData.data.has_element_types = await AECO_tools.bim.types.hasElementTypes(context.ifc.activeModel);
+    TypeData.data.has_element_types = await AECO_TOOLS.bim.types.hasElementTypes(context.ifc.activeModel);
     
     TypeData.data.element_types = await TypeData.getTypes(context.ifc.activeModel);
     
@@ -40,11 +40,11 @@ export class TypeData {
 
   static async loadSelection() {
 
-    const globalId = AECO_tools.world.scene.getEntityGlobalId(context.editor.selected);
+    const globalId = AECO_TOOLS.world.scene.getEntityGlobalId(context.editor.selected);
 
-    TypeData.data.is_product = await AECO_tools.bim.types.isProduct();
+    TypeData.data.is_product = await AECO_TOOLS.bim.types.isProduct();
     
-    TypeData.data.selection_data =  await AECO_tools.bim.types.getElementTypeData(globalId),
+    TypeData.data.selection_data =  await AECO_TOOLS.bim.types.getElementTypeData(globalId),
 
     TypeData.is_selection_loaded = true;
   
@@ -53,13 +53,13 @@ export class TypeData {
   static async loadActivetype() {
     
     TypeData.data.active_type_data = {
-      is_layered_element : await AECO_tools.bim.types.isLayeredElement()
+      is_layered_element : await AECO_TOOLS.bim.types.isLayeredElement()
     }
   }
 
   static async getTypes(model) {
 
-    const unorganisedTypes =  await AECO_tools.bim.types.getElementTypes(model);
+    const unorganisedTypes =  await AECO_TOOLS.bim.types.getElementTypes(model);
 
     const categorisedTyped  = {};
 
@@ -75,10 +75,10 @@ export class TypeData {
 
   }
   static async totalInstances() {
-    return await AECO_tools.ifc.totalInstances();
+    return await AECO_TOOLS.bim.ifc.totalInstances();
   }
 
   static async relatingType() {
-    return await AECO_tools.bim.types.relatingType();
+    return await AECO_TOOLS.bim.types.relatingType();
   }
 }

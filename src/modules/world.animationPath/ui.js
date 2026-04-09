@@ -1,12 +1,8 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-
-import { BasePanel } from "../../../drawUI/BasePanel.js";
+import { Components as UIComponents, BasePanel, makeDraggable, makeResizable } from "../../ui/Components/Components.js";
 
 import dataStore from "../../data/index.js";
 
-import { makeDraggable, makeResizable } from "../../../drawUI/utils/panelResizer.js";
-
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 class AnimationPathUI extends BasePanel {
   constructor({ context, operators }) {
@@ -44,7 +40,7 @@ class AnimationPathUI extends BasePanel {
 
   onShow() {
     if (this.firstDisplay) {
-      if (AECO_tools.world.animationPath.getCount() === 0) {
+      if (AECO_TOOLS.world.animationPath.getCount() === 0) {
         this.operators.execute('animationPath.create_template', this.context);
       }
 
@@ -109,7 +105,7 @@ class AnimationPathUI extends BasePanel {
     addButton.addClass('Button');
 
     addButton.onClick(() => {
-      const name = `Path ${AECO_tools.world.animationPath.getCount() + 1}`;
+      const name = `Path ${AECO_TOOLS.world.animationPath.getCount() + 1}`;
 
       this.operators.execute('animationPath.create', this.context, name);
     });
@@ -126,7 +122,7 @@ class AnimationPathUI extends BasePanel {
 
     this.listContainer.clear();
 
-    const paths = AECO_tools.world.animationPath.getAllPaths();
+    const paths = AECO_TOOLS.world.animationPath.getAllPaths();
 
     if (paths.length === 0) {
       const emptyMessage = UIComponents.text('No animation paths');
@@ -148,14 +144,7 @@ class AnimationPathUI extends BasePanel {
 
     const item = UIComponents.div();
 
-    item.addClass('AnimationPathItem');
-
     if (isExpanded) item.addClass('expanded');
-
-    item.setStyle('display', ['flex'])
-      .setStyle('flex-direction', ['column'])
-      .setStyle('padding', ['0.5rem 0.75rem'])
-      .setStyle('border-bottom', ['1px solid var(--border)']);
 
     const mainRow = UIComponents.row();
 
@@ -209,9 +198,9 @@ class AnimationPathUI extends BasePanel {
 
     const actionsRow = UIComponents.row();
 
-    actionsRow.addClass('AnimationPathItem-actions');
+    actionsRow.addClass('Item-actions');
 
-    actionsRow.setStyle('gap', ['0.25rem']).setStyle('opacity', ['0']);
+    actionsRow.setStyle('gap', ['0.25rem']).setStyle('opacity', ['0.5']);
 
     const editButton = UIComponents.icon('settings');
 
@@ -345,7 +334,7 @@ class AnimationPathUI extends BasePanel {
       list.add(empty);
     } else {
       path.viewpointIds.forEach((vpId, index) => {
-        const vp = AECO_tools.world.viewpoint.get(vpId);
+        const vp = AECO_TOOLS.world.viewpoint.get(vpId);
 
         if (vp) {
           list.add(this._createDraggableViewpointItem(path, vp, index));
@@ -466,7 +455,7 @@ class AnimationPathUI extends BasePanel {
   _createViewpointDropdown(path) {
     const select = UIComponents.select();
     
-    const allVps = AECO_tools.world.viewpoint.getAll();
+    const allVps = AECO_TOOLS.world.viewpoint.getAll();
 
     const availableVps = allVps.filter(vp => !path.viewpointIds.includes(vp.GlobalId));
 
@@ -644,7 +633,7 @@ class AnimationPathUI extends BasePanel {
   }
 
   showViewpointSelector(path) {
-    const allVps = AECO_tools.world.viewpoint.getAll();
+    const allVps = AECO_TOOLS.world.viewpoint.getAll();
 
     const availableVps = allVps.filter(vp => !path.viewpointIds.includes(vp.GlobalId));
 
@@ -663,7 +652,7 @@ class AnimationPathUI extends BasePanel {
 
     this.listContainer.clear();
 
-    const allPaths = AECO_tools.world.animationPath.getAllPaths();
+    const allPaths = AECO_TOOLS.world.animationPath.getAllPaths();
 
     const filteredPaths = query
       ? allPaths.filter(path => path.name.toLowerCase().includes(query.toLowerCase()))
@@ -1027,7 +1016,7 @@ class AnimationPathUI extends BasePanel {
         .setStyle('overflow-y', ['auto']);
 
       path.viewpointIds.forEach((vpId, index) => {
-        const vp = AECO_tools.world.viewpoint.get(vpId);
+        const vp = AECO_TOOLS.world.viewpoint.get(vpId);
 
         if (vp) {
           const vpSettingItem = this._createViewpointSettingItem(path, vp, index);

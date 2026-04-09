@@ -121,10 +121,6 @@ class NavigationController extends THREE.EventDispatcher {
     this.crosshair = null;
     this.crosshairResizeObserver = null;
 
-    this.clock = new THREE.Clock();
-
-    this.lastTime = 0;
-
     this.isLocked = false;
 
     this._animationFrameId = null;
@@ -409,13 +405,11 @@ class NavigationController extends THREE.EventDispatcher {
       this.updateDriveCamera(1.0);
     }
 
+    this.editor.signals.navigationCameraRigChanged.dispatch({
+      cameraViewMode: this.cameraViewMode,
+    });
+    
     this._dispatchChange();
-
-    if (this.editor.signals.navigationCameraRigChanged) {
-      this.editor.signals.navigationCameraRigChanged.dispatch({
-        cameraViewMode: this.cameraViewMode,
-      });
-    }
   }
 
   getCameraViewMode() {
@@ -827,9 +821,14 @@ class NavigationController extends THREE.EventDispatcher {
       return;
     }
 
+    const outgoingMode = this.mode;
+
+    const syncOrbitPivotFromView =
+      options.syncPivotFromView ?? outgoingMode !== 'FIRST_PERSON';
+
     this.exitCurrentMode(mode);
 
-    this.previousMode = this.mode;
+    this.previousMode = outgoingMode;
 
     this.mode = mode;
 
@@ -850,7 +849,7 @@ class NavigationController extends THREE.EventDispatcher {
         break;
 
       default:
-        this.enterOrbitMode({ syncPivotFromView: true });
+        this.enterOrbitMode({ syncPivotFromView: syncOrbitPivotFromView });
 
         break;
     }
@@ -1793,9 +1792,13 @@ class NavigationController extends THREE.EventDispatcher {
     if (!controls) {
       return;
     }
+    const orbitTarget = controls.center || controls.target;
+    if (!orbitTarget) {
+      return;
+    }
     const panSpeed = 0.5 * moveSensitivity;
-    controls.target.x -= deltaX * panSpeed;
-    controls.target.y += deltaY * panSpeed;
+    orbitTarget.x -= deltaX * panSpeed;
+    orbitTarget.y += deltaY * panSpeed;
   }
 
   applyOrbitRotateFromStick(deltaX, deltaY, lookSensitivity) {

@@ -1,5 +1,3 @@
-import * as Init from "./init.js";
-
 import * as Notification from "./notification.js";
 
 import * as World from "./world.js";
@@ -26,15 +24,19 @@ import * as Theme from "./theme.js";
 
 import * as BIM from "./bim.js";
 
+import * as BIMAttribute from "./bim.attribute.js";
+
+import * as BIMPset from "./bim.pset.js";
+
+import * as BIMSequence from "./bim.sequence.js";
+
+import * as LLMChat from "./llm.chat.js";
+
 import * as Configurator from "./configurator.js";
 
-import * as Scheduling from "./bim.sequence.js";
-
-import * as ModulePreset from "./modulePreset.js";
-
 export default {
+    Configurator,
     Notification,
-    Init,
     World,
     Terminal,
     Scripting,
@@ -46,8 +48,11 @@ export default {
     Navigation,
     Spatial,
     Theme,
+
     BIM,
-    Scheduling,
-    Configurator,
-    ModulePreset,
+    BIMSequence,
+    BIMAttribute,
+    BIMPset,
+    
+    LLMChat,
 };

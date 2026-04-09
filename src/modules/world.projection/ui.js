@@ -1,8 +1,6 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
+import { Components as UIComponents, BasePanel } from "../../ui/Components/Components.js";
 
-import { BasePanel } from "../../../drawUI/BasePanel.js";
-
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 /**
  * @typedef {'x' | 'y' | 'z'} ProjectionAxis
@@ -192,7 +190,7 @@ class ProjectionUI extends BasePanel {
 
     axisWrap.setStyle('flex', ['1']);
 
-    const axisSelectOptions = AECO_tools.world.projection.getCutPlaneAxisSelectOptions();
+    const axisSelectOptions = AECO_TOOLS.world.projection.getCutPlaneAxisSelectOptions();
 
     const axisOptionsRecord = {};
 

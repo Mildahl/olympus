@@ -1,6 +1,6 @@
 import { Operator } from "../../operators/Operator.js";
 
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 import * as ViewpointCore from "../../core/viewpoint.js";
 
@@ -25,7 +25,7 @@ class CreateViewpoint extends Operator {
 
   execute() {
     const viewpoint = ViewpointCore.create(this.name, {
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 
@@ -54,7 +54,7 @@ class RemoveViewpoint extends Operator {
 
   execute() {
     const result = ViewpointCore.remove(this.GlobalId, {
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 
@@ -85,7 +85,7 @@ class RenameViewpoint extends Operator {
 
   execute() {
     const result = ViewpointCore.rename(this.GlobalId, this.newName, {
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 
@@ -120,7 +120,7 @@ class UpdateViewpointPosition extends Operator {
 
   execute() {
     const result = ViewpointCore.updatePosition(this.GlobalId, this.x, this.y, this.z, {
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 
@@ -155,7 +155,7 @@ class UpdateViewpointTarget extends Operator {
 
   execute() {
     const result = ViewpointCore.updateTarget(this.GlobalId, this.x, this.y, this.z, {
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 
@@ -184,7 +184,7 @@ class UpdateViewpointFromEditor extends Operator {
 
   execute() {
     const result = ViewpointCore.updateFromEditor(this.GlobalId, {
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 
@@ -215,7 +215,7 @@ class ActivateViewpoint extends Operator {
 
   execute() {
     const viewpoint = ViewpointCore.activate(this.GlobalId, this.animate, {
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 
@@ -237,12 +237,12 @@ class NavigateViewpointBack extends Operator {
   }
 
   poll() {
-    return this.context?.editor && AECO_tools.world.viewpoint.canNavigateBack();
+    return this.context?.editor && AECO_TOOLS.world.viewpoint.canNavigateBack();
   }
 
   execute() {
     const viewpoint = ViewpointCore.navigateBack({
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 
@@ -264,12 +264,12 @@ class NavigateViewpointForward extends Operator {
   }
 
   poll() {
-    return this.context?.editor && AECO_tools.world.viewpoint.canNavigateForward();
+    return this.context?.editor && AECO_TOOLS.world.viewpoint.canNavigateForward();
   }
 
   execute() {
     const viewpoint = ViewpointCore.navigateForward({
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 
@@ -296,7 +296,7 @@ class ClearViewpointHistory extends Operator {
 
   execute() {
     ViewpointCore.clearHistory({
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 
@@ -324,7 +324,7 @@ class GetViewpoint extends Operator {
   }
 
   execute() {
-    const viewpoint = AECO_tools.world.viewpoint.get(this.GlobalId);
+    const viewpoint = AECO_TOOLS.world.viewpoint.get(this.GlobalId);
 
     return { status: "FINISHED", viewpoint };
   }
@@ -350,7 +350,7 @@ class GetViewpointByName extends Operator {
   }
 
   execute() {
-    const viewpoint = AECO_tools.world.viewpoint.getByName(this.name);
+    const viewpoint = AECO_TOOLS.world.viewpoint.getByName(this.name);
 
     return { status: "FINISHED", viewpoint };
   }
@@ -375,7 +375,7 @@ class ExportViewpoints extends Operator {
 
   execute() {
     const data = ViewpointCore.exportJSON({
-      viewpointTool: AECO_tools.world.viewpoint
+      viewpointTool: AECO_TOOLS.world.viewpoint
     });
 
     return { status: "FINISHED", data };
@@ -403,7 +403,7 @@ class ImportViewpoints extends Operator {
 
   execute() {
     const collection = ViewpointCore.importJSON(this.data, {
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 
@@ -434,7 +434,7 @@ class ToggleViewpointVisibility extends Operator {
   execute() {
     
     const result = ViewpointCore.toggleVisibility(this.GlobalId, this.settings, {
-      viewpointTool: AECO_tools.world.viewpoint,
+      viewpointTool: AECO_TOOLS.world.viewpoint,
       context: this.context
     });
 

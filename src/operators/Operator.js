@@ -11,6 +11,9 @@ class Operator  {
 
   static operatorOptions = ["REGISTER"];
 
+  /** @type {Object<string, {type?: string, description?: string, enum?: string[]}>|null} */
+  static operatorParams = null;
+
   constructor(context, input = {}) {
 
 		this.inMemory = false;

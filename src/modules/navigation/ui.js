@@ -1,8 +1,5 @@
-import { DrawUI } from "../../../drawUI/index.js";
+import { Components as DrawUI, SimpleFloatingWindow, UICheckbox, UILabel } from "../../ui/Components/Components.js";
 
-import { UICheckbox, UILabel } from "../../../drawUI/ui.js";
-
-import * as THREE from "three";
 
 function humanizeKeyCode(keyCode) {
   if (!keyCode || typeof keyCode !== "string") {
@@ -28,6 +25,13 @@ const NAVIGATION_KEYBOARD_ARROW_RIGHT = "\u2192";
 function placeMovementKeyOnGrid(keyElement, gridRow, gridColumn) {
   keyElement.dom.style.gridRow = String(gridRow);
   keyElement.dom.style.gridColumn = String(gridColumn);
+}
+
+function navigationViewportPrefersJoystickByDefault() {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return false;
+  }
+  return window.matchMedia("(hover: none) and (pointer: coarse)").matches;
 }
 
 function isUnmodifiedShiftKeyEvent(keyboardEvent) {
@@ -400,17 +404,15 @@ class NavigationUI {
     this.aboveCameraCheckboxInput = null;
     this.aboveCameraCheckboxRowElement = null;
     this.aboveCameraCheckboxSuppressChange = false;
-    this.leftControlMode = "keys";
+    this.leftControlMode = navigationViewportPrefersJoystickByDefault() ? "move" : "keys";
     this.activeKeyCodes = new Set();
     this.onViewportKeyboardBlur = this.releaseAllSimulatedKeys.bind(this);
     this.onKeysMoveModeCheckboxChange = this.onKeysMoveModeCheckboxChange.bind(this);
     this.onAboveCameraCheckboxChange = this.onAboveCameraCheckboxChange.bind(this);
 
-    if (context) {
-      context.navigationUI = this;
-    }
-
-    context.addListeners(["navigationModeChanged", "displaySettings", "navigationCameraRigChanged"]);
+    context.navigationUI = this;
+  
+    context.addListeners(["displaySettings"]);
 
     this.createNavigationToolbar(context, operators);
 
@@ -499,24 +501,29 @@ class NavigationUI {
     const navigationApplicationConfig =
       context.config && context.config.app ? context.config.app.Navigation : null;
 
-    context.signals.navigationModeChanged.add(({ mode, showInstructions }) => {
-      this.updateToolbarActiveState(mode);
-      if (showInstructions) {
-        this.showInstructions(mode, context);
+    if (editor && editor.signals) {
+      if (editor.signals.navigationModeChanged) {
+        editor.signals.navigationModeChanged.add(({ mode, showInstructions }) => {
+          this.updateToolbarActiveState(mode);
+          if (showInstructions) {
+            this.showInstructions(mode, context);
+          }
+          if (this.context) {
+            this.refreshViewportKeyboard(this.context);
+          }
+        });
       }
-      if (this.context) {
-        this.refreshViewportKeyboard(this.context);
+      if (editor.signals.navigationCameraRigChanged) {
+        editor.signals.navigationCameraRigChanged.add(() => {
+          if (this.context) {
+            this.syncAboveCameraCheckbox();
+          }
+        });
       }
-    });
+    }
 
     context.signals.displaySettings.add(() => {
       this.draw(context);
-    });
-
-    context.signals.navigationCameraRigChanged.add(() => {
-      if (this.context) {
-        this.syncAboveCameraCheckbox();
-      }
     });
 
     document.addEventListener("keydown", (keyboard) => {
@@ -574,18 +581,9 @@ class NavigationUI {
       return;
     }
 
-    const floatingWindow = DrawUI.floatingPanel();
-
-    floatingWindow.setSize("auto", "auto");
-
-    floatingWindow.setStyle("left", ["10px"]);
-
-    floatingWindow.setStyle("top", ["50vh"]);
-
-    this.instructionsPanel = floatingWindow;
-
-    floatingWindow.setTitle(instructionPanelDefinition.title);
-    floatingWindow.setIcon(instructionPanelDefinition.icon);
+    const instructionWindow = new SimpleFloatingWindow({ context, operators: this.operators });
+    instructionWindow.setTitle(instructionPanelDefinition.title);
+    instructionWindow.setIcon(instructionPanelDefinition.icon);
 
     const content = DrawUI.div();
     content.addClass("nav-instructions-content");
@@ -599,13 +597,36 @@ class NavigationUI {
     }
     const tips = instructionPanelDefinition.tips;
     for (let tipIndex = 0; tipIndex < tips.length; tipIndex++) {
-      const tipEntry = tips[tipIndex];
-      content.add(this.createTipRow(tipEntry[0], tipEntry[1]));
+      content.add(this.createTipRow(tips[tipIndex]));
     }
 
-    floatingWindow.setContent(content);
-
-    context.dom.appendChild(floatingWindow.dom);
+    instructionWindow.setContent(content);
+    const navigationToolbarElement = document.getElementById("NavigationToolbar");
+    if (navigationToolbarElement && context && context.dom) {
+      const toolbarBounds = navigationToolbarElement.getBoundingClientRect();
+      const contextBounds = context.dom.getBoundingClientRect();
+      const topOffset = Math.max(8, toolbarBounds.bottom - contextBounds.top + 8);
+      const rightOffset = Math.max(8, contextBounds.right - toolbarBounds.right);
+      instructionWindow.position({
+        top: `${topOffset}px`,
+        left: "auto",
+        right: `${rightOffset}px`,
+        bottom: "auto",
+        width: "auto",
+        height: "auto",
+      });
+    } else {
+      instructionWindow.position({
+        top: "50vh",
+        left: "10px",
+        right: "auto",
+        bottom: "auto",
+        width: "auto",
+        height: "auto",
+      });
+    }
+    instructionWindow.show();
+    this.instructionsPanel = instructionWindow;
     this.hideTimeout = setTimeout(() => {
       this.hideInstructions();
     }, this.timeout);
@@ -641,22 +662,90 @@ class NavigationUI {
     return row;
   }
 
-  createTipRow(key, description) {
+  createTipRow(tip, description) {
     const row = DrawUI.row();
     row.setClass("nav-tip-row");
 
-    const kbd = DrawUI.span();
-    kbd.setClass("nav-kbd nav-kbd-small");
-    kbd.setTextContent(key);
+    const controlsWrapper = DrawUI.div();
+    controlsWrapper.setClass("nav-tip-controls");
+
+    const controls = Array.isArray(tip) ? tip : tip.controls;
+    const resolvedDescription = Array.isArray(tip) ? description : tip.description;
+
+    for (let controlIndex = 0; controlIndex < controls.length; controlIndex++) {
+      if (controlIndex > 0) {
+        const plus = DrawUI.span();
+        plus.setClass("nav-tip-plus");
+        plus.setTextContent("+");
+        controlsWrapper.add(plus);
+      }
+      controlsWrapper.add(this.createTipControl(controls[controlIndex]));
+    }
 
     const desc = DrawUI.span();
     desc.setClass("nav-tip-desc");
-    desc.setTextContent(description);
+    desc.setTextContent(resolvedDescription);
 
-    row.add(kbd);
+    row.add(controlsWrapper);
     row.add(desc);
 
     return row;
+  }
+
+  createTipControl(controlToken) {
+    if (controlToken.type === "mouse") {
+      return this.createMouseControl(controlToken.button);
+    }
+
+    const kbd = DrawUI.span();
+    kbd.setClass("nav-kbd nav-kbd-small");
+    kbd.setTextContent(controlToken.value);
+
+    return kbd;
+  }
+
+  createMouseControl(button) {
+    const wrapper = DrawUI.div();
+    wrapper.setClass("nav-mouse-control");
+
+    const body = DrawUI.div();
+    body.setClass("nav-mouse-body");
+
+    const leftButton = DrawUI.div();
+    leftButton.setClass("nav-mouse-btn nav-mouse-btn--left");
+    if (button === "left") leftButton.addClass("nav-mouse-btn--active");
+
+    const middleButton = DrawUI.div();
+    middleButton.setClass("nav-mouse-btn nav-mouse-btn--middle");
+    if (button === "middle") middleButton.addClass("nav-mouse-btn--active");
+    if (button === "scroll") middleButton.addClass("nav-mouse-btn--scroll");
+
+    const rightButton = DrawUI.div();
+    rightButton.setClass("nav-mouse-btn nav-mouse-btn--right");
+    if (button === "right") rightButton.addClass("nav-mouse-btn--active");
+
+    const stem = DrawUI.div();
+    stem.setClass("nav-mouse-stem");
+
+    const buttonsRow = DrawUI.div();
+    buttonsRow.setClass("nav-mouse-buttons-row");
+    buttonsRow.add(leftButton);
+    buttonsRow.add(middleButton);
+    buttonsRow.add(rightButton);
+
+    body.add(buttonsRow);
+    body.add(stem);
+
+    if (button === "move") {
+      const moveArrows = DrawUI.div();
+      moveArrows.setClass("nav-mouse-move-indicator");
+      moveArrows.setTextContent("↕");
+      wrapper.add(moveArrows);
+    }
+
+    wrapper.add(body);
+
+    return wrapper;
   }
 
   hideInstructions() {
@@ -999,8 +1088,8 @@ class NavigationUI {
     if (this.mobileJoystick) {
       this.mobileJoystick.disable();
     }
-    if (this.viewportKeyboardRoot && this.viewportKeyboardRoot.dom) {
-      this.viewportKeyboardRoot.dom.style.display = "none";
+    if (this.viewportKeyboardRoot) {
+      this.viewportKeyboardRoot.setStyles({ display: "none" });
     }
   }
 
@@ -1074,7 +1163,7 @@ class NavigationUI {
     }
 
     if (navigationController.touchOverlaySuppressed) {
-      this.viewportKeyboardRoot.dom.style.display = "none";
+      this.viewportKeyboardRoot.setStyles({ display: "none" });
       if (this.mobileJoystick) {
         this.mobileJoystick.disable();
       }
@@ -1094,11 +1183,11 @@ class NavigationUI {
         }
         this.mobileJoystick.disable();
       }
-      this.viewportKeyboardRoot.dom.style.display = "none";
+      this.viewportKeyboardRoot.setStyles({ display: "none" });
       return;
     }
 
-    this.viewportKeyboardRoot.dom.style.display = "";
+    this.viewportKeyboardRoot.setStyles({ display: "flex" });
     if (this.mobileJoystick) {
       this.mobileJoystick.enable();
     }

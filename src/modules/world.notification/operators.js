@@ -8,6 +8,11 @@ class NewNotification extends Operator {
 
   static operatorOptions = ["REGISTER"];
 
+  static operatorParams = {
+    message: { type: "string", description: "Notification text to display" },
+    type: { type: "string", description: "Notification severity", enum: ["info", "warning", "error"] },
+  };
+
   constructor(context, { message, type = 'info' }) {
     super(context);
 
@@ -37,6 +42,10 @@ class MarkNotificationRead extends Operator {
   static operatorLabel = "Mark Notification Read";
 
   static operatorOptions = ["REGISTER"];
+
+  static operatorParams = {
+    id: { type: "string", description: "Notification ID to mark as read" },
+  };
 
   constructor(context, id) {
     super(context);
@@ -91,6 +100,10 @@ class RemoveNotification extends Operator {
   static operatorLabel = "Remove Notification";
 
   static operatorOptions = ["REGISTER"];
+
+  static operatorParams = {
+    id: { type: "string", description: "Notification ID to remove" },
+  };
 
   constructor(context, id) {
     super(context);

@@ -10,8 +10,6 @@ import { CodeCollection } from "./DataCollections/CodeCollection.js";
 
 import { TerminalCollection } from "./DataCollections/TerminalCollection.js";
 
-import { NodeCollection, NodesCollection } from "./DataCollections/NodesCollection.js";
-
 import { BIMAttribute, BIMAttributes } from "./BIMCollections/BIMAttribute.js";
 
 import { BIMJsonProperties } from "./BIMCollections/BIMJsonProperties.js";
@@ -67,33 +65,6 @@ DataStore.prototype = {
 
 const dataStore = new DataStore();
 
-class IfcRoot {
-    constructor(GlobalId, key, opts) {
-        const { string, Name, type, id } = opts || {};
-        this.GlobalId = GlobalId;
-
-        this.key = key || "ifc_root";
-        
-        this.string = string;
-
-        this.ifcProxy = string;
-
-        this.Name = Name;
-
-        this.type = type;
-
-        this.id = id;
-    }
-}
-
-class IfcModel {
-    constructor(name, key) {
-        this.name = name;
-
-        this.key = key || "model";
-    }
-}
-
 export default dataStore;
 
 export {
@@ -101,15 +72,11 @@ export {
     Attribute,
     Collection,
     _generateGuid,
-    IfcRoot,
-    IfcModel,
     NotificationAttribute,
     NotificationCollection,
     MeasurementCollection,
     CodeCollection,
     TerminalCollection,
-    NodeCollection,
-    NodesCollection,
     BIMAttribute,
     BIMAttributes,
     BIMJsonProperties,

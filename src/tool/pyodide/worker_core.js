@@ -1,6 +1,8 @@
 import {
   getPyodide, setPyodide, getOutputBuffer, setOutputBuffer, appendOutputBuffer,
-  ifc, scene, model, placement, notification, viewpoint, animation, measure, section, layer, utils
+  ifc, scene, model, placement, notification, viewpoint, animation, measure, section, layer, utils,
+  resetBootstrapMetrics, markBootstrapMetric, measureBootstrapDuration, setBootstrapCompleted,
+  setPackageBaseUrl,
 } from './worker_state.js';
 
 const PRESERVED_GLOBALS = new Set([
@@ -20,22 +22,24 @@ function _sanitize_val(v) {
     return v.map((i) => _sanitize_val(i));
   } else return String(v);
 }
-export async function startPyodide(version = "v0.29.0", mode = "full", baseUrl = null) {
+export async function startPyodide(version = "v0.29.0", mode = "full", baseUrl = null, ifcopenshellWheelsBaseUrl = null) {
   if (getPyodide()) {
     return { status: "already_initialized" };
   }
+  resetBootstrapMetrics();
+  markBootstrapMetric("runtime_start");
   let indexURL;
   const origin = self.location.origin + "/";
   let pathSegment;
   if (baseUrl == null || String(baseUrl).trim() === "") {
-    pathSegment = `external/vendor/pyodide/${version}/${mode}/`;
+    pathSegment = `/vendor/pyodide/${version}/${mode}/`;
   } else if (baseUrl.startsWith("http://") || baseUrl.startsWith("https://")) {
     try {
       pathSegment = new URL(baseUrl).pathname.replace(/\/?$/, "") + "/";
-      if (pathSegment === "/") pathSegment = `external/vendor/pyodide/${version}/${mode}/`;
+      if (pathSegment === "/") pathSegment = `/vendor/pyodide/${version}/${mode}/`;
       else if (!pathSegment.startsWith("/")) pathSegment = "/" + pathSegment;
     } catch {
-      pathSegment = `external/vendor/pyodide/${version}/${mode}/`;
+      pathSegment = `/vendor/pyodide/${version}/${mode}/`;
     }
   } else {
     pathSegment = baseUrl.startsWith("/") ? baseUrl.replace(/\/?$/, "") + "/" : baseUrl.replace(/\/?$/, "") + "/";
@@ -92,8 +96,14 @@ export async function startPyodide(version = "v0.29.0", mode = "full", baseUrl =
     },
 
   });
+  markBootstrapMetric("load_pyodide_end");
+  measureBootstrapDuration("load_pyodide_ms", "runtime_start", "load_pyodide_end");
 
   setPyodide(pyodideInstance);
+  if (ifcopenshellWheelsBaseUrl && String(ifcopenshellWheelsBaseUrl).trim()) {
+    const trimmed = String(ifcopenshellWheelsBaseUrl).trim();
+    setPackageBaseUrl(trimmed.endsWith("/") ? trimmed : `${trimmed}/`);
+  }
   pyodideInstance.registerJsModule("viewer", {
     
     ifc,
@@ -111,6 +121,9 @@ export async function startPyodide(version = "v0.29.0", mode = "full", baseUrl =
   });
 
   self.postMessage({ type: "progress", message: "Pyodide loaded!" });
+  markBootstrapMetric("runtime_ready");
+  measureBootstrapDuration("runtime_total_ms", "runtime_start", "runtime_ready");
+  setBootstrapCompleted();
 
   return { status: "initialized", version };
 }

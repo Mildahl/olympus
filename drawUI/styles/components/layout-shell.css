@@ -1,0 +1,159 @@
+.MinimizedIcon img,
+.MinimizedIcon span {
+  font-size: var(--headerbar-height);
+  width: var(--headerbar-height);
+  height: var(--headerbar-height);
+}
+
+.MinimizedIcon.active {
+  background: color-mix(in srgb, var(--brand-color) 18%, transparent);
+  border-color: color-mix(in srgb, var(--brand-color) 40%, transparent);
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.MinimizedIcon:hover {
+  background: color-mix(in srgb, var(--windowbar-highlight) 60%, transparent);
+  border-color: var(--windowbar-border);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 var(--windowbar-highlight);
+  transform: translateY(-2px) scale(1.06);
+}
+
+.MinimizedIcon:active {
+  transform: translateY(0px) scale(0.97);
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.25),
+    inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  background: color-mix(
+    in srgb,
+    var(--windowbar-surface-strong) 80%,
+    transparent
+  );
+}
+
+.MinimizedIcon:hover .UIIcon {
+  opacity: 1;
+}
+
+.MinimizedIcon:hover .MinimizedIcon-image {
+  opacity: 1;
+}
+
+.selected {
+  background: var(--brand-color-alpha) !important;
+  border-color: var(--brand-color) !important;
+}
+
+.SelectionToggle {
+  align-items: center;
+  background: var(--glass-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  display: inline-flex;
+  gap: var(--phi-0-5);
+  padding: var(--phi-0-5) var(--phi-1);
+  transition: var(--transition-fast);
+}
+
+.SelectionToggle:hover {
+  background: var(--glass-surface-hover);
+  border-color: var(--glass-border-hover);
+}
+
+.SelectionToggle.active {
+  background: var(--brand-color-alpha);
+  border-color: var(--brand-color);
+  color: var(--on-brand-color);
+}
+
+.layout-panel {
+  background: var(--theme-background);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+}
+
+.layout-panel-left {
+  border-left: none;
+  border-bottom: none;
+  border-top: none;
+}
+
+.layout-panel-right {
+  border-right: none;
+  border-bottom: none;
+  border-top: none;
+}
+
+.layout-panel-bottom {
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+}
+
+.layout-resizer {
+  background: transparent;
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.15s ease;
+  z-index: 100;
+}
+
+.layout-resizer:hover,
+.layout-resizer.active {
+  background: var(--brand-color-alpha) !important;
+}
+
+.layout-resizer-left,
+.layout-resizer-right {
+  cursor: col-resize;
+  width: 4px;
+}
+
+.layout-resizer-bottom {
+  cursor: row-resize;
+  height: 4px;
+}
+
+.layout-viewport {
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.layout-drag-overlay {
+  background: transparent;
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 9999;
+}
+
+.layout-toggle-btn {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  color: var(--theme-text-light);
+  cursor: pointer;
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  padding: 0 4px;
+  transition: all 0.15s ease;
+}
+
+.ws-zoom-btn:hover {
+  background: var(--glass-surface-hover);
+  border-color: var(--glass-border-hover);
+}

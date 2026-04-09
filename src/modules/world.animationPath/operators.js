@@ -1,6 +1,6 @@
 import { Operator } from "../../operators/Operator.js";
 
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 import * as AnimationPathCore from "../../core/animationPath.js";
 
@@ -28,7 +28,7 @@ class CreateAnimationPath extends Operator {
 
   execute() {
     const path = AnimationPathCore.create(this.name, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -61,7 +61,7 @@ class RemoveAnimationPath extends Operator {
 
   execute() {
     const result = AnimationPathCore.remove(this.GlobalId, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -96,7 +96,7 @@ class RenameAnimationPath extends Operator {
 
   execute() {
     const result = AnimationPathCore.rename(this.GlobalId, this.newName, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -129,7 +129,7 @@ class ActivateAnimationPath extends Operator {
 
   execute() {
     const result = AnimationPathCore.activate(this.GlobalId, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -162,7 +162,7 @@ class ToggleAnimationPathVisibility extends Operator {
 
   execute() {
     const result = AnimationPathCore.toggleVisibility(this.GlobalId, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -195,7 +195,7 @@ class PlayAnimationPath extends Operator {
 
   execute() {
     const result = AnimationPathCore.play(this.GlobalId, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -228,7 +228,7 @@ class StopAnimationPath extends Operator {
 
   execute() {
     const result = AnimationPathCore.stop(this.GlobalId, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -263,7 +263,7 @@ class AddViewpointToAnimationPath extends Operator {
 
   execute() {
     AnimationPathCore.addViewpoint(this.pathGlobalId, this.viewpointGlobalId, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -298,7 +298,7 @@ class RemoveViewpointFromAnimationPath extends Operator {
 
   execute() {
     AnimationPathCore.removeViewpoint(this.pathGlobalId, this.viewpointGlobalId, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -335,7 +335,7 @@ class MoveViewpointInPath extends Operator {
 
   execute() {
     AnimationPathCore.moveViewpoint(this.pathGlobalId, this.viewpointGlobalId, this.newIndex, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -370,7 +370,7 @@ class UpdateAnimationSettings extends Operator {
 
   execute() {
     AnimationPathCore.updateSettings(this.GlobalId, this.settings, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -405,7 +405,7 @@ class SetPathColor extends Operator {
 
   execute() {
     AnimationPathCore.setPathColor(this.GlobalId, this.color, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -440,7 +440,7 @@ class SetMarkerColor extends Operator {
 
   execute() {
     AnimationPathCore.setMarkerColor(this.GlobalId, this.color, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -475,7 +475,7 @@ class SetTargetColor extends Operator {
 
   execute() {
     AnimationPathCore.setTargetColor(this.GlobalId, this.color, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -506,7 +506,7 @@ class CreateAnimationPathTemplate extends Operator {
 
   execute() {
     const template = AnimationPathCore.createTemplate({
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });
@@ -543,7 +543,7 @@ class UpdateViewpointSettings extends Operator {
 
   execute() {
     AnimationPathCore.updateViewpointSettings(this.pathGlobalId, this.viewpointGlobalId, this.settings, {
-      animationPathTool: AECO_tools.world.animationPath,
+      animationPathTool: AECO_TOOLS.world.animationPath,
       context: this.context,
       signals: this.context.signals
     });

@@ -9,8 +9,8 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "aeco": ["dist/index.d.ts", "dist/index.js"],
-      "aeco/*": ["dist/*"]
+      "aeco": ["src/index.d.ts", "src/index.js"],
+      "aeco/*": ["src/*"]
     }
   },
   "include": [
@@ -19,10 +19,9 @@
     "dist/**/*.d.ts",
     "drawUI/**/*.js",
     "examples/**/*.js"
-  ],
+, "src/core/bim.psetjs", "configuration/modes.js"  ],
   "exclude": [
     "node_modules",
-    "external/dist",
-    "external/vendor"
+    "examples/vendor"
   ]
 }

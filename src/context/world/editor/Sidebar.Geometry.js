@@ -57,7 +57,6 @@ function SidebarGeometry( editor ) {
 	const container = new UIPanel();
 	container.setBorderTop( '0' );
 	container.setDisplay( 'none' );
-	container.setPaddingTop( '20px' );
 
 	let currentGeometryType = null;
 	const geometryTypeRow = new UIRow();

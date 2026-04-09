@@ -1,6 +1,4 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-
-import { BasePanel } from "../../../drawUI/BasePanel.js";
+import { Components as UIComponents, BasePanel } from "../../ui/Components/Components.js";
 
 import { SnapState } from "./operators.js";
 
@@ -155,18 +153,24 @@ class SnapUI extends BasePanel {
     });
 
     this.content.add(content);
-    const footerContent = UIComponents.div().addClass("instruction-content");
+    const footerContent = UIComponents.column().gap("var(--phi-0-5)").padding("var(--phi-0-5)");
 
     const instructions = [
       { key: "ctrl+s", desc: "Toggle snap" },
     ];
 
     instructions.forEach((inst) => {
-      const line = UIComponents.row().addClass("instruction-line");
+      const line = UIComponents.row();
+
+      line.setStyle("alignItems", ["center"]);
+
+      line.setStyle("display", ["flex"]);
+
+      line.setStyle("gap", ["var(--phi-0-5)"]);
 
       line.add(UIComponents.span(inst.key).addClass("kbd"));
 
-      line.add(UIComponents.text(inst.desc).addClass("instruction-desc"));
+      line.add(UIComponents.text(inst.desc));
 
       footerContent.add(line);
     });

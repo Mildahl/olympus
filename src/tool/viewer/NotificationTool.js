@@ -2,9 +2,8 @@ import dataStore from "../../data/index.js";
 
 import { NotificationAttribute, NotificationCollection } from "../../data/index.js";
 
-import * as THREE from "three";
+import context from '../../context/index.js';
 
-import InteractiveObject, { makeInteractive } from "../model/animate/InteractiveObject.js";
 class NotificationTool {
   static collection = null;
 
@@ -33,7 +32,7 @@ class NotificationTool {
     return this.collection.getUnreadCount();
   }
 
-  static markAsRead(context, id) {
+  static markAsRead(id) {
     this.init();
 
     this.collection.markAsRead(id);
@@ -41,7 +40,7 @@ class NotificationTool {
     context.signals.notificationRead.dispatch(id);
   }
 
-  static markAllAsRead(context) {
+  static markAllAsRead() {
     this.init();
 
     const notifications = this.collection.getAll();
@@ -55,7 +54,7 @@ class NotificationTool {
     context.signals.notificationRead.dispatch();
   }
 
-  static removeNotification(context, id) {
+  static removeNotification(id) {
     this.init();
 
     const index = this.collection.notifications.findIndex(n => n.id === id);
@@ -67,7 +66,7 @@ class NotificationTool {
     }
   }
 
-  static clearAll(context) {
+  static clearAll() {
     this.init();
 
     this.collection.notifications = [];

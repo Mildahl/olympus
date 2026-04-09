@@ -5,8 +5,6 @@ import { BIMProperties, BIMQuantities, BIMPropertiesData } from "../../data/BIMC
 import tools from "../index.js";
 
 class PsetTool {
-  static projectName = "default";
-
   /**
    * Load property sets and quantity sets for an entity.
    * @param {string} modelName - Loaded model name

@@ -1,0 +1,125 @@
+
+.PieMenuOverlay {
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity 120ms ease;
+    z-index: 36;
+  }
+  
+  .PieMenuOverlay-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .PieMenu {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    transform: translate(-50%, -50%);
+  }
+  
+  .PieMenu::before {
+    background: var(--glass-surface);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    box-shadow:
+      0 18px 40px rgba(0, 0, 0, 0.32),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    content: "";
+    inset: 0;
+    position: absolute;
+  }
+  
+  .PieMenu-items {
+    inset: 0;
+    position: absolute;
+  }
+  
+  .PieMenu-itemSlot {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+  
+  .PieMenu-hub {
+    align-items: center;
+    background: rgba(23, 23, 23, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.3);
+    color: white;
+    cursor: pointer;
+    gap: 0.2rem;
+    height: 76px;
+    justify-content: center;
+    pointer-events: auto;
+    position: relative;
+    text-align: center;
+    transition:
+      transform 120ms ease,
+      background 120ms ease,
+      border-color 120ms ease;
+    width: 76px;
+    z-index: 2;
+  }
+  
+  .PieMenu-hub:hover {
+    background: rgba(31, 31, 31, 0.94);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.03);
+  }
+  
+  .PieMenu-hubIcon {
+    font-size: 20px;
+  }
+  
+  .PieMenu-hubLabel {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    max-width: 56px;
+    text-transform: uppercase;
+  }
+  
+  .PieMenu-item {
+    align-items: center;
+    height: 56px;
+    justify-content: center;
+    pointer-events: auto;
+    transition:
+      opacity 120ms ease,
+      background 120ms ease,
+      border-color 120ms ease,
+      color 120ms ease;
+    width: 56px;
+  }
+  
+  .PieMenu-item:hover {
+    transform: none;
+  }
+  
+  .PieMenu-item .Icon {
+    font-size: 22px;
+  }
+  
+  .PieMenu-itemDisabled {
+    cursor: not-allowed;
+    opacity: 0.42;
+    pointer-events: auto;
+  }
+  
+  .PieMenu-itemDisabled:hover {
+    transform: none;
+  }
+  

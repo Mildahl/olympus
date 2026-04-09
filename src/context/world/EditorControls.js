@@ -8,6 +8,7 @@ class EditorControls extends THREE.EventDispatcher {
 		this.enabled = true;
 
 		this.center = new THREE.Vector3();
+		this.target = this.center;
 
 		this.panSpeed = 0.002;
 

@@ -26,13 +26,14 @@ const ApplicationConfig = {
     
     monacoBaseUrl: null,
 
-    vendorBaseUrl: "/external/vendor",
+    vendorBaseUrl: "/vendor",
 
-    dataBaseUrl: "/external/data",
+    dataBaseUrl: "/data",
 
-    pythonToolsBaseUrl: "/external/pytools",
+    ifcSamplesBaseUrl: "/data/ifc",
+    
+    pythonToolsBaseUrl: "/dist/pytools",
 
-    ifcSamplesBaseUrl: "/external/ifc",
   },
   Navigation : NavigationConfig,
   Editor: {
@@ -59,27 +60,25 @@ const ApplicationConfig = {
   },
 };
 
-const defaultUILayout = {
-  leftWorkspaceTabGroupsByModule: [
-    { moduleId: 'bim.project', tabIds: ['bim-project-ifc-models'] },
-    { moduleId: 'bim.sequence', tabIds: ['sequence-scheduling', 'sequence-schedule-tasks'] },
-  ],
-  bottomWorkspaceTabGroupsByModule: [],
-  workspaceTabIdsByModule: {
-    'code.scripting': 'code-scripts',
-  },
-};
-
-const UIConfig = {
-  showWelcomeScreen: false,
-  layout: defaultUILayout,
-  theme: {
-    default: "night",
-    colors: {
+const themeDayNight = {
       day: {
         "background": {
           key: "--theme-background",
-          value: "#ebebeb",
+          value: "#ebebebff",
+        },
+        "light-text":
+        {
+          key: "--theme-light-text",
+          value: "#438a38",
+        },
+        "light-text2":
+        {
+          key: "--theme-text-light",
+          value: "#191b1b",
+        },
+        "border": {
+          key: "--border",
+          value: "#438a38",
         },
         "text": {
           key: "--theme-text",
@@ -91,17 +90,32 @@ const UIConfig = {
         },
         "brand-color": {
           key: "--brand-color",
-          value: "#a0ff96",
+          value: "#629c5c",
         },
         "glass-surface": {
           key: "--glass-surface",
-          value: "rgba(255,255,255,0.08)",
+          value: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)",
         },
       },
+      
       night: {
         "background": {
           key: "--theme-background",
           value: "#121212",
+        },
+        "light-text":
+        {
+          key: "--theme-light-text",
+          value: "#969c94",
+        },
+        "light-text2":
+        {
+          key: "--theme-text-light",
+          value: "#b4bcbe",
+        },
+        "border": {
+          key: "--border",
+          value: "#1e251e",
         },
         "text": {
           key: "--theme-text",
@@ -117,10 +131,45 @@ const UIConfig = {
         },
         "glass-surface": {
           key: "--glass-surface",
-          value: "rgba(28,30,34,0.5)",
+          value: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)",
         },
       },
-    },
+};
+
+const pieMenu = [
+  {
+    id: "pie-dim-elements",
+    name: "Dim Elements",
+    icon: "highlight_off",
+    operator: "viewer.dim_elements",
+  },
+  {
+    id: "pie-undim-elements",
+    name: "Undim Elements",
+    icon: "highlight_off",
+    operator: "viewer.undim_elements",
+  },
+  {
+    id: "pie-highlight-elements",
+    name: "Highlight Elements",
+    icon: "highlight",
+    operator: "viewer.highlight_elements",
+  },
+  {
+    id: "pie-unhighlight-elements",
+    name: "Unhighlight Elements",
+    icon: "highlight_off",
+    operator: "viewer.unhighlight_elements",
+  }
+];
+
+
+const UIConfig = {
+  showWelcomeScreen: false,
+  pieMenu: {items: pieMenu, shortcut: "P"},
+  theme: {
+    default: "night",
+    colors: themeDayNight,
   },
   language: "en",
   mobileLandscapePrompt: true,

@@ -6,7 +6,6 @@ import { WorldComponent as DefaultWorldComponent } from "./UserInterface.config.
 
 import { LayoutManager } from "../utils/LayoutManager.js";
 
-import { Sidebar, Properties } from "../../context/world/editor/Sidebar.js";
 
 const WORKSPACE_REGION_IDS = [
   "Viewport",

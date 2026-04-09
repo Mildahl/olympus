@@ -1,8 +1,8 @@
-import { Components as UIComponents } from "../../ui/Components/Components.js";
-
-import { TabPanel } from "../../../drawUI/TabPanel.js";
+import { Components as UIComponents, TabPanel } from "../../ui/Components/Components.js";
 
 import { UIHelper } from "../../ui/UIHelper.js";
+
+import AECO_TOOLS from "../../tool/index.js";
 
 import Paths from "../../utils/paths.js";
 
@@ -25,15 +25,14 @@ const IFC_TEMPLATES = [{
 },
 {
   name: "Works Plan",
-  path : Paths.ifcSamples("Works_Plan.ifc"),
-  fileName: "Works_Plan.ifc",
+  path : Paths.ifcSamples("office-refurbishement-Live.ifc"),
+  fileName: "office-refurbishement-Live.ifc",
   size: "1.2 MB"
 }
 ]
 
-/** Shown when IFC load operators are polled as not ready (Python / IfcOpenShell). */
-const BIM_IFC_OPERATOR_LOCKED_TOOLTIP =
-  "Enable Python and BIM (IfcOpenShell) first, then try again.";
+const BIM_IFCOPEN_SHELL_GEOMETRY_LOCKED_TOOLTIP =
+  "Enable Python and BIM (IfcOpenShell) to load geometry with IfcOpenShell.";
 
 class ProjectUI extends TabPanel {
   constructor({ context, operators }) {
@@ -47,7 +46,7 @@ class ProjectUI extends TabPanel {
       title: 'IFC Building Models',
       showHeader: false,
       floatable: true,
-      autoShow: true,
+      autoShow: false,
     });
 
     this.panel.addClass("Panel");
@@ -64,9 +63,13 @@ class ProjectUI extends TabPanel {
 
     this.progressPulseTimer = null;
 
+    this.modelsWithGeometry = new Set();
+
     this.baseUI(context, operators);
 
     this.listen(context, operators);
+
+    this.show({ select: false });
   }
 
   baseUI(context, operators) {
@@ -92,6 +95,14 @@ class ProjectUI extends TabPanel {
     });
 
     context.signals.activeModelChanged.add(() => {
+      this.refreshModelsList(context, operators);
+    });
+
+    context.signals.newIFCGeometry.add(({ modelName }) => {
+      if (!modelName) return;
+
+      this.modelsWithGeometry.add(modelName);
+
       this.refreshModelsList(context, operators);
     });
 
@@ -216,70 +227,63 @@ class ProjectUI extends TabPanel {
       }
     });
 
-    const loadGeometryOp = UIComponents.button("Load Geometry (Safe & Slow)");
+    const modelGeometryLoaded = this.modelsWithGeometry.has(loadedModelName);
 
-    const loadLiteGeometryOp = UIComponents.button("Load Lite (Fast & Experimental)");
+    let loadGeometryOp = null;
 
-    loadGeometryOp.setIcon("view_in_ar");
+    let loadLiteGeometryOp = null;
 
-    loadLiteGeometryOp.setIcon("view_in_ar");
+    if (!modelGeometryLoaded) {
+      loadGeometryOp = UIComponents.button("Load Geometry (Safe & Slow)");
+
+      loadLiteGeometryOp = UIComponents.button("Load Lite (Fast & Experimental)");
+
+      loadGeometryOp.setIcon("view_in_ar");
+
+      loadLiteGeometryOp.setIcon("view_in_ar");
+
+      const runGeometryLoad = async (backend) => {
+        try {
+          await operators.execute("bim.load_geometry_data", context, loadedModelName, "Buildings", backend);
+        } catch {
+          return;
+        }
+      };
+
+      loadLiteGeometryOp.onClick(async (clickEvent) => {
+        clickEvent?.stopPropagation?.();
+
+        await runGeometryLoad("ifc-lite");
+      });
+
+      UIHelper.bindOperatorPolling({
+        element: loadGeometryOp,
+        operators,
+        context,
+        operatorId: "bim.load_geometry_data",
+        getArgs: () => [loadedModelName, "Buildings", "ifcopenshell"],
+        lockedTooltip: BIM_IFCOPEN_SHELL_GEOMETRY_LOCKED_TOOLTIP,
+        extraReadyCheck: () =>
+          Boolean(AECO_TOOLS.code.pyWorker.isReady && AECO_TOOLS.code.pyWorker.initialized.bim),
+        onLocked: () => {
+          operators.execute("world.new_notification", context, {
+            message: BIM_IFCOPEN_SHELL_GEOMETRY_LOCKED_TOOLTIP,
+            type: "warning",
+          });
+        },
+        onClick: async () => {
+          await runGeometryLoad("ifcopenshell");
+        },
+      });
+    }
 
     if (context.ifc.activeModel === loadedModelName) item.addClass("Active");
 
-    const runGeometryLoad = async (backend) => {
-      try {
-        await operators.execute("bim.load_geometry_data", context, loadedModelName, "Buildings", backend);
-      } catch {
-        return;
-      }
-    };
-
-    const onGeometryLocked = () => {
-      operators.execute("world.new_notification", context, {
-        message: BIM_IFC_OPERATOR_LOCKED_TOOLTIP,
-        type: "warning",
-      });
-    };
-
-    UIHelper.bindOperatorPolling({
-      element: loadGeometryOp,
-      operators,
-      context,
-      operatorId: "bim.load_geometry_data",
-      getArgs: () => [loadedModelName, "Buildings", "ifcopenshell"],
-      lockedTooltip: BIM_IFC_OPERATOR_LOCKED_TOOLTIP,
-      onLocked: onGeometryLocked,
-      onClick: async () => {
-        await runGeometryLoad("ifcopenshell");
-      },
-    });
-
-
-    context.signals.newIFCGeometry.add(({modelName}) => {
-
-      if ( modelName === loadedModelName ) {
-
-        item.remove(loadGeometryOp);
-
-        item.remove(loadLiteGeometryOp);
-
-      }
-    });
-
-    UIHelper.bindOperatorPolling({
-      element: loadLiteGeometryOp,
-      operators,
-      context,
-      operatorId: "bim.load_geometry_data",
-      getArgs: () => [loadedModelName, "Buildings", "ifc-lite"],
-      lockedTooltip: BIM_IFC_OPERATOR_LOCKED_TOOLTIP,
-      onLocked: onGeometryLocked,
-      onClick: async () => {
-        await runGeometryLoad("ifc-lite");
-      },
-    });
-
-    item.add(name, loadGeometryOp, loadLiteGeometryOp, saveOp);
+    if (loadGeometryOp && loadLiteGeometryOp) {
+      item.add(name, loadGeometryOp, loadLiteGeometryOp, saveOp);
+    } else {
+      item.add(name, saveOp);
+    }
 
     this.projectsList.add(item);
   }
@@ -301,27 +305,9 @@ class ProjectUI extends TabPanel {
 
     const dropArea = UIComponents.div();
 
-    UIHelper.bindOperatorPolling({
-      element: dropArea,
-      operators,
-      context,
-      operatorId: "bim.load_model_from_path",
-      getArgs: () => [null, null, null],
-      lockedTooltip: BIM_IFC_OPERATOR_LOCKED_TOOLTIP,
-    });
-
     UIHelper.makeFileDropZone(dropArea, {
       accept: ['.ifc', '.ifczip', '.ifcxml'],
       onFile: async (file, arrayBuffer) => {
-        if (!operators.canExecute("bim.load_model_from_path", context, null, null, null)) {
-          operators.execute("world.new_notification", context, {
-            message: BIM_IFC_OPERATOR_LOCKED_TOOLTIP,
-            type: "warning",
-          });
-
-          return;
-        }
-
         this.showProgress(`Loading ${file.name} into memory...`, 100);
 
         try {
@@ -369,27 +355,13 @@ class ProjectUI extends TabPanel {
       
       grid.add(item);
 
-      UIHelper.bindOperatorPolling({
-        element: item,
-        operators,
-        context,
-        operatorId: "bim.load_model_from_path",
-        getArgs: () => [null, null, null],
-        lockedTooltip: BIM_IFC_OPERATOR_LOCKED_TOOLTIP,
-        onLocked: () => {
-          operators.execute("world.new_notification", context, {
-            message: BIM_IFC_OPERATOR_LOCKED_TOOLTIP,
-            type: "warning",
-          });
-        },
-        onClick: () => {
-          const modelName = template.path.split("/").pop();
+      const templateModelName = template.path.split("/").pop();
 
-          this.loadModelWithProgress(context, operators, template.path, modelName);
-        },
+      item.onClick(() => {
+        this.loadModelWithProgress(context, operators, template.path, templateModelName);
       });
 
-      const modelName = template.path.split("/").pop();
+      const modelName = templateModelName;
 
       context.signals.newIFCModel.add(({ FileName }) => {
 
@@ -651,15 +623,6 @@ class ProjectUI extends TabPanel {
   }
 
   async loadModelWithProgress(context, operators, path, modelName) {
-    if (!operators.canExecute("bim.load_model_from_path", context, null, null, null)) {
-      operators.execute("world.new_notification", context, {
-        message: BIM_IFC_OPERATOR_LOCKED_TOOLTIP,
-        type: "warning",
-      });
-
-      return;
-    }
-
     try {
       this.showProgress(`Downloading ${modelName}...`, 0);
 

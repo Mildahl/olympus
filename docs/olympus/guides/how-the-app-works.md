@@ -2,9 +2,9 @@
 
 This guide describes the Olympus application architecture: the entrypoint, Core, tools, operators, and UI.
 
-## Entrypoint: `src/aeco.js`
+## Entrypoint: `src/index.js`
 
-The application starts from **`src/aeco.js`**, which exports the **`AECO`** class and the shared **`context`** and **`Core`**.
+The application starts from **`src/index.js`**, which exports the **`AECO`** class and the shared **`context`** and **`Core`**.
 
 In tutorials the **`AECO` instance** is often stored in a variable named `simulation`; the following steps use that name.
 

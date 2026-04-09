@@ -32,8 +32,6 @@ function SidebarObject( editor ) {
 
 	container.setBorderTop( '0' );
 
-	container.setPaddingTop( '20px' );
-
 	container.add( new UIBreak() );
 
 	const emptySelectionRow = new UIRow();

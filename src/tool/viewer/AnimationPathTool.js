@@ -4,6 +4,8 @@ import { Collection } from "../../data/index.js";
 
 import tools from "../index.js";
 
+import context from '../../context/index.js';
+
 import * as THREE from "three";
 
 /**
@@ -297,7 +299,7 @@ class AnimationPathTool {
     return this.collection;
   }
 
-  static createPath(context, name = 'New Path') {
+  static createPath(name = 'New Path') {
     const path = new AnimationPathCollection({ name });
 
     this.collection.children.push(path);
@@ -305,12 +307,12 @@ class AnimationPathTool {
     return path;
   }
 
-  static removePath(context, GlobalId) {
+  static removePath(GlobalId) {
     const path = this.collection.children.find(p => p.GlobalId === GlobalId);
 
     if (path) {
       
-      this.removeVisualization(context, path);
+      this.removeVisualization(path);
 
       this.collection.children = this.collection.children.filter(p => p.GlobalId !== GlobalId);
 
@@ -320,7 +322,7 @@ class AnimationPathTool {
     return false;
   }
 
-  static renamePath(context, GlobalId, newName) {
+  static renamePath(GlobalId, newName) {
     const path = this.collection.children.find(p => p.GlobalId === GlobalId);
 
     if (path) {
@@ -332,7 +334,7 @@ class AnimationPathTool {
     return false;
   }
 
-  static activatePath(context, GlobalId) {
+  static activatePath(GlobalId) {
     this.collection.children.forEach(p => {
       if (p.active) {
         p.active = false;
@@ -344,7 +346,7 @@ class AnimationPathTool {
     if (path) {
       path.active = true;
       if (path.visible) {
-        this.updateVisualization(context, path);
+        this.updateVisualization(path);
       }
 
       return true;
@@ -353,16 +355,16 @@ class AnimationPathTool {
     return false;
   }
 
-  static setPathVisibility(context, GlobalId, visible) {
+  static setPathVisibility(GlobalId, visible) {
     const path = this.collection.children.find(p => p.GlobalId === GlobalId);
 
     if (path) {
       path.visible = visible;
 
       if (visible) {
-        this.addVisualization(context, path);
+        this.addVisualization(path);
       } else {
-        this.removeVisualization(context, path);
+        this.removeVisualization(path);
       }
 
       return true;
@@ -371,14 +373,14 @@ class AnimationPathTool {
     return false;
   }
 
-  static addViewpointToPath(context, pathGlobalId, viewpointGlobalId) {
+  static addViewpointToPath(pathGlobalId, viewpointGlobalId) {
     const path = this.collection.children.find(p => p.GlobalId === pathGlobalId);
 
     if (path) {
       path.addViewpoint(viewpointGlobalId);
 
       if (path.visible) {
-        this.updateVisualization(context, path);
+        this.updateVisualization(path);
       }
 
       return true;
@@ -387,14 +389,14 @@ class AnimationPathTool {
     return false;
   }
 
-  static removeViewpointFromPath(context, pathGlobalId, viewpointGlobalId) {
+  static removeViewpointFromPath(pathGlobalId, viewpointGlobalId) {
     const path = this.collection.children.find(p => p.GlobalId === pathGlobalId);
 
     if (path) {
       path.removeViewpoint(viewpointGlobalId);
 
       if (path.visible) {
-        this.updateVisualization(context, path);
+        this.updateVisualization(path);
       }
 
       return true;
@@ -410,7 +412,7 @@ class AnimationPathTool {
     return pathLength / travelTime;
   }
 
-  static playPath(context, GlobalId) {
+  static playPath(GlobalId) {
 
     const path = this.collection.children.find(p => p.GlobalId === GlobalId);
 
@@ -429,7 +431,7 @@ class AnimationPathTool {
       nav?.pauseInput(isControllingObject); 
 
       if (!path.showPathDuringPlay && path.visible) {
-        this.removeVisualization(context, path);
+        this.removeVisualization(path);
       }
 
       const viewpoints = path.getViewpoints();
@@ -463,7 +465,7 @@ class AnimationPathTool {
           path.playbackProgress = 1;
 
           if (!path.showPathDuringPlay && path.visible) {
-            this.addVisualization(context, path);
+            this.addVisualization(path);
           }
           context.editor.controls.enabled = true;
 
@@ -498,7 +500,7 @@ class AnimationPathTool {
           transitionDuration = (distance / cameraSpeed) * 1000;
         }
         const easingFn = this._getEasingFunction(path.easing);
-        this._animateCameraToViewpoint(context, currentVp, transitionDuration, easingFn, () => {
+        this._animateCameraToViewpoint(currentVp, transitionDuration, easingFn, () => {
           
           path.playbackProgress = (currentIndex + 1) / viewpoints.length;
           const stopDuration = path.getStopDurationSeconds(vpId) * 1000;
@@ -526,7 +528,7 @@ class AnimationPathTool {
   /**
    * Stop the currently playing animation
    */
-  static stopPath(context, GlobalId) {
+  static stopPath(GlobalId) {
     const path = this.collection.children.find(p => p.GlobalId === GlobalId);
 
     if (path) {
@@ -537,7 +539,7 @@ class AnimationPathTool {
       path.playbackProgress = 0;
 
       if (!path.showPathDuringPlay && path.visible) {
-        this.addVisualization(context, path);
+        this.addVisualization(path);
       }
       context.editor.controls.enabled = true;
 
@@ -552,7 +554,7 @@ class AnimationPathTool {
   /**
    * Pause/resume the animation
    */
-  static togglePausePath(context, GlobalId) {
+  static togglePausePath(GlobalId) {
     const path = this.collection.children.find(p => p.GlobalId === GlobalId);
 
     if (path && path.isPlaying) {
@@ -585,7 +587,7 @@ class AnimationPathTool {
   /**
    * Animate camera to a viewpoint with custom duration and easing
    */
-  static _animateCameraToViewpoint(context, viewpoint, duration, easingFn, onComplete) {
+  static _animateCameraToViewpoint(viewpoint, duration, easingFn, onComplete) {
     const camera = context.editor.camera;
 
     const controls = context.editor.controls;
@@ -636,7 +638,7 @@ class AnimationPathTool {
    * If in FLY/DRIVE mode with a controlled object, the object follows the camera automatically
    * via the attachment system in NavigationController.
    */
-  static animateToPositionAndTarget(context, {position, target, duration = 2000, easing = 'ease-out-cubic', onComplete}) {
+  static animateToPositionAndTarget({position, target, duration = 2000, easing = 'ease-out-cubic', onComplete}) {
     const editor = context.editor || context;
 
     if (!editor?.camera || !editor?.controls) {
@@ -699,7 +701,7 @@ class AnimationPathTool {
   /**
    * Update animation settings for a path
    */
-  static updateAnimationSettings(context, GlobalId, settings) {
+  static updateAnimationSettings(GlobalId, settings) {
     const path = this.collection.children.find(p => p.GlobalId === GlobalId);
 
     if (path) {
@@ -731,7 +733,7 @@ class AnimationPathTool {
   /**
    * Update settings for a specific viewpoint in a path
    */
-  static updateViewpointSettings(context, pathGlobalId, viewpointGlobalId, settings) {
+  static updateViewpointSettings(pathGlobalId, viewpointGlobalId, settings) {
     const path = this.collection.children.find(p => p.GlobalId === pathGlobalId);
 
     if (path) {
@@ -746,14 +748,14 @@ class AnimationPathTool {
   /**
    * Set path color
    */
-  static setPathColor(context, GlobalId, color) {
+  static setPathColor(GlobalId, color) {
     const path = this.collection.children.find(p => p.GlobalId === GlobalId);
 
     if (path) {
       path.pathColor = color;
 
       if (path.visible) {
-        this.updateVisualization(context, path);
+        this.updateVisualization(path);
       }
 
       return true;
@@ -765,14 +767,14 @@ class AnimationPathTool {
   /**
    * Set marker color (camera position markers)
    */
-  static setMarkerColor(context, GlobalId, color) {
+  static setMarkerColor(GlobalId, color) {
     const path = this.collection.children.find(p => p.GlobalId === GlobalId);
 
     if (path) {
       path.markerColor = color;
 
       if (path.visible) {
-        this.updateVisualization(context, path);
+        this.updateVisualization(path);
       }
 
       return true;
@@ -784,14 +786,14 @@ class AnimationPathTool {
   /**
    * Set target color (camera target markers)
    */
-  static setTargetColor(context, GlobalId, color) {
+  static setTargetColor(GlobalId, color) {
     const path = this.collection.children.find(p => p.GlobalId === GlobalId);
 
     if (path) {
       path.targetColor = color;
 
       if (path.visible) {
-        this.updateVisualization(context, path);
+        this.updateVisualization(path);
       }
 
       return true;
@@ -803,14 +805,14 @@ class AnimationPathTool {
   /**
    * Reorder viewpoints in a path
    */
-  static reorderViewpoints(context, pathGlobalId, newOrder) {
+  static reorderViewpoints(pathGlobalId, newOrder) {
     const path = this.collection.children.find(p => p.GlobalId === pathGlobalId);
 
     if (path) {
       path.reorderViewpoints(newOrder);
 
       if (path.visible) {
-        this.updateVisualization(context, path);
+        this.updateVisualization(path);
       }
 
       return true;
@@ -822,14 +824,14 @@ class AnimationPathTool {
   /**
    * Move a viewpoint to a new position in the path
    */
-  static moveViewpointInPath(context, pathGlobalId, viewpointGlobalId, newIndex) {
+  static moveViewpointInPath(pathGlobalId, viewpointGlobalId, newIndex) {
     const path = this.collection.children.find(p => p.GlobalId === pathGlobalId);
 
     if (path) {
       path.moveViewpoint(viewpointGlobalId, newIndex);
 
       if (path.visible) {
-        this.updateVisualization(context, path);
+        this.updateVisualization(path);
       }
 
       return true;
@@ -838,7 +840,7 @@ class AnimationPathTool {
     return false;
   }
 
-  static addVisualization(context, path) {
+  static addVisualization(path) {
     const scene = context.editor.scene;
 
     const viewpoints = path.getViewpoints();
@@ -897,7 +899,7 @@ class AnimationPathTool {
     });
   }
 
-  static removeVisualization(context, path) {
+  static removeVisualization(path) {
     const scene = context.editor.scene;
 
     path.sceneObjects.forEach(obj => {
@@ -913,10 +915,10 @@ class AnimationPathTool {
     path.sceneObjects = [];
   }
 
-  static updateVisualization(context, path) {
-    this.removeVisualization(context, path);
+  static updateVisualization(path) {
+    this.removeVisualization(path);
 
-    this.addVisualization(context, path);
+    this.addVisualization(path);
   }
 
   static getAllPaths() {

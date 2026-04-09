@@ -1,14 +1,21 @@
 import { Components as UIComponents } from "../../ui/Components/Components.js";
 
+import { analyticsSectionTitleStyles, analyticsSpatialCellStyles } from "./bimAnalyticsPanelStyles.js";
+
 class DirectorSpatialSummarySection {
   constructor() {
     this.root = UIComponents.column().gap("var(--phi-0-5)");
 
     this.title = UIComponents.text("Spatial structure");
 
-    this.title.addClass("director-analytics-section-title");
+    this.title.setStyles(analyticsSectionTitleStyles);
 
-    this.body = UIComponents.div().addClass("director-analytics-spatial-grid");
+    this.body = UIComponents.div()
+      .addClass("OlympusGrid")
+      .setStyles({
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gap: "var(--phi-0-5)",
+      });
   }
 
   getDom() {
@@ -34,7 +41,7 @@ class DirectorSpatialSummarySection {
   }
 
   _cell(label, value) {
-    const cell = UIComponents.div().addClass("director-analytics-spatial-cell");
+    const cell = UIComponents.div().setStyles(analyticsSpatialCellStyles);
 
     cell.add(UIComponents.text(label));
 

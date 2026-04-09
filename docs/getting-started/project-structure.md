@@ -8,10 +8,10 @@ This document explains the Olympus/AECO project layout and key directories.
 Olympus/
 ├── src/                    # Source code (the library)
 ├── drawUI/                 # UI component library
-├── external/               # Vendor libraries and assets
-├── examples/               # Example applications
+├── external/               # Sample data, IFC files, and application stylesheets
+├── examples/               # Example applications (and `examples/vendor/` from postinstall)
 ├── docs/                   # Documentation
-├── scripts/                # Build and utility scripts
+├── scripts/                # Vendor sync for examples (`sync-examples-vendor.js`)
 ├── dist/                   # Built output (generated)
 ├── package.json            # Dependencies and scripts
 ├── webpack.config.js       # Main build configuration
@@ -24,9 +24,8 @@ The core library is organized into layers:
 
 ```
 src/
-├── index.js                # Main entry point (exports AECO class)
+├── index.js                # Library entry: AECO class and public exports
 ├── index.d.ts              # TypeScript definitions
-├── aeco.js                 # AECO class implementation
 │
 ├── core/                   # Core APIs (namespaced functions)
 │   ├── index.js            # Exports all namespaces
@@ -168,7 +167,7 @@ examples/
                             ▼
 ┌─────────────────────────────────────────────────────────┐
 │                     AECO Class                           │
-│                   (src/aeco.js)                          │
+│                   (src/index.js)                         │
 │  • createUI()  • moduleRegistry  • tools  • ops         │
 └─────────────────────────────────────────────────────────┘
                             │
@@ -202,8 +201,7 @@ examples/
 
 | File | Purpose |
 |------|---------|
-| `src/index.js` | Main library export |
-| `src/aeco.js` | AECO class (the engine) |
+| `src/index.js` | AECO class, context, Core, tools, and named public exports |
 | `src/core/index.js` | All Core API namespaces |
 | `src/operators/Operator.js` | Base Operator class |
 | `src/modules/ModuleRegistry.js` | Module system |

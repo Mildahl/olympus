@@ -6,13 +6,13 @@ function resolveModeOptions(mode, { editor, vehicle = null, flyObject = null, gr
     const scene = editor && editor.scene ? editor.scene : null;
 
     if (mode === 'DRIVE' && !vehicle) {
-        modeOptions.vehicle = NavigationTool.findDefaultVehicleInScene(scene);
+        modeOptions.vehicle = NavigationTool.findDefaultVehicleInScene();
     } else if (vehicle) {
         modeOptions.vehicle = vehicle;
     }
 
     if ((mode === 'FLY' || mode === 'FIRST_PERSON') && !flyObject) {
-        modeOptions.flyObject = NavigationTool.findDefaultFlyingObjectInScene(scene);
+        modeOptions.flyObject = NavigationTool.findDefaultFlyingObjectInScene();
     } else if (flyObject) {
         modeOptions.flyObject = flyObject;
     }

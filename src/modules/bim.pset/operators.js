@@ -2,12 +2,14 @@ import { Operator } from "../../operators/Operator.js";
 
 import operators from "../../operators/index.js";
 
-import { IfcRoot, IfcModel } from "../../data/index.js";
-
-import AECO_tools from "../../tool/index.js";
+import AECO_TOOLS from "../../tool/index.js";
 
 import dataStore from "../../data/index.js";
-class BIM_EditPropertySet extends Operator {
+
+import * as Core from "../../core/bim.pset.js";
+
+
+class BIM_OP_EditPropertySet extends Operator {
   static operatorName = "bim.edit_property_set";
 
   static operatorLabel = "Edit Property Set";
@@ -27,21 +29,21 @@ class BIM_EditPropertySet extends Operator {
   }
 
   poll() {
-    return AECO_tools.initialized.bim && this.psetGlobalId && this.properties;
+    return AECO_TOOLS.code.pyWorker.initialized.bim && this.psetGlobalId && this.properties;
   }
 
   async execute() {
 
-    const result = await AECO_tools.ifc.runAPI(this.modelName, "pset.edit_pset", {
-      pset: new IfcRoot(this.psetGlobalId),
+    const result = await AECO_TOOLS.bim.ifc.runAPI(this.modelName, "pset.edit_pset", {
+      pset: this.psetGlobalId,
       properties: this.properties,
-    });
+    }, ["pset"]);
     
     return { status: "FINISHED", success: true };
   }
 }
 
-class BIM_EditQuantitySet extends Operator {
+class BIM_OP_EditQuantitySet extends Operator {
   static operatorName = "bim.edit_quantity_set";
 
   static operatorLabel = "Edit Quantity Set";
@@ -63,11 +65,11 @@ class BIM_EditQuantitySet extends Operator {
   }
 
   poll() {
-    return AECO_tools.initialized.bim && this.GlobalId && this.qtoName && this.quantities;
+    return AECO_TOOLS.code.pyWorker.initialized.bim && this.GlobalId && this.qtoName && this.quantities;
   }
 
   async execute() {
-    const result = await AECO_tools.code.pyWorker.run_api("editQuantitySet", {
+    const result = await AECO_TOOLS.code.pyWorker.run_api("editQuantitySet", {
       modelName: this.modelName,
       GlobalId: this.GlobalId,
       qtoName: this.qtoName,
@@ -78,7 +80,7 @@ class BIM_EditQuantitySet extends Operator {
   }
 }
 
-class BIM_LoadProperties extends Operator {
+class BIM_OP_LoadProperties extends Operator {
   static operatorName = "bim.load_properties";
 
   static operatorLabel = "Load Properties";
@@ -96,25 +98,18 @@ class BIM_LoadProperties extends Operator {
   }
 
   poll() {
-    return AECO_tools.initialized.bim && this.GlobalId;
+    return AECO_TOOLS.code.pyWorker.initialized.bim && this.GlobalId;
   }
 
   async execute() {
  
-    let propertiesData = null;
-
-    const psetResult = await AECO_tools.bim.pset.loadProperties(this.modelName, this.GlobalId);
-
-    if (psetResult.psets?.length > 0 || psetResult.qtos?.length > 0) {
-
-      AECO_tools.bim.pset.storeProperties(this.GlobalId, psetResult);
-      
-    }
+    Core.loadProperties(this.modelName, this.GlobalId, {context: this.context, psetTool: AECO_TOOLS.bim.pset});
 
     return { status: "FINISHED" };
   }
 }
-class BIM_CalculateQuantities extends Operator {
+
+class BIM_OP_CalculateQuantities extends Operator {
   static operatorName = "bim.calculate_quantities";
 
   static operatorLabel = "Calculate Quantities";
@@ -132,18 +127,19 @@ class BIM_CalculateQuantities extends Operator {
   }
 
   poll() {
-    return AECO_tools.initialized.bim && this.GlobalId;
+    return AECO_TOOLS.code.pyWorker.initialized.bim && this.GlobalId;
   }
 
   async execute() {
 
-    const result = await AECO_tools.ifc.runTool(this.modelName, {
+    const result = await AECO_TOOLS.bim.ifc.runTool(this.modelName, {
       toolName: "pset",
       functionName: "calculate_element_quantities",
       args: {
-        model: new IfcModel(this.modelName),
+        model: this.modelName,
         element_guids: [this.GlobalId]
       },
+      entityArgs: ["model"],
     });
 
     await operators.execute("bim.load_properties", this.context, this.modelName, this.GlobalId);
@@ -157,4 +153,4 @@ class BIM_CalculateQuantities extends Operator {
   return { status: "FINISHED"};
   }
 }
-export default [BIM_EditPropertySet, BIM_EditQuantitySet, BIM_LoadProperties, BIM_CalculateQuantities];
+export default [BIM_OP_EditPropertySet, BIM_OP_EditQuantitySet, BIM_OP_LoadProperties, BIM_OP_CalculateQuantities];

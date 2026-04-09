@@ -35,7 +35,7 @@ examples/HelloWorld/
     <link rel="stylesheet" href="./../../external/styles/master.css">
     
     <!-- Signals library (event system) -->
-    <script src="./../../external/vendor/editor_deps/signals.min.js"></script>
+    <script src="./../vendor/editor_deps/signals.min.js"></script>
 </head>
 <body>
     <!-- Import map defines module resolution -->
@@ -43,8 +43,8 @@ examples/HelloWorld/
     {
         "imports": {
             "aeco": "./../../dist/index.js",
-            "three": "./../../external/vendor/three/build/three.module.js",
-            "three/addons/": "./../../external/vendor/three/examples/jsm/"
+            "three": "./../vendor/three/build/three.module.js",
+            "three/addons/": "./../vendor/three/examples/jsm/"
         }
     }
     </script>
@@ -114,9 +114,9 @@ const ApplicationConfig = {
         save: true,
         persistSettings: false,
         devMode: false,
-        pyodideBaseUrl: "/external/vendor/pyodide/v0.29.0/full",
-        monacoBaseUrl: "/external/vendor/monaco-editor/0.52.2",
-        vendorBaseUrl: "/external/vendor",
+        pyodideBaseUrl: "/examples/vendor/pyodide/v0.29.0/full",
+        monacoBaseUrl: "/examples/vendor/monaco-editor/0.52.2",
+        vendorBaseUrl: "/examples/vendor",
         dataBaseUrl: "/external/data",
     },
     Navigation: NavigationConfig,
