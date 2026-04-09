@@ -9,10 +9,9 @@ Don't waste time re-building an editor from scratch: olympus is here!
 [![aeco.dev](https://img.shields.io/badge/site-aeco.dev-0066cc)](https://www.aeco.dev/)
 [![License](https://img.shields.io/badge/license-see%20LICENSE-blue)](LICENSE)
 
-
 [**Hello World (reference app)**](https://myoualid.github.io/olympus/examples/HelloWorld/index.html) · [**Addons (build your host app)**](https://myoualid.github.io/olympus/examples/Addons/index.html)
 
-![Olympus — digital construction app](./AECO_20260409.png)
+![Olympus — digital construction app](https://www.aeco.dev/static/img/AECO_20260409.png)
 
 <details>
 <summary>More Screenshots</summary>
